@@ -21,6 +21,7 @@
 	<property name="aceview_api_jar" location="site/aceview-api.jar"/>
 
 	<!-- These properties you do not need to modify. -->
+	<property name="classes" location="classes/"/>
 	<property name="aceview_lib" location="lib/"/>
 	<property name="aceview_dist" location="dist/"/>
 	<property name="protege_dist" location="${protege}/build/dist/"/>
@@ -39,10 +40,11 @@
 	</target>
 
 	<target name="compile" description="Compile the ACE View Java files.">
+		<mkdir dir="${classes}"/>
 		<javac
 			srcdir="src/"
 			classpath="${jars}"
-			destdir="classes/"/>
+			destdir="${classes}"/>
 	</target>
 
 
@@ -51,14 +53,14 @@
 			destfile="${aceview_jar}"
 			manifest="manifest.txt"
 			basedir="."
-			includes="classes/ch/**, lib/**, licenses/**, viewconfig-aceviewtab.xml, plugin.xml"
+			includes="${classes}/ch/**, lib/**, licenses/**, viewconfig-aceviewtab.xml, plugin.xml"
 			/>
 	</target>
 
 	<target name="api_jar" depends="compile" description="EXPERIMENTAL: Generate the ACE View jar-file containing only the class files.">
 		<jar
 			destfile="${aceview_api_jar}"
-			basedir="classes/"
+			basedir="${classes}"
 			includes="ch/**"
 			/>
 	</target>
@@ -89,7 +91,7 @@
 
 	<target name="clean" description="Clean up.">
 		<delete file="${aceview_jar}"/>
-		<delete dir="classes/ch/"/>
+		<delete dir="${classes}/ch/"/>
 		<delete dir="javadoc"/>
 		<delete dir="${aceview_dist}"/>
 	</target>
@@ -99,8 +101,8 @@
 		<zip
 			destfile="${aceview_dist}/aceview_src-${build.time}_unofficial.zip"
 			basedir="."
-			includes="lib/**, src/**, test/**, licenses/**, site/**, classes, *.xml, *.txt, .classpath, .project, .settings/**"
-			excludes="classes/ch/**, **/.DS_Store, **/old/**, **/*.zip, **/*.bash, **/*.lst"
+			includes="lib/**, src/**, test/**, licenses/**, site/**, ${classes}, *.xml, *.txt, .classpath, .project, .settings/**"
+			excludes="${classes}/ch/**, **/.DS_Store, **/old/**, **/*.zip, **/*.bash, **/*.lst"
 			/>
 	</target>
 
@@ -109,7 +111,7 @@
 		<javac
 			srcdir="${aceview_test_src}"
 			classpath="${jars};${aceview_lib}/junit-4.5.jar"
-			destdir="classes/"/>
+			destdir="${classes}"/>
 	</target>
 
 
@@ -118,7 +120,7 @@
 		<junit printsummary="yes" haltonfailure="no">
 
 			<classpath>
-				<pathelement location="classes/"/>
+				<pathelement location="${classes}"/>
 				<pathelement path="${jars};${aceview_lib}/junit-4.5.jar"/>
 			</classpath>
 
