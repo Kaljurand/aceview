@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+	<VSNode splits="0.34 0.45 0.21">
+		<HSNode splits="0.24 0.76">
+			<CNode>
+				<Component label="ACE Snippet Editor">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACESnippetEditorViewComponent"/>
+				</Component>
+			</CNode>
+			<CNode>
+				<Component label="ACE Feedback">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEFeedbackViewComponent"/>
+				</Component>
+			</CNode>
+		</HSNode>
+		<HSNode splits="0.7 0.3">
+			<CNode>
+				<Component label="ACE Snippets">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACESnippetsViewComponent"/>
+				</Component>
+				<Component label="ACE Word Usage">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEWordUsageViewComponent"/>
+				</Component>
+				<Component label="ACE Q&amp;A">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEQandAViewComponent"/>
+				</Component>
+				<!--
+				<Component label="ACE Entailments">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEEntailmentsViewComponent"/>
+				</Component>
+				-->
+				<Component label="ACE Lexicon">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACELexiconViewComponent"/>
+				</Component>
+				<Component label="ACE Text">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACETextViewComponent"/>
+				</Component>
+			</CNode>
+			<CNode>
+				<Component label="ACE Explanation">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEExplanationViewComponent"/>
+				</Component>
+			</CNode>
+		</HSNode>
+		<HSNode splits="0.6 0.4">
+			<CNode>
+				<Component label="ACE Words">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEWordsAlphaSortedViewComponent"/>
+				</Component>
+				<Component label="Classes">
+					<Property id="pluginId" value="org.protege.editor.owl.OWLAssertedClassHierarchy"/>
+				</Component>
+				<Component label="Properties">
+					<Property id="pluginId" value="org.protege.editor.owl.OWLObjectPropertyTree"/>
+				</Component>
+				<Component label="Individuals">
+					<Property id="pluginId" value="org.protege.editor.owl.OWLIndividualsList"/>
+				</Component>
+			</CNode>
+			<CNode>
+				<Component label="ACE Metrics">
+					<Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEMetricsViewComponent"/>
+				</Component>
+			</CNode>
+		</HSNode>
+	</VSNode>
+</layout>

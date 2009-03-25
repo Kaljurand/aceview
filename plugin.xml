@@ -1,0 +1,256 @@
+<?xml version="1.0" ?>
+
+<plugin id="ch.uzh.ifi.attempto.aceview" version="1.2.18.ACEViewTab">
+
+<!-- Tab -->
+<extension id="ACEViewTab"
+	point="org.protege.editor.core.application.WorkspaceTab">
+	<label value="ACE View"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ACEViewTab"/>
+	<editorKitId value="OWLEditorKit"/>
+	<!-- Note: we want the ACE View tab to be positioned before Ontology tab (whose index is "A"). -->
+	<index value="1"/>
+	<defaultViewConfigFileName value="viewconfig-aceviewtab.xml"/>
+</extension>
+
+<!-- Preferences panel -->
+<extension id="ACEPreferencesPanel"
+	point="org.protege.editor.core.application.preferencespanel">
+	<label value="ACE View"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ACEPreferencesPanel"/>
+</extension>
+
+<!-- Views -->
+<extension id="ACETextViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Text"/>
+	<label value="ACE Text"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACETextViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACEQandAViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Q&amp;A"/>
+	<label value="ACE Q&amp;A"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACEQandAViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACEEntailmentsViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Entailments"/>
+	<label value="ACE Entailments"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACEEntailmentsViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACEExplanationViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Explanation"/>
+	<label value="ACE Explanation"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACEExplanationViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACELexiconFormatViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Lexicon format"/>
+	<label value="ACE Lexicon format"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACELexiconFormatViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="AceWikiFormatViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="AceWiki format"/>
+	<label value="AceWiki format"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.AceWikiFormatViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACEWordsAlphaSortedViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Words"/>
+	<label value="ACE Words"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACEWordsAlphaSortedViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACEWordsASortedViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Words (exp)"/>
+	<label value="ACE Words (exp)"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACEWordsASortedViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACEWordUsageViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Word Usage"/>
+	<label value="ACE Word Usage"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACEWordUsageViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACEIndexViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Index"/>
+	<label value="ACE Index"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACEIndexViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACEMetricsViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Metrics"/>
+	<label value="ACE Metrics"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACEMetricsViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACESnippetEditorViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Snippet Editor"/>
+	<label value="ACE Snippet Editor"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACESnippetEditorViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACEFeedbackViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Feedback"/>
+	<label value="ACE Feedback"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACEFeedbackViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACESnippetsViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Snippets"/>
+	<label value="ACE Snippets"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACESnippetsViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<extension id="ACELexiconViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="ACE Lexicon"/>
+	<label value="ACE Lexicon"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ACELexiconViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+
+<!--
+<extension id="ManagerViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="Manager (test)"/>
+	<label value="Manager (test)"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ManagerViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+-->
+
+<!--
+<extension id="AnnotationViewComponent"
+	point="org.protege.editor.core.application.ViewComponent">
+	<name value="Annotations"/>
+	<label value="Annotations"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.view.AnnotationViewComponent"/>
+	<headerColor value="@org.protege.ontologycolor"/>
+	<category value="ACE"/>
+</extension>
+-->
+
+
+<!-- ACE menu -->
+<!-- Tasks related specifically to the ACE text -->
+    
+<extension id="ch.uzh.ifi.attempto.aceview.ui.menu.CreateAceWikiAction"
+	point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Export as AceWiki ..."/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.action.CreateAceWikiAction"/>
+	<toolTip value="Saves the ACE text in AceWiki format."/>
+	<path value="org.protege.editor.owl.menu.tools/SlotP-B"/>
+	<editorKitId value="OWLEditorKit"/>
+</extension>
+
+<extension id="ch.uzh.ifi.attempto.aceview.ui.menu.ACEReparse"
+	point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Reparse failed snippets"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.action.ReparseAction"/>
+	<toolTip value="Reparse every snippet that does not have any corresponding OWL/SWRL axioms."/>
+	<path value="org.protege.editor.owl.menu.tools/SlotP-C"/>
+	<editorKitId value="OWLEditorKit"/>
+</extension>
+
+<extension id="ch.uzh.ifi.attempto.aceview.ui.menu.FillLexiconAction"
+	point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Fill lexicon"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.action.FillLexiconAction"/>
+	<toolTip value="Fill every empty slot in the lexicon."/>
+	<path value="org.protege.editor.owl.menu.tools/SlotP-D"/>
+	<editorKitId value="OWLEditorKit"/>
+</extension>
+
+<extension id="ch.uzh.ifi.attempto.aceview.ui.menu.UpdateAnswersAction"
+	point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Update answers"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.action.UpdateAnswersAction"/>
+	<toolTip value="Update the answers to every question."/>
+	<path value="org.protege.editor.owl.menu.tools/SlotP-E"/>
+	<editorKitId value="OWLEditorKit"/>
+</extension>
+
+
+<!-- ACE View related links -->
+
+<extension id="menu.ACEViewHelpWebsiteMenuItem" point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Website"/>
+	<toolTip value="ACE View website"/>
+	<url value="http://attempto.ifi.uzh.ch/aceview/"/>
+	<path value="org.protege.editor.core.application.menu.HelpMenu/SlotACEView-A"/>
+	<editorKitId value="any"/>
+</extension>
+
+<extension id="menu.ACEViewHelpReleaseNotesMenuItem" point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Release Notes"/>
+	<toolTip value="ACE View release notes"/>
+	<url value="http://attempto.ifi.uzh.ch/aceview/RELEASE_NOTES.html"/>
+	<path value="org.protege.editor.core.application.menu.HelpMenu/SlotACEView-B"/>
+	<editorKitId value="any"/>
+</extension>
+
+<extension id="menu.ACEViewHelpWritingOWLinACEMenuItem" point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Writing OWL ontologies in ACE"/>
+	<toolTip value="Introduction to writing OWL ontologies in ACE"/>
+	<url value="http://attempto.ifi.uzh.ch/site/docs/writing_owl_in_ace.html"/>
+	<path value="org.protege.editor.core.application.menu.HelpMenu/SlotACEView-C"/>
+	<editorKitId value="any"/>
+</extension>
+
+<extension id="menu.ACEViewHelpExamplesCountriesMenuItem" point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Example: Countries"/>
+	<toolTip value="ACE text about various (mostly European) countries"/>
+	<url value="http://attempto.ifi.uzh.ch/aceview/examples/countries.ace.txt"/>
+	<path value="org.protege.editor.core.application.menu.HelpMenu/SlotACEView-D"/>
+	<editorKitId value="any"/>
+</extension>
+
+</plugin>
