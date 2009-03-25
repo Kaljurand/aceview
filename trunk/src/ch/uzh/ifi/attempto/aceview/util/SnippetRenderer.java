@@ -1,0 +1,150 @@
+/*
+ * This file is part of ACE View.
+ * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ *
+ * ACE View is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * ACE View is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with ACE View.
+ * If not, see http://www.gnu.org/licenses/.
+ */
+
+package ch.uzh.ifi.attempto.aceview.util;
+
+import java.util.List;
+
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+
+import ch.uzh.ifi.attempto.ace.ACESentence;
+import ch.uzh.ifi.attempto.ace.ACEToken;
+import ch.uzh.ifi.attempto.aceview.ACESnippet;
+
+/**
+ * <p>Pretty-prints the snippet by placing each sentence on a separate line, and
+ * pretty-printing each sentence.
+ * Pretty-prints each {@link ACESentence} by using line-breaks and indentation.</p>
+ * 
+ * <p>TODO: We want to increase the indentation when encountering
+ * a relative clause pronoun (that, which, who, whose). The problem
+ * is that many of these pronouns are used also as question pronouns
+ * in which case we do not want to increase the indentation. The current
+ * solution is not correct and complete. This kind of pretty-printing
+ * is best done if the syntax tree is given as input.</p>
+ * 
+ * <p>TODO: Maybe glue apostrophes and commas to the preceding word (see toString()).</p>
+ * 
+ * @author Kaarel Kaljurand
+ */
+public class SnippetRenderer {
+
+	private final Multimap<Integer, Integer> hl = Multimaps.newHashMultimap();
+	private final Multimap<Integer, Integer> spans;
+	private final StringBuilder sb = new StringBuilder();
+
+	// Four levels of indentation are supported. Deeper structures should not be used anyway.
+	private final static String[] indentStrings = {"\n", "\n\t", "\n\t\t", "\n\t\t\t", "\n\t\t\t\t"};
+
+	public SnippetRenderer(ACESnippet snippet) {
+		spans = snippet.getErrorSpans();
+		render(snippet.getSentences());
+	}
+
+	public SnippetRenderer(List<ACESentence> sentences) {
+		spans = null;
+		render(sentences);
+	}
+
+	public String getRendering() {
+		return sb.toString();
+	}
+
+	public Multimap<Integer, Integer> getSpans() {
+		return hl;
+	}
+
+
+	private void render(List<ACESentence> sentences) {
+		int lastIndex = sentences.size() - 1;
+		int i = 0;
+
+		for (ACESentence sentence : sentences) {
+			renderSentence(sentence, i);
+			if (i != lastIndex) {
+				sb.append('\n');
+			}
+			i++;
+		}
+	}
+
+
+	private String renderSentence(ACESentence sentence, int sId) {
+		int indentLevel = 0;
+		for (int i = 0; i < sentence.size(); i++) {
+			ACEToken tok = sentence.getTokens().get(i);
+			String tokStr = tok.toString();
+			boolean isQuestion = sentence.isQuestion();
+			boolean tokenIsRelClPronoun = tokStr.equals("that") ||
+			(tokStr.equals("whose") && ! isQuestion) ||
+			(tokStr.equals("which") && ! isQuestion) ||
+			(tokStr.equals("who") && ! isQuestion);
+
+			if (tokenIsRelClPronoun) {
+				indentLevel++;
+			}
+
+			if (tokStr.equals("then")) {
+				// BUG: this should also apply to the "invisible then-part border" of the every/no-sentences.
+				// As there is unfortunately no explicit token standing on this border, we would
+				// have to process the syntax tree to derive this information.
+				sb.append('\n');
+				appendToken(sId, i, tokStr);
+				indentLevel = 0;
+			}
+			else if (i > 0 && tok.isOrdinationWord()) {
+				sb.append(getIndentString(indentLevel));
+				appendToken(sId, i, tokStr);
+				if (indentLevel > 0) {
+					indentLevel--;
+				}
+			}
+			else if (tokenIsRelClPronoun) {
+				sb.append(getIndentString(indentLevel));
+				appendToken(sId, i, tokStr);
+			}
+			else {
+				if (i > 0) {
+					sb.append(' ');
+				}
+				appendToken(sId, i, tokStr);
+			}
+		}
+		return sb.toString();
+	}
+
+
+	private static String getIndentString(int indentLevel) {
+		if (indentLevel < indentStrings.length) {
+			return indentStrings[indentLevel];
+		}
+		return indentStrings[indentStrings.length - 1];
+	}
+
+
+	private void appendToken(int sId, int tId, String token) {
+		if (spans != null && spans.containsEntry(sId, tId)) {
+			int before = sb.length();
+			sb.append(token);
+			int after = sb.length();
+			hl.put(before, after);
+		}
+		else {
+			sb.append(token);
+		}
+	}
+}
