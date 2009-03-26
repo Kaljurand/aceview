@@ -10,7 +10,8 @@ Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.i
 ACE View is free software licensed under the GNU Lesser General Public
 License (see LICENSE.txt and http://www.gnu.org/licenses/lgpl.html).
 
-See site/index.html for the documentation and information about the used third-party libraries.
+See <http://attempto.ifi.uzh.ch/aceview/> for the documentation and
+information about the used third-party libraries.
 
 
 == Introduction ==
@@ -23,14 +24,13 @@ In the following, "Protege" means "Protege 4 latest build".
 * .project: Eclipse project file
 * .settings/: Eclipse settings files
 * README.txt: this file
-* site/RELEASE_NOTES.txt: release notes
+* RELEASE_NOTES.html: release notes
 * build.xml: Ant build-file for ACE View
 * classes/: directory into which the Java class files will be generated (both by Eclipse and Ant)
 * lib/: external jar-files used by ACE View
 * licenses/: licenses of the external jar-files
 * manifest.txt: Manifest file for the ACE View jar-file
 * plugin.xml: Protege plug-in file for ACE View
-* site/: ACE View website
 * src/: ACE View source files (in Java)
 * test/: ACE View unit tests
 * viewconfig-aceviewtab.xml: Protege viewconfig-file for ACE View (specifies the layout of the ACE View views)
@@ -166,5 +166,5 @@ Modify these files to update the ACE View version number:
 
 * manifest.txt
 * plugin.xml
-* site/RELEASE_NOTES.html
-* site/update.properties
+* RELEASE_NOTES.html
+* update.properties
