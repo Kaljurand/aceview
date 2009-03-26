@@ -1,7 +1,7 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2009-01-20
+Version: 2009-03-26
 
 == License ==
 
@@ -74,7 +74,7 @@ ant (in the trunk-directory)
 
 == Setting up the ACE View Eclipse project ==
 
-* Edit the file .classpath (in the root directory of the ACE View source tarball)
+* Edit the file .classpath (in the root directory of the ACE View source)
 
 Change the paths to the Protege trunk to the ones that point to your local copy of Protege.
 
@@ -84,7 +84,7 @@ File -> New -> Project ...
 
 Project name: ACE View
 Create project from existing source
-Directory: /the directory where the source tarball was unpacked/
+Directory: /the root directory of the ACE View source/
 
 
 == Building ACE View and integrating it with Protege ==
@@ -118,11 +118,11 @@ to ACE View integrated.
 	ACESnippet: representation of a snippet
 	ACEText: representation of an ACE text (= set of snippets)
 	ACETextManager: lots of important static methods, many generate events
-	in case a change in the ACE text occurs. Needs some cleanup.
+	in case a change in the ACE text occurs.
 	ACEPreferences: model for the ACE View preferences
 	ACEPreferencesPanel: UI for the ACE View preferences
 	ACEViewTab: implementation of the ACE View tab. Listens to Protege events and
-	translates them to ACE View events. Needs some cleanup.
+	translates them to ACE View events.
 
 ./ch/uzh/ifi/attempto/aceview/lexicon:
 	This package contains classes for managing the ACE lexicon:
@@ -145,7 +145,7 @@ to ACE View integrated.
 	This package contains:
 	ACESnippetEditor: used by ACE Snippet Editor (extended version of JTextArea)
 	ACETable: used by all ACE View tables (extended version of JXTable)
-	SnippetAutocompleter: pop-up that shows auto-completer results (customozed version of a similar
+	SnippetAutocompleter: pop-up that shows auto-completer results (customized version of a similar
 		auto-completer in Protege)
 
 ./ch/uzh/ifi/attempto/aceview/ui/action:
@@ -155,7 +155,7 @@ to ACE View integrated.
 	This package contains some utilities, e.g. for an easier creation of the ACE View UI.
 
 ./ch/uzh/ifi/attempto/aceview/ui/view:
-	ACE*ViewComponent: implementations of ACE View views
+	Implementations of ACE View view components.
 
 ./ch/uzh/ifi/attempto/aceview/util:
 	Some utilities.

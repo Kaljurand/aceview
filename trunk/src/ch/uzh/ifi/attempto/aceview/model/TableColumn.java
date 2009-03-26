@@ -23,7 +23,7 @@ public interface TableColumn {
 	 * 
 	 * @return Name as a string
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * <p>Returns an alternative and shorter name
@@ -31,7 +31,7 @@ public interface TableColumn {
 	 * 
 	 * @return Abbreviation as a string
 	 */
-	public String getAbbr();
+	String getAbbr();
 
 	/**
 	 * <p>Returns <code>true</code> iff this table column is
@@ -39,12 +39,12 @@ public interface TableColumn {
 	 * 
 	 * @return <code>true</code> iff this table column is visible by default
 	 */
-	public boolean isVisible();
+	boolean isVisible();
 
 	/**
 	 * <p>Returns the Java class of the data that is shown in this column.</p>
 	 * 
 	 * @return Java class of the data that is shown in this column
 	 */
-	public Class<?> getDataClass();
+	Class<?> getDataClass();
 }

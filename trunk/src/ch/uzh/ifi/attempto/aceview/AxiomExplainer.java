@@ -101,10 +101,10 @@ public class AxiomExplainer {
 	 * to display this tree.</p>
 	 * 
 	 * TODO: Currently we flatten the tree to keep things simple. The flattening
-	 * is done by {@ #getAllNodes(Tree)} which creates a list of tree nodes
+	 * is done by {@link #getAllNodes(Tree)} which creates a list of tree nodes
 	 * by traversing the tree in a depth-first manner.
 	 * 
-	 * TODO: Note that this code crashes more often than {@ #getExplanations()}
+	 * TODO: Note that this code crashes more often than {@link #getExplanations()}
 	 * (because of the ordering).
 	 * 
 	 * @return Set of sets of snippets
