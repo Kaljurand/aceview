@@ -42,7 +42,7 @@ public interface ACELexicon {
 	 * @param entity OWL entity
 	 * @return ACE lexicon entry
 	 */
-	public ACELexiconEntry getEntry(OWLEntity entity);
+	ACELexiconEntry getEntry(OWLEntity entity);
 
 
 	/**
@@ -55,7 +55,7 @@ public interface ACELexicon {
 	 * @param wordform Wordform to occupy the field
 	 * @throws IncompatibleMorphTagException
 	 */
-	public void addEntry(OWLEntity entity, FieldType field, String wordform) throws IncompatibleMorphTagException;
+	void addEntry(OWLEntity entity, FieldType field, String wordform) throws IncompatibleMorphTagException;
 
 
 	/**
@@ -67,7 +67,7 @@ public interface ACELexicon {
 	 * @param field Field to be removed
 	 * @throws IncompatibleMorphTagException
 	 */
-	public void removeEntry(OWLEntity entity, FieldType field) throws IncompatibleMorphTagException;
+	void removeEntry(OWLEntity entity, FieldType field) throws IncompatibleMorphTagException;
 
 
 	/**
@@ -78,7 +78,7 @@ public interface ACELexicon {
 	 * @param wordform ACE wordform
 	 * @return <code>true</code> if wordform is in the lexicon
 	 */
-	public boolean containsWordform(String wordform);
+	boolean containsWordform(String wordform);
 
 
 	/**
@@ -89,7 +89,7 @@ public interface ACELexicon {
 	 * @param wordform ACE wordform
 	 * @return Set of OWL entities that the wordform can refer to
 	 */
-	public Set<OWLEntity> getWordformEntities(String wordform);
+	Set<OWLEntity> getWordformEntities(String wordform);
 
 
 	/**
@@ -99,7 +99,7 @@ public interface ACELexicon {
 	 * @param wordforms Set of ACE wordforms
 	 * @return Set of OWL entities that the wordform can refer to
 	 */
-	public Set<OWLEntity> getWordformEntities(Set<String> wordforms);
+	Set<OWLEntity> getWordformEntities(Set<String> wordforms);
 
 
 	/**
@@ -110,7 +110,7 @@ public interface ACELexicon {
 	 * 
 	 * @return Auto-completer
 	 */
-	public Autocompleter getAutocompleter();
+	Autocompleter getAutocompleter();
 
 
 	/**
@@ -120,7 +120,7 @@ public interface ACELexicon {
 	 * 
 	 * @return Number of lexicon entries
 	 */
-	public int size();
+	int size();
 
 
 	/**
@@ -128,7 +128,7 @@ public interface ACELexicon {
 	 * 
 	 * @return Number of CN entries
 	 */
-	public int getCNCount();
+	int getCNCount();
 
 
 	/**
@@ -136,7 +136,7 @@ public interface ACELexicon {
 	 * 
 	 * @return Number of TV entries
 	 */
-	public int getTVCount();
+	int getTVCount();
 
 
 	/**
@@ -144,7 +144,7 @@ public interface ACELexicon {
 	 * 
 	 * @return Number of PN entries
 	 */
-	public int getPNCount();
+	int getPNCount();
 
 
 	/**
@@ -152,7 +152,7 @@ public interface ACELexicon {
 	 * 
 	 * @return Number of partial entries
 	 */
-	public int getPartialEntryCount();
+	int getPartialEntryCount();
 
 
 	/**
@@ -160,7 +160,7 @@ public interface ACELexicon {
 	 * 
 	 * @return String in ACE lexicon format
 	 */
-	public String toACELexiconFormat();
+	String toACELexiconFormat();
 
 
 	/**
@@ -170,7 +170,7 @@ public interface ACELexicon {
 	 * @param contentWordforms Set of ACE wordforms
 	 * @return Lexicon
 	 */
-	public Lexicon createLexicon(Set<String> contentWordforms);
+	Lexicon createLexicon(Set<String> contentWordforms);
 
 
 	/**
@@ -179,14 +179,14 @@ public interface ACELexicon {
 	 * 
 	 * @return Lexicon
 	 */
-	public Lexicon createLexicon();
+	Lexicon createLexicon();
 
 
 	/** <p>Returns the number of wordforms in this lexicon.</p>
 	 * 
 	 * @return Number of wordforms
 	 */
-	public int getWordformCount();
+	int getWordformCount();
 
 
 	/** <p>Returns the number of wordforms that are ambiguous (i.e. can denote
@@ -194,7 +194,7 @@ public interface ACELexicon {
 	 * 
 	 * @return Number of ambiguous wordforms
 	 */
-	public int getAmbiguousWordformCount();
+	int getAmbiguousWordformCount();
 
 
 	/** <p>Returns the number of wordforms that are ambiguous in the
@@ -206,7 +206,7 @@ public interface ACELexicon {
 	 * 
 	 * @return Number of ambiguous wordforms in the same wordclass
 	 */
-	public int getWordclassAmbiguousWordformCount();
+	int getWordclassAmbiguousWordformCount();
 
 
 	/**
@@ -217,5 +217,5 @@ public interface ACELexicon {
 	 * @param wordform ACE wordform
 	 * @return OWLEntity that corresponds to the given wordform
 	 */
-	public OWLEntity getWordformEntity(String wordform);
+	OWLEntity getWordformEntity(String wordform);
 }

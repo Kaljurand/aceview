@@ -17,14 +17,14 @@
 package ch.uzh.ifi.attempto.aceview.lexicon;
 
 public interface ACELexiconEntry {
-	public String get(FieldType fieldType) throws IncompatibleMorphTagException;
-	public void set(FieldType fieldType, String fieldValue) throws IncompatibleMorphTagException;
-	public EntryType getType();
-	public boolean isEmpty();
-	public boolean isPartial();
-	public FieldType getFieldType(String str);
-	public String toAceWikiFormat();
-	public String getSg();
-	public String getPl();
-	public String getVbg();
+	String get(FieldType fieldType) throws IncompatibleMorphTagException;
+	void set(FieldType fieldType, String fieldValue) throws IncompatibleMorphTagException;
+	EntryType getType();
+	boolean isEmpty();
+	boolean isPartial();
+	FieldType getFieldType(String str);
+	String toAceWikiFormat();
+	String getSg();
+	String getPl();
+	String getVbg();
 }

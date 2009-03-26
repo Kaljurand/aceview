@@ -95,7 +95,7 @@ public class Autocompleter {
 	 * determined by <code>numberOfResults</code>. In case it is set to <code>-1</code>,
 	 * then all results are returned.</p>
 	 * 
-	 * <p>TODO: Why does searchPrefix not return a sorted set/list
+	 * <p>TODO: Why does searchPrefix not return a sorted set/list</p>
 	 * <p>TODO: how does the alphabetical ordering deal with non US-ASCII characters?</p>
 	 * 
 	 * @param prefix String according to which the search is made
@@ -113,7 +113,7 @@ public class Autocompleter {
 
 
 	/**
-	 * @see {@link #getCandidates(String, int)}
+	 * @see The documentation of {@link #getCandidates(String, int)}
 	 */
 	public ImmutableSortedSet<String> getCandidates(String prefix) {
 		return getCandidates(prefix, -1);

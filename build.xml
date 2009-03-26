@@ -1,11 +1,5 @@
-<project name="ACE View" default="deploy" basedir=".">
+<project name="ACE View" default="jar" basedir=".">
 	<description>Building and deployment of the ACE View jar-file.</description>
-
-	<!--
-	TODO:
-
-	* Add: creating a zip-archive with Protege + ACE View
-	-->
 
 	<!-- The location of the local copy of Protege 4 trunk. -->
 	<property name="protege" location="/Volumes/Extra/Users/kalju/mywork/protege4/trunk/"/>
@@ -14,15 +8,13 @@
 	i.e. if you do not rely on the APE webservice for the ACE->OWL/SWRL translation. -->
 	<property name="libjpl" location="/opt/local/lib/swipl-5.6.61/lib/powerpc-darwin8.11.0/libjpl.jnilib"/>
 
+	<!-- The following properties you probably do not need to modify. -->
+
 	<!-- The name of the ACE View jar-file which this build-script will generate. -->
-	<property name="aceview_jar" location="site/ch.uzh.ifi.attempto.aceview.jar"/>
+	<property name="aceview_jar" value="ch.uzh.ifi.attempto.aceview.jar"/>
 
-	<!-- The name of the ACE View API jar-file which this build-script will generate. -->
-	<property name="aceview_api_jar" location="site/aceview-api.jar"/>
-
-	<!-- These properties you do not need to modify. -->
-	<property name="classes" location="classes/"/>
-	<property name="aceview_lib" location="lib/"/>
+	<property name="javadoc" location="javadoc/"/>
+	<property name="aceview_lib" location="lib"/>
 	<property name="aceview_dist" location="dist/"/>
 	<property name="protege_dist" location="${protege}/build/dist/"/>
 	<property name="protege_dist_plugins" location="${protege_dist}/equinox/plugins/"/>
@@ -39,36 +31,26 @@
 		<mkdir dir="${aceview_dist}"/>
 	</target>
 
-	<target name="compile" description="Compile the ACE View Java files.">
-		<mkdir dir="${classes}"/>
+	<target name="compile" depends="init" description="Compile the ACE View Java files.">
+		<mkdir dir="classes"/>
 		<javac
 			srcdir="src/"
 			classpath="${jars}"
-			destdir="${classes}"/>
+			destdir="classes"/>
 	</target>
-
 
 	<target name="jar" depends="compile" description="Generate the ACE View jar-file.">
 		<jar
-			destfile="${aceview_jar}"
+			destfile="${aceview_dist}/${aceview_jar}"
 			manifest="manifest.txt"
 			basedir="."
-			includes="${classes}/ch/**, lib/**, licenses/**, viewconfig-aceviewtab.xml, plugin.xml"
+			includes="classes/**, lib/**, licenses/**, viewconfig-aceviewtab.xml, plugin.xml"
 			/>
 	</target>
-
-	<target name="api_jar" depends="compile" description="EXPERIMENTAL: Generate the ACE View jar-file containing only the class files.">
-		<jar
-			destfile="${aceview_api_jar}"
-			basedir="${classes}"
-			includes="ch/**"
-			/>
-	</target>
-
 
 	<target name="deploy" depends="jar" description="Copy the ACE View jar-file into the Protege plug-in directory.">
 		<echo>Copy: ${aceview_jar}</echo>
-		<copy file="${aceview_jar}" todir="${protege_dist_plugins}"/>
+		<copy file="${aceview_dist}/${aceview_jar}" todir="${protege_dist_plugins}"/>
 		<echo>Copy: ${libjpl}</echo>
 		<copy file="${libjpl}" todir="${protege_dist}/equinox/"/>
 	</target>
@@ -79,8 +61,8 @@
 			classpath="${jars}"
 			sourcepath="src/"
 			packagenames="*"
-			destdir="javadoc/"
-			extdirs="lib/"
+			destdir="${javadoc}"
+			extdirs="${aceview_lib}"
 			windowtitle="ACE View Packages"
 			doctitle="ACE View Packages">
 
@@ -90,10 +72,10 @@
 	</target>
 
 	<target name="clean" description="Clean up.">
-		<delete file="${aceview_jar}"/>
-		<delete dir="${classes}/ch/"/>
-		<delete dir="javadoc"/>
+		<delete dir="classes"/>
+		<delete dir="${javadoc}"/>
 		<delete dir="${aceview_dist}"/>
+		<delete dir="${aceview_test_report}"/>
 	</target>
 
 
@@ -101,8 +83,8 @@
 		<zip
 			destfile="${aceview_dist}/aceview_src-${build.time}_unofficial.zip"
 			basedir="."
-			includes="lib/**, src/**, test/**, licenses/**, site/**, ${classes}, *.xml, *.txt, .classpath, .project, .settings/**"
-			excludes="${classes}/ch/**, **/.DS_Store, **/old/**, **/*.zip, **/*.bash, **/*.lst"
+			includes="lib/**, src/**, test/**, licenses/**, *.xml, *.txt, .classpath, .settings/**"
+			excludes="classes, **/.DS_Store, **/old/**, **/*.zip, **/*.bash, **/*.lst"
 			/>
 	</target>
 
@@ -111,7 +93,7 @@
 		<javac
 			srcdir="${aceview_test_src}"
 			classpath="${jars};${aceview_lib}/junit-4.5.jar"
-			destdir="${classes}"/>
+			destdir="classes"/>
 	</target>
 
 
@@ -120,7 +102,7 @@
 		<junit printsummary="yes" haltonfailure="no">
 
 			<classpath>
-				<pathelement location="${classes}"/>
+				<pathelement location="classes"/>
 				<pathelement path="${jars};${aceview_lib}/junit-4.5.jar"/>
 			</classpath>
 
