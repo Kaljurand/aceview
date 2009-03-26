@@ -232,7 +232,7 @@
 <extension id="menu.ACEViewHelpReleaseNotesMenuItem" point="org.protege.editor.core.application.EditorKitMenuAction">
 	<name value="ACE View: Release Notes"/>
 	<toolTip value="ACE View release notes"/>
-	<url value="http://attempto.ifi.uzh.ch/aceview/RELEASE_NOTES.html"/>
+	<url value="http://aceview.googlecode.com/svn/trunk/RELEASE_NOTES.html"/>
 	<path value="org.protege.editor.core.application.menu.HelpMenu/SlotACEView-B"/>
 	<editorKitId value="any"/>
 </extension>

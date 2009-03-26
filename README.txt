@@ -160,11 +160,23 @@ to ACE View integrated.
 ./ch/uzh/ifi/attempto/aceview/util:
 	Some utilities.
 
+
 = Other =
 
-Modify these files to update the ACE View version number:
+== Version numbers ==
+
+Before every release,
+modify these files to update the ACE View version number:
 
 * manifest.txt
 * plugin.xml
 * RELEASE_NOTES.html
 * update.properties
+
+== SVN properties ==
+
+RELEASE_NOTES.html must be served as text/html by Google.
+To check if it has the right svn property:
+
+$ svn propget svn:mime-type RELEASE_NOTES.html
+text/html
