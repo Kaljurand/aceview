@@ -82,7 +82,7 @@ public class LexiconTableModel extends AbstractTableModel {
 
 
 	public enum Column implements TableColumn {
-		ENTITY("Entity", null, true, OWLEntity.class), // TODO: isVisible == false
+		ENTITY("Entity", null, false, OWLEntity.class),
 		ENTITY_RENDERING("Entity rendering", null, true, String.class),
 		TYPE("Type", null, true, String.class),
 		SG("Singular", null, true, String.class),

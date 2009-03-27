@@ -90,7 +90,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 	private final AnnotationsTableModel commentsTableModel = new AnnotationsTableModel();
 	private final SimilarSnippetsTableModel similarSnippetsTableModel = new SimilarSnippetsTableModel();
 
-	private final ColorHighlighter errorHighlighter = new ColorHighlighter(new ErrorMessagePredicate(0));
+	private final ColorHighlighter errorHighlighter = new ColorHighlighter(new ErrorMessagePredicate(MessagesTableModel.Column.IMPORTANCE.ordinal()));
 
 
 	@Override

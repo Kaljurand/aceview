@@ -34,17 +34,15 @@ import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
  */
 public class ACEMetricsViewComponent extends AbstractOWLViewComponent {
 
-	private JXTable tableMetrics;
-	private final MetricsTableModel metricsTableModel = new MetricsTableModel();
+	private final JXTable tableMetrics = new JXTable(new MetricsTableModel());
 
 	@Override
 	protected void disposeOWLView() {
-		metricsTableModel.dispose();
+		((MetricsTableModel) tableMetrics.getModel()).dispose();
 	}
 
 	@Override
 	protected void initialiseOWLView() throws Exception {
-		tableMetrics = new JXTable(metricsTableModel);
 		tableMetrics.setShowGrid(true);
 		tableMetrics.setGridColor(Colors.GRID_COLOR);
 		tableMetrics.setRowHeight(tableMetrics.getRowHeight() + 1);

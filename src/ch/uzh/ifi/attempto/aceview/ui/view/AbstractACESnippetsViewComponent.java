@@ -35,8 +35,11 @@ import ch.uzh.ifi.attempto.aceview.ui.Colors;
  */
 public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilterableViewComponent {
 
+	// This is the model index of the column where the snippet resides (in all snippet views)
+	private static final int SNIPPET_COLUMN = 0;
+
 	protected ACESnippetTable tableSnippets;
-	private final ColorHighlighter isWeirdHighlighter = new ColorHighlighter(new SnippetIsWeirdPredicate(0));
+	private final ColorHighlighter isWeirdHighlighter = new ColorHighlighter(new SnippetIsWeirdPredicate(SNIPPET_COLUMN));
 
 	private ColorHighlighter entityHightlighter;
 
@@ -57,20 +60,19 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
 
 		if (isShowing() && entity != null) {
-			int col = 0; // This is the number of the column where the snippet resides (in all 3 snippet views)
 			if (buttonFilter.isSelected()) {
 				String entityRendering = getOWLModelManager().getRendering(entity);
 				if (entityHightlighter != null) {
 					tableSnippets.removeHighlighter(entityHightlighter);
 				}
-				tableSnippets.setFilters(new FilterPipeline(new PatternFilter("\\b" + entityRendering, 0, col)));
+				tableSnippets.setFilters(new FilterPipeline(new PatternFilter("\\b" + entityRendering, 0, SNIPPET_COLUMN)));
 			}
 			else if (buttonHighlight.isSelected()) {
 				tableSnippets.setFilters(null);
 				if (entityHightlighter != null) {
 					tableSnippets.removeHighlighter(entityHightlighter);
 				}
-				entityHightlighter = new ColorHighlighter(new SnippetContainsEntityPredicate(entity, col));
+				entityHightlighter = new ColorHighlighter(new SnippetContainsEntityPredicate(entity, SNIPPET_COLUMN));
 				entityHightlighter.setBackground(Colors.HIGHLIGHT_COLOR);
 				tableSnippets.addHighlighter(entityHightlighter);
 			}
