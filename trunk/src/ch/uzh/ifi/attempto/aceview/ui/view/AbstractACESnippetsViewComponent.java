@@ -18,12 +18,14 @@ package ch.uzh.ifi.attempto.aceview.ui.view;
 
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
-import org.jdesktop.swingx.decorator.PatternFilter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLObject;
 
+import ch.uzh.ifi.attempto.aceview.model.filter.PredicateFilter;
 import ch.uzh.ifi.attempto.aceview.predicate.SnippetContainsEntityPredicate;
 import ch.uzh.ifi.attempto.aceview.predicate.SnippetIsWeirdPredicate;
+import ch.uzh.ifi.attempto.aceview.predicate.SnippetReferencesEntity;
 import ch.uzh.ifi.attempto.aceview.ui.ACESnippetTable;
 import ch.uzh.ifi.attempto.aceview.ui.Colors;
 
@@ -59,20 +61,24 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 	protected OWLObject updateView() {
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
 
+		HighlightPredicate pred = new SnippetContainsEntityPredicate(entity, SNIPPET_COLUMN);
+
 		if (isShowing() && entity != null) {
 			if (buttonFilter.isSelected()) {
-				String entityRendering = getOWLModelManager().getRendering(entity);
 				if (entityHightlighter != null) {
 					tableSnippets.removeHighlighter(entityHightlighter);
 				}
-				tableSnippets.setFilters(new FilterPipeline(new PatternFilter("\\b" + entityRendering, 0, SNIPPET_COLUMN)));
+				tableSnippets.setFilters(
+						new FilterPipeline(
+								new PredicateFilter(
+										new SnippetReferencesEntity(entity), SNIPPET_COLUMN)));
 			}
 			else if (buttonHighlight.isSelected()) {
 				tableSnippets.setFilters(null);
 				if (entityHightlighter != null) {
 					tableSnippets.removeHighlighter(entityHightlighter);
 				}
-				entityHightlighter = new ColorHighlighter(new SnippetContainsEntityPredicate(entity, SNIPPET_COLUMN));
+				entityHightlighter = new ColorHighlighter(pred);
 				entityHightlighter.setBackground(Colors.HIGHLIGHT_COLOR);
 				tableSnippets.addHighlighter(entityHightlighter);
 			}

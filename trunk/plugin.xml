@@ -157,17 +157,6 @@
 </extension>
 
 <!--
-<extension id="ManagerViewComponent"
-	point="org.protege.editor.core.application.ViewComponent">
-	<name value="Manager (test)"/>
-	<label value="Manager (test)"/>
-	<class value="ch.uzh.ifi.attempto.aceview.ui.view.ManagerViewComponent"/>
-	<headerColor value="@org.protege.ontologycolor"/>
-	<category value="ACE"/>
-</extension>
--->
-
-<!--
 <extension id="AnnotationViewComponent"
 	point="org.protege.editor.core.application.ViewComponent">
 	<name value="Annotations"/>
