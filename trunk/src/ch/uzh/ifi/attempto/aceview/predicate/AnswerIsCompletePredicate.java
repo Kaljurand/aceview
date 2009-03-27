@@ -35,8 +35,8 @@ public class AnswerIsCompletePredicate implements HighlightPredicate {
 	}
 
 	public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
-		// BUG: replace "0" with something more flexible
-		ACESnippet snippet = (ACESnippet) adapter.getFilteredValueAt(adapter.row, 0);
+		// row = view, column = model
+		ACESnippet snippet = (ACESnippet) adapter.getFilteredValueAt(adapter.row, QuestionsTableModel.Column.SNIPPET.ordinal());
 
 		if (snippet == null) {
 			return false;

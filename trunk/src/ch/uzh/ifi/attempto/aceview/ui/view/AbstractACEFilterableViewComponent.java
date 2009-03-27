@@ -36,15 +36,15 @@ public abstract class AbstractACEFilterableViewComponent extends AbstractACEView
 
 	protected final JRadioButton buttonHighlight = new JRadioButton("Highlight");
 	protected final JRadioButton buttonFilter = new JRadioButton("Filter");
-	protected JPanel panelButtons;
+	protected final JPanel panelButtons = new JPanel();
 
 	@Override
 	public void initialiseView() throws Exception {
-		ButtonGroup findmodusGroup = new ButtonGroup();
-		findmodusGroup.add(buttonHighlight);
-		findmodusGroup.add(buttonFilter);
+		new ButtonGroup() {{
+			add(buttonHighlight);
+			add(buttonFilter);
+		}};
 
-		panelButtons = new JPanel();
 		panelButtons.setLayout(new BoxLayout(panelButtons, BoxLayout.LINE_AXIS));
 		panelButtons.add(new JLabel("Find snippet by: "));
 		panelButtons.add(buttonHighlight);

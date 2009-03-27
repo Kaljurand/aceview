@@ -44,6 +44,9 @@ import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
  */
 public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent {
 
+	// This is the model index of the column where the entity resides
+	private static final int ENTITY_COLUMN = LexiconTableModel.Column.ENTITY.ordinal();
+
 	private ACETable tableLexicon;
 	private final LexiconTableModel stm = new LexiconTableModel();
 
@@ -87,10 +90,10 @@ public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent 
 					ACETable table = (ACETable) e.getSource();
 					int row = table.rowAtPoint(e.getPoint());
 					if (row != -1) {
-						// BUG: We expect the entity to be in the 1st column (index = 0)
-						// int col = table.getColumnExt(LexiconTableModel.Column.ENTITY.getName()).getModelIndex();
-						int col = 0;
-						OWLEntity entity = (OWLEntity) table.getValueAt(row, col);
+						int rowModel = table.convertRowIndexToModel(row);
+						int colModel = LexiconTableModel.Column.ENTITY.ordinal();
+
+						OWLEntity entity = (OWLEntity) table.getModel().getValueAt(rowModel, colModel);
 						if (entity != null) {
 							getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(entity);
 						}
@@ -127,15 +130,14 @@ public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent 
 	protected OWLObject updateView() {
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
 		if (isShowing() && entity != null) {
-			int col = tableLexicon.getColumn(LexiconTableModel.Column.ENTITY.getName()).getModelIndex();
 			if (buttonFilter.isSelected()) {
 				String entityRendering = getOWLModelManager().getRendering(entity);
 				tableLexicon.setHighlighters(new Highlighter [] { });
-				tableLexicon.setFilters(new FilterPipeline(new PatternFilter(entityRendering, 0, col)));
+				tableLexicon.setFilters(new FilterPipeline(new PatternFilter(entityRendering, 0, ENTITY_COLUMN)));
 			}
 			else if (buttonHighlight.isSelected()) {
 				tableLexicon.setFilters(null);
-				ColorHighlighter entityHightlighter = new ColorHighlighter(new EntryContainsEntityPredicate(entity, col));
+				ColorHighlighter entityHightlighter = new ColorHighlighter(new EntryContainsEntityPredicate(entity, ENTITY_COLUMN));
 				entityHightlighter.setBackground(Colors.HIGHLIGHT_COLOR);
 				tableLexicon.setHighlighters(new Highlighter [] { entityHightlighter });
 			}

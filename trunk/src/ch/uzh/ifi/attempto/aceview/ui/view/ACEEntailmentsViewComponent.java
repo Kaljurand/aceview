@@ -117,7 +117,9 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 					ACETable table = (ACETable) e.getSource();
 					int row = table.rowAtPoint(e.getPoint());
 					if (row != -1) {
-						ACESnippet snippet = (ACESnippet) table.getValueAt(row, 0);
+						int rowModel = table.convertRowIndexToModel(row);
+						int colModel = EntailmentsTableModel.Column.SNIPPET.ordinal();
+						ACESnippet snippet = (ACESnippet) table.getModel().getValueAt(rowModel, colModel);
 						ACETextManager.setWhySnippet(snippet);
 					}
 				}
