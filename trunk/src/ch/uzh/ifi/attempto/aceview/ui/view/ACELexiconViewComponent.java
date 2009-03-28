@@ -27,12 +27,13 @@ import javax.swing.event.TableModelListener;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.Highlighter;
-import org.jdesktop.swingx.decorator.PatternFilter;
 import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLObject;
 
 import ch.uzh.ifi.attempto.aceview.model.LexiconTableModel;
+import ch.uzh.ifi.attempto.aceview.model.filter.PredicateFilter;
 import ch.uzh.ifi.attempto.aceview.predicate.EntryContainsEntityPredicate;
+import ch.uzh.ifi.attempto.aceview.predicate.EntryReferencesEntity;
 import ch.uzh.ifi.attempto.aceview.ui.ACETable;
 import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
@@ -131,9 +132,11 @@ public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent 
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
 		if (isShowing() && entity != null) {
 			if (buttonFilter.isSelected()) {
-				String entityRendering = getOWLModelManager().getRendering(entity);
 				tableLexicon.setHighlighters(new Highlighter [] { });
-				tableLexicon.setFilters(new FilterPipeline(new PatternFilter(entityRendering, 0, ENTITY_COLUMN)));
+				tableLexicon.setFilters(
+						new FilterPipeline(
+								new PredicateFilter(
+										new EntryReferencesEntity(entity), ENTITY_COLUMN)));
 			}
 			else if (buttonHighlight.isSelected()) {
 				tableLexicon.setFilters(null);
