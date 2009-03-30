@@ -21,9 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 
@@ -38,7 +35,7 @@ import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
  * 
  * @author Kaarel Kaljurand
  */
-public interface ACEText {
+public interface ACEText<E, A> {
 
 	/**
 	 * <p>Adds the given snippet to the end of the text.
@@ -81,7 +78,7 @@ public interface ACEText {
 	 * @param snippet ACE snippet
 	 * @return Set of OWL axioms
 	 */
-	Set<OWLLogicalAxiom> getSharedAxioms(ACESnippet snippet);
+	Set<A> getSharedAxioms(ACESnippet snippet);
 
 	/**
 	 * <p>Removes the given snippet from this text. Returns a set
@@ -94,7 +91,7 @@ public interface ACEText {
 	 * @param snippet ACE snippet
 	 * @return Set of OWL axioms
 	 */
-	Set<OWLLogicalAxiom> remove(ACESnippet snippet);
+	Set<A> remove(ACESnippet snippet);
 
 	/**
 	 * <p>Constructs and returns a map of snippets in this text
@@ -112,7 +109,7 @@ public interface ACEText {
 	 * @param axiom OWL axiom
 	 * @return <code>true</code> iff the axiom is referenced
 	 */
-	boolean containsAxiom(OWLLogicalAxiom axiom);
+	boolean containsAxiom(A axiom);
 
 	/**
 	 * <p>Returns a set of snippets that reference the given axiom.</p>
@@ -120,7 +117,7 @@ public interface ACEText {
 	 * @param axiom OWL axiom
 	 * @return Set of snippets
 	 */
-	Set<ACESnippet> getAxiomSnippets(OWLLogicalAxiom axiom);
+	Set<ACESnippet> getAxiomSnippets(A axiom);
 
 	/**
 	 * <p>Returns the string representation of this text.</p>
@@ -138,14 +135,14 @@ public interface ACEText {
 	 * 
 	 * @return Set of OWL entities
 	 */
-	Set<OWLEntity> getReferencedEntities();
+	Set<E> getReferencedEntities();
 
 	/**
 	 * <p>Returns the set of pairs (Entity, Snippet set).</p>
 	 * 
 	 * @return Set of entity - snippet set map entries
 	 */
-	Set<Entry<OWLEntity, Set<ACESnippet>>> getEntitySnippetSetPairs();
+	Set<Entry<E, Set<ACESnippet>>> getEntitySnippetSetPairs();
 
 	/**
 	 * <p>Returns the number of snippets that reference
@@ -200,7 +197,7 @@ public interface ACEText {
 	 * @param entity OWL entity
 	 * @return HTML-rendering as string
 	 */
-	String getIndexEntry(OWLEntity entity);
+	String getIndexEntry(E entity);
 
 	/**
 	 * <p>Returns <code>true</code> if this text contains a snippet
@@ -284,7 +281,7 @@ public interface ACEText {
 	 * @param axiom OWL axiom
 	 * @return Set of "unreferenced" OWL axioms
 	 */
-	Set<OWLLogicalAxiom> removeAxiom(OWLLogicalAxiom axiom);
+	Set<A> removeAxiom(A axiom);
 
 	/**
 	 * <p>Returns a list of questions (interrogative snippets) in this text.</p>
@@ -302,7 +299,7 @@ public interface ACEText {
 	 * 
 	 * @return ACE lexicon
 	 */
-	ACELexicon getACELexicon();
+	ACELexicon<E> getACELexicon();
 
 	/**
 	 * <p>Returns the number of snippets whose axioms reference
@@ -313,7 +310,7 @@ public interface ACEText {
 	 * @param entity OWL entity
 	 * @return Number of snippets that reference the given entity
 	 */
-	int getSnippetCount(OWLEntity entity);
+	int getSnippetCount(E entity);
 
 	/**
 	 * <p>Returns a set of snippets that reference the same entities

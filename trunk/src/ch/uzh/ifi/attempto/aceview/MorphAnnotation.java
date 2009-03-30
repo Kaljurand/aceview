@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -36,6 +36,7 @@ import ch.uzh.ifi.attempto.ace.ACEVerb;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
+import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 
 /**
@@ -72,7 +73,7 @@ public class MorphAnnotation {
 
 		Set<OWLEntityAnnotationAxiom> axioms = Sets.newHashSet();
 
-		if (! ACETextManager.isShow(entity)) {
+		if (! Showing.isShow(entity)) {
 			return axioms;
 		}
 
@@ -127,7 +128,7 @@ public class MorphAnnotation {
 	public static Set<OWLEntityAnnotationAxiom> createMorphAnnotations(OWLDataFactory df, OWLEntity entity, String lemma) {
 		Set<OWLEntityAnnotationAxiom> axioms = Sets.newHashSet();
 
-		if (! ACETextManager.isShow(entity)) {
+		if (! Showing.isShow(entity)) {
 			return axioms;
 		}
 
@@ -159,11 +160,11 @@ public class MorphAnnotation {
 	 * @param entity OWL entity to be annotated
 	 * @return Set of OWL entity annotation axioms
 	 */
-	public static Set<OWLEntityAnnotationAxiom> getMorphAnnotationsFromLexicon(OWLDataFactory df, ACELexicon lexicon, OWLEntity entity) {
+	public static Set<OWLEntityAnnotationAxiom> getMorphAnnotationsFromLexicon(OWLDataFactory df, ACELexicon<OWLEntity> lexicon, OWLEntity entity) {
 
 		Set<OWLEntityAnnotationAxiom> axioms = Sets.newHashSet();
 
-		if (! ACETextManager.isShow(entity)) {
+		if (! Showing.isShow(entity)) {
 			return axioms;
 		}
 

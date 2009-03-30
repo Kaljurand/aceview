@@ -7,9 +7,9 @@ import org.jdesktop.swingx.decorator.Filter;
 
 import com.google.common.base.Predicate;
 
-public class PredicateFilter extends Filter {
+public class PredicateFilter<T> extends Filter {
 	private List<Integer> toPrevious;
-	private final Predicate predicate;
+	private final Predicate<T> predicate;
 
 
 	/**
@@ -17,7 +17,7 @@ public class PredicateFilter extends Filter {
 	 * @param predicate
 	 * @param col Column to filter in model coordinates
 	 */
-	public PredicateFilter(Predicate predicate, int col) {
+	public PredicateFilter(Predicate<T> predicate, int col) {
 		super(col);
 		this.predicate = predicate;
 	}
@@ -58,11 +58,14 @@ public class PredicateFilter extends Filter {
 	 * <p>Tests whether the given row (in this filter's coordinates) should
 	 * be added.<p>
 	 * 
+	 * <p>BUG: What is erasure object?</p>
+	 * 
 	 * @param row the row to test
 	 * @return true iff the row should be added
 	 */
 	private boolean test(int row) {
-		return predicate.apply(getInputValue(row, getColumnIndex()));
+		Object value = getInputValue(row, getColumnIndex());
+		return predicate.apply((T) value);
 	}
 
 

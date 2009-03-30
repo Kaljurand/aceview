@@ -6,7 +6,7 @@ import com.google.common.base.Predicate;
 
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 
-public class SnippetReferencesEntity implements Predicate {
+public class SnippetReferencesEntity implements Predicate<ACESnippet> {
 	private final OWLEntity entity;
 
 	public SnippetReferencesEntity(OWLEntity entity) {
@@ -14,9 +14,8 @@ public class SnippetReferencesEntity implements Predicate {
 	}
 
 
-	public boolean apply(Object input) {
-		if (input != null && input instanceof ACESnippet) {
-			ACESnippet snippet = (ACESnippet) input;
+	public boolean apply(ACESnippet snippet) {
+		if (snippet != null) {
 			return snippet.containsEntityReference(entity);
 		}
 		return false;

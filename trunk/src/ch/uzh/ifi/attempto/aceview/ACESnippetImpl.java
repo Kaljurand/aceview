@@ -226,7 +226,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 
 	private void parse(ACEPreferences prefs) throws OWLOntologyCreationException {
-		ACELexicon aceLexicon = ACETextManager.getActiveACELexicon();
+		ACELexicon<OWLEntity> aceLexicon = ACETextManager.getActiveACELexicon();
 		Set<String> contentWordForms = getContentWordsAsStrings();
 
 		if (! prefs.getParseWithUndefinedTokens()) {
@@ -245,7 +245,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	private void parseWithAceParser(ACEPreferences prefs, ACELexicon aceLexicon, Set<String> contentWordForms)
+	private void parseWithAceParser(ACEPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms)
 	throws OWLOntologyCreationException {
 		Lexicon lexicon = aceLexicon.createLexicon(contentWordForms);
 
@@ -359,7 +359,7 @@ public class ACESnippetImpl implements ACESnippet {
 			return "<span color='red'>" + altRendering + "</span>";
 		}
 
-		ACELexicon aceLexicon = ACETextManager.getActiveACELexicon();
+		ACELexicon<OWLEntity> aceLexicon = ACETextManager.getActiveACELexicon();
 		String span = "";
 
 		for (ACESentence sentence : sentences) {

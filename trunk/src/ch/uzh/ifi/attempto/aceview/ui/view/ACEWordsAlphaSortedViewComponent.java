@@ -11,6 +11,7 @@ import javax.swing.JScrollPane;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owl.model.OWLLogicalAxiom;
 import org.semanticweb.owl.model.OWLObject;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
@@ -19,6 +20,7 @@ import ch.uzh.ifi.attempto.aceview.WordsHyperlinkListener;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
+import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 /**
  * <p>This view shows all the entities alphabetically sorted and
@@ -83,7 +85,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 
 
 	private void showWords() {
-		ACEText acetext = ACETextManager.getActiveACEText();
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 		int contentWordCount = acetext.getReferencedEntities().size();
 		int sentenceCount = acetext.getSentences().size();
 		String pl1 = "";
@@ -106,7 +108,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 	@Override
 	protected OWLObject updateView() {
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
-		if (isShowing() && entity != null && ACETextManager.isShow(entity)) {
+		if (isShowing() && entity != null && Showing.isShow(entity)) {
 			String entityRendering = getOWLModelManager().getRendering(entity);
 			editorpaneWords.scrollToReference(entityRendering);
 		}
@@ -129,7 +131,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 	 * 
 	 * @return HTML-rendering of all contentwords in the text
 	 */
-	private String getContentWordsInHtml(ACEText acetext) {
+	private String getContentWordsInHtml(ACEText<OWLEntity, OWLLogicalAxiom> acetext) {
 		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getReferencedEntities();
 		SortedSet<OWLEntity> entitiesSorted = new TreeSet<OWLEntity>(new EntityComparator());
 		entitiesSorted.addAll(entities);
@@ -137,7 +139,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 		StringBuilder html = new StringBuilder();
 		char previousFirstChar = ' '; // No word can contain a space (as the first character)
 		for (OWLEntity entity : entitiesSorted) {
-			if (! ACETextManager.isShow(entity)) {
+			if (! Showing.isShow(entity)) {
 				continue;
 			}
 			String entityRendering = ACETextManager.getRendering(entity);

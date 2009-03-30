@@ -33,6 +33,7 @@ import org.semanticweb.owl.inference.OWLReasonerException;
 import org.semanticweb.owl.io.OWLRendererException;
 import org.semanticweb.owl.model.OWLAxiom;
 import org.semanticweb.owl.model.OWLClassAssertionAxiom;
+import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owl.model.OWLEquivalentObjectPropertiesAxiom;
 import org.semanticweb.owl.model.OWLLogicalAxiom;
@@ -61,6 +62,7 @@ import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.model.EntailmentsTableModel;
 import ch.uzh.ifi.attempto.aceview.ui.ACETable;
 import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
+import ch.uzh.ifi.attempto.aceview.util.Showing;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 
 /**
@@ -231,7 +233,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 		}
 
 		ACEPreferences prefs = ACEPreferences.getInstance();
-		ACELexicon lexicon = ACETextManager.getActiveACELexicon();
+		ACELexicon<OWLEntity> lexicon = ACETextManager.getActiveACELexicon();
 		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(new VerbalizerWebservice(prefs.getOwlToAce()), lexicon);
 
 		OWLOntology activeOntology = getOWLModelManager().getActiveOntology();
@@ -255,7 +257,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 				// BUG: ignoring Protege/OWLAPI bug
 				logger.info("NOT showing: " + ax.toString());
 			}
-			else if (! ACETextManager.isShow(ax)) {
+			else if (! Showing.isShow(ax)) {
 				logger.info("NOT showing: " + ax + ", contains tricks");
 			}
 			else {

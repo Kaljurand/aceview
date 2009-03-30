@@ -16,39 +16,24 @@
 
 package ch.uzh.ifi.attempto.aceview.predicate;
 
-import java.awt.Component;
-
-import org.jdesktop.swingx.decorator.ComponentAdapter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
+import com.google.common.base.Predicate;
 
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 
-public class SnippetIsWeirdPredicate implements HighlightPredicate {
-
-	private final int column;
-
-	public SnippetIsWeirdPredicate(int column) {
-		this.column = column;
-	}
+public class SnippetIsWeirdPredicate implements Predicate<ACESnippet> {
 
 	/**
-	 * <p>Decides if the snippet should be highlighted.
-	 * A snippet should be highlighted if represents a class axiom
+	 * <p>True if this snippet represents a class axiom
 	 * whose superclass argument is equal to <code>owl:Thing</code>.</p>
 	 * 
-	 * <p>Note that we used to highlight also snippets which contain
+	 * <p>Note that we used to consider "weird" also snippets which contain
 	 * <code>owl:Thing</code> but this
 	 * is now commented out as it is probably misleading.</p>
 	 */
-	public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
-		int modelColumn = adapter.viewToModel(adapter.column);
-		if (modelColumn == column) {
-			Object value = adapter.getFilteredValueAt(adapter.row, column);
-			if (value instanceof ACESnippet) {
-				ACESnippet snippet = (ACESnippet) value;
-				return snippet.isUnsatisfiable();
-				//return (snippet.isUnsatisfiable() || snippet.isEqualToThing());
-			}
+	public boolean apply(ACESnippet snippet) {
+		if (snippet != null) {
+			return snippet.isUnsatisfiable();
+			//return (snippet.isUnsatisfiable() || snippet.isEqualToThing());
 		}
 		return false;
 	}

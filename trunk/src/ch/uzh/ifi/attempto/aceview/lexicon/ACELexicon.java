@@ -18,8 +18,6 @@ package ch.uzh.ifi.attempto.aceview.lexicon;
 
 import java.util.Set;
 
-import org.semanticweb.owl.model.OWLEntity;
-
 import ch.uzh.ifi.attempto.ape.Lexicon;
 
 /**
@@ -31,7 +29,7 @@ import ch.uzh.ifi.attempto.ape.Lexicon;
  * 
  * @author Kaarel Kaljurand
  */
-public interface ACELexicon {
+public interface ACELexicon<E> {
 
 	/**
 	 * <p>Returns the corresponding lexicon entry for the
@@ -42,7 +40,7 @@ public interface ACELexicon {
 	 * @param entity OWL entity
 	 * @return ACE lexicon entry
 	 */
-	ACELexiconEntry getEntry(OWLEntity entity);
+	ACELexiconEntry getEntry(E entity);
 
 
 	/**
@@ -55,7 +53,7 @@ public interface ACELexicon {
 	 * @param wordform Wordform to occupy the field
 	 * @throws IncompatibleMorphTagException
 	 */
-	void addEntry(OWLEntity entity, FieldType field, String wordform) throws IncompatibleMorphTagException;
+	void addEntry(E entity, FieldType field, String wordform) throws IncompatibleMorphTagException;
 
 
 	/**
@@ -67,7 +65,7 @@ public interface ACELexicon {
 	 * @param field Field to be removed
 	 * @throws IncompatibleMorphTagException
 	 */
-	void removeEntry(OWLEntity entity, FieldType field) throws IncompatibleMorphTagException;
+	void removeEntry(E entity, FieldType field) throws IncompatibleMorphTagException;
 
 
 	/**
@@ -89,7 +87,7 @@ public interface ACELexicon {
 	 * @param wordform ACE wordform
 	 * @return Set of OWL entities that the wordform can refer to
 	 */
-	Set<OWLEntity> getWordformEntities(String wordform);
+	Set<E> getWordformEntities(String wordform);
 
 
 	/**
@@ -99,7 +97,7 @@ public interface ACELexicon {
 	 * @param wordforms Set of ACE wordforms
 	 * @return Set of OWL entities that the wordform can refer to
 	 */
-	Set<OWLEntity> getWordformEntities(Set<String> wordforms);
+	Set<E> getWordformEntities(Set<String> wordforms);
 
 
 	/**
@@ -217,5 +215,5 @@ public interface ACELexicon {
 	 * @param wordform ACE wordform
 	 * @return OWLEntity that corresponds to the given wordform
 	 */
-	OWLEntity getWordformEntity(String wordform);
+	E getWordformEntity(String wordform);
 }

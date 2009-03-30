@@ -28,6 +28,7 @@ import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.WordsHyperlinkListener;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 
@@ -69,7 +70,7 @@ public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 	@Override
 	protected OWLObject updateView() {
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
-		if (isShowing() && entity != null && ACETextManager.isShow(entity)) {
+		if (isShowing() && entity != null && Showing.isShow(entity)) {
 			String indexEntry = ACETextManager.getActiveACEText().getIndexEntry(entity);
 			if (indexEntry == null) {
 				editorpaneIndex.setText(ACETextManager.wrapInHtml("<em>No entries</em>"));

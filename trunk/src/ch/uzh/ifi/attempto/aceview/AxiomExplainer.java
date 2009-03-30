@@ -24,6 +24,7 @@ import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owl.apibinding.OWLManager;
 import org.semanticweb.owl.model.OWLAxiom;
 import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLLogicalAxiom;
 
 import uk.ac.manchester.cs.bhig.util.Tree;
@@ -67,7 +68,7 @@ public class AxiomExplainer {
 	 * @return Set of set of snippets
 	 */
 	public Set<Set<ACESnippet>> getExplanations() {
-		ACEText activeAcetext = ACETextManager.getActiveACEText();
+		ACEText<OWLEntity, OWLLogicalAxiom> activeAcetext = ACETextManager.getActiveACEText();
 		Set<Set<OWLAxiom>> explanationSet = getAxiomSets();
 		Set<Set<ACESnippet>> snippetSetSet = Sets.newHashSet();
 
@@ -110,7 +111,7 @@ public class AxiomExplainer {
 	 * @return Set of sets of snippets
 	 */
 	public Set<Set<ACESnippet>> getOrderedExplanations() {
-		ACEText activeAcetext = ACETextManager.getActiveACEText();
+		ACEText<OWLEntity, OWLLogicalAxiom> activeAcetext = ACETextManager.getActiveACEText();
 		Set<Set<OWLAxiom>> explanationSet = getAxiomSets();
 		Set<Set<ACESnippet>> snippetSetSet = Sets.newHashSet();
 

@@ -55,14 +55,14 @@ public class AxiomVerbalizer {
 
 	private static final Logger logger = Logger.getLogger(AxiomVerbalizer.class);
 	private final VerbalizerWebservice verbalizerWS;
-	private final ACELexicon lexicon;
+	private final ACELexicon<OWLEntity> lexicon;
 
-	public AxiomVerbalizer(String verbalizerWSURL, ACELexicon lexicon) {
+	public AxiomVerbalizer(String verbalizerWSURL, ACELexicon<OWLEntity> lexicon) {
 		this.verbalizerWS = new VerbalizerWebservice(verbalizerWSURL);
 		this.lexicon = lexicon;
 	}
 
-	public AxiomVerbalizer(VerbalizerWebservice verbalizerWS, ACELexicon lexicon) {
+	public AxiomVerbalizer(VerbalizerWebservice verbalizerWS, ACELexicon<OWLEntity> lexicon) {
 		this.verbalizerWS = verbalizerWS;
 		this.lexicon = lexicon;
 	}

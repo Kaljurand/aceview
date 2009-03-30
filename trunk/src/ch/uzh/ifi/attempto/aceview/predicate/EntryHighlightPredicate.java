@@ -22,32 +22,20 @@ import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.semanticweb.owl.model.OWLEntity;
 
-import ch.uzh.ifi.attempto.aceview.ACESnippet;
+import com.google.common.base.Predicate;
 
-public class SnippetContainsEntityPredicate implements HighlightPredicate {
+public class EntryHighlightPredicate implements HighlightPredicate {
 
-	private final OWLEntity entity;
+	private final Predicate<OWLEntity> predicate;
 	private final int column;
 
-	/**
-	 * @param entity OWLEntity
-	 * @param column Column index in model
-	 */
-	public SnippetContainsEntityPredicate(OWLEntity entity, int column) {
-		this.entity = entity;
+	public EntryHighlightPredicate(Predicate<OWLEntity> predicate, int column) {
+		this.predicate = predicate;
 		this.column = column;
 	}
 
 	public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
-		int modelColumn = adapter.viewToModel(adapter.column);
-		if (modelColumn == column) {
-			Object value = adapter.getFilteredValueAt(adapter.row, column);
-			if (value instanceof ACESnippet) {
-				ACESnippet snippet = (ACESnippet) value;
-				return snippet.containsEntityReference(entity);
-			}
-		}
-
-		return false;
+		Object value = adapter.getFilteredValueAt(adapter.row, column);
+		return predicate.apply((OWLEntity) value);
 	}
 }

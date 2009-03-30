@@ -20,6 +20,8 @@ import org.apache.log4j.Logger;
 import org.jdesktop.swingworker.SwingWorker;
 import org.jdesktop.swingx.JXBusyLabel;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
+import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owl.model.OWLLogicalAxiom;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESentenceSplitter;
@@ -108,7 +110,7 @@ public class ACETextViewComponent extends AbstractOWLViewComponent {
 				labelBusyIndicator.setBusy(true);
 				labelBusyIndicator.setVisible(true);
 
-				ACEText acetext = ACETextManager.getActiveACEText();
+				ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 
 				logger.info("Updating active knowledge base.");
 

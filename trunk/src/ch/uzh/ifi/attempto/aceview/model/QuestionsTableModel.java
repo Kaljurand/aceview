@@ -28,7 +28,7 @@ import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
  */
 public class QuestionsTableModel extends AbstractSnippetsTableModel {
 
-	private ACEText acetext;
+	private ACEText<?, ?> acetext;
 
 	public enum Column implements TableColumn {
 		SNIPPET("Question", "Q", true, ACESnippet.class),

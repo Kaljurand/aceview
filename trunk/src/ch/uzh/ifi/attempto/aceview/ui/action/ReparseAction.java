@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -23,6 +23,8 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
+import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owl.model.OWLLogicalAxiom;
 
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
@@ -48,7 +50,7 @@ public class ReparseAction extends ProtegeOWLAction {
 	}
 
 	public void actionPerformed(ActionEvent actionEvent) {
-		ACEText acetext = ACETextManager.getActiveACEText();
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 		if (acetext == null) return;
 
 		Map<ACESnippet, Integer> axiomlessSnippets = acetext.getAxiomlessSnippets();
