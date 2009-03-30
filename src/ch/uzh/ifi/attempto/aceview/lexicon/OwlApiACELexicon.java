@@ -33,7 +33,7 @@ import ch.uzh.ifi.attempto.ape.Gender;
 import ch.uzh.ifi.attempto.ape.Lexicon;
 import ch.uzh.ifi.attempto.ape.LexiconEntry;
 
-public class OwlApiACELexicon implements ACELexicon {
+public class OwlApiACELexicon implements ACELexicon<OWLEntity> {
 
 	private static final Logger logger = Logger.getLogger(OwlApiACELexicon.class);
 

@@ -28,6 +28,8 @@ import org.apache.log4j.Logger;
 import org.jdesktop.swingworker.SwingWorker;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owl.inference.OWLReasonerException;
+import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owl.model.OWLLogicalAxiom;
 
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
 
@@ -48,7 +50,7 @@ public class UpdateAnswersUI {
 	private ProgressMonitor progressMonitor;
 	private Task task;
 
-	public UpdateAnswersUI(Component parent, ACEText acetext, OWLModelManager mngr) {
+	public UpdateAnswersUI(Component parent, ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLModelManager mngr) {
 		this.parent = parent;
 		this.mngr = mngr;
 		this.acetext = acetext;

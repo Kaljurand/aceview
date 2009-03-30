@@ -22,6 +22,7 @@ import org.protege.editor.owl.model.selection.OWLSelectionModel;
 import org.protege.editor.owl.model.selection.OWLSelectionModelAdapter;
 import org.protege.editor.owl.model.selection.OWLSelectionModelListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
+import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLLogicalAxiom;
 import org.semanticweb.owl.model.OWLObject;
 
@@ -70,7 +71,7 @@ public abstract class AbstractACESnippetSelectionViewComponent extends AbstractO
 			OWLObject lastSelection = selModel.getSelectedObject();
 
 			if (lastSelection instanceof OWLLogicalAxiom) {
-				ACEText acetext = ACETextManager.getActiveACEText();
+				ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 				Set<ACESnippet> snippets = acetext.getAxiomSnippets((OWLLogicalAxiom) lastSelection);
 
 				// Shows the first corresponding snippet to the axiom selected in the Protege views.

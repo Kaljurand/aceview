@@ -35,6 +35,7 @@ import org.jdesktop.swingx.JXHyperlink;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owl.model.OWLLogicalAxiom;
 import org.semanticweb.owl.model.OWLObject;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
@@ -45,6 +46,7 @@ import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.EntityLinkAction;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
+import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 /**
  * <p>This view shows all the entities alphabetically sorted and
@@ -104,7 +106,7 @@ public class ACEWordsASortedViewComponent extends AbstractACEViewComponent {
 
 
 	private void showWords() {
-		ACEText acetext = ACETextManager.getActiveACEText();
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 		int contentWordCount = acetext.getReferencedEntities().size();
 		int sentenceCount = acetext.getSentences().size();
 		String pl1 = "";
@@ -153,7 +155,7 @@ public class ACEWordsASortedViewComponent extends AbstractACEViewComponent {
 	 * 
 	 * @return Styled document of all content words in the given text
 	 */
-	private StyledDocument getContentWordsAsStyledDocument(ACEText acetext, Font font) {
+	private StyledDocument getContentWordsAsStyledDocument(ACEText<OWLEntity, OWLLogicalAxiom> acetext, Font font) {
 		StyledDocument doc = new DefaultStyledDocument();
 		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getReferencedEntities();
 		SortedSet<OWLEntity> entitiesSorted = new TreeSet<OWLEntity>(new EntityComparator());
@@ -161,7 +163,7 @@ public class ACEWordsASortedViewComponent extends AbstractACEViewComponent {
 
 		char previousFirstChar = ' '; // No word can contain a space (as the first character)
 		for (OWLEntity entity : entitiesSorted) {
-			if (! ACETextManager.isShow(entity)) {
+			if (! Showing.isShow(entity)) {
 				continue;
 			}
 			String entityRendering = ACETextManager.getRendering(entity);

@@ -31,6 +31,7 @@ import org.semanticweb.owl.model.OWLIndividual;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
+import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 
 /**
@@ -176,7 +177,7 @@ public class ACEAnswer {
 
 	private void setClassAnswerList(Set<OWLClass> answerList, Set<OWLClass> classes) {
 		for (OWLClass entity : classes) {
-			if (ACETextManager.isShow(entity)) {
+			if (Showing.isShow(entity)) {
 				answerList.add(entity);
 			}
 		}
@@ -185,7 +186,7 @@ public class ACEAnswer {
 
 	private void setIndividualAnswerList(Set<OWLIndividual> answerList, Set<OWLIndividual> individuals) {
 		for (OWLIndividual answer : individuals) {
-			if (ACETextManager.isShow(answer)) {
+			if (Showing.isShow(answer)) {
 				answerList.add(answer);
 			}
 		}

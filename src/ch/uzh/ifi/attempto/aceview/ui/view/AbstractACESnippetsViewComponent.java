@@ -18,12 +18,14 @@ package ch.uzh.ifi.attempto.aceview.ui.view;
 
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLObject;
 
+import com.google.common.base.Predicate;
+
+import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.model.filter.PredicateFilter;
-import ch.uzh.ifi.attempto.aceview.predicate.SnippetContainsEntityPredicate;
+import ch.uzh.ifi.attempto.aceview.predicate.SnippetHighlightPredicate;
 import ch.uzh.ifi.attempto.aceview.predicate.SnippetIsWeirdPredicate;
 import ch.uzh.ifi.attempto.aceview.predicate.SnippetReferencesEntity;
 import ch.uzh.ifi.attempto.aceview.ui.ACESnippetTable;
@@ -41,7 +43,8 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 	private static final int SNIPPET_COLUMN = 0;
 
 	protected ACESnippetTable tableSnippets;
-	private final ColorHighlighter isWeirdHighlighter = new ColorHighlighter(new SnippetIsWeirdPredicate(SNIPPET_COLUMN));
+	private final ColorHighlighter isWeirdHighlighter =
+		new ColorHighlighter(new SnippetHighlightPredicate(new SnippetIsWeirdPredicate(), SNIPPET_COLUMN));
 
 	private ColorHighlighter entityHightlighter;
 
@@ -61,7 +64,7 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 	protected OWLObject updateView() {
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
 
-		HighlightPredicate pred = new SnippetContainsEntityPredicate(entity, SNIPPET_COLUMN);
+		Predicate<ACESnippet> snippetPredicate = new SnippetReferencesEntity(entity);
 
 		if (isShowing() && entity != null) {
 			if (buttonFilter.isSelected()) {
@@ -70,15 +73,15 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 				}
 				tableSnippets.setFilters(
 						new FilterPipeline(
-								new PredicateFilter(
-										new SnippetReferencesEntity(entity), SNIPPET_COLUMN)));
+								new PredicateFilter<ACESnippet>(
+										snippetPredicate, SNIPPET_COLUMN)));
 			}
 			else if (buttonHighlight.isSelected()) {
 				tableSnippets.setFilters(null);
 				if (entityHightlighter != null) {
 					tableSnippets.removeHighlighter(entityHightlighter);
 				}
-				entityHightlighter = new ColorHighlighter(pred);
+				entityHightlighter = new ColorHighlighter(new SnippetHighlightPredicate(snippetPredicate, SNIPPET_COLUMN));
 				entityHightlighter.setBackground(Colors.HIGHLIGHT_COLOR);
 				tableSnippets.addHighlighter(entityHightlighter);
 			}

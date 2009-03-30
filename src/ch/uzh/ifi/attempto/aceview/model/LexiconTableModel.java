@@ -26,6 +26,7 @@ import org.semanticweb.owl.model.OWLAxiomChange;
 import org.semanticweb.owl.model.OWLDataFactory;
 import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLEntityAnnotationAxiom;
+import org.semanticweb.owl.model.OWLLogicalAxiom;
 import org.semanticweb.owl.model.OWLOntology;
 
 import com.google.common.collect.Lists;
@@ -63,8 +64,8 @@ import ch.uzh.ifi.attempto.aceview.model.event.EventType;
  */
 public class LexiconTableModel extends AbstractTableModel {
 
-	private ACEText acetext;
-	private ACELexicon acelexicon;
+	private ACEText<OWLEntity, OWLLogicalAxiom> acetext;
+	private ACELexicon<OWLEntity> acelexicon;
 	private Object[] entityArray;
 	private static final Logger logger = Logger.getLogger(LexiconTableModel.class);
 

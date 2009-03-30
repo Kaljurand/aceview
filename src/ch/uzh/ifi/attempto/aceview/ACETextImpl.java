@@ -41,8 +41,9 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.OwlApiACELexicon;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
+import ch.uzh.ifi.attempto.aceview.util.Showing;
 
-public class ACETextImpl implements ACEText {
+public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 	private static final Logger logger = Logger.getLogger(ACETextImpl.class);
 
@@ -67,7 +68,7 @@ public class ACETextImpl implements ACEText {
 	private final List<ACESnippet> questions = Lists.newArrayList();
 
 	// The ACE lexicon that decides the surface forms of the snippets in this text.
-	private ACELexicon lexicon = null;
+	private ACELexicon<OWLEntity> lexicon = null;
 
 	// Number of ACE snippets that reference one or more SWRL rules
 	private int ruleCount = 0;
@@ -134,7 +135,7 @@ public class ACETextImpl implements ACEText {
 			}
 			for (OWLLogicalAxiom axiom : snippetAxioms) {
 				for (OWLEntity entity : axiom.getReferencedEntities()) {
-					if (ACETextManager.isShow(entity)) {
+					if (Showing.isShow(entity)) {
 						Set<ACESnippet> snippets = entityToSnippets.get(entity);
 						if (snippets == null) {
 							snippets = Sets.newHashSet();
@@ -216,7 +217,7 @@ public class ACETextImpl implements ACEText {
 			}
 			for (OWLLogicalAxiom axiom : snippetAxioms) {
 				for (OWLEntity entity : axiom.getReferencedEntities()) {
-					if (ACETextManager.isShow(entity)) {
+					if (Showing.isShow(entity)) {
 						Set<ACESnippet> snippets = entityToSnippets.get(entity);
 						if (snippets == null) {
 							logger.error("Lemma `" + entity + "' not found in hash!");
@@ -442,7 +443,7 @@ public class ACETextImpl implements ACEText {
 	}
 
 
-	public ACELexicon getACELexicon() {
+	public ACELexicon<OWLEntity> getACELexicon() {
 		return lexicon;
 	}
 
@@ -467,7 +468,7 @@ public class ACETextImpl implements ACEText {
 		Set<ACESnippet> similarSnippets = Sets.newHashSet();
 		boolean isFirst = true;
 		for (OWLEntity entity : entities) {
-			if (ACETextManager.isShow(entity)) {
+			if (Showing.isShow(entity)) {
 				Set<ACESnippet> snippets = entityToSnippets.get(entity);
 				if (snippets != null) {
 					if (isFirst) {

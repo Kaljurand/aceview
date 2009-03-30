@@ -45,6 +45,7 @@ import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.UIHelper;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
 import org.semanticweb.owl.model.OWLAxiom;
+import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLLogicalAxiom;
 
 import com.google.common.collect.Multimap;
@@ -156,7 +157,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 					displayWarningMessage("Not added. There are no sentences.");
 				}
 				else {
-					ACEText acetext = ACETextManager.getActiveACEText();
+					ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 					ACESnippet oldSnippet = acetext.find(sentences);
 					if (oldSnippet == null) {
 						URI name = ACETextManager.getActiveACETextURI();
@@ -185,7 +186,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 						deleteSnippet(selectedSnippet);
 					}
 					else {
-						ACEText acetext = ACETextManager.getActiveACEText();
+						ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 						ACESnippet oldSnippet = acetext.find(sentences);
 						if (oldSnippet == null) {
 							ACETextManager.update(acetext.indexOf(selectedSnippet), selectedSnippet, sentences);

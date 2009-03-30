@@ -86,10 +86,7 @@ public final class ACETextManager {
 	public static final URI acetextURI = URI.create("http://attempto.ifi.uzh.ch/acetext#acetext");
 	private static final URI timestampURI = URI.create("http://purl.org/dc/elements/1.1/date");
 
-	private static final URI entityKnow = URI.create("http://attempto.ifi.uzh.ch/ace#know");
-	private static final URI entitySuperman = URI.create("http://attempto.ifi.uzh.ch/ace#Superman");
-
-	private static final Map<URI, ACEText> acetexts = Maps.newHashMap();
+	private static final Map<URI, ACEText<OWLEntity, OWLLogicalAxiom>> acetexts = Maps.newHashMap();
 	private static OWLModelManager owlModelManager;
 	private static URI activeACETextURI;
 
@@ -114,7 +111,7 @@ public final class ACETextManager {
 	private ACETextManager() {}
 
 	public static void createACEText(URI uri) {
-		ACEText acetext = new ACETextImpl();
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = new ACETextImpl();
 		acetexts.put(uri, acetext);
 		// BUG: would be better if we didn't have to set the active URI here
 		activeACETextURI = uri;
@@ -171,16 +168,16 @@ public final class ACETextManager {
 		return activeACETextURI;
 	}
 
-	public static ACEText getActiveACEText() {
+	public static ACEText<OWLEntity, OWLLogicalAxiom> getActiveACEText() {
 		return getACEText(getActiveACETextURI());
 	}
 
-	public static ACEText getACEText(URI uri) {
+	public static ACEText<OWLEntity, OWLLogicalAxiom> getACEText(URI uri) {
 		if (uri == null) {
 			logger.error("getACEText: URI == null; THIS SHOULD NOT HAPPEN");
 			return new ACETextImpl();
 		}
-		ACEText acetext = acetexts.get(uri);
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = acetexts.get(uri);
 		if (acetext == null) {
 			logger.error("acetext == null, where URI: " + uri);
 			createACEText(uri);
@@ -189,7 +186,7 @@ public final class ACETextManager {
 		return acetext;
 	}
 
-	public static ACELexicon getActiveACELexicon() {
+	public static ACELexicon<OWLEntity> getActiveACELexicon() {
 		return getACEText(activeACETextURI).getACELexicon();
 	}
 
@@ -231,7 +228,7 @@ public final class ACETextManager {
 	 * @param acetext ACE text
 	 * @param snippet ACE snippet
 	 */
-	private static void add(ACEText acetext, ACESnippet snippet) {
+	private static void add(ACEText<OWLEntity, OWLLogicalAxiom> acetext, ACESnippet snippet) {
 		acetext.add(snippet);
 		changeOntology(getAddChanges(owlModelManager.getActiveOntology(), snippet));
 		fireEvent(EventType.ACETEXT_CHANGED);
@@ -246,7 +243,7 @@ public final class ACETextManager {
 	 * @param acetext ACE text
 	 * @param axiom OWL logical axiom
 	 */
-	public static void add(ACEText acetext, OWLLogicalAxiom axiom) {		
+	public static void add(ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLLogicalAxiom axiom) {		
 		AxiomVerbalizer axiomVerbalizer = getAxiomVerbalizer(acetext.getACELexicon());
 		OWLModelManager mm = getOWLModelManager();
 		OWLOntology ont = mm.getActiveOntology();
@@ -281,7 +278,7 @@ public final class ACETextManager {
 	 */
 	public static void update(int index, ACESnippet snippet, List<ACESentence> sentences) {
 		ACESnippet newSnippet = new ACESnippetImpl(snippet.getDefaultNamespace(), sentences);
-		ACEText acetext = getActiveACEText();
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = getActiveACEText();
 		logger.info("Del old snippet: " + snippet);
 		Set<OWLLogicalAxiom> removedAxioms = acetext.remove(snippet);
 		logger.info("Add new snippet: " + newSnippet);
@@ -298,7 +295,7 @@ public final class ACETextManager {
 
 
 	public static void addAndRemoveSentences(Collection<ACESentence> addedSentences, Collection<ACESentence> removedSentences) {
-		ACEText activeAceText = getActiveACEText();
+		ACEText<OWLEntity, OWLLogicalAxiom> activeAceText = getActiveACEText();
 		List<OWLAxiomChange> changes = Lists.newArrayList();
 
 		for (ACESentence sentence : addedSentences) {
@@ -405,7 +402,7 @@ public final class ACETextManager {
 	// We make a defensive copy here, otherwise we would get a
 	// ConcurrentModificationException
 	private static List<OWLAxiomChange> findAndRemove(ACESentence sentence) {
-		ACEText acetext = getActiveACEText();
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = getActiveACEText();
 		OWLOntology ontology = owlModelManager.getActiveOntology();
 		List<OWLAxiomChange> changes = Lists.newArrayList();
 
@@ -493,57 +490,6 @@ public final class ACETextManager {
 
 	private static String wrapInHtml(String head, String body) {
 		return "<html><head>" + head + "</head><body>" + body + "</body></html>";
-	}
-
-
-	/**
-	 * <p>Specifies entities which should be displayed as ACE content words.</p>
-	 * 
-	 * <p>Note: we do not show the morph annotations of the following entities:
-	 * owl:Thing, owl:Nothing, ace:Superman, ace:know.</p>
-	 * 
-	 * TODO: What do to with anonymous individuals?
-	 * 
-	 * @param entity OWL entity
-	 * @return <code>true</code> if entity should be shown
-	 */
-	public static boolean isShow(OWLEntity entity) {
-
-		// isClass && !entity.asOWLClass().isOWLThing() && !entity.asOWLClass().isOWLNothing() ||
-		if (entity.isBuiltIn()) {
-			return false;
-		}
-
-		if (entity.isOWLDataType()) {
-			return false;
-		}
-
-		return (
-				entity.isOWLClass() ||
-				entity.isOWLObjectProperty() && !entity.getURI().equals(entityKnow) ||
-				entity.isOWLDataProperty() ||
-				entity.isOWLIndividual() && !entity.getURI().equals(entitySuperman)
-		);
-	}
-
-
-	/**
-	 * <p>Specifies axioms which should be "shown". For example we do not want to verbalize
-	 * (entailed) axioms which contain "tricks" like using entities `know' and `Superman'.</p>
-	 * 
-	 * @param axiom OWL axiom
-	 * @return true if axiom should be "shown"
-	 */
-	public static boolean isShow(OWLAxiom axiom) {
-		for (OWLEntity entity : axiom.getReferencedEntities()) {
-			if (entity.getURI().equals(entityKnow)) {
-				return false;
-			}
-			if (entity.getURI().equals(entitySuperman)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 
@@ -783,7 +729,7 @@ public final class ACETextManager {
 	}
 
 
-	private static AxiomVerbalizer getAxiomVerbalizer(ACELexicon lexicon) {
+	private static AxiomVerbalizer getAxiomVerbalizer(ACELexicon<OWLEntity> lexicon) {
 		return new AxiomVerbalizer(
 				new VerbalizerWebservice(ACEPreferences.getInstance().getOwlToAce()), lexicon);
 	}
@@ -795,7 +741,7 @@ public final class ACETextManager {
 	}
 
 
-	public static void processTanglingAxioms(ACEText acetext, Set<OWLLogicalAxiom> tanglingAxioms) {		
+	public static void processTanglingAxioms(ACEText<OWLEntity, OWLLogicalAxiom> acetext, Set<OWLLogicalAxiom> tanglingAxioms) {		
 		AxiomVerbalizer axiomVerbalizer = getAxiomVerbalizer(acetext.getACELexicon());
 		OWLModelManager mm = getOWLModelManager();
 		OWLOntology ont = mm.getActiveOntology();
@@ -816,7 +762,7 @@ public final class ACETextManager {
 	 * @param axiomVerbalizer
 	 * @param axiom
 	 */
-	private static void verbalizeAndAdd(ACEText acetext, OWLOntology ont, AxiomVerbalizer axiomVerbalizer, OWLLogicalAxiom axiom) {
+	private static void verbalizeAndAdd(ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLOntology ont, AxiomVerbalizer axiomVerbalizer, OWLLogicalAxiom axiom) {
 		ACESnippet snippet = null;
 		try {
 			snippet = axiomVerbalizer.verbalizeAxiom(ont.getURI(), axiom);

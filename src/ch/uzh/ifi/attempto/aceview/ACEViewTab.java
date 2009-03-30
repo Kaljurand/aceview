@@ -197,8 +197,8 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 
 			// Translate every OWLEntityAnnotationAxiom into the corresponding lexicon entry.
-			ACEText acetext = ACETextManager.getACEText(uri);
-			ACELexicon acelexicon = acetext.getACELexicon();
+			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(uri);
+			ACELexicon<OWLEntity> acelexicon = acetext.getACELexicon();
 			Set<OWLAnnotationAxiom>	annotationAxioms = ont.getAnnotationAxioms();
 
 			for (OWLAnnotationAxiom annotationAxiom : annotationAxioms) {
@@ -270,8 +270,8 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			OWLOntology changeOnt = change.getOntology();
 			URI uri = changeOnt.getURI();
 			OWLAxiom axiom = change.getAxiom();
-			ACEText acetext = ACETextManager.getACEText(uri);
-			ACELexicon acelexicon = acetext.getACELexicon();
+			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(uri);
+			ACELexicon<OWLEntity> acelexicon = acetext.getACELexicon();
 
 			if (axiom instanceof OWLLogicalAxiom) {
 

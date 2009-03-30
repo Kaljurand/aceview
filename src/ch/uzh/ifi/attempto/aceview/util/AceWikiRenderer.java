@@ -24,6 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owl.model.OWLLogicalAxiom;
 
 import com.google.common.collect.Maps;
 
@@ -70,12 +71,12 @@ import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
  */
 public class AceWikiRenderer {
 
-	private final ACEText acetext;
-	private final ACELexicon lexicon;
+	private final ACEText<OWLEntity, OWLLogicalAxiom> acetext;
+	private final ACELexicon<OWLEntity> lexicon;
 	private final Map<OWLEntity, Integer> seen = Maps.newHashMap();
 	private int counter = 0; // the "first" entity has index 1
 
-	public AceWikiRenderer(ACEText acetext) {
+	public AceWikiRenderer(ACEText<OWLEntity, OWLLogicalAxiom> acetext) {
 		this.acetext = acetext;
 		this.lexicon = acetext.getACELexicon();
 	}
