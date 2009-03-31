@@ -54,7 +54,7 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 		buttonHighlight.setToolTipText("Highlight the snippets that contain the selected word.");
 		buttonFilter.setToolTipText("Show only the snippets that contain the selected word.");
 		isWeirdHighlighter.setForeground(Colors.WEIRD_COLOR);
-		tableSnippets = new ACESnippetTable();
+		tableSnippets = new ACESnippetTable(SNIPPET_COLUMN);
 		tableSnippets.addHighlighter(isWeirdHighlighter);
 		refreshComponent();
 	}

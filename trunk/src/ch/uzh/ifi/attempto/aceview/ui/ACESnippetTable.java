@@ -8,8 +8,8 @@ import ch.uzh.ifi.attempto.aceview.ACETextManager;
 
 public class ACESnippetTable extends ACETable {
 
-	public ACESnippetTable() {
-		getSelectionModel().addListSelectionListener(new SelectionListener(this));
+	public ACESnippetTable(int snippetColumn) {
+		getSelectionModel().addListSelectionListener(new SelectionListener(this, snippetColumn));
 
 		// TODO: What does this do?
 		//getColumnModel().getSelectionModel().addListSelectionListener(new SelectionListener(this));
@@ -18,9 +18,11 @@ public class ACESnippetTable extends ACETable {
 	private class SelectionListener implements ListSelectionListener {
 
 		private final ACESnippetTable table;
+		private final int snippetColumn;
 
-		SelectionListener(ACESnippetTable table) {
+		SelectionListener(ACESnippetTable table, int snippetColumn) {
 			this.table = table;
+			this.snippetColumn = snippetColumn;
 		}
 
 		/**
@@ -29,11 +31,8 @@ public class ACESnippetTable extends ACETable {
 		public void valueChanged(ListSelectionEvent e) {
 			if (e.getSource() == table.getSelectionModel() && table.getRowSelectionAllowed()) {
 				int selectedRow = table.getSelectedRow();
-				if (selectedRow == -1) {
-				}
-				else {
-					// BUG: magic number: 0
-					Object cellContent = table.getValueAt(selectedRow, 0);
+				if (selectedRow != -1) {
+					Object cellContent = table.getValueAt(selectedRow, snippetColumn);
 					if (cellContent instanceof ACESnippet) {
 						ACESnippet selectedSnippet = (ACESnippet) cellContent;
 						ACETextManager.setSelectedSnippet(selectedSnippet);

@@ -78,7 +78,8 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 	private final JTextArea textareaParaphrase = ComponentFactory.makeSmallTextArea();
 	private final ACETable tableAnnotations = new ACETable();
 	private final JEditorPane editorpaneAxioms = new JEditorPane("text/html", ACETextManager.wrapInHtml(""));
-	private final ACESnippetTable tableSimilarSnippets = new ACESnippetTable();
+	// BUG: magic number
+	private final ACESnippetTable tableSimilarSnippets = new ACESnippetTable(0);
 
 	private final FeedbackPane panelMessages = new FeedbackPane(listMessages, PANEL_MESSAGES_TITLE);
 	private final FeedbackPane panelParaphrase = new FeedbackPane(textareaParaphrase, PANEL_PARAPHRASES_TITLE);
