@@ -597,6 +597,21 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if ((obj == null) || (obj.getClass() != this.getClass())) return false;
+		ACESnippet s = (ACESnippet) obj;
+		return sentences.equals(s.getSentences());
+	}
+
+
+	@Override
+	public int hashCode() {
+		return sentences.hashCode();
+	}
+
+
 	private void countMessages() {
 		errorMessagesCount = 0;
 		owlErrorMessagesCount = 0;
