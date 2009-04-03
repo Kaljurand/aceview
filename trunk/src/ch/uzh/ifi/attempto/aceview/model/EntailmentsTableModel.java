@@ -107,13 +107,12 @@ public class EntailmentsTableModel extends AbstractTableModel {
 	}
 
 	public void addSnippet(ACESnippet snippet) {
+		snippetToCounter.put(snippet, counter);
 		if (snippets.contains(snippet)) {
-			snippetToCounter.put(snippet, counter);
 			fireTableCellUpdated(snippets.indexOf(snippet), 1);
 		}
 		else {
 			snippets.add(snippet);
-			snippetToCounter.put(snippet, counter);
 			fireTableCellUpdated(snippets.size() - 1, 0);
 		}
 	}
