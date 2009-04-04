@@ -1,11 +1,14 @@
 package ch.uzh.ifi.attempto.aceview.ui.util;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
 
@@ -81,5 +84,15 @@ public class ComponentFactory {
 		ta.setWrapStyleWord(true);
 		ta.setBackground(Colors.BG_COLOR);
 		return ta;
+	}
+
+
+	public static JPanel makeSnippetDialogPanel(String message, String snippetRendering) {
+		JTextArea ta = makeSmallTextArea();
+		ta.setText(snippetRendering);
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(new JLabel(message), BorderLayout.NORTH);
+		panel.add(new JScrollPane(ta), BorderLayout.CENTER);
+		return panel;
 	}
 }

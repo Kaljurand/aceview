@@ -48,7 +48,15 @@ public class SnippetRenderer {
 	private final StringBuilder sb = new StringBuilder();
 
 	// Four levels of indentation are supported. Deeper structures should not be used anyway.
-	private final static String[] indentStrings = {"\n", "\n\t", "\n\t\t", "\n\t\t\t", "\n\t\t\t\t"};
+	//private final static String[] indentStrings = {"\n", "\n\t", "\n\t\t", "\n\t\t\t", "\n\t\t\t\t"};
+	private final static String[] INDENT_STRINGS = {
+		"\n",
+		"\n    ",
+		"\n        ",
+		"\n            ",
+		"\n                ",
+		"\n                    "
+	};
 
 	public SnippetRenderer(ACESnippet snippet) {
 		spans = snippet.getErrorSpans();
@@ -129,10 +137,10 @@ public class SnippetRenderer {
 
 
 	private static String getIndentString(int indentLevel) {
-		if (indentLevel < indentStrings.length) {
-			return indentStrings[indentLevel];
+		if (indentLevel < INDENT_STRINGS.length) {
+			return INDENT_STRINGS[indentLevel];
 		}
-		return indentStrings[indentStrings.length - 1];
+		return INDENT_STRINGS[INDENT_STRINGS.length - 1];
 	}
 
 
