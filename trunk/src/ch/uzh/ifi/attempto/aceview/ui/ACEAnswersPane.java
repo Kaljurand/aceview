@@ -26,8 +26,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -58,6 +56,9 @@ import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 
 public class ACEAnswersPane extends JTextPane {
+
+	private static final String LABEL_DECLARE_COMPLETE = "Declare complete!";
+
 	private final OWLWorkspace ws;
 	private final OWLDataFactory df;
 	private StyledDocument doc;
@@ -171,7 +172,7 @@ public class ACEAnswersPane extends JTextPane {
 				addLinebreak();
 			}
 			else if (! individuals.isEmpty()) {
-				final JButton buttonCompleter = ComponentFactory.makeButton("Declare complete!");
+				final JButton buttonCompleter = ComponentFactory.makeButton(LABEL_DECLARE_COMPLETE);
 				buttonCompleter.setToolTipText("Add a new snippet asserting that this answer is complete.");
 				buttonCompleter.setBackground(Colors.BG_COLOR);
 
@@ -203,7 +204,7 @@ public class ACEAnswersPane extends JTextPane {
 				addLinebreak();
 			}
 			else if (! subclasses.isEmpty()) {
-				final JButton buttonCompleter = ComponentFactory.makeButton("Declare complete!");
+				final JButton buttonCompleter = ComponentFactory.makeButton(LABEL_DECLARE_COMPLETE);
 				buttonCompleter.setToolTipText("Add a new snippet asserting that this answer is complete.");
 				buttonCompleter.setBackground(Colors.BG_COLOR);
 
@@ -286,10 +287,9 @@ public class ACEAnswersPane extends JTextPane {
 			e.printStackTrace();
 		}
 		if (snippet != null) {
-			JTextArea ta = ComponentFactory.makeSmallTextArea();
 			SnippetRenderer snippetRenderer = new SnippetRenderer(snippet);
-			ta.setText(snippetRenderer.getRendering());
-			int ret = new UIHelper(ws.getOWLEditorKit()).showDialog("Add this snippet to the active ACE text?", new JScrollPane(ta), JOptionPane.OK_CANCEL_OPTION);
+			JComponent comp = ComponentFactory.makeSnippetDialogPanel("Add this snippet to the active ACE text?", snippetRenderer.getRendering());
+			int ret = new UIHelper(ws.getOWLEditorKit()).showDialog(LABEL_DECLARE_COMPLETE, comp, JOptionPane.OK_CANCEL_OPTION);
 			if (ret == JOptionPane.OK_OPTION) {
 				buttonCompleter.setEnabled(false);
 				ACETextManager.add(snippet);

@@ -137,7 +137,7 @@ public interface ACESnippet {
 
 	/**
 	 * <p>Constructs and returns a list of sentences that
-	 * form this sentence, but with the given sentence
+	 * form this snippet, but with the given sentence
 	 * omitted.</p>
 	 * 
 	 * @param sentence ACE sentence
