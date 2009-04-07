@@ -32,7 +32,6 @@ import org.protege.editor.owl.model.find.EntityFinder;
 import org.protege.editor.owl.model.parser.ParserUtil;
 import org.protege.editor.owl.model.parser.ProtegeOWLEntityChecker;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
-//import org.semanticweb.owl.apibinding.OWLManager;
 import org.semanticweb.owl.expression.ParserException;
 import org.semanticweb.owl.io.OWLRendererException;
 import org.semanticweb.owl.model.OWLAnnotation;
@@ -69,14 +68,15 @@ import ch.uzh.ifi.attempto.aceview.model.event.SnippetEventType;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 
 /**
- * <p>ACE text manager allows snippets to be added to and removed from
+ * <p>The ACE text manager keeps track of the open ACE texts, how
+ * they map to open OWL ontologies, and which one of them is active.</p>
+ * 
+ * <p>The ACE text manager allows snippets to be added to and removed from
  * the ACE texts so that the corresponding ontology is updated
  * by adding/removing the affected axioms.</p>
  * 
  * <p>Note: selected snippet is independent from the ACE text, e.g. we can select a snippet
  * which does not belong to any text, e.g. entailed snippets are such.</p>
- * 
- * TODO: move utilities like {@link #isShow(OWLEntity)} to separate class
  * 
  * @author Kaarel Kaljurand
  */
@@ -117,19 +117,6 @@ public final class ACETextManager {
 		activeACETextURI = uri;
 	}
 
-	/*
-	public static void createACEText(URI uri) {
-		// If the given URI is already registered
-		if (acetexts.containsKey(uri)) {
-			// Do nothing.
-		}
-		else {
-			acetexts.put(uri, new ACEText());
-			acelexicons.put(uri, new ACELexicon());
-		}
-	}
-	 */
-
 
 	public static void setActiveACETextURI(URI uri) {
 		if (activeACETextURI.compareTo(uri) != 0) {
@@ -138,29 +125,11 @@ public final class ACETextManager {
 		}
 	}
 
-	/*
-	public static void setActiveACETextURI(URI uri) {
-		// If the given URI is already registered
-		if (acetexts.containsKey(uri)) {
-			// If the URI does not match the active ACE text URI
-			if (activeACETextURI.compareTo(uri) != 0) {
-				activeACETextURI = uri;
-				fireEvent(EventType.ACTIVE_ACETEXT_CHANGED);
-			}
-		}
-		// If the URI is not registered then create a new ACE text
-		else {
-			createACEText(uri);
-		}
-	}
-	 */
 
 	/**
 	 * <p>Returns the URI of the active ACE text.
 	 * In case no ACE text has been set as active
 	 * then returns <code>null</code>.</p>
-	 * 
-	 * BUG: The latter case cannot happen though, I think.
 	 * 
 	 * @return URI of the active ACE text.
 	 */
@@ -168,9 +137,11 @@ public final class ACETextManager {
 		return activeACETextURI;
 	}
 
+
 	public static ACEText<OWLEntity, OWLLogicalAxiom> getActiveACEText() {
 		return getACEText(getActiveACETextURI());
 	}
+
 
 	public static ACEText<OWLEntity, OWLLogicalAxiom> getACEText(URI uri) {
 		if (uri == null) {
@@ -179,20 +150,23 @@ public final class ACETextManager {
 		}
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = acetexts.get(uri);
 		if (acetext == null) {
-			logger.error("acetext == null, where URI: " + uri);
+			logger.error("getACEText: acetext == null, where URI: " + uri);
 			createACEText(uri);
 			return getACEText(uri);
 		}
 		return acetext;
 	}
 
+
 	public static ACELexicon<OWLEntity> getActiveACELexicon() {
 		return getACEText(activeACETextURI).getACELexicon();
 	}
 
+
 	public static void setOWLModelManager(OWLModelManager mm) {
 		owlModelManager = mm;
 	}
+
 
 	public static OWLModelManager getOWLModelManager() {
 		return owlModelManager;
@@ -206,58 +180,12 @@ public final class ACETextManager {
 	 * 
 	 * @param snippet ACE snippet
 	 */
-	public static void add(ACESnippet snippet) {
-		add(getActiveACEText(), snippet);
+	public static void addSnippet(ACESnippet snippet) {
+		addSnippet(getActiveACEText(), snippet);
 	}
 
 
-	/*
-	private static void add(int index, ACESnippet snippet) {
-		getActiveACEText().add(index, snippet);
-		changeOntology(getAddChanges(owlModelManager.getActiveOntology(), snippet));
-		fireEvent(EventType.ACETEXT_CHANGED);
-	}
-	 */
-
-
-	/**
-	 * <p>Adds the given snippet to the given ACE text, and
-	 * adds the axioms of the snippet to the ontology that corresponds
-	 * to the ACE text.</p>
-	 * 
-	 * @param acetext ACE text
-	 * @param snippet ACE snippet
-	 */
-	private static void add(ACEText<OWLEntity, OWLLogicalAxiom> acetext, ACESnippet snippet) {
-		acetext.add(snippet);
-		changeOntology(getAddChanges(owlModelManager.getActiveOntology(), snippet));
-		fireEvent(EventType.ACETEXT_CHANGED);
-	}
-
-
-	/**
-	 * <p>Creates a new snippet from the given OWL axiom, and
-	 * adds the snippet to the given ACE text.
-	 * See also {@link #add(ACEText, ACESnippet)}.</p>
-	 * 
-	 * @param acetext ACE text
-	 * @param axiom OWL logical axiom
-	 */
-	public static void add(ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLLogicalAxiom axiom) {		
-		AxiomVerbalizer axiomVerbalizer = getAxiomVerbalizer(acetext.getACELexicon());
-		OWLModelManager mm = getOWLModelManager();
-		OWLOntology ont = mm.getActiveOntology();
-		ACESnippet snippet = null;
-		try {
-			snippet = axiomVerbalizer.verbalizeAxiom(ont.getURI(), axiom);
-			add(acetext, snippet);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
-	public static void remove(ACESnippet snippet) {
+	public static void removeSnippet(ACESnippet snippet) {
 		Set<OWLLogicalAxiom> removedAxioms = getActiveACEText().remove(snippet);
 		changeOntology(getRemoveChanges(owlModelManager.getActiveOntology(), removedAxioms));
 		fireEvent(EventType.ACETEXT_CHANGED);
@@ -276,7 +204,7 @@ public final class ACETextManager {
 	 * @param snippet Snippet to be updated (i.e replaced)
 	 * @param sentences Sentences that form the new snippet
 	 */
-	public static void update(int index, ACESnippet snippet, List<ACESentence> sentences) {
+	public static void updateSnippet(int index, ACESnippet snippet, List<ACESentence> sentences) {
 		ACESnippet newSnippet = new ACESnippetImpl(snippet.getDefaultNamespace(), sentences);
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = getActiveACEText();
 		logger.info("Del old snippet: " + snippet);
@@ -352,23 +280,7 @@ public final class ACETextManager {
 	}
 
 
-	private static void fireSnippetEvent(SnippetEventType type) {
-		ACESnippetEvent event = new ACESnippetEvent(type);
-		logger.info("Event: " + event.getType());
-		for (ACESnippetListener listener : snippetListeners) {
-			try {
-				listener.handleChange(event);
-			}
-			catch (Exception e) {
-				logger.error("Detaching " + listener.getClass().getName() + " because it threw " + e.toString());
-				ProtegeApplication.getErrorLog().logError(e);
-				removeSnippetListener(listener);
-			}
-		}
-	}
-
-
-	public static void addToOntology(OWLOntologyManager ontologyManager, OWLOntology ontology, Set<? extends OWLAxiom> axioms) {
+	public static void addAxiomsToOntology(OWLOntologyManager ontologyManager, OWLOntology ontology, Set<? extends OWLAxiom> axioms) {
 		List<AddAxiomByACEView> changes = Lists.newArrayList();
 		for (OWLAxiom ax : axioms) {
 			changes.add(new AddAxiomByACEView(ontology, ax));
@@ -394,43 +306,6 @@ public final class ACETextManager {
 		}
 	}
 
-	private static void changeOntology(List<? extends OWLAxiomChange> changes) {
-		changeOntology(owlModelManager.getOWLOntologyManager(), changes);
-	}
-
-
-	// We make a defensive copy here, otherwise we would get a
-	// ConcurrentModificationException
-	private static List<OWLAxiomChange> findAndRemove(ACESentence sentence) {
-		ACEText<OWLEntity, OWLLogicalAxiom> acetext = getActiveACEText();
-		OWLOntology ontology = owlModelManager.getActiveOntology();
-		List<OWLAxiomChange> changes = Lists.newArrayList();
-
-		for (ACESnippet oldSnippet : ImmutableSet.copyOf(acetext.getSentenceSnippets(sentence))) {
-			Set<OWLLogicalAxiom> removedAxioms = acetext.remove(oldSnippet);
-			changes.addAll(getRemoveChanges(ontology, removedAxioms));
-
-			if (oldSnippet.getSentences().size() > 1) {
-				logger.info("Found super snippet: " + oldSnippet.toString());
-				List<ACESentence> sentences = oldSnippet.getRest(sentence);
-				ACESnippet snippet = new ACESnippetImpl(activeACETextURI, sentences);
-				acetext.add(snippet);
-				changes.addAll(getAddChanges(ontology, snippet));
-			}
-		}
-		return changes;
-	}
-
-
-	public static OWLOntology createOntologyFromAxioms(OWLOntologyManager ontologyManager, URI uri, Set<OWLAxiom> axioms) throws OWLOntologyCreationException, OWLOntologyChangeException {
-		return ontologyManager.createOntology(axioms, uri);
-	}
-
-	/*
-	private static OWLOntology createOntology(URI uri) throws OWLOntologyCreationException {
-		return createOntology(OWLManager.createOWLOntologyManager(), uri);
-	}
-	 */
 
 	/**
 	 * <p>Creates a new ontology with a dummy URI.</p>
@@ -452,44 +327,9 @@ public final class ACETextManager {
 		}
 	}
 
-	/*
-	private static OWLOntology createOntology(OWLOntologyManager ontologyManager, URI uri) throws OWLOntologyCreationException {
-		return ontologyManager.createOntology(uri);
-	}
-	 */
-
-	private static OWLAxiomAnnotationAxiom createAxiomAnnotation(OWLAxiom logicalAxiom, URI uri, String str) {
-		OWLAnnotation ann = null;
-		OWLDataFactory df = owlModelManager.getOWLDataFactory();
-		ann = df.getOWLConstantAnnotation(uri, df.getOWLUntypedConstant(str));
-		return df.getOWLAxiomAnnotationAxiom(logicalAxiom, ann);
-	}
-
-
-	// BUG: these HTML-generators should be in some other class
-	private static String getHtmlHead() {
-		String fontName = owlRendererPreferences.getFontName();
-		int fontSize = owlRendererPreferences.getFontSize();
-		return 	"<style type='text/css'>" +
-		"	body { font-size: " + fontSize +"; font-family: " + fontName + "; margin-left: 4px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px; background-color: #ffffee }" +
-		"	table { border-width: 1px; border-style: solid; border-color: silver; empty-cells: show; border-collapse: collapse; margin-bottom: 1em }" +
-		"	td { border-width: 1px; border-style: solid; border-color: silver }" +
-		"	div { padding-left: 4px; padding-right: 4px; padding-top: 4px; padding-bottom: 4px;" +
-		"		margin-left: 4px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px }" +
-		"	div.messages { border-width: 3px; border-color: red  }" +
-		"	p.question { color: olive }" +
-		"	.indent { margin-left: 15px }" +
-		"	.error { color: red }" +
-		"	a { text-decoration: none }" +
-		"</style>";
-	}
 
 	public static String wrapInHtml(String body) {
 		return wrapInHtml(getHtmlHead(), body);
-	}
-
-	private static String wrapInHtml(String head, String body) {
-		return "<html><head>" + head + "</head><body>" + body + "</body></html>";
 	}
 
 
@@ -625,74 +465,9 @@ public final class ACETextManager {
 		return whySnippet;
 	}
 
+
 	public static void setInitCompleted(boolean b) {
 		isInitCompleted = b;
-	}
-
-	/**
-	 * <p>Parses a <code>String</code> with the Manchester OWL Syntax parser and
-	 * returns the corresponding <code>OWLAxiom</code> or throws an exception if
-	 * parsing failed. The <code>String</code> is assumed to correspond to an OWL axiom,
-	 * i.e. we use only the following methods to obtain the result.</p>
-	 * 
-	 * <ul>
-	 * <li>parsePropertyChainSubPropertyAxiom()</li>
-	 * <li>parseClassAxiom()</li>
-	 * <li>parseObjectPropertyAxiom()</li>
-	 * </ul>
-	 * 
-	 * TODO: add support for parsePropertyChainSubPropertyAxiom and parseObjectPropertyAxiom
-	 * (tried but did not work).
-	 * 
-	 * TODO: pass URI as an argument
-	 * 
-	 * @param str String that possibly represents an OWL axiom in Manchester OWL Syntax
-	 * @return <code>OWLAxiom</code> that corresponds to the given string.
-	 * @throws OWLExpressionParserException 
-	 */
-	private static OWLLogicalAxiom parseWithManchesterSyntaxParser(String str) throws OWLExpressionParserException {
-		OWLModelManager mngr = getOWLModelManager();
-		ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(mngr.getOWLDataFactory(), str);
-		parser.setOWLEntityChecker(new ProtegeOWLEntityChecker(mngr));
-		parser.setBase(mngr.getActiveOntology().getURI().toString());
-		try {
-			OWLAxiom axiom = parser.parseClassAxiom();
-			if (axiom instanceof OWLLogicalAxiom) {
-				return (OWLLogicalAxiom) axiom;
-			}
-			return null;
-		}
-		catch (ParserException e) {
-			throw ParserUtil.convertException(e);
-		}
-	}
-
-
-	/**
-	 * TODO: Currently we can only store the text and timestamp of the snippet
-	 * if the snippet corresponds to a single axiom. Would be nice if a group of
-	 * axioms could be annotated as well.
-	 * 
-	 * @param snippet
-	 */
-	private static List<? extends OWLAxiomChange> getAddChanges(OWLOntology ontology, ACESnippet snippet) {
-		List<AddAxiomByACEView> changes = Lists.newArrayList();
-		Set<OWLLogicalAxiom> snippetAxioms = snippet.getLogicalAxioms();
-
-		for (OWLLogicalAxiom axiom : snippetAxioms) {
-			changes.add(new AddAxiomByACEView(ontology, axiom));
-		}
-
-		// In case the snippet has only one axiom, then we annotate it as well
-		if (snippetAxioms.size() == 1) {
-			OWLLogicalAxiom axiom = snippetAxioms.iterator().next();
-			OWLAxiomAnnotationAxiom annAcetext = createAxiomAnnotation(axiom, acetextURI, snippet.toString());
-			OWLAxiomAnnotationAxiom annTimestamp = createAxiomAnnotation(axiom, timestampURI, snippet.getTimestamp().toString());
-			changes.add(new AddAxiomByACEView(ontology, annAcetext));
-			changes.add(new AddAxiomByACEView(ontology, annTimestamp));
-		}
-
-		return changes;
 	}
 
 
@@ -724,14 +499,8 @@ public final class ACETextManager {
 	 * @throws OWLOntologyChangeException
 	 */
 	public static ACESnippet makeSnippetFromAxiom(OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
-		AxiomVerbalizer axiomVerbalizer = getAxiomVerbalizer(getActiveACEText().getACELexicon());
+		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer(getActiveACEText().getACELexicon());
 		return axiomVerbalizer.verbalizeAxiom(getActiveACETextURI(), axiom);
-	}
-
-
-	private static AxiomVerbalizer getAxiomVerbalizer(ACELexicon<OWLEntity> lexicon) {
-		return new AxiomVerbalizer(
-				new VerbalizerWebservice(ACEPreferences.getInstance().getOwlToAce()), lexicon);
 	}
 
 
@@ -742,7 +511,7 @@ public final class ACETextManager {
 
 
 	public static void processTanglingAxioms(ACEText<OWLEntity, OWLLogicalAxiom> acetext, Set<OWLLogicalAxiom> tanglingAxioms) {		
-		AxiomVerbalizer axiomVerbalizer = getAxiomVerbalizer(acetext.getACELexicon());
+		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer(acetext.getACELexicon());
 		OWLModelManager mm = getOWLModelManager();
 		OWLOntology ont = mm.getActiveOntology();
 
@@ -752,36 +521,6 @@ public final class ACETextManager {
 		}
 	}
 
-
-	/**
-	 * <p>Note that we do not add the axiom into the ontology, because
-	 * we expect it to be there already, as it is one of the tangling
-	 * axioms.</p>
-	 * 
-	 * @param ont
-	 * @param axiomVerbalizer
-	 * @param axiom
-	 */
-	private static void verbalizeAndAdd(ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLOntology ont, AxiomVerbalizer axiomVerbalizer, OWLLogicalAxiom axiom) {
-		ACESnippet snippet = null;
-		try {
-			snippet = axiomVerbalizer.verbalizeAxiom(ont.getURI(), axiom);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (snippet != null) {
-			acetext.add(snippet);
-			OWLAxiomAnnotationAxiom annAcetext = createAxiomAnnotation(axiom, acetextURI, snippet.toString());
-			OWLAxiomAnnotationAxiom annTimestamp = createAxiomAnnotation(axiom, timestampURI, snippet.getTimestamp().toString());
-			List<OWLAxiomChange> changes = Lists.newArrayList();
-			changes.add(new AddAxiomByACEView(ont, annAcetext));
-			changes.add(new AddAxiomByACEView(ont, annTimestamp));
-			changeOntology(changes);
-		}
-		else {
-			logger.warn("AxiomVerbalizer produced a null-snippet for: " + axiom.toString());
-		}
-	}
 
 	/**
 	 * <p>Returns a list of annotations that are contained by the
@@ -860,5 +599,226 @@ public final class ACETextManager {
 
 		logger.info("Parsing with the MOS parser: " + mosStr);
 		return parseWithManchesterSyntaxParser(mosStr);
+	}
+
+
+	/**
+	 * <p>Adds the given snippet to the given ACE text, and
+	 * adds the axioms of the snippet to the ontology that corresponds
+	 * to the ACE text.</p>
+	 * 
+	 * @param acetext ACE text
+	 * @param snippet ACE snippet
+	 */
+	private static void addSnippet(ACEText<OWLEntity, OWLLogicalAxiom> acetext, ACESnippet snippet) {
+		acetext.add(snippet);
+		changeOntology(getAddChanges(owlModelManager.getActiveOntology(), snippet));
+		fireEvent(EventType.ACETEXT_CHANGED);
+	}
+
+
+	private static void changeOntology(List<? extends OWLAxiomChange> changes) {
+		changeOntology(owlModelManager.getOWLOntologyManager(), changes);
+	}
+
+
+	// We make a defensive copy here, otherwise we would get a
+	// ConcurrentModificationException
+	private static List<OWLAxiomChange> findAndRemove(ACESentence sentence) {
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = getActiveACEText();
+		OWLOntology ontology = owlModelManager.getActiveOntology();
+		List<OWLAxiomChange> changes = Lists.newArrayList();
+
+		for (ACESnippet oldSnippet : ImmutableSet.copyOf(acetext.getSentenceSnippets(sentence))) {
+			Set<OWLLogicalAxiom> removedAxioms = acetext.remove(oldSnippet);
+			changes.addAll(getRemoveChanges(ontology, removedAxioms));
+
+			if (oldSnippet.getSentences().size() > 1) {
+				logger.info("Found super snippet: " + oldSnippet.toString());
+				List<ACESentence> sentences = oldSnippet.getRest(sentence);
+				ACESnippet snippet = new ACESnippetImpl(activeACETextURI, sentences);
+				acetext.add(snippet);
+				changes.addAll(getAddChanges(ontology, snippet));
+			}
+		}
+		return changes;
+	}
+
+
+	private static OWLAxiomAnnotationAxiom createAxiomAnnotation(OWLAxiom logicalAxiom, URI uri, String str) {
+		OWLAnnotation ann = null;
+		OWLDataFactory df = owlModelManager.getOWLDataFactory();
+		ann = df.getOWLConstantAnnotation(uri, df.getOWLUntypedConstant(str));
+		return df.getOWLAxiomAnnotationAxiom(logicalAxiom, ann);
+	}
+
+
+	// BUG: these HTML-generators should be in some other class
+	private static String getHtmlHead() {
+		String fontName = owlRendererPreferences.getFontName();
+		int fontSize = owlRendererPreferences.getFontSize();
+		return 	"<style type='text/css'>" +
+		"	body { font-size: " + fontSize +"; font-family: " + fontName + "; margin-left: 4px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px; background-color: #ffffee }" +
+		"	table { border-width: 1px; border-style: solid; border-color: silver; empty-cells: show; border-collapse: collapse; margin-bottom: 1em }" +
+		"	td { border-width: 1px; border-style: solid; border-color: silver }" +
+		"	div { padding-left: 4px; padding-right: 4px; padding-top: 4px; padding-bottom: 4px;" +
+		"		margin-left: 4px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px }" +
+		"	div.messages { border-width: 3px; border-color: red  }" +
+		"	p.question { color: olive }" +
+		"	.indent { margin-left: 15px }" +
+		"	.error { color: red }" +
+		"	a { text-decoration: none }" +
+		"</style>";
+	}
+
+
+	private static String wrapInHtml(String head, String body) {
+		return "<html><head>" + head + "</head><body>" + body + "</body></html>";
+	}
+
+
+	/**
+	 * <p>Parses a <code>String</code> with the Manchester OWL Syntax parser and
+	 * returns the corresponding <code>OWLAxiom</code> or throws an exception if
+	 * parsing failed. The <code>String</code> is assumed to correspond to an OWL axiom,
+	 * i.e. we use only the following methods to obtain the result.</p>
+	 * 
+	 * <ul>
+	 * <li>parsePropertyChainSubPropertyAxiom()</li>
+	 * <li>parseClassAxiom()</li>
+	 * <li>parseObjectPropertyAxiom()</li>
+	 * </ul>
+	 * 
+	 * TODO: add support for parsePropertyChainSubPropertyAxiom and parseObjectPropertyAxiom
+	 * (tried but did not work).
+	 * 
+	 * TODO: pass URI as an argument
+	 * 
+	 * @param str String that possibly represents an OWL axiom in Manchester OWL Syntax
+	 * @return <code>OWLAxiom</code> that corresponds to the given string.
+	 * @throws OWLExpressionParserException 
+	 */
+	private static OWLLogicalAxiom parseWithManchesterSyntaxParser(String str) throws OWLExpressionParserException {
+		OWLModelManager mngr = getOWLModelManager();
+		ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(mngr.getOWLDataFactory(), str);
+		parser.setOWLEntityChecker(new ProtegeOWLEntityChecker(mngr));
+		parser.setBase(mngr.getActiveOntology().getURI().toString());
+		try {
+			OWLAxiom axiom = parser.parseClassAxiom();
+			if (axiom instanceof OWLLogicalAxiom) {
+				return (OWLLogicalAxiom) axiom;
+			}
+			return null;
+		}
+		catch (ParserException e) {
+			throw ParserUtil.convertException(e);
+		}
+	}
+
+
+	/**
+	 * TODO: Currently we can only store the text and timestamp of the snippet
+	 * if the snippet corresponds to a single axiom. Would be nice if a group of
+	 * axioms could be annotated as well.
+	 * 
+	 * @param ontology OWL ontology
+	 * @param snippet ACE snippet
+	 */
+	private static List<? extends OWLAxiomChange> getAddChanges(OWLOntology ontology, ACESnippet snippet) {
+		List<AddAxiomByACEView> changes = Lists.newArrayList();
+		Set<OWLLogicalAxiom> snippetAxioms = snippet.getLogicalAxioms();
+
+		for (OWLLogicalAxiom axiom : snippetAxioms) {
+			changes.add(new AddAxiomByACEView(ontology, axiom));
+		}
+
+		// In case the snippet has only one axiom, then we annotate it as well
+		if (snippetAxioms.size() == 1) {
+			OWLLogicalAxiom axiom = snippetAxioms.iterator().next();
+			OWLAxiomAnnotationAxiom annAcetext = createAxiomAnnotation(axiom, acetextURI, snippet.toString());
+			OWLAxiomAnnotationAxiom annTimestamp = createAxiomAnnotation(axiom, timestampURI, snippet.getTimestamp().toString());
+			changes.add(new AddAxiomByACEView(ontology, annAcetext));
+			changes.add(new AddAxiomByACEView(ontology, annTimestamp));
+		}
+
+		return changes;
+	}
+
+
+	/**
+	 * <p>Note that we do not add the axiom into the ontology, because
+	 * we expect it to be there already, as it is one of the tangling
+	 * axioms.</p>
+	 * 
+	 * @param acetext ACE text
+	 * @param ont OWL ontology
+	 * @param axiomVerbalizer AxiomVerbalizer
+	 * @param axiom OWL axiom
+	 */
+	private static void verbalizeAndAdd(ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLOntology ont, AxiomVerbalizer axiomVerbalizer, OWLLogicalAxiom axiom) {
+		ACESnippet snippet = null;
+		try {
+			snippet = axiomVerbalizer.verbalizeAxiom(ont.getURI(), axiom);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (snippet != null) {
+			acetext.add(snippet);
+			OWLAxiomAnnotationAxiom annAcetext = createAxiomAnnotation(axiom, acetextURI, snippet.toString());
+			OWLAxiomAnnotationAxiom annTimestamp = createAxiomAnnotation(axiom, timestampURI, snippet.getTimestamp().toString());
+			List<OWLAxiomChange> changes = Lists.newArrayList();
+			changes.add(new AddAxiomByACEView(ont, annAcetext));
+			changes.add(new AddAxiomByACEView(ont, annTimestamp));
+			changeOntology(changes);
+		}
+		else {
+			logger.warn("AxiomVerbalizer produced a null-snippet for: " + axiom.toString());
+		}
+	}
+
+
+	private static AxiomVerbalizer createAxiomVerbalizer(ACELexicon<OWLEntity> lexicon) {
+		return new AxiomVerbalizer(
+				new VerbalizerWebservice(ACEPreferences.getInstance().getOwlToAce()), lexicon);
+	}
+
+
+	/**
+	 * <p>Creates a new snippet from the given OWL axiom, and
+	 * adds the snippet to the given ACE text.
+	 * See also {@link #addSnippet(ACEText, ACESnippet)}.</p>
+	 * 
+	 * @param acetext ACE text
+	 * @param axiom OWL logical axiom
+	 */
+	/*
+	private static void addAxiom(ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLLogicalAxiom axiom) {		
+		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer(acetext.getACELexicon());
+		OWLModelManager mm = getOWLModelManager();
+		OWLOntology ont = mm.getActiveOntology();
+		ACESnippet snippet = null;
+		try {
+			snippet = axiomVerbalizer.verbalizeAxiom(ont.getURI(), axiom);
+			addSnippet(acetext, snippet);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	 */
+
+
+	private static void fireSnippetEvent(SnippetEventType type) {
+		ACESnippetEvent event = new ACESnippetEvent(type);
+		logger.info("Event: " + event.getType());
+		for (ACESnippetListener listener : snippetListeners) {
+			try {
+				listener.handleChange(event);
+			}
+			catch (Exception e) {
+				logger.error("Detaching " + listener.getClass().getName() + " because it threw " + e.toString());
+				ProtegeApplication.getErrorLog().logError(e);
+				removeSnippetListener(listener);
+			}
+		}
 	}
 }

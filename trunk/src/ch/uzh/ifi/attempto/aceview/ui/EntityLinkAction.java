@@ -4,13 +4,13 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.Action;
 
-import org.jdesktop.swingx.hyperlink.LinkAction;
+import org.jdesktop.swingx.hyperlink.AbstractHyperlinkAction;
 import org.protege.editor.owl.model.OWLWorkspace;
 import org.semanticweb.owl.model.OWLEntity;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 
-public class EntityLinkAction extends LinkAction {
+public class EntityLinkAction extends AbstractHyperlinkAction {
 
 	private final OWLWorkspace ws;
 	private final OWLEntity entity;

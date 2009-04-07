@@ -162,7 +162,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 					if (oldSnippet == null) {
 						URI name = ACETextManager.getActiveACETextURI();
 						ACESnippetImpl newSnippet = new ACESnippetImpl(name, sentences);
-						ACETextManager.add(newSnippet);
+						ACETextManager.addSnippet(newSnippet);
 						ACETextManager.setSelectedSnippet(newSnippet);
 					}
 					else {
@@ -189,7 +189,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 						ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 						ACESnippet oldSnippet = acetext.find(sentences);
 						if (oldSnippet == null) {
-							ACETextManager.update(acetext.indexOf(selectedSnippet), selectedSnippet, sentences);
+							ACETextManager.updateSnippet(acetext.indexOf(selectedSnippet), selectedSnippet, sentences);
 						}
 						else {
 							displayWarningMessage("Selected snippet <b>not</b> updated. These sentences are already in the text.");
@@ -416,7 +416,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 	 * @param snippet ACE snippet
 	 */
 	private void deleteSnippet(ACESnippet snippet) {
-		ACETextManager.remove(snippet);
+		ACETextManager.removeSnippet(snippet);
 		ACETextManager.resetSelectedSnippet();
 		displayWarningMessage("Selected snippet deleted.");
 	}

@@ -3,7 +3,7 @@ package ch.uzh.ifi.attempto.ace;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -22,6 +22,8 @@ public class ACESentence {
 	private final List<ACEToken> contentWords = Lists.newArrayList();
 	private boolean isNothingbut = false;
 	private boolean isQuestion = false;
+
+	private final Joiner joiner = Joiner.on(" ");
 
 
 	public ACESentence(String str) {
@@ -97,7 +99,7 @@ public class ACESentence {
 
 
 	public String toSimpleString() {
-		return Join.join(" ", tokens);
+		return joiner.join(tokens);
 	}
 
 

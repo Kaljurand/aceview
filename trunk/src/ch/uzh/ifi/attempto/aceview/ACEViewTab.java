@@ -386,7 +386,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 					logger.info("Add declaration axiom: " + declarationAxiom);
 					OWLEntity entity = declarationAxiom.getEntity();
 					// BUG: replace toString() with something else, maybe?
-					ACETextManager.addToOntology(ontologyManager, changeOnt, MorphAnnotation.getMorphAnnotations(df, changeOnt, entity, entity.toString()));
+					ACETextManager.addAxiomsToOntology(ontologyManager, changeOnt, MorphAnnotation.getMorphAnnotations(df, changeOnt, entity, entity.toString()));
 				}
 				else if (change instanceof RemoveAxiom) {
 					logger.info("Del declaration axiom: " + declarationAxiom);
@@ -496,7 +496,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				Set<OWLAxiom> set = Sets.newHashSet();
 				set.add(getVbg(df, p1, p2));
 				set.add(getVbg(df, p2, p1));
-				ACETextManager.addToOntology(ontologyManager, ont, set);
+				ACETextManager.addAxiomsToOntology(ontologyManager, ont, set);
 			}
 		}
 	}
@@ -514,7 +514,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		acetext.add(snippet);
 		OWLAnnotation ann = df.getOWLConstantAnnotation(ACETextManager.acetextURI, df.getOWLUntypedConstant(snippet.toString()));
 		OWLAxiomAnnotationAxiom axannax = df.getOWLAxiomAnnotationAxiom(logicalAxiom, ann);
-		ACETextManager.addToOntology(ontologyManager, ont, Sets.newHashSet(axannax));
+		ACETextManager.addAxiomsToOntology(ontologyManager, ont, Sets.newHashSet(axannax));
 	}
 
 

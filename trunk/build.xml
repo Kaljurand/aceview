@@ -20,7 +20,8 @@
 	<property name="protege_dist_plugins" location="${protege_dist}/equinox/plugins/"/>
 	<property name="protege_dist_bundles" location="${protege_dist}/bundles/"/>
 
-	<property name="jars" location="${protege_dist_bundles}/org.protege.editor.owl.jar;${protege_dist_bundles}/org.protege.editor.core.application.jar;${protege}/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar;${protege}/plugins/org.protege.common/lib/log4j.jar;${aceview_lib}/jdom.jar;${aceview_lib}/RadixTree.jar;${aceview_lib}/swingx-0.9.5.jar;${aceview_lib}/swing-worker-1.2.jar;${aceview_lib}/simplenlg-v37.jar;${aceview_lib}/attempto-ape.jar;${aceview_lib}/attempto-owl.jar;${aceview_lib}/google-collect-snapshot-20090211.jar"/>
+	<!-- Note: jpl.jar is only needed for tests. -->
+	<property name="jars" location="${protege_dist_bundles}/org.protege.editor.owl.jar;${protege_dist_bundles}/org.protege.editor.core.application.jar;${protege}/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar;${protege}/plugins/org.protege.common/lib/log4j.jar;${aceview_lib}/jdom.jar;${aceview_lib}/RadixTree.jar;${aceview_lib}/swingx-0.9.7.jar;${aceview_lib}/swing-worker-1.2.jar;${aceview_lib}/simplenlg-v37.jar;${aceview_lib}/attempto-ape.jar;${aceview_lib}/attempto-owl.jar;${aceview_lib}/google-collect-1.0-rc1.jar;${aceview_lib}/jpl.jar"/>
 
 	<property name="aceview_test_src" location="test/"/>
 	<property name="aceview_test_report" location="test_report/"/>
@@ -81,7 +82,7 @@
 
 	<target name="zip_source" depends="init" description="Generate a zip-archive of all the source files.">
 		<zip
-			destfile="${aceview_dist}/aceview_src-${build.time}_unofficial.zip"
+			destfile="${aceview_dist}/aceview_src-${build.time}.zip"
 			basedir="."
 			includes="lib/**, src/**, test/**, licenses/**, *.xml, *.txt, .classpath, .settings/**"
 			excludes="classes, **/.DS_Store, **/old/**, **/*.zip, **/*.bash, **/*.lst"

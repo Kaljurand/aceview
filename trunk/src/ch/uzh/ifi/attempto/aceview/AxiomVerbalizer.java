@@ -155,7 +155,7 @@ public class AxiomVerbalizer {
 		}
 
 		OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
-		OWLOntology ontology = ACETextManager.createOntologyFromAxioms(ontologyManager, uri, allAxioms);
+		OWLOntology ontology = ontologyManager.createOntology(allAxioms, uri);
 		return verbalizeOntology(ontologyManager, ontology);
 	}
 
