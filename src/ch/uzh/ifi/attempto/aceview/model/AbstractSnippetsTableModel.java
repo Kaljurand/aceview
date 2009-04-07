@@ -95,12 +95,12 @@ public abstract class AbstractSnippetsTableModel extends AbstractTableModel {
 				else if (newSentences.isEmpty()) {
 					logger.info("Add nothing: newSentences is empty");
 					logger.info("Del old snippet: " + oldSnippet);
-					ACETextManager.remove(oldSnippet);
+					ACETextManager.removeSnippet(oldSnippet);
 					ACETextManager.resetSelectedSnippet();
 					fireTableCellUpdated(row, column);
 				}
 				else {
-					ACETextManager.update(row, oldSnippet, newSentences);
+					ACETextManager.updateSnippet(row, oldSnippet, newSentences);
 					fireTableCellUpdated(row, column);
 				}
 			}

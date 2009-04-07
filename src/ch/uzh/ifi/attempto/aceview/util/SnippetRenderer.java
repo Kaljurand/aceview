@@ -18,8 +18,8 @@ package ch.uzh.ifi.attempto.aceview.util;
 
 import java.util.List;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACEToken;
@@ -43,19 +43,20 @@ import ch.uzh.ifi.attempto.aceview.ACESnippet;
  */
 public class SnippetRenderer {
 
-	private final Multimap<Integer, Integer> hl = Multimaps.newHashMultimap();
+	private final Multimap<Integer, Integer> hl = HashMultimap.create();
 	private final Multimap<Integer, Integer> spans;
 	private final StringBuilder sb = new StringBuilder();
 
-	// Four levels of indentation are supported. Deeper structures should not be used anyway.
-	//private final static String[] indentStrings = {"\n", "\n\t", "\n\t\t", "\n\t\t\t", "\n\t\t\t\t"};
+	private final static String TS = "    ";
+
+	// Five levels of indentation are supported. Deeper structures should not be used anyway.
 	private final static String[] INDENT_STRINGS = {
 		"\n",
-		"\n    ",
-		"\n        ",
-		"\n            ",
-		"\n                ",
-		"\n                    "
+		"\n" + TS,
+		"\n" + TS + TS,
+		"\n" + TS + TS + TS,
+		"\n" + TS + TS + TS + TS,
+		"\n" + TS + TS + TS + TS + TS
 	};
 
 	public SnippetRenderer(ACESnippet snippet) {

@@ -31,10 +31,10 @@ import org.apache.log4j.Logger;
 import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLLogicalAxiom;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
@@ -56,11 +56,11 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	private final SortedMap<OWLEntity, Set<ACESnippet>> entityToSnippets = new TreeMap<OWLEntity, Set<ACESnippet>>(new EntityComparator());
 
 	// Maps every OWL axiom to a set of ACE snippets that correspond to the axiom.
-	private final Multimap<OWLLogicalAxiom, ACESnippet> axiomToSnippets = Multimaps.newHashMultimap();
+	private final Multimap<OWLLogicalAxiom, ACESnippet> axiomToSnippets = HashMultimap.create();
 
 	// Maps every ACE sentence to a set of snippets that contain the sentence.
 	// Note that an ACE text is a set of snippets but some additions/removals operate with sentences.
-	private final Multimap<ACESentence, ACESnippet> sentenceToSnippets = Multimaps.newHashMultimap();
+	private final Multimap<ACESentence, ACESnippet> sentenceToSnippets = HashMultimap.create();
 
 	private final Map<ACESnippet, ACEAnswer> questionToAnswer = Maps.newHashMap();
 

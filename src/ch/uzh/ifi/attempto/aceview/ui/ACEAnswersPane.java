@@ -292,7 +292,7 @@ public class ACEAnswersPane extends JTextPane {
 			int ret = new UIHelper(ws.getOWLEditorKit()).showDialog(LABEL_DECLARE_COMPLETE, comp, JOptionPane.OK_CANCEL_OPTION);
 			if (ret == JOptionPane.OK_OPTION) {
 				buttonCompleter.setEnabled(false);
-				ACETextManager.add(snippet);
+				ACETextManager.addSnippet(snippet);
 				removeButton(buttonCompleter);
 				return true;
 			}

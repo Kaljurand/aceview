@@ -87,11 +87,13 @@ public class ComponentFactory {
 	}
 
 
-	public static JPanel makeSnippetDialogPanel(String message, String snippetRendering) {
+	public static JPanel makeSnippetDialogPanel(String message, String content) {
 		JTextArea ta = makeSmallTextArea();
-		ta.setText(snippetRendering);
+		ta.setText(content);
+		JLabel label = new JLabel("<html><i>" + message + "</i></html>");
+		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(new JLabel(message), BorderLayout.NORTH);
+		panel.add(label, BorderLayout.NORTH);
 		panel.add(new JScrollPane(ta), BorderLayout.CENTER);
 		return panel;
 	}

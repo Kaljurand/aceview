@@ -23,9 +23,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.semanticweb.owl.model.OWLEntity;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
@@ -37,7 +37,7 @@ public class OwlApiACELexicon implements ACELexicon<OWLEntity> {
 
 	private static final Logger logger = Logger.getLogger(OwlApiACELexicon.class);
 
-	private final Multimap<String, OWLEntity> wordformToEntities = Multimaps.newHashMultimap();
+	private final Multimap<String, OWLEntity> wordformToEntities = HashMultimap.create();
 	private final Map<OWLEntity, ACELexiconEntry> entityToEntry = Maps.newHashMap();
 
 	private final Autocompleter ac;

@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -36,12 +36,12 @@ import org.semanticweb.owl.model.OWLOntologyManager;
 import org.semanticweb.owl.model.OWLSubClassAxiom;
 import org.semanticweb.owl.model.SWRLRule;
 
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
@@ -74,7 +74,7 @@ public class ACESnippetImpl implements ACESnippet {
 	private final String altRendering;
 	private final SnippetDate timestamp;
 	private final List<Message> messages = Lists.newArrayList();
-	private final Multimap<Integer, Integer> pinpointers = Multimaps.newHashMultimap();
+	private final Multimap<Integer, Integer> pinpointers = HashMultimap.create();
 
 	// BUG: make everything final
 	private ImmutableSet<OWLLogicalAxiom> axiomSet = ImmutableSet.of();
@@ -84,6 +84,7 @@ public class ACESnippetImpl implements ACESnippet {
 	private int errorMessagesCount = 0;
 	private int owlErrorMessagesCount = 0;
 
+	private final Joiner joiner = Joiner.on(" ");
 
 	/**
 	 * <p>Constructs an ACE snippet from a list of ACE sentences.</p>
@@ -335,7 +336,7 @@ public class ACESnippetImpl implements ACESnippet {
 			// which we convert into a single space.
 			return "/* MOS: " + altRendering.replaceAll("[ \t\n\f\b\r]+", " ") + " */";
 		}
-		return Join.join(" ", sentences);
+		return joiner.join(sentences);
 	}
 
 

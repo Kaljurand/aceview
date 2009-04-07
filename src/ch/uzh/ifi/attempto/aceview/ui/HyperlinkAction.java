@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.Action;
 
-import org.jdesktop.swingx.hyperlink.LinkAction;
+import org.jdesktop.swingx.hyperlink.AbstractHyperlinkAction;
 import org.protege.editor.owl.model.OWLWorkspace;
 import org.semanticweb.owl.io.OWLRendererException;
 import org.semanticweb.owl.model.OWLEntity;
@@ -20,7 +20,7 @@ import ch.uzh.ifi.attempto.aceview.ACETextManager;
  * @author Kaarel Kaljurand
  *
  */
-public class HyperlinkAction extends LinkAction {
+public class HyperlinkAction extends AbstractHyperlinkAction {
 
 	private final OWLWorkspace ws;
 	private final OWLLogicalAxiom axiom;

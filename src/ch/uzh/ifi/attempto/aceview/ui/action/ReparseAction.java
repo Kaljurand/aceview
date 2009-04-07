@@ -61,7 +61,7 @@ public class ReparseAction extends ProtegeOWLAction {
 			for (Map.Entry<ACESnippet, Integer> entry : axiomlessSnippets.entrySet()) {
 				ACESnippet oldSnippet = entry.getKey();
 				logger.info("Reparsing: " + oldSnippet);
-				ACETextManager.update(entry.getValue(), oldSnippet, oldSnippet.getSentences());
+				ACETextManager.updateSnippet(entry.getValue(), oldSnippet, oldSnippet.getSentences());
 			}
 			int counterFailedBefore = axiomlessSnippets.size();
 			int counterFailedAgain = acetext.getAxiomlessSnippets().size();
