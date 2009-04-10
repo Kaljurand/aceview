@@ -32,6 +32,7 @@ import org.protege.editor.owl.model.find.EntityFinder;
 import org.protege.editor.owl.model.parser.ParserUtil;
 import org.protege.editor.owl.model.parser.ProtegeOWLEntityChecker;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
+import org.semanticweb.owl.apibinding.OWLManager;
 import org.semanticweb.owl.expression.ParserException;
 import org.semanticweb.owl.io.OWLRendererException;
 import org.semanticweb.owl.model.OWLAnnotation;
@@ -325,6 +326,17 @@ public final class ACETextManager {
 		} catch (OWLOntologyChangeException e) {
 			return null; // Cannot happen
 		}
+	}
+
+
+	/**
+	 * <p>Creates a new OWL ontology manager, but uses an existing
+	 * OWL data factory.</p>
+	 * 
+	 * @return OWL ontology manager
+	 */
+	public static OWLOntologyManager createOWLOntologyManager() {
+		return OWLManager.createOWLOntologyManager(owlModelManager.getOWLDataFactory());
 	}
 
 

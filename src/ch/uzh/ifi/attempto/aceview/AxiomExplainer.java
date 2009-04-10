@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owl.apibinding.OWLManager;
 import org.semanticweb.owl.model.OWLAxiom;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLEntity;
@@ -192,7 +191,7 @@ public class AxiomExplainer {
 		OWLDescription desc = satCon.convert(axiom);
 
 		// Sets up the BlackBoxExplanation
-		BlackBoxExplanation exp = new BlackBoxExplanation(OWLManager.createOWLOntologyManager());
+		BlackBoxExplanation exp = new BlackBoxExplanation(ACETextManager.createOWLOntologyManager());
 		exp.setOntology(modelManager.getActiveOntology());
 		exp.setReasoner(modelManager.getReasoner());
 		exp.setReasonerFactory(modelManager.getOWLReasonerManager().getCurrentReasonerFactory());

@@ -266,7 +266,7 @@ public class ACEPreferencesPanel extends OWLPreferencesPanel {
 
 		Box boxUpdateAnswersOnClassify = new Box(BoxLayout.X_AXIS);
 		boxUpdateAnswersOnClassify.add(checkboxUpdateAnswersOnClassify);
-		boxUpdateAnswersOnClassify.add(new JLabel("Automatically update answers when classifying"));
+		boxUpdateAnswersOnClassify.add(new JLabel("Automatically update answers after classifying"));
 
 
 
