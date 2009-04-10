@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 import org.coode.owlapi.owlxml.renderer.OWLXMLRenderer;
-import org.semanticweb.owl.apibinding.OWLManager;
 import org.semanticweb.owl.io.OWLRendererException;
 import org.semanticweb.owl.model.OWLAxiom;
 import org.semanticweb.owl.model.OWLClass;
@@ -92,8 +91,9 @@ public class AxiomVerbalizer {
 		}
 
 		logger.info("Verbalizing the axiom using WS");
+		OWLDataFactory df = ACETextManager.getOWLModelManager().getOWLDataFactory();
 		try {
-			verbalization = verbalizeWithWS(ns, axiom);
+			verbalization = verbalizeWithWS(ns, axiom, df);
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "OWL verbalizer error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -145,16 +145,15 @@ public class AxiomVerbalizer {
 	 * @throws OWLOntologyChangeException 
 	 * @throws OWLOntologyCreationException 
 	 */
-	private String verbalizeWithWS(URI uri, OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	private String verbalizeWithWS(URI uri, OWLLogicalAxiom axiom, OWLDataFactory df) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		Set<OWLAxiom> allAxioms = Sets.newHashSet((OWLAxiom) axiom);
 
-		OWLDataFactory df = ACETextManager.getOWLModelManager().getOWLDataFactory();
 		for (OWLEntity entity : axiom.getReferencedEntities()) {
 			Set<OWLEntityAnnotationAxiom> annotationAxioms = MorphAnnotation.getMorphAnnotationsFromLexicon(df, lexicon, entity);
 			allAxioms.addAll(annotationAxioms);
 		}
 
-		OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
+		OWLOntologyManager ontologyManager = ACETextManager.createOWLOntologyManager();
 		OWLOntology ontology = ontologyManager.createOntology(allAxioms, uri);
 		return verbalizeOntology(ontologyManager, ontology);
 	}

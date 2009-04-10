@@ -24,7 +24,6 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.description.OWLExpressionParserException;
-import org.semanticweb.owl.apibinding.OWLManager;
 import org.semanticweb.owl.io.StringInputSource;
 import org.semanticweb.owl.model.OWLAxiom;
 import org.semanticweb.owl.model.OWLDescription;
@@ -58,7 +57,7 @@ import ch.uzh.ifi.attempto.ape.OutputType;
 import ch.uzh.ifi.attempto.ape.ACEParserResult;
 
 /**
- * <p>Every snippet is mapped to OWL/SWRL already in the constructor.
+ * <p>Every snippet is mapped to OWL/SWRL during construction time.
  * The corresponding OWL/SWRL axiom can be given as an argument in the
  * constructor (this is used by the verbalizer).</p>
  * 
@@ -293,7 +292,7 @@ public class ACESnippetImpl implements ACESnippet {
 				}
 				// TODO: BUG: creating a new ontology manager just to parse a snippet
 				// might be bad for performance
-				OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+				OWLOntologyManager manager = ACETextManager.createOWLOntologyManager();
 				// BUG: we should copy the axioms and then throw away the created ontology
 				axiomSet = ImmutableSet.copyOf(manager.loadOntology(new StringInputSource(owlxml)).getLogicalAxioms());
 			}

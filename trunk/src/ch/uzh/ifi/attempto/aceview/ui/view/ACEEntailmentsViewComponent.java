@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import javax.swing.JScrollPane;
 
 import org.apache.log4j.Logger;
+import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.semanticweb.owl.apibinding.OWLManager;
 import org.semanticweb.owl.inference.OWLReasoner;
 import org.semanticweb.owl.inference.OWLReasonerException;
 import org.semanticweb.owl.io.OWLRendererException;
@@ -194,7 +194,8 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 	 */
 	private void getInferredSentences() throws OWLOntologyCreationException, InferredAxiomGeneratorException, OWLOntologyChangeException, OWLReasonerException, OWLRendererException {
 
-		OWLReasoner reasoner = getOWLModelManager().getReasoner();
+		OWLModelManager mm = getOWLModelManager();
+		OWLReasoner reasoner = mm.getReasoner();
 
 		if (reasoner.getLoadedOntologies().isEmpty()) {
 			return;
@@ -222,7 +223,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 
 		// Uses the inferred ontology generator to fill the new ontology.
 		logger.info("fillOntology...");
-		OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
+		OWLOntologyManager ontologyManager = ACETextManager.createOWLOntologyManager();
 		// Creates a new ontology.
 		OWLOntology inferredOnt = ACETextManager.createOntology(ontologyManager);
 		ontGen.fillOntology(ontologyManager, inferredOnt);
@@ -236,7 +237,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 		ACELexicon<OWLEntity> lexicon = ACETextManager.getActiveACELexicon();
 		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(new VerbalizerWebservice(prefs.getOwlToAce()), lexicon);
 
-		OWLOntology activeOntology = getOWLModelManager().getActiveOntology();
+		OWLOntology activeOntology = mm.getActiveOntology();
 
 		for (OWLLogicalAxiom ax : inferredOnt.getLogicalAxioms()) {
 
