@@ -11,6 +11,26 @@ in order to create, view and edit OWL 2 ontologies and SWRL rulesets.
 For more information, see:
 <a href="http://attempto.ifi.uzh.ch/aceview/">http://attempto.ifi.uzh.ch/aceview/</a>.</p>
 
+<p>Version 1.2.19 (Protege 4.0.110 (r13753, OWL API 2.2.1.1090)).
+Release date: 2009-04-15</p>
+
+<ul>
+	<li>IMPROVED: Snippet-table tooltips</li>
+	<li>IMPROVED: "Declare complete" dialog</li>
+	<li>FIXED: Snippet table filtering was based on regexp matching which meant that
+	if you clicked on `work-for' then "John works-for Mary." was not shown in the
+	filtering mode. Now filtering is based on whether the snippet references
+	an entity or not.</li>
+	<li>FIXED: Problems with hiding and reordering table columns</li>
+	<li>FIXED: Added <em>equals</em> and <em>hashCode</em> to <em>ACESnippetImpl</em>.
+	This fixed a regression in the entailment tracking, and
+	probably several other regressions as well.</li>
+	<li>UPDATED: google-collect</li>
+	<li>UPDATED: swingx</li>
+</ul>
+
+
+
 <p>Version 1.2.18 (Protege 4.0.109+ (r13523, OWL API 2.2.1.1070)).
 Release date: 2009-03-26</p>
 
