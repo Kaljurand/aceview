@@ -62,6 +62,7 @@ import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.model.EntailmentsTableModel;
 import ch.uzh.ifi.attempto.aceview.ui.ACETable;
 import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 
@@ -224,8 +225,8 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 		// Uses the inferred ontology generator to fill the new ontology.
 		logger.info("fillOntology...");
 		OWLOntologyManager ontologyManager = ACETextManager.createOWLOntologyManager();
-		// Creates a new ontology.
-		OWLOntology inferredOnt = ACETextManager.createOntology(ontologyManager);
+		// Creates a new empty ontology.
+		OWLOntology inferredOnt = OntologyUtils.createOntology(ontologyManager);
 		ontGen.fillOntology(ontologyManager, inferredOnt);
 		logger.info("Done.");
 

@@ -28,7 +28,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.ape.Gender;
 import ch.uzh.ifi.attempto.ape.Lexicon;
 import ch.uzh.ifi.attempto.ape.LexiconEntry;
@@ -74,7 +73,7 @@ public class OwlApiACELexicon implements ACELexicon<OWLEntity> {
 		ACELexiconEntry entry = getEntry(entity);
 
 		if (entry == null) {
-			switch (ACETextManager.getLexiconEntryType(entity)) {
+			switch (LexiconUtils.getLexiconEntryType(entity)) {
 			case CN:
 				entry = new NounEntry(); cnCount++; break;
 			case TV:
@@ -130,7 +129,7 @@ public class OwlApiACELexicon implements ACELexicon<OWLEntity> {
 			// back into the lexicon, and we put it back into the wordform2entries map.
 			if (entry.isEmpty()) {
 				logger.info("No entries left");
-				switch (ACETextManager.getLexiconEntryType(entity)) {
+				switch (LexiconUtils.getLexiconEntryType(entity)) {
 				case CN:
 					cnCount--; break;
 				case TV:

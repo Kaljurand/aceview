@@ -18,35 +18,26 @@ package ch.uzh.ifi.attempto.aceview;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.coode.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser;
 import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.description.OWLExpressionParserException;
 import org.protege.editor.owl.model.find.EntityFinder;
-import org.protege.editor.owl.model.parser.ParserUtil;
-import org.protege.editor.owl.model.parser.ProtegeOWLEntityChecker;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
 import org.semanticweb.owl.apibinding.OWLManager;
-import org.semanticweb.owl.expression.ParserException;
 import org.semanticweb.owl.io.OWLRendererException;
 import org.semanticweb.owl.model.OWLAnnotation;
 import org.semanticweb.owl.model.OWLAnnotationAxiom;
 import org.semanticweb.owl.model.OWLAxiom;
 import org.semanticweb.owl.model.OWLAxiomAnnotationAxiom;
 import org.semanticweb.owl.model.OWLAxiomChange;
-import org.semanticweb.owl.model.OWLClass;
 import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDataProperty;
 import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLIndividual;
 import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLObjectProperty;
 import org.semanticweb.owl.model.OWLOntology;
 import org.semanticweb.owl.model.OWLOntologyChangeException;
 import org.semanticweb.owl.model.OWLOntologyCreationException;
@@ -55,7 +46,6 @@ import org.semanticweb.owl.model.OWLOntologyManager;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
@@ -66,6 +56,7 @@ import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
 import ch.uzh.ifi.attempto.aceview.model.event.SnippetEventType;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 
 /**
@@ -186,6 +177,13 @@ public final class ACETextManager {
 	}
 
 
+	/**
+	 * <p>Removes the given snippet from the active ACE text, and
+	 * removes the axioms of the snippet from the ontology that corresponds
+	 * to the ACE text.</p>
+	 * 
+	 * @param snippet ACE snippet
+	 */
 	public static void removeSnippet(ACESnippet snippet) {
 		Set<OWLLogicalAxiom> removedAxioms = getActiveACEText().remove(snippet);
 		changeOntology(getRemoveChanges(owlModelManager.getActiveOntology(), removedAxioms));
@@ -198,8 +196,6 @@ public final class ACETextManager {
 	 * by first removing the snippet,
 	 * then creating a new snippet out of the set of given sentences, and then
 	 * adding the new snippet to the text and setting it as the selected snippet.</p>
-	 * 
-	 * TODO: require the ACE text to be passed as an argument
 	 * 
 	 * @param index Index of the snippet in the ACE text
 	 * @param snippet Snippet to be updated (i.e replaced)
@@ -223,6 +219,13 @@ public final class ACETextManager {
 	}
 
 
+	/**
+	 * <p>Adds a collection of ACE sentences and removes another collection
+	 * of ACE sentences to/from the active ACE text.</p>
+	 * 
+	 * @param addedSentences Collection of ACE sentences
+	 * @param removedSentences Collection of ACE sentences
+	 */
 	public static void addAndRemoveSentences(Collection<ACESentence> addedSentences, Collection<ACESentence> removedSentences) {
 		ACEText<OWLEntity, OWLLogicalAxiom> activeAceText = getActiveACEText();
 		List<OWLAxiomChange> changes = Lists.newArrayList();
@@ -281,51 +284,13 @@ public final class ACETextManager {
 	}
 
 
+	// TODO: This is called only from ACEViewTab
 	public static void addAxiomsToOntology(OWLOntologyManager ontologyManager, OWLOntology ontology, Set<? extends OWLAxiom> axioms) {
 		List<AddAxiomByACEView> changes = Lists.newArrayList();
 		for (OWLAxiom ax : axioms) {
 			changes.add(new AddAxiomByACEView(ontology, ax));
 		}
-		changeOntology(ontologyManager, changes);
-	}
-
-
-	/**
-	 * TODO: We currently catch the change exception here.
-	 * Find out what can the exception actually inform us about,
-	 * and how can we recover from that. Otherwise we could
-	 * also raise a runtime exception here.
-	 * 
-	 * @param owlOntologyManager
-	 * @param changes
-	 */
-	public static void changeOntology(OWLOntologyManager owlOntologyManager, List<? extends OWLAxiomChange> changes) {
-		try {
-			owlOntologyManager.applyChanges(changes);
-		} catch (OWLOntologyChangeException e) {
-			e.printStackTrace();
-		}
-	}
-
-
-	/**
-	 * <p>Creates a new ontology with a dummy URI.</p>
-	 * 
-	 * TODO: OWL-API can currently invent URIs but requires
-	 * the set of initial axioms to be provided.
-	 * The interface specifies OWLOntologyChangeException which cannot happen
-	 * in case of empty set of axioms, but which we need to catch anyway.
-	 * 
-	 * @param ontologyManager OWL ontology manager
-	 * @return OWL ontology
-	 * @throws OWLOntologyCreationException
-	 */
-	public static OWLOntology createOntology(OWLOntologyManager ontologyManager) throws OWLOntologyCreationException {
-		try {
-			return ontologyManager.createOntology(Collections.<OWLAxiom>emptySet());
-		} catch (OWLOntologyChangeException e) {
-			return null; // Cannot happen
-		}
+		OntologyUtils.changeOntology(ontologyManager, changes);
 	}
 
 
@@ -398,49 +363,15 @@ public final class ACETextManager {
 	}
 
 
-	public static EntryType getLexiconEntryType(OWLEntity entity) {
-		if (entity instanceof OWLClass) {
-			return EntryType.CN;
-		}
-		else if (entity instanceof OWLObjectProperty || entity instanceof OWLDataProperty) {
-			return EntryType.TV;
-		}
-		else if (entity instanceof OWLIndividual) {
-			return EntryType.PN;
-		}
-		// BUG: throw an exception instead
-		return EntryType.CN;
-	}
-
-
 	/**
-	 * <p>Returns an identifier that is constructed from the lexicon type and
-	 * the name of the entity.
-	 * This identifier makes a difference between punned entities.
-	 * It is intended for the a-element in the HTML views
-	 * where entities are used as links.</p>
-	 * 
-	 * TODO: instead of lexicon entry type, use the entity type (class, object property, ...)
-	 * TODO: instead of toString() use getURI() to get a true identifier
-	 * 
-	 * @param entity
-	 * @return Identifier constructed from the entity type and entity name
+	 * <p>Creates an ACE snippet from the given OWL axioms,
+	 * and selects the created snippet.</p>
+	 *
+	 * @param axiom OWL axiom
+	 * @throws OWLRendererException
+	 * @throws OWLOntologyCreationException
+	 * @throws OWLOntologyChangeException
 	 */
-	public static String getHrefId(OWLEntity entity) {
-		EntryType type = ACETextManager.getLexiconEntryType(entity);
-		return type + ":" + entity.toString();
-	}
-
-
-	public static Set<URI> getAnnotationURIs(OWLOntology ontology, OWLEntity entity) {
-		Set<URI> annotationURIs = Sets.newHashSet();
-		for (OWLAnnotation annotation : entity.getAnnotations(ontology)) {
-			annotationURIs.add(annotation.getAnnotationURI());
-		}
-		return annotationURIs;
-	}
-
-
 	public static void setSelectedSnippet(OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		ACESnippet snippet = makeSnippetFromAxiom(axiom);
 		setSelectedSnippet(snippet);
@@ -465,6 +396,7 @@ public final class ACETextManager {
 	public static ACESnippet getSelectedSnippet() {
 		return selectedSnippet;
 	}
+
 
 	public static void setWhySnippet(ACESnippet snippet) {
 		whySnippet = snippet;
@@ -499,7 +431,7 @@ public final class ACETextManager {
 
 
 	/**
-	 * <p>Converts the given OWL logical axiom into the corresponding ACE snippet.</p>
+	 * <p>Converts the given OWL logical axiom into its corresponding ACE snippet.</p>
 	 *  
 	 * TODO: We should not necessarily set the namespace to be equivalent to the
 	 * active ontology namespace.
@@ -524,8 +456,7 @@ public final class ACETextManager {
 
 	public static void processTanglingAxioms(ACEText<OWLEntity, OWLLogicalAxiom> acetext, Set<OWLLogicalAxiom> tanglingAxioms) {		
 		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer(acetext.getACELexicon());
-		OWLModelManager mm = getOWLModelManager();
-		OWLOntology ont = mm.getActiveOntology();
+		OWLOntology ont = getOWLModelManager().getActiveOntology();
 
 		for (OWLLogicalAxiom newAxiom : tanglingAxioms) {
 			logger.info("Adding back: " + newAxiom);
@@ -608,9 +539,9 @@ public final class ACETextManager {
 	public static OWLLogicalAxiom parseWithMos(ACESentence sentence) throws OWLExpressionParserException {
 		// Remove the last token (a dot or a question mark) of the given sentence.
 		String mosStr = sentence.toMOSString();
-
 		logger.info("Parsing with the MOS parser: " + mosStr);
-		return parseWithManchesterSyntaxParser(mosStr);
+		URI uri = getOWLModelManager().getActiveOntology().getURI();
+		return OntologyUtils.parseWithManchesterSyntaxParser(getOWLModelManager(), uri, mosStr);
 	}
 
 
@@ -630,7 +561,7 @@ public final class ACETextManager {
 
 
 	private static void changeOntology(List<? extends OWLAxiomChange> changes) {
-		changeOntology(owlModelManager.getOWLOntologyManager(), changes);
+		OntologyUtils.changeOntology(owlModelManager.getOWLOntologyManager(), changes);
 	}
 
 
@@ -654,14 +585,6 @@ public final class ACETextManager {
 			}
 		}
 		return changes;
-	}
-
-
-	private static OWLAxiomAnnotationAxiom createAxiomAnnotation(OWLAxiom logicalAxiom, URI uri, String str) {
-		OWLAnnotation ann = null;
-		OWLDataFactory df = owlModelManager.getOWLDataFactory();
-		ann = df.getOWLConstantAnnotation(uri, df.getOWLUntypedConstant(str));
-		return df.getOWLAxiomAnnotationAxiom(logicalAxiom, ann);
 	}
 
 
@@ -690,45 +613,6 @@ public final class ACETextManager {
 
 
 	/**
-	 * <p>Parses a <code>String</code> with the Manchester OWL Syntax parser and
-	 * returns the corresponding <code>OWLAxiom</code> or throws an exception if
-	 * parsing failed. The <code>String</code> is assumed to correspond to an OWL axiom,
-	 * i.e. we use only the following methods to obtain the result.</p>
-	 * 
-	 * <ul>
-	 * <li>parsePropertyChainSubPropertyAxiom()</li>
-	 * <li>parseClassAxiom()</li>
-	 * <li>parseObjectPropertyAxiom()</li>
-	 * </ul>
-	 * 
-	 * TODO: add support for parsePropertyChainSubPropertyAxiom and parseObjectPropertyAxiom
-	 * (tried but did not work).
-	 * 
-	 * TODO: pass URI as an argument
-	 * 
-	 * @param str String that possibly represents an OWL axiom in Manchester OWL Syntax
-	 * @return <code>OWLAxiom</code> that corresponds to the given string.
-	 * @throws OWLExpressionParserException 
-	 */
-	private static OWLLogicalAxiom parseWithManchesterSyntaxParser(String str) throws OWLExpressionParserException {
-		OWLModelManager mngr = getOWLModelManager();
-		ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(mngr.getOWLDataFactory(), str);
-		parser.setOWLEntityChecker(new ProtegeOWLEntityChecker(mngr));
-		parser.setBase(mngr.getActiveOntology().getURI().toString());
-		try {
-			OWLAxiom axiom = parser.parseClassAxiom();
-			if (axiom instanceof OWLLogicalAxiom) {
-				return (OWLLogicalAxiom) axiom;
-			}
-			return null;
-		}
-		catch (ParserException e) {
-			throw ParserUtil.convertException(e);
-		}
-	}
-
-
-	/**
 	 * TODO: Currently we can only store the text and timestamp of the snippet
 	 * if the snippet corresponds to a single axiom. Would be nice if a group of
 	 * axioms could be annotated as well.
@@ -746,9 +630,10 @@ public final class ACETextManager {
 
 		// In case the snippet has only one axiom, then we annotate it as well
 		if (snippetAxioms.size() == 1) {
+			OWLDataFactory df = owlModelManager.getOWLDataFactory();
 			OWLLogicalAxiom axiom = snippetAxioms.iterator().next();
-			OWLAxiomAnnotationAxiom annAcetext = createAxiomAnnotation(axiom, acetextURI, snippet.toString());
-			OWLAxiomAnnotationAxiom annTimestamp = createAxiomAnnotation(axiom, timestampURI, snippet.getTimestamp().toString());
+			OWLAxiomAnnotationAxiom annAcetext = OntologyUtils.createAxiomAnnotation(df, axiom, acetextURI, snippet.toString());
+			OWLAxiomAnnotationAxiom annTimestamp = OntologyUtils.createAxiomAnnotation(df, axiom, timestampURI, snippet.getTimestamp().toString());
 			changes.add(new AddAxiomByACEView(ontology, annAcetext));
 			changes.add(new AddAxiomByACEView(ontology, annTimestamp));
 		}
@@ -776,8 +661,9 @@ public final class ACETextManager {
 		}
 		if (snippet != null) {
 			acetext.add(snippet);
-			OWLAxiomAnnotationAxiom annAcetext = createAxiomAnnotation(axiom, acetextURI, snippet.toString());
-			OWLAxiomAnnotationAxiom annTimestamp = createAxiomAnnotation(axiom, timestampURI, snippet.getTimestamp().toString());
+			OWLDataFactory df = owlModelManager.getOWLDataFactory();
+			OWLAxiomAnnotationAxiom annAcetext = OntologyUtils.createAxiomAnnotation(df, axiom, acetextURI, snippet.toString());
+			OWLAxiomAnnotationAxiom annTimestamp = OntologyUtils.createAxiomAnnotation(df, axiom, timestampURI, snippet.getTimestamp().toString());
 			List<OWLAxiomChange> changes = Lists.newArrayList();
 			changes.add(new AddAxiomByACEView(ont, annAcetext));
 			changes.add(new AddAxiomByACEView(ont, annTimestamp));

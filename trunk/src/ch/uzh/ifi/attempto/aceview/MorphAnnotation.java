@@ -36,6 +36,7 @@ import ch.uzh.ifi.attempto.ace.ACEVerb;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 
@@ -46,7 +47,7 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  * In the future they will be applied different ACE categories.</p>
  * 
  * <p>Note that the built-in entities <code>owl:Thing</code>, <code>owl:Nothing</code>,
- * are not linguistically annotated, see {@link ACETextManager#isShow(OWLEntity)}.</p>
+ * are not linguistically annotated, see {@link Showing#isShow(OWLEntity)}.</p>
  * 
  * @see <a href="http://www.csd.abdn.ac.uk/~agatt/home/links.html">Albert Gatt's Lexicon Generation API</a>
  * 
@@ -78,7 +79,7 @@ public class MorphAnnotation {
 		}
 
 		// Existing annotation URIs for the entity.
-		Set<URI> annotationURIs = ACETextManager.getAnnotationURIs(ontology, entity);
+		Set<URI> annotationURIs = OntologyUtils.getAnnotationURIs(ontology, entity);
 
 		if (entity instanceof OWLClass) {
 

@@ -48,6 +48,7 @@ import ch.uzh.ifi.attempto.ace.ACESentenceSplitter;
 import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.util.SnippetDate;
 import ch.uzh.ifi.attempto.ape.ACEParser;
 import ch.uzh.ifi.attempto.ape.Lexicon;
@@ -385,7 +386,7 @@ public class ACESnippetImpl implements ACESnippet {
 						// TODO: BUG: in case a wordform maps to multiple different entities then
 						// we just take the first. This shouldn't occur often though.
 						OWLEntity firstEntity = entitySet.iterator().next();
-						EntryType type = ACETextManager.getLexiconEntryType(firstEntity);
+						EntryType type = LexiconUtils.getLexiconEntryType(firstEntity);
 						span += "<a href='#" + type + ":" + firstEntity.toString() + "'>" + token + "</a>";
 					}
 				}

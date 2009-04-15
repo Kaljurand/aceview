@@ -17,6 +17,7 @@ import org.semanticweb.owl.model.OWLObject;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.WordsHyperlinkListener;
+import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
@@ -137,7 +138,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 		entitiesSorted.addAll(entities);
 
 		StringBuilder html = new StringBuilder();
-		char previousFirstChar = ' '; // No word can contain a space (as the first character)
+		char previousFirstChar = ' '; // No word can contain a space as the first character
 		for (OWLEntity entity : entitiesSorted) {
 			if (! Showing.isShow(entity)) {
 				continue;
@@ -153,7 +154,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 			else {
 				html.append(", ");
 			}
-			String hrefId = ACETextManager.getHrefId(entity);
+			String hrefId = LexiconUtils.getHrefId(entity);
 			html.append("<a name='");
 			html.append(hrefId);
 			html.append("'></a><a href='#");

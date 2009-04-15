@@ -113,7 +113,7 @@ public class Autocompleter {
 
 
 	/**
-	 * @see The documentation of {@link #getCandidates(String, int)}
+	 * @see The documentation of {@link #getCandidates(String,int)}
 	 */
 	public ImmutableSortedSet<String> getCandidates(String prefix) {
 		return getCandidates(prefix, -1);

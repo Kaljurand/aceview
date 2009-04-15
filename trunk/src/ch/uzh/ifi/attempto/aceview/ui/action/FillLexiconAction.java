@@ -52,6 +52,7 @@ import com.google.common.collect.Lists;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.MorphAnnotation;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
 /**
  * <p>Creates ACE Lexicon annotations (sg, pl, vbg) for all entities in
@@ -102,7 +103,7 @@ public class FillLexiconAction extends ProtegeOWLAction {
 			}
 		}
 
-		ACETextManager.changeOntology(ontologyManager, additions);
+		OntologyUtils.changeOntology(ontologyManager, additions);
 
 		ACETextManager.fireEvent(EventType.ACELEXICON_CHANGED);
 		String message = "Checked " + entityCounter + " entities in " + ontologyCounter + " active ontologies.";
