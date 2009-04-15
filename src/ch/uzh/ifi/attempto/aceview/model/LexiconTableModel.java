@@ -40,6 +40,7 @@ import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
 
 /**
@@ -226,7 +227,7 @@ public class LexiconTableModel extends AbstractTableModel {
 					changes.add(new AddAxiomByACEView(ont, newAnnot));
 				}
 
-				ACETextManager.changeOntology(mm.getOWLOntologyManager(), changes);
+				OntologyUtils.changeOntology(mm.getOWLOntologyManager(), changes);
 				fireTableCellUpdated(row, column);
 			}
 		}

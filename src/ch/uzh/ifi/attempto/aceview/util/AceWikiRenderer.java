@@ -32,9 +32,9 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
-import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
+import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 
 /**
  * <p>Saves the given ACE text in AceWiki internal format. Each OWL entity gets a
@@ -230,7 +230,7 @@ public class AceWikiRenderer {
 	private String getAceWikiEntry(OWLEntity entity, ACELexiconEntry lexiconEntry, Set<ACESnippet> snippets) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("type:");
-		sb.append(ACETextManager.getLexiconEntryType(entity).toAceWikiType());
+		sb.append(LexiconUtils.getLexiconEntryType(entity).toAceWikiType());
 		sb.append('\n');
 		sb.append("words:");
 		sb.append(lexiconEntry.toAceWikiFormat());

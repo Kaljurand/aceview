@@ -56,6 +56,7 @@ import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.IncompatibleMorphTagException;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
 /**
  * <p>The ACE View tab monitors several Protege events and generates
@@ -126,7 +127,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			List<OWLAxiomChange> changeList2 = addMorfAnnotations(mm.getOWLDataFactory(), ont, entity, entityRendering);
 			changeList1.addAll(changeList2);
 
-			ACETextManager.changeOntology(ontologyManager, changeList1);
+			OntologyUtils.changeOntology(ontologyManager, changeList1);
 		}
 	};
 
@@ -193,7 +194,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 					changes.add(new AddAxiomByACEView(ont, ax));
 				}
 			}
-			ACETextManager.changeOntology(ontologyManager, changes);
+			OntologyUtils.changeOntology(ontologyManager, changes);
 
 
 			// Translate every OWLEntityAnnotationAxiom into the corresponding lexicon entry.
@@ -491,7 +492,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				OWLObjectProperty p2 = iopa.getSecondProperty().asOWLObjectProperty();
 
 				// BUG: removes all, not just the vbg-annotations
-				ACETextManager.changeOntology(ontologyManager,
+				OntologyUtils.changeOntology(ontologyManager,
 						ACETextManager.getRemoveChanges(ont, p1.getAnnotationAxioms(ont)));
 				Set<OWLAxiom> set = Sets.newHashSet();
 				set.add(getVbg(df, p1, p2));
