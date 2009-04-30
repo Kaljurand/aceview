@@ -4,11 +4,6 @@
 	<!-- The location of the local copy of Protege 4 trunk. -->
 	<property name="protege" location="/Volumes/Extra/Users/kalju/mywork/protege4/trunk/"/>
 
-	<!-- The location of libjpl. Only needed if you plan to use APELocal,
-	i.e. if you do not rely on the APE webservice for the ACE->OWL/SWRL translation. -->
-	<property name="libjpl" location="/opt/local/lib/swipl-5.6.61/lib/powerpc-darwin8.11.0/libjpl.jnilib"/>
-	<property name="aceview.command" location="aceview.command"/>
-
 	<!-- The following properties you probably do not need to modify. -->
 
 	<!-- The name of the ACE View jar-file which this build-script will generate. -->
@@ -53,8 +48,6 @@
 	<target name="deploy" depends="jar" description="Copy the ACE View jar-file into the Protege plug-in directory.">
 		<echo>Copy: ${aceview_jar}</echo>
 		<copy file="${aceview_dist}/${aceview_jar}" todir="${protege_dist_plugins}"/>
-		<echo>Copy: ${aceview.command}</echo>
-		<copy file="${aceview.command}" todir="${protege_dist}/equinox/"/>
 	</target>
 
 

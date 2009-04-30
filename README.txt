@@ -1,7 +1,7 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2009-03-26
+Version: 2009-04-30
 
 == License ==
 
@@ -180,3 +180,7 @@ To check if it has the right svn property:
 
 $ svn propget svn:mime-type RELEASE_NOTES.html
 text/html
+
+== Protege and ACE View preferences ==
+
+Are stored in ~/Library/Preferences/ (on Mac OS X).
