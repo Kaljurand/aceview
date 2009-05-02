@@ -37,7 +37,7 @@ import ch.uzh.ifi.attempto.aceview.ACESnippet;
  * solution is not correct and complete. This kind of pretty-printing
  * is best done if the syntax tree is given as input.</p>
  * 
- * <p>TODO: Maybe glue apostrophes and commas to the preceding word (see toString()).</p>
+ * <p>TODO: Glue apostrophes and commas to the preceding word.</p>
  * 
  * @author Kaarel Kaljurand
  */

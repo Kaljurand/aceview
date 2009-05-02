@@ -21,6 +21,7 @@ public class ACESentenceTest {
 
 	String str1 = "Every cat is an [animal] whose address is \"Paris\"and no cat sees 12.";
 	String str2 = " Every  cat  is  an [ animal]  whose  address  is\"Paris\"and no cat sees 12 . ";
+	String str3 = "John's pet is a cat or knows Jonas' pet, and is an animal.";
 
 	String question = "Which countries does Switzerland border?";
 
@@ -56,6 +57,11 @@ public class ACESentenceTest {
 	@Test
 	public final void testToString2() {
 		assertEquals(new ACESentence(str1).toString(), new ACESentence(str2).toString());
+	}
+
+	@Test
+	public final void testToString3() {
+		assertEquals(new ACESentence(str3).toString(), str3);
 	}
 
 	@Test

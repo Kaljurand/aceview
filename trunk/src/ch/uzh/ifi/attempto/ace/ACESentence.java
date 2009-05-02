@@ -1,5 +1,6 @@
 package ch.uzh.ifi.attempto.ace;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ public class ACESentence {
 	private final ImmutableList<ACEToken> tokens;
 	private final Set<ACEToken> badChars = Sets.newHashSet();
 	private final List<ACEToken> contentWords = Lists.newArrayList();
+	private final String sentenceAsString;
 	private boolean isNothingbut = false;
 	private boolean isQuestion = false;
 
@@ -52,6 +54,7 @@ public class ACESentence {
 				contentWords.add(token);
 			}
 		}
+		this.sentenceAsString = createString(this.tokens);
 	}
 
 
@@ -73,28 +76,7 @@ public class ACESentence {
 	 */
 	@Override
 	public String toString() {
-		int lastIndex = size() - 1;
-
-		if (lastIndex == -1) {
-			return "";
-		}
-
-		StringBuilder sb = new StringBuilder();
-
-		ACEToken token = this.tokens.get(0);
-
-		for (int i = 0; i <= lastIndex; i++) {
-			sb.append(token);
-			if (i != lastIndex) {
-				ACEToken nextToken = this.tokens.get(i+1);
-				if (!token.isApos() && !nextToken.isSymbol()) {
-					sb.append(" ");
-				}
-				token = nextToken;
-			}
-		}
-
-		return sb.toString();
+		return sentenceAsString;
 	}
 
 
@@ -168,6 +150,42 @@ public class ACESentence {
 			sb.append(' ');
 			counter++;
 		}
+
+		return sb.toString();
+	}
+
+
+	/**
+	 * <p>Pretty-prints the ACE tokens so that the punctuation marks
+	 * are attached to the preceding tokens. The resulting
+	 * string is for example:</p>
+	 * 
+	 * <pre>
+	 * John's pet is a cat or knows Jonas' pet, and is an animal.
+	 * </pre>
+	 * 
+	 * @param tokens List of ACE tokens
+	 * @return Pretty-printed token list
+	 */
+	private static String createString(List<ACEToken> tokens) {
+		if (tokens.isEmpty()) {
+			return "";
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		Iterator<ACEToken> it = tokens.iterator();
+		ACEToken token = it.next();
+
+		while (it.hasNext()) {
+			sb.append(token);
+			ACEToken nextToken = it.next();
+			if (! (nextToken.isSymbol() || token.isApos() && nextToken.toString().equals("s"))) {
+				sb.append(' ');
+			}
+			token = nextToken;
+		}
+		sb.append(token);
 
 		return sb.toString();
 	}
