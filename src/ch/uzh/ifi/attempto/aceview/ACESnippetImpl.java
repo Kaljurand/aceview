@@ -86,6 +86,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 	private final Joiner joiner = Joiner.on(" ");
 
+
 	/**
 	 * <p>Constructs an ACE snippet from a list of ACE sentences.</p>
 	 * 
@@ -176,39 +177,6 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	/**
-	 * <p>Parses the text of the snippet with the Manchester OWL Syntax parser;
-	 * if this fails then parses with an ACE parser. In the later case,
-	 * also optionally paraphrases the snippet.</li>
-	 */
-	private void init() {
-		ACEPreferences prefs = ACEPreferences.getInstance();
-
-		// As possible MOS strings,
-		// we only accept snippets which contain exactly one sentence.
-		if (prefs.getUseMos() && sentences.size() == 1) {
-			OWLLogicalAxiom mosAxiom = null;
-			try {
-				mosAxiom = ACETextManager.parseWithMos(sentences.iterator().next());
-			} catch (OWLExpressionParserException e) {
-				// Note: we are silent about using ManchesterSyntaxParser, i.e.
-				// we do not return the syntax errors.
-			}
-			if (mosAxiom != null) {
-				axiomSet = ImmutableSet.of(mosAxiom);
-				return;
-			}
-		}
-
-
-		try {
-			parse(prefs);
-		} catch (OWLOntologyCreationException e) {
-			e.printStackTrace();
-		}
-	}
-
-
 	public Set<OWLLogicalAxiom> getLogicalAxioms() {
 		return axiomSet;
 	}
@@ -226,106 +194,6 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	private void parse(ACEPreferences prefs) throws OWLOntologyCreationException {
-		ACELexicon<OWLEntity> aceLexicon = ACETextManager.getActiveACELexicon();
-		Set<String> contentWordForms = getContentWordsAsStrings();
-
-		if (! prefs.getParseWithUndefinedTokens()) {
-			for (String contentWordForm : contentWordForms) {
-				if (! aceLexicon.containsWordform(contentWordForm)) {
-					messages.add(new Message("error", "token", null, null, contentWordForm, "Add this wordform to the lexicon"));
-				}
-			}
-		}
-
-		// In case there are no lexical entries for at least one token, and the preferences
-		// tell us not to parse in this case, then abort immediately.
-		if (messages.isEmpty()) {
-			parseWithAceParser(prefs, aceLexicon, contentWordForms);
-		}
-	}
-
-
-	private void parseWithAceParser(ACEPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms)
-	throws OWLOntologyCreationException {
-		Lexicon lexicon = aceLexicon.createLexicon(contentWordForms);
-
-		if (lexicon.getEntries().isEmpty()) {
-			logger.info("Parsing with empty lexicon.");
-			lexicon = null;
-		}
-		else {
-			logger.info("Parsing with lexicon:\n" + lexicon.toString());
-		}
-
-		boolean paraphrase1Enabled = prefs.isParaphrase1Enabled();
-
-		ACEParser parser = ParserHolder.getACEParser();
-		parser.setURI(ns.toString());
-
-		ACEParserResult result = null;
-
-		try {
-			if (paraphrase1Enabled) {
-				result = parser.getMultiOutput(toSimpleString(), lexicon, OutputType.PARAPHRASE1, OutputType.OWLXML);
-			}
-			else {
-				result = parser.getMultiOutput(toSimpleString(), lexicon, OutputType.OWLXML);
-			}
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "ACE Parser error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-		}
-
-		if (result != null) {
-			MessageContainer messageContainer = result.getMessageContainer();
-			messages.addAll(messageContainer.getMessages());
-
-			List<Message> errorMessages = messageContainer.getErrorMessages();
-
-			if (errorMessages.isEmpty()) {
-				if (paraphrase1Enabled) {
-					para1 = ACESentenceSplitter.splitSentences(result.get(OutputType.PARAPHRASE1));
-				}
-				String owlxml = result.get(OutputType.OWLXML);
-				if (owlxml == null || owlxml.length() == 0) {
-					throw new OWLOntologyCreationException("get(OutputType.OWLXML) is null or empty");
-				}
-				// TODO: BUG: creating a new ontology manager just to parse a snippet
-				// might be bad for performance
-				OWLOntologyManager manager = ACETextManager.createOWLOntologyManager();
-				// BUG: we should copy the axioms and then throw away the created ontology
-				axiomSet = ImmutableSet.copyOf(manager.loadOntology(new StringInputSource(owlxml)).getLogicalAxioms());
-			}
-			else {
-				setPinpointers(errorMessages);
-			}
-		}
-	}
-
-
-	private void setPinpointers(List<Message> errorMessages) {
-		for (Message m : errorMessages) {
-			Integer sid = m.getSentenceId();
-			Integer tid = m.getTokenId();
-
-			// TODO: do not check for <1 here, fix the messages instead
-			if (sid == null || tid == null || sid < 1 || tid < 1) {
-				continue;
-			}
-
-			int sentenceIndex = sid.intValue() - 1;
-			int tokenIndex = tid.intValue() - 1;
-			if (sentences.size () > sentenceIndex && sentences.get(sentenceIndex).size() > tokenIndex) {
-				pinpointers.put(sentenceIndex, tokenIndex);
-			}
-			else {
-				logger.error("Pinpointer out of bounds: " + sentenceIndex + "-" + tokenIndex);
-			}
-		}
-	}
-
-
 	@Override
 	public String toString() {		
 		if (isEmpty()) {
@@ -337,20 +205,6 @@ public class ACESnippetImpl implements ACESnippet {
 			return "/* MOS: " + altRendering.replaceAll("[ \t\n\f\b\r]+", " ") + " */";
 		}
 		return joiner.join(sentences);
-	}
-
-
-	// BUG: What is the purpose of this method?
-	private String toSimpleString() {
-		if (sentences.size() == 1) {
-			return sentences.iterator().next().toSimpleString();
-		}
-
-		String str = "";
-		for (ACESentence s : sentences) {
-			str += s.toSimpleString() + " ";
-		}
-		return str;
 	}
 
 
@@ -476,21 +330,6 @@ public class ACESnippetImpl implements ACESnippet {
 		return restSentences;
 	}
 
-	/**
-	 * <p>Returns a set of contentword forms of this snippet.</p> 
-	 * 
-	 * @return Set of contentword forms
-	 */
-	private Set<String> getContentWordsAsStrings() {
-		Set<String> tokens = Sets.newHashSet();
-		for (ACESentence s : sentences) {
-			for (ACEToken token : s.getContentWords()) {
-				tokens.add(token.toString());
-			}
-		}
-		return tokens;
-	}
-
 
 	public int getContentWordCount() {
 		int count = 0;
@@ -508,22 +347,6 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public boolean hasACEErrors() {
 		return hasErrors() && (errorMessagesCount != owlErrorMessagesCount);
-	}
-
-
-	/**
-	 * <p>Returns <code>true</code> iff this snippet
-	 * contains errors, either ACE syntax errors or
-	 * errors that were encountered when mapping the
-	 * (legal ACE snippet) into OWL/SWRL.</p>
-	 * 
-	 * <p>Iff this method returns <code>true</code>, then
-	 * {@link #getLogicalAxioms()} returns an empty set.</p>
-	 * 
-	 * @return <code>true</code> iff this snippet contains errors
-	 */
-	private boolean hasErrors() {
-		return (errorMessagesCount > 0);
 	}
 
 
@@ -624,5 +447,189 @@ public class ACESnippetImpl implements ACESnippet {
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * <p>Returns a set of contentword forms of this snippet.</p> 
+	 * 
+	 * @return Set of contentword forms
+	 */
+	private Set<String> getContentWordsAsStrings() {
+		Set<String> contentWordsAsStrings = Sets.newHashSet();
+		for (ACESentence s : sentences) {
+			for (ACEToken contentWord : s.getContentWords()) {
+				contentWordsAsStrings.add(contentWord.toString());
+			}
+		}
+		return contentWordsAsStrings;
+	}
+
+
+	/**
+	 * <p>Parses the text of the snippet with the Manchester OWL Syntax parser;
+	 * if this fails then parses with an ACE parser. In the later case,
+	 * also optionally paraphrases the snippet.</li>
+	 */
+	private void init() {
+		ACEPreferences prefs = ACEPreferences.getInstance();
+
+		// As possible MOS strings,
+		// we only accept snippets which contain exactly one sentence.
+		if (prefs.getUseMos() && sentences.size() == 1) {
+			OWLLogicalAxiom mosAxiom = null;
+			try {
+				mosAxiom = ACETextManager.parseWithMos(sentences.iterator().next());
+			} catch (OWLExpressionParserException e) {
+				// Note: we are silent about using ManchesterSyntaxParser, i.e.
+				// we do not return the syntax errors.
+			}
+			if (mosAxiom != null) {
+				axiomSet = ImmutableSet.of(mosAxiom);
+				return;
+			}
+		}
+
+
+		try {
+			parse(prefs);
+		} catch (OWLOntologyCreationException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	private void parse(ACEPreferences prefs) throws OWLOntologyCreationException {
+		ACELexicon<OWLEntity> aceLexicon = ACETextManager.getActiveACELexicon();
+		Set<String> contentWordForms = getContentWordsAsStrings();
+
+		if (! prefs.getParseWithUndefinedTokens()) {
+			// logger.info("Content word forms: " + contentWordForms);
+			for (String wordFrom : contentWordForms) {
+				if (! aceLexicon.containsWordform(wordFrom)) {
+					messages.add(new Message("error", "token", null, null, wordFrom, "Add this wordform to the lexicon"));
+				}
+			}
+		}
+
+		// In case there are no lexical entries for at least one token, and the preferences
+		// tell us not to parse in this case, then abort immediately.
+		if (messages.isEmpty()) {
+			parseWithAceParser(prefs, aceLexicon, contentWordForms);
+		}
+		else {
+			//logger.info("Not parsing, there are messages.");
+			//logger.info("Messages: " + messages);
+		}
+	}
+
+
+	private void parseWithAceParser(ACEPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms)
+	throws OWLOntologyCreationException {
+		Lexicon lexicon = aceLexicon.createLexicon(contentWordForms);
+
+		if (lexicon.getEntries().isEmpty()) {
+			logger.info("Parsing with empty lexicon.");
+			lexicon = null;
+		}
+		else {
+			logger.info("Parsing with lexicon:\n" + lexicon.toString());
+		}
+
+		boolean paraphrase1Enabled = prefs.isParaphrase1Enabled();
+
+		ACEParser parser = ParserHolder.getACEParser();
+		parser.setURI(ns.toString());
+
+		ACEParserResult result = null;
+
+		try {
+			if (paraphrase1Enabled) {
+				result = parser.getMultiOutput(toSimpleString(), lexicon, OutputType.PARAPHRASE1, OutputType.OWLXML);
+			}
+			else {
+				result = parser.getMultiOutput(toSimpleString(), lexicon, OutputType.OWLXML);
+			}
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "ACE Parser error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+
+		if (result != null) {
+			MessageContainer messageContainer = result.getMessageContainer();
+			messages.addAll(messageContainer.getMessages());
+
+			List<Message> errorMessages = messageContainer.getErrorMessages();
+
+			if (errorMessages.isEmpty()) {
+				if (paraphrase1Enabled) {
+					para1 = ACESentenceSplitter.splitSentences(result.get(OutputType.PARAPHRASE1));
+				}
+				String owlxml = result.get(OutputType.OWLXML);
+				if (owlxml == null || owlxml.length() == 0) {
+					throw new OWLOntologyCreationException("get(OutputType.OWLXML) is null or empty");
+				}
+				// TODO: BUG: creating a new ontology manager just to parse a snippet
+				// might be bad for performance
+				OWLOntologyManager manager = ACETextManager.createOWLOntologyManager();
+				// BUG: we should copy the axioms and then throw away the created ontology
+				axiomSet = ImmutableSet.copyOf(manager.loadOntology(new StringInputSource(owlxml)).getLogicalAxioms());
+			}
+			else {
+				setPinpointers(errorMessages);
+			}
+		}
+	}
+
+
+	private void setPinpointers(List<Message> errorMessages) {
+		for (Message m : errorMessages) {
+			Integer sid = m.getSentenceId();
+			Integer tid = m.getTokenId();
+
+			// TODO: do not check for <1 here, fix the messages instead
+			if (sid == null || tid == null || sid < 1 || tid < 1) {
+				continue;
+			}
+
+			int sentenceIndex = sid.intValue() - 1;
+			int tokenIndex = tid.intValue() - 1;
+			if (sentences.size () > sentenceIndex && sentences.get(sentenceIndex).size() > tokenIndex) {
+				pinpointers.put(sentenceIndex, tokenIndex);
+			}
+			else {
+				logger.error("Pinpointer out of bounds: " + sentenceIndex + "-" + tokenIndex);
+			}
+		}
+	}
+
+
+	// BUG: What is the purpose of this method?
+	private String toSimpleString() {
+		if (sentences.size() == 1) {
+			return sentences.iterator().next().toSimpleString();
+		}
+
+		String str = "";
+		for (ACESentence s : sentences) {
+			str += s.toSimpleString() + " ";
+		}
+		return str;
+	}
+
+
+	/**
+	 * <p>Returns <code>true</code> iff this snippet
+	 * contains errors, either ACE syntax errors or
+	 * errors that were encountered when mapping the
+	 * (legal ACE snippet) into OWL/SWRL.</p>
+	 * 
+	 * <p>Iff this method returns <code>true</code>, then
+	 * {@link #getLogicalAxioms()} returns an empty set.</p>
+	 * 
+	 * @return <code>true</code> iff this snippet contains errors
+	 */
+	private boolean hasErrors() {
+		return (errorMessagesCount > 0);
 	}
 }
