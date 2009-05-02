@@ -208,13 +208,12 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public String toHtmlString() {
+	public String toHtmlString(ACELexicon<OWLEntity> aceLexicon) {
 
 		if (isEmpty() && altRendering != null) {
 			return "<span color='red'>" + altRendering + "</span>";
 		}
 
-		ACELexicon<OWLEntity> aceLexicon = ACETextManager.getActiveACELexicon();
 		String span = "";
 
 		for (ACESentence sentence : sentences) {

@@ -339,7 +339,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 			OWLEntity word = entry.getKey();
 			Set<ACESnippet> snippets = entry.getValue();
 			html += "<p><strong><a name='" + word + "'>" + word + "</a></strong> (" + snippets.size() + ")</p>\n";
-			html += snippetsToHtml(snippets);
+			html += snippetsToHtml(snippets, lexicon);
 		}
 		return html;
 	}
@@ -352,7 +352,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 		}
 		SortedSet<ACESnippet> snippetsSorted = new TreeSet<ACESnippet>(new SnippetComparator());
 		snippetsSorted.addAll(snippets);
-		return snippetsToHtml(snippetsSorted);
+		return snippetsToHtml(snippetsSorted, lexicon);
 	}
 
 
@@ -362,14 +362,14 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	 * @param snippets Set of ACE snippets
 	 * @return <code>String</code> representing an HTML list
 	 */
-	private static String snippetsToHtml(Set<ACESnippet> snippets) {
+	private static String snippetsToHtml(Set<ACESnippet> snippets, ACELexicon<OWLEntity> lexicon) {
 		if (snippets.isEmpty()) {
 			return "<em>No snippets.</em>";
 		}
 		StringBuilder sb = new StringBuilder();
 		for (ACESnippet snippet : snippets) {
 			sb.append("<p>");
-			sb.append(snippet.toHtmlString());
+			sb.append(snippet.toHtmlString(lexicon));
 			sb.append(' ');
 			sb.append(snippet.getTags());
 			sb.append("</p>");
