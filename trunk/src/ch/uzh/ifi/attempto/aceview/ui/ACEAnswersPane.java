@@ -134,7 +134,7 @@ public class ACEAnswersPane extends JTextPane {
 				}
 			});
 			addLinebreak();
-			addComponent(new JLabel("<html>" + nothingSnippet.toHtmlString() + "</html>"));
+			addComponent(new JLabel("<html>" + nothingSnippet.toHtmlString(ACETextManager.getActiveACELexicon()) + "</html>"));
 			addLinebreak();
 			addComponent(buttonWhy);
 		} catch (OWLRendererException e) {
