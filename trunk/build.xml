@@ -3,6 +3,7 @@
 
 	<!-- The location of the local copy of Protege 4 trunk. -->
 	<property name="protege" location="/Volumes/Extra/Users/kalju/mywork/protege4/trunk/"/>
+	<property name="swi_home_dir" location="/opt/local/lib/swipl-5.6.61/"/>
 
 	<!-- The following properties you probably do not need to modify. -->
 
@@ -16,8 +17,7 @@
 	<property name="protege_dist_plugins" location="${protege_dist}/equinox/plugins/"/>
 	<property name="protege_dist_bundles" location="${protege_dist}/bundles/"/>
 
-	<!-- Note: jpl.jar is only needed for tests. -->
-	<property name="jars" location="${protege_dist_bundles}/org.protege.editor.owl.jar;${protege_dist_bundles}/org.protege.editor.core.application.jar;${protege}/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar;${protege}/plugins/org.protege.common/lib/log4j.jar;${aceview_lib}/jdom.jar;${aceview_lib}/RadixTree.jar;${aceview_lib}/swingx-0.9.7.jar;${aceview_lib}/swing-worker-1.2.jar;${aceview_lib}/simplenlg-v37.jar;${aceview_lib}/attempto-ape.jar;${aceview_lib}/attempto-owl.jar;${aceview_lib}/google-collect-1.0-rc1.jar;${aceview_lib}/jpl.jar"/>
+	<property name="jars" location="${protege_dist_bundles}/org.protege.editor.owl.jar;${protege_dist_bundles}/org.protege.editor.core.application.jar;${protege}/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar;${protege}/plugins/org.protege.common/lib/log4j.jar;${aceview_lib}/jdom.jar;${aceview_lib}/RadixTree.jar;${aceview_lib}/swingx-0.9.7.jar;${aceview_lib}/swing-worker-1.2.jar;${aceview_lib}/simplenlg-v37.jar;${aceview_lib}/attempto-ape.jar;${aceview_lib}/attempto-owl.jar;${aceview_lib}/google-collect-1.0-rc1.jar"/>
 
 	<property name="aceview_test_src" location="test/"/>
 	<property name="aceview_test_report" location="test_report/"/>
@@ -84,21 +84,19 @@
 	</target>
 
 
-	<target name="compile_tests" depends="compile" description="Compile the ACE View unit tests.">
+	<target name="test" depends="compile" description="Unit test some ACE View classes.">
 		<javac
 			srcdir="${aceview_test_src}"
 			classpath="${jars};${aceview_lib}/junit-4.5.jar"
 			destdir="classes"/>
-	</target>
 
-
-	<target name="test" depends="compile_tests" description="Unit test some ACE View classes.">
 		<mkdir dir="${aceview_test_report}"/>
+
 		<junit printsummary="yes" haltonfailure="no">
 
 			<classpath>
 				<pathelement location="classes"/>
-				<pathelement path="${jars};${aceview_lib}/junit-4.5.jar"/>
+				<pathelement path="${jars};${swi_home_dir}/lib/jpl.jar;${aceview_lib}/junit-4.5.jar"/>
 			</classpath>
 
 			<formatter type="plain"/>

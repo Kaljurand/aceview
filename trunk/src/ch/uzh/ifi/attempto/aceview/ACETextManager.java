@@ -301,7 +301,11 @@ public final class ACETextManager {
 	 * @return OWL ontology manager
 	 */
 	public static OWLOntologyManager createOWLOntologyManager() {
-		return OWLManager.createOWLOntologyManager(owlModelManager.getOWLDataFactory());
+		return OWLManager.createOWLOntologyManager();
+		//if (owlModelManager == null) {
+		//	OWLManager.createOWLOntologyManager();
+		//}
+		//return OWLManager.createOWLOntologyManager(owlModelManager.getOWLDataFactory());
 	}
 
 
