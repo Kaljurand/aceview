@@ -1,0 +1,16 @@
+/**
+
+@title Questions for the people and pets text
+@author Kaarel Kaljurand
+@version 2009-05-03
+
+*/
+
+
+Who is a person that does not drive a van?
+
+Who is a male or is a female?
+
+Whose pet is Rex?
+
+An old-lady's pet is who?
