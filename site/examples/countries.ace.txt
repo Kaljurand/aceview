@@ -1,7 +1,7 @@
 /**
 * @title Countries and territories
 * @author Kaarel Kaljurand
-* @version 2009-04-02
+* @version 2009-05-03
 *
 * The goal of this text to describe some aspects of the European Union
 * completely (e.g. we list all the countries).
@@ -307,7 +307,8 @@ What is a baltic-state?
 
 Which EU-country borders a NATO-country?
 
-What does Austria border?
+/* Worked in Pellet 2rc5, but gets stuck in Pellet 2rc6. */
+/* What does Austria border? */
 What does Belgium border?
 What does Bulgaria border?
 What does Cyprus border?
@@ -317,7 +318,8 @@ What does Denmark border?
 What does Estonia border?
 What does Finland border?
 What does France border?
-What does Germany border?
+/* Worked in Pellet 2rc5, but gets stuck in Pellet 2rc6. */
+/* What does Germany border? */
 /*
 What does Greece border?
 What does Hungary border?
