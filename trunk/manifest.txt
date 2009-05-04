@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ACE View Tab
 Bundle-SymbolicName: ch.uzh.ifi.attempto.aceview.ui.view;singleton:=true
 Bundle-Category: protege
-Bundle-Description: A plug-in that adds the ACE View to the Protege OWL Editor
+Bundle-Description: ACE View plug-in for the Protege OWL Editor
 Bundle-Vendor: Kaarel Kaljurand
 Bundle-DocURL: http://attempto.ifi.uzh.ch/aceview/
 Update-Url: http://attempto.ifi.uzh.ch/aceview/update.properties
