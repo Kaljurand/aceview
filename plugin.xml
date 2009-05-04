@@ -13,11 +13,11 @@
 	<defaultViewConfigFileName value="viewconfig-aceviewtab.xml"/>
 </extension>
 
-<!-- Preferences panel -->
-<extension id="ACEPreferencesPanel"
+<!-- ACE View preferences panel -->
+<extension id="ACEViewPreferencesPanel"
 	point="org.protege.editor.core.application.preferencespanel">
 	<label value="ACE View"/>
-	<class value="ch.uzh.ifi.attempto.aceview.ACEPreferencesPanel"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ACEViewPreferencesPanel"/>
 </extension>
 
 <!-- Views -->

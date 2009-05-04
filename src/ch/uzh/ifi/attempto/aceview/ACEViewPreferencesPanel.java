@@ -51,7 +51,7 @@ import ch.uzh.ifi.attempto.aceview.ui.ServiceSelectionPane;
  * 
  * @author Kaarel Kaljurand
  */
-public class ACEPreferencesPanel extends OWLPreferencesPanel {
+public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 
 	private ServiceSelectionPane serviceSelectionPaneAceToOwl;
 	private final JCheckBox checkboxGuessingEnabled = new JCheckBox();
@@ -61,7 +61,6 @@ public class ACEPreferencesPanel extends OWLPreferencesPanel {
 	private final JCheckBox checkboxUseMos = new JCheckBox();
 	private final JCheckBox checkboxUpdateAnswersOnClassify = new JCheckBox();
 
-	private JTextField textfieldSwi;
 	private JTextField textfieldApe;
 
 	private JComboBox cbApeWebservice;
@@ -70,9 +69,7 @@ public class ACEPreferencesPanel extends OWLPreferencesPanel {
 	private JComboBox comboboxOwlToAce;
 
 
-	//private JButton buttonBrowseSwiPath = new JButton(UIManager.getIcon("FileView.hardDriveIcon"));
 	//private JButton buttonBrowseApePath = new JButton(UIManager.getIcon("FileView.directoryIcon"));
-	private final JButton buttonBrowseSwiPath = new JButton("Choose...");
 	private final JButton buttonBrowseApePath = new JButton("Choose...");
 
 	private JTextField tfApeSocket;
@@ -80,12 +77,11 @@ public class ACEPreferencesPanel extends OWLPreferencesPanel {
 
 	@Override
 	public void applyChanges() {
-		ACEPreferences prefs = ACEPreferences.getInstance();
+		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 
 		// ACE to OWL
 		prefs.setAceToOwl(serviceSelectionPaneAceToOwl.getSelectedItem().toString());
 
-		prefs.setSwiPath(textfieldSwi.getText());
 		prefs.setApePath(textfieldApe.getText());
 
 		prefs.setAceToOwlWebservices(getComboBoxItemsAsStrings(cbApeWebservice));
@@ -117,7 +113,7 @@ public class ACEPreferencesPanel extends OWLPreferencesPanel {
 
 	public void initialise() throws Exception {
 
-		ACEPreferences prefs = ACEPreferences.getInstance();
+		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 
 		comboboxOwlToAce = new JComboBox(prefs.getOwlToAceWebservices().toArray());
 		comboboxOwlToAce.setEditable(true);
@@ -147,17 +143,7 @@ public class ACEPreferencesPanel extends OWLPreferencesPanel {
 		checkboxUpdateAnswersOnClassify.setSelected(prefs.isUpdateAnswersOnClassify());
 		checkboxUpdateAnswersOnClassify.setToolTipText("Update answers automatically after each classification.");
 
-		textfieldSwi = new JTextField(prefs.getSwiPath());
 		textfieldApe = new JTextField(prefs.getApePath());
-
-		buttonBrowseSwiPath.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				File f = chooseFile("Specify the location of SWI-Prolog");
-				if (f != null) {
-					textfieldSwi.setText(f.getAbsolutePath());
-				}
-			}
-		});
 
 		buttonBrowseApePath.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -168,18 +154,13 @@ public class ACEPreferencesPanel extends OWLPreferencesPanel {
 			}
 		});
 
-		Box boxSwi = new Box(BoxLayout.X_AXIS);
-		boxSwi.add(textfieldSwi);
-		boxSwi.add(buttonBrowseSwiPath);
 
 		Box boxApe = new Box(BoxLayout.X_AXIS);
 		boxApe.add(textfieldApe);
 		boxApe.add(buttonBrowseApePath);
 
 		// Configuration of APE Local
-		JPanel panelSwiApe = new JPanel(new GridLayout(4, 1));
-		panelSwiApe.add(new JLabel("SWI-Prolog:"));
-		panelSwiApe.add(boxSwi);
+		JPanel panelSwiApe = new JPanel(new GridLayout(2, 1));
 		panelSwiApe.add(new JLabel("APE:"));
 		panelSwiApe.add(boxApe);
 

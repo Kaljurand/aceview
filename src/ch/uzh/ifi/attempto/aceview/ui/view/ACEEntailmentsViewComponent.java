@@ -54,7 +54,7 @@ import org.semanticweb.owl.util.InferredPropertyAssertionGenerator;
 import org.semanticweb.owl.util.InferredSubClassAxiomGenerator;
 import org.semanticweb.owl.util.InferredSubObjectPropertyAxiomGenerator;
 
-import ch.uzh.ifi.attempto.aceview.ACEPreferences;
+import ch.uzh.ifi.attempto.aceview.ACEViewPreferences;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.AxiomVerbalizer;
@@ -234,7 +234,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 			return;
 		}
 
-		ACEPreferences prefs = ACEPreferences.getInstance();
+		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 		ACELexicon<OWLEntity> lexicon = ACETextManager.getActiveACELexicon();
 		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(new VerbalizerWebservice(prefs.getOwlToAce()), lexicon);
 

@@ -681,7 +681,7 @@ public final class ACETextManager {
 
 	private static AxiomVerbalizer createAxiomVerbalizer(ACELexicon<OWLEntity> lexicon) {
 		return new AxiomVerbalizer(
-				new VerbalizerWebservice(ACEPreferences.getInstance().getOwlToAce()), lexicon);
+				new VerbalizerWebservice(ACEViewPreferences.getInstance().getOwlToAce()), lexicon);
 	}
 
 

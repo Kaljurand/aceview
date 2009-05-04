@@ -37,7 +37,7 @@ public enum ParserHolder {
 	 */
 	public static ACEParser getACEParser() {
 		if (INSTANCE.aceParser == null) {
-			updateACEParser(ACEPreferences.getInstance());
+			updateACEParser(ACEViewPreferences.getInstance());
 		}
 		return INSTANCE.aceParser;
 	}
@@ -48,13 +48,18 @@ public enum ParserHolder {
 	 * 
 	 * @param prefs ACE preferences
 	 */
-	public static void updateACEParser(ACEPreferences prefs) {
+	public static void updateACEParser(ACEViewPreferences prefs) {
 		String serviceType = prefs.getAceToOwl();
 		if (serviceType.equals("APE Local")) {
 			// BUG: experimental. If ACE Parser has been instantiated as APE Local then we won't
 			// create a new parser, as we would get a runtime exception.
-			if (! (INSTANCE.aceParser instanceof APELocal)) {
-				INSTANCE.aceParser = new APELocal(prefs.getSwiPath(), prefs.getApePath());
+			if (APELocal.isInitialized()) {
+				// TODO: Inform the user that we keep using the old APELocal parser
+			}
+			else {
+				//INSTANCE.aceParser = new APELocal(prefs.getSwiPath(), prefs.getApePath());
+				APELocal.init(prefs.getApePath());
+				INSTANCE.aceParser = APELocal.getInstance();
 			}
 		}
 		else if (serviceType.equals("APE Socket")) {

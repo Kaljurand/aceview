@@ -88,7 +88,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			}
 			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_CLASSIFIED)) {
 				logger.info("ONTOLOGY_CLASSIFIED");
-				if (ACEPreferences.getInstance().isUpdateAnswersOnClassify()) {
+				if (ACEViewPreferences.getInstance().isUpdateAnswersOnClassify()) {
 					new UpdateAnswersUI(null, ACETextManager.getActiveACEText(), getOWLModelManager()).updateAnswers();
 				}
 			}
@@ -169,7 +169,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		OWLModelManager mm = ACETextManager.getOWLModelManager();
 		OWLOntologyManager ontologyManager = mm.getOWLOntologyManager();
 		OWLDataFactory df = mm.getOWLDataFactory();
-		ACEPreferences prefs = ACEPreferences.getInstance();
+		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 		Set<OWLOntology> ontologies = mm.getOntologies();
 
 		logger.info("Init: ontologies: " + ontologies);
@@ -254,7 +254,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	private static void processChanges(OWLModelManager mngr, List<? extends OWLOntologyChange> changes) {
 		OWLDataFactory df = mngr.getOWLDataFactory();
 		OWLOntologyManager ontologyManager = mngr.getOWLOntologyManager();
-		ACEPreferences prefs = ACEPreferences.getInstance();
+		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 
 		// Counts axioms that cause the ACE text to change.
 		int textAxiomCounter = 0;
