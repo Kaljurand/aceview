@@ -9,13 +9,16 @@
 
 	<!-- The name of the ACE View jar-file which this build-script will generate. -->
 	<property name="aceview_jar" value="ch.uzh.ifi.attempto.aceview.jar"/>
+	<property name="aceview.command" value="aceview.command"/>
 
 	<property name="javadoc" location="javadoc/"/>
 	<property name="aceview_lib" location="lib"/>
 	<property name="aceview_dist" location="dist/"/>
+
 	<property name="protege_dist" location="${protege}/build/dist/"/>
-	<property name="protege_dist_plugins" location="${protege_dist}/equinox/plugins/"/>
+	<property name="protege_dist_equinox" location="${protege_dist}/equinox/"/>
 	<property name="protege_dist_bundles" location="${protege_dist}/bundles/"/>
+	<property name="protege_dist_plugins" location="${protege_dist_equinox}/plugins/"/>
 
 	<property name="jars" location="${protege_dist_bundles}/org.protege.editor.owl.jar;${protege_dist_bundles}/org.protege.editor.core.application.jar;${protege}/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar;${protege}/plugins/org.protege.common/lib/log4j.jar;${aceview_lib}/jdom.jar;${aceview_lib}/RadixTree.jar;${aceview_lib}/swingx-0.9.7.jar;${aceview_lib}/swing-worker-1.2.jar;${aceview_lib}/simplenlg-v37.jar;${aceview_lib}/attempto-ape.jar;${aceview_lib}/attempto-owl.jar;${aceview_lib}/google-collect-1.0-rc1.jar"/>
 
@@ -48,6 +51,11 @@
 	<target name="deploy" depends="jar" description="Copy the ACE View jar-file into the Protege plug-in directory.">
 		<echo>Copy: ${aceview_jar}</echo>
 		<copy file="${aceview_dist}/${aceview_jar}" todir="${protege_dist_plugins}"/>
+		<!--
+		<echo>Copy: ${aceview.command}</echo>
+		<copy file="${aceview.command}" todir="${protege_dist_equinox}"/>
+		<chmod file="${protege_dist_equinox}/${aceview.command}" perm="750"/>
+		-->
 	</target>
 
 
