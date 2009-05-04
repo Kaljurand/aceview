@@ -27,16 +27,15 @@ import org.protege.editor.core.prefs.PreferencesManager;
  * 
  * @author Kaarel Kaljurand
  */
-public final class ACEPreferences {
+public final class ACEViewPreferences {
 
-	private static ACEPreferences instance;
+	private static ACEViewPreferences instance;
 
 	private static final String PREFERENCES_SET_KEY = "ch.uzh.ifi.attempto.aceview";
 
 	private static final String ACE_TO_OWL_KEY = "ACE_TO_OWL";
 
 	private static final String ACE_TO_OWL_LOCAL_APE_PATH_KEY = "ACE_TO_OWL_LOCAL_APE_PATH";
-	private static final String ACE_TO_OWL_LOCAL_SWI_PATH_KEY = "ACE_TO_OWL_LOCAL_SWI_PATH";
 
 	private static final String ACE_TO_OWL_WEBSERVICES_KEY = "ACE_TO_OWL_WEBSERVICES";
 	private static final String ACE_TO_OWL_WEBSERVICE_URL_KEY = "ACE_TO_OWL_WEBSERVICE_URL";
@@ -57,9 +56,9 @@ public final class ACEPreferences {
 	private static final String UPDATE_ANSWERS_ON_CLASSIFY_KEY = "UPDATE_ANSWERS_ON_CLASSIFY";
 
 
-	public static synchronized ACEPreferences getInstance() {
+	public static synchronized ACEViewPreferences getInstance() {
 		if (instance == null) {
-			instance = new ACEPreferences();
+			instance = new ACEViewPreferences();
 		}
 		return instance;
 	}
@@ -90,21 +89,6 @@ public final class ACEPreferences {
 		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, ACE_TO_OWL_LOCAL_APE_PATH_KEY);
 		prefs.putString(ACE_TO_OWL_LOCAL_APE_PATH_KEY, apePath);
 	}
-
-
-	// ACE to OWL: Local: SWI path
-	public String getSwiPath() {
-		PreferencesManager prefMan = PreferencesManager.getInstance();
-		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, ACE_TO_OWL_LOCAL_SWI_PATH_KEY);
-		return prefs.getString(ACE_TO_OWL_LOCAL_SWI_PATH_KEY, "/opt/local/bin/swipl");
-	}
-
-	public void setSwiPath(String swiPath) {
-		PreferencesManager prefMan = PreferencesManager.getInstance();
-		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, ACE_TO_OWL_LOCAL_SWI_PATH_KEY);
-		prefs.putString(ACE_TO_OWL_LOCAL_SWI_PATH_KEY, swiPath);
-	}
-
 
 	// ACE to OWL: Webservices (URLs)
 	public List<String> getAceToOwlWebservices() {

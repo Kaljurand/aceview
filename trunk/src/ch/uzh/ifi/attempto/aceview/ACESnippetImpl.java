@@ -471,7 +471,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 * also optionally paraphrases the snippet.</li>
 	 */
 	private void init() {
-		ACEPreferences prefs = ACEPreferences.getInstance();
+		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 
 		// As possible MOS strings,
 		// we only accept snippets which contain exactly one sentence.
@@ -498,7 +498,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	private void parse(ACEPreferences prefs) throws OWLOntologyCreationException {
+	private void parse(ACEViewPreferences prefs) throws OWLOntologyCreationException {
 		ACELexicon<OWLEntity> aceLexicon = ACETextManager.getActiveACELexicon();
 		Set<String> contentWordForms = getContentWordsAsStrings();
 
@@ -523,7 +523,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	private void parseWithAceParser(ACEPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms)
+	private void parseWithAceParser(ACEViewPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms)
 	throws OWLOntologyCreationException {
 		Lexicon lexicon = aceLexicon.createLexicon(contentWordForms);
 
