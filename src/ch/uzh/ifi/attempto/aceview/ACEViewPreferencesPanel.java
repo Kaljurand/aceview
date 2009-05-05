@@ -120,9 +120,10 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 
 		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 
+		// OWL->ACE webservice URLs
 		comboboxOwlToAce = new JComboBox(prefs.getOwlToAceWebservices().toArray());
-		comboboxOwlToAce.setEditable(true);
 		comboboxOwlToAce.setSelectedItem(prefs.getOwlToAce());
+		comboboxOwlToAce.setEditable(true);
 
 		checkboxParaphrase1Enabled.setSelected(prefs.isParaphrase1Enabled());
 		checkboxParaphrase1Enabled.setToolTipText("Generate a Core ACE paraphrase for every snippet.");
@@ -169,7 +170,9 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		panelSwiApe.add(new JLabel("APE:"));
 		panelSwiApe.add(boxApe);
 
+		// ACE->OWL webservice URLs
 		cbApeWebservice = new JComboBox(prefs.getAceToOwlWebservices().toArray());
+		cbApeWebservice.setSelectedItem(prefs.getAceToOwlWebserviceUrl());
 		cbApeWebservice.setEditable(true);
 
 		// Configuration of APE Webservice
@@ -177,7 +180,9 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		panelApeWebservice.add(new JLabel("URL:"));
 		panelApeWebservice.add(cbApeWebservice);
 
+		// ACE->OWL socket service host + port 
 		cbApeSocket = new JComboBox(prefs.getAceToOwlSockets().toArray());
+		cbApeSocket.setSelectedItem(prefs.getAceToOwlSocketHost());
 		cbApeSocket.setEditable(true);
 
 		// Note: important: we convert int to String
@@ -253,8 +258,6 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		Box boxUpdateAnswersOnClassify = new Box(BoxLayout.X_AXIS);
 		boxUpdateAnswersOnClassify.add(checkboxUpdateAnswersOnClassify);
 		boxUpdateAnswersOnClassify.add(new JLabel("Automatically update answers after classifying"));
-
-
 
 
 		JPanel panelOptions = new JPanel(new GridLayout(4, 1));
