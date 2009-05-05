@@ -31,6 +31,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -105,7 +106,11 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		prefs.setUpdateAnswersOnClassify(checkboxUpdateAnswersOnClassify.isSelected());
 
 		// Because the parser settings might have changed, we update the parser holder.
-		ParserHolder.updateACEParser(prefs);
+		try {
+			ParserHolder.updateACEParser(prefs);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+		}
 	}
 
 	public void dispose() throws Exception {

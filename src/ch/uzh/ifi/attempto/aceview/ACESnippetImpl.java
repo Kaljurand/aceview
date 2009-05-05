@@ -523,8 +523,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	private void parseWithAceParser(ACEViewPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms)
-	throws OWLOntologyCreationException {
+	private void parseWithAceParser(ACEViewPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms) throws OWLOntologyCreationException {
 		Lexicon lexicon = aceLexicon.createLexicon(contentWordForms);
 
 		if (lexicon.getEntries().isEmpty()) {
@@ -537,6 +536,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 		boolean paraphrase1Enabled = prefs.isParaphrase1Enabled();
 
+		// Note: parser might by null in case the ParserHolder has not been initialized
 		ACEParser parser = ParserHolder.getACEParser();
 		parser.setURI(ns.toString());
 

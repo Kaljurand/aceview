@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -135,6 +135,13 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	@Override
 	public void initialise() {
 		super.initialise();
+
+		try {
+			ParserHolder.updateACEParser(ACEViewPreferences.getInstance());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
 		ACETextManager.setOWLModelManager(getOWLModelManager());
 		ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getURI());
 		// Note: We start to listen before filling the ACE text, because
