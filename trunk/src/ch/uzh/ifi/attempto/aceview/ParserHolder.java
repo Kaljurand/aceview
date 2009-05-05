@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -31,14 +31,12 @@ public enum ParserHolder {
 	/**
 	 * <p>Returns the concrete ACE parser
 	 * (either <code>APELocal</code>, <code>APESocket</code>, or <code>APEWebservice</code>)
-	 * that the user has selected in the Protege Preferences-menu.</p>
+	 * that the user has selected in the Protege Preferences-menu. In case
+	 * the parser has not been selected then <code>null</code> is returned.</p>
 	 * 
 	 * @return ACE parser that is selected in preferences
 	 */
 	public static ACEParser getACEParser() {
-		if (INSTANCE.aceParser == null) {
-			updateACEParser(ACEViewPreferences.getInstance());
-		}
 		return INSTANCE.aceParser;
 	}
 
@@ -47,20 +45,18 @@ public enum ParserHolder {
 	 * <p>Updates the ACE parser based on the given ACE preferences.</p>
 	 * 
 	 * @param prefs ACE preferences
+	 * @throws Exception if Protege needs to be restarted for the update to take effect
 	 */
-	public static void updateACEParser(ACEViewPreferences prefs) {
+	public static void updateACEParser(ACEViewPreferences prefs) throws Exception {
 		String serviceType = prefs.getAceToOwl();
 		if (serviceType.equals("APE Local")) {
-			// BUG: experimental. If ACE Parser has been instantiated as APE Local then we won't
-			// create a new parser, as we would get a runtime exception.
+			// We cannot reinitialize APE Local, as we would get a runtime exception.
+			// If the user changes the path to APE, then a restart is required.
 			if (APELocal.isInitialized()) {
-				// TODO: Inform the user that we keep using the old APELocal parser
+				throw new Exception("Restart Protege for this change to take effect.");
 			}
-			else {
-				//INSTANCE.aceParser = new APELocal(prefs.getSwiPath(), prefs.getApePath());
-				APELocal.init(prefs.getApePath());
-				INSTANCE.aceParser = APELocal.getInstance();
-			}
+			APELocal.init(prefs.getApePath());
+			INSTANCE.aceParser = APELocal.getInstance();
 		}
 		else if (serviceType.equals("APE Socket")) {
 			INSTANCE.aceParser = new APESocket(prefs.getAceToOwlSocketHost(), prefs.getAceToOwlSocketPort());

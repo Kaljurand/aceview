@@ -56,3 +56,4 @@ baltic
 collapsible
 jonas
 jbutton
+deprecated
