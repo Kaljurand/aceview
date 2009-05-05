@@ -27,6 +27,8 @@ public enum ParserHolder {
 
 	private ACEParser aceParser;
 
+	private String apePath;
+
 
 	/**
 	 * <p>Returns the concrete ACE parser
@@ -44,19 +46,24 @@ public enum ParserHolder {
 	/**
 	 * <p>Updates the ACE parser based on the given ACE preferences.</p>
 	 * 
+	 * <p>Note that we cannot reinitialize APE Local, as we would get a runtime exception.
+	 * If the user changes the path to APE, then a restart is required.</p>
+	 * 
 	 * @param prefs ACE preferences
 	 * @throws Exception if Protege needs to be restarted for the update to take effect
 	 */
 	public static void updateACEParser(ACEViewPreferences prefs) throws Exception {
 		String serviceType = prefs.getAceToOwl();
 		if (serviceType.equals("APE Local")) {
-			// We cannot reinitialize APE Local, as we would get a runtime exception.
-			// If the user changes the path to APE, then a restart is required.
-			if (APELocal.isInitialized()) {
-				throw new Exception("Restart Protege for this change to take effect.");
+			String apePath = prefs.getApePath();
+			if (INSTANCE.apePath == null || ! INSTANCE.apePath.equals(apePath)) {
+				if (APELocal.isInitialized()) {
+					throw new Exception("Restart Protege for this change to take effect.");
+				}
+				INSTANCE.apePath = apePath;
+				APELocal.init(apePath);
+				INSTANCE.aceParser = APELocal.getInstance();
 			}
-			APELocal.init(prefs.getApePath());
-			INSTANCE.aceParser = APELocal.getInstance();
 		}
 		else if (serviceType.equals("APE Socket")) {
 			INSTANCE.aceParser = new APESocket(prefs.getAceToOwlSocketHost(), prefs.getAceToOwlSocketPort());
