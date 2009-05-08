@@ -28,6 +28,13 @@ public class ACESnippetImplTest {
 	private static final OWLAxiom john_likes_mary = createAxiomJohnLikesMary();
 	private static final OWLAxiom every_man_is_a_human = createAxiomEveryManIsAHuman();
 
+	static {
+		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
+		prefs.setParseWithUndefinedTokens(true);
+		prefs.setGuessingEnabled(true);
+		prefs.setClexEnabled(true);
+	}
+
 
 	@Test
 	public final void test0() {
