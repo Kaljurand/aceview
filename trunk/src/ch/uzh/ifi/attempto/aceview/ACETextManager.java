@@ -246,6 +246,27 @@ public final class ACETextManager {
 		}
 	}
 
+	public static void addAndRemoveItems(Collection<List<ACESentence>> addedSentences, Collection<ACESnippet> removedSnippets) {
+		ACEText<OWLEntity, OWLLogicalAxiom> activeAceText = getActiveACEText();
+		List<OWLAxiomChange> changes = Lists.newArrayList();
+
+		for (List<ACESentence> sentenceList : addedSentences) {
+			ACESnippet snippet = new ACESnippetImpl(activeACETextURI, sentenceList);
+			activeAceText.add(snippet);
+			changes.addAll(getAddChanges(owlModelManager.getActiveOntology(), snippet));
+		}
+
+		for (ACESnippet oldSnippet : removedSnippets) {
+			Set<OWLLogicalAxiom> removedAxioms = activeAceText.remove(oldSnippet);
+			changes.addAll(getRemoveChanges(owlModelManager.getActiveOntology(), removedAxioms));
+		}
+
+		if (! (addedSentences.isEmpty() && removedSnippets.isEmpty())) {
+			changeOntology(changes);
+			fireEvent(EventType.ACETEXT_CHANGED);
+		}
+	}
+
 
 	public static void addListener(ACETextManagerListener listener) {
 		aceTextManagerChangeListeners.add(listener);

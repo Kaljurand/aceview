@@ -336,6 +336,15 @@ public interface ACEText<E, A> {
 	boolean contains(ACESnippet snippet);
 
 	/**
+	 * <p>Returns <code>true</code> iff this text contains
+	 * the given list of sentences in the form of a snippet.</p>
+	 * 
+	 * @param sentences ACE sentences
+	 * @return <code>true</code> iff this text contains the given list of sentences
+	 */
+	boolean contains(List<ACESentence> sentences);
+
+	/**
 	 * <p>Returns the number of snippets in this text.</p>
 	 * 
 	 * @return Number of snippets in this text

@@ -23,8 +23,11 @@ import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLLogicalAxiom;
 
+import com.google.common.collect.Sets;
+
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESentenceSplitter;
+import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
@@ -38,6 +41,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -52,7 +56,8 @@ import javax.swing.JScrollPane;
 
 /**
  * <p>This view component shows the ACE text in a simple text area
- * which can be edited to update the text.</p>
+ * which can be edited to update the text. A double newline separates
+ * the snippets.</p>
  * 
  * @author Kaarel Kaljurand
  */
@@ -114,35 +119,43 @@ public class ACETextViewComponent extends AbstractOWLViewComponent {
 
 				logger.info("Updating active knowledge base.");
 
-				List<ACESentence> textareaSentences = ACESentenceSplitter.splitSentences(aceTextArea.getText());
+				final Set<List<ACESentence>> addedSentenceLists = new LinkedHashSet<List<ACESentence>>();
+				final Set<List<ACESentence>> removedSentenceLists = new LinkedHashSet<List<ACESentence>>();
 
-				final Set<ACESentence> addedSentences = new LinkedHashSet<ACESentence>();
-				final Set<ACESentence> removedSentences = new LinkedHashSet<ACESentence>();
+				final Set<ACESnippet> removedSnippets = Sets.newHashSet();
 
-				for (ACESentence sentence : textareaSentences) {
-					if (! acetext.containsSentence(sentence)) {
-						addedSentences.add(sentence);
+				// BUG: TODO: put this pattern into attempto-ape.jar to share with AceWiki
+				Pattern snippetSeparator = Pattern.compile("\n\n");
+				String[] textareaSentenceLists = snippetSeparator.split(aceTextArea.getText());
+				for (String snippetAsString : textareaSentenceLists) {
+					List<ACESentence> sentences = ACESentenceSplitter.splitSentences(snippetAsString);					
+					if (acetext.contains(sentences)) {
+						removedSentenceLists.add(sentences);
+					}
+					else {
+						addedSentenceLists.add(sentences);
 					}
 				}
 
-				logger.info("Add: " + addedSentences);
+				logger.info("Add: " + addedSentenceLists);
 
-				for (ACESentence s : acetext.getSentences()) {
-					if (! textareaSentences.contains(s)) {
-						removedSentences.add(s);
+
+				for (ACESnippet s : acetext.getSnippets()) {
+					if (! removedSentenceLists.contains(s.getSentences())) {
+						removedSnippets.add(s);
 					}
 				}
 
-				logger.info("Del: " + removedSentences);
+				logger.info("Del: " + removedSnippets);
 
-				displayMessage("Adding " + addedSentences.size() + " and deleting " + removedSentences.size() + " sentence(s)");
+				displayMessage("Adding " + addedSentenceLists.size() + " and deleting " + removedSnippets.size() + " snippet(s)");
 
 				new SwingWorker<Double, Object>() {
 
 					@Override
 					public Double doInBackground() {
 						Date dateBegin = new Date();
-						ACETextManager.addAndRemoveSentences(addedSentences, removedSentences);
+						ACETextManager.addAndRemoveItems(addedSentenceLists, removedSnippets);
 						Date dateEnd = new Date();
 						return (double) ((dateEnd.getTime() - dateBegin.getTime()) / 1000);
 					}
