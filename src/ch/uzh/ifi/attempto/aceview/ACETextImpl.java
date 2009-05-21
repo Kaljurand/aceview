@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLLogicalAxiom;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -78,6 +79,8 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	private int emptySnippetCount = 0;
 
 	private int axiomlessSnippetCount = 0;
+
+	private final Joiner snippetJoiner = Joiner.on("\n\n");
 
 
 	public ACETextImpl() {
@@ -299,12 +302,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	// TODO: set it during snippet add/remove
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (ACESnippet snippet : snippetList) {
-			sb.append(snippet);
-			sb.append('\n');
-		}
-		return sb.toString();
+		return snippetJoiner.join(snippetList);
 	}
 
 
@@ -380,6 +378,20 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 	public boolean containsSentence(ACESentence sentence) {
 		return sentenceToSnippets.containsKey(sentence);
+	}
+
+
+	public boolean contains(List<ACESentence> sentences) {
+		if (sentences.isEmpty()) {
+			return false;
+		}
+		ACESentence sent = sentences.iterator().next();
+		for (ACESnippet s : sentenceToSnippets.get(sent)) {
+			if (s.getSentences().equals(sentences)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 
