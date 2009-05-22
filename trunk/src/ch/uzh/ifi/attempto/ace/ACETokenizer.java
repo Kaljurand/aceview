@@ -27,6 +27,8 @@ public class ACETokenizer {
 		Reader r = new StringReader(str);
 		StreamTokenizer t = new StreamTokenizer(r);
 
+		t.eolIsSignificant(true);
+
 		// We override some default values
 		t.ordinaryChar('/');
 		t.ordinaryChar('\'');
@@ -43,8 +45,22 @@ public class ACETokenizer {
 		t.wordChars('$', '$');
 
 		List<ACEToken> tokens = Lists.newArrayList();
+		int newLineCounter = 0;
+		boolean textHasStarted = false;
+
 		try {
 			while (t.nextToken() != StreamTokenizer.TT_EOF) {
+				if (t.ttype == StreamTokenizer.TT_EOL) {
+					newLineCounter++;
+					continue;
+				}
+
+				if (textHasStarted && newLineCounter > 1) {
+					tokens.add(ACEToken.PARA);
+				}
+				newLineCounter = 0;
+				textHasStarted = true;
+
 				if (t.ttype == StreamTokenizer.TT_WORD) {
 					tokens.add(ACEToken.newToken(t.sval));
 				}

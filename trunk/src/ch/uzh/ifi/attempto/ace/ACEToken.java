@@ -37,9 +37,13 @@ public final class ACEToken {
 	private boolean isVariable = false;
 	private boolean isFunctionWord = false;
 
+	private boolean isParagraphMarker = false;
+
 	private static final Pattern variablePattern = Pattern.compile("[A-Z][0-9]*");
 
 	public static final ACEToken DOT = makeDot();
+
+	public static final ACEToken PARA = makeParagraphMarker();
 
 
 	private ACEToken() {}
@@ -177,6 +181,10 @@ public final class ACEToken {
 		return isFunctionWord;
 	}
 
+	public boolean isParagraphMarker() {
+		return isParagraphMarker;
+	}
+
 	public boolean isContentWord() {
 		return (! isFunctionWord());
 	}
@@ -210,6 +218,15 @@ public final class ACEToken {
 		newToken.isBorderToken = true;
 		newToken.isSymbol = true;
 		newToken.isFunctionWord = true;
+		return newToken;
+	}
+
+
+	private static ACEToken makeParagraphMarker() {
+		ACEToken newToken = new ACEToken();
+		newToken.token = "<p>";
+		newToken.tokenLC = newToken.token;
+		newToken.isParagraphMarker = true;
 		return newToken;
 	}
 
