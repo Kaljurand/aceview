@@ -22,16 +22,24 @@ java -jar HermiT.jar --classify=- ~/Desktop/houses.owx
 /* These constraints make sure that there are AT LEAST 5 houses. */
 
 Every house follows at most 1 house and is followed by at most 1 house.
+
 Every first-house is a house that follows no house and that is followed by a house. /* and vv */
+
 Every last-house is a house that follows a house and that is followed by no house. /* and vv */
+
 Every middle-house is a house that follows a house that follows a first-house.
+
 Every middle-house is a house that is followed by a house that is followed by a last-house.
 /* and vv */
 
 House1 is a first-house.
+
 House2 is a house.
+
 House3 is a middle-house.
+
 House4 is a house.
+
 House5 is a house.
 
 /* This constraint makes sure that there a NOT MORE THAN 5 houses. */
@@ -46,8 +54,13 @@ Every house that follows a house that follows House1 is an answer1.
 Every house that follows a house that follows a house that follows a house that follows House1 is an answer2.
 
 Which house does not follow a house?
+
 Which house follows a house?
+
 Which house is not followed by a house?
+
 Which house is not a last-house?
+
 What is an answer1?
+
 What is an answer2?
