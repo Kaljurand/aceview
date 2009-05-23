@@ -27,15 +27,9 @@ public class ACESentence {
 
 	private final Joiner joiner = Joiner.on(" ");
 
-
 	public ACESentence(String str) {
-		// BUG: we fix the bug that the tokenizer has with sentences like
-		// "John's age is 15." where it parses the dot as part of the number
-		// (i.e. 15.0) and leaves the sentence without an end symbol.
-		// It's not the best solution as it also modifies dots in strings.
-		this(ACETokenizer.tokenize(ACESentenceSplitter.dotSeparator.matcher(str).replaceAll(" . ")));
+		this(ACESplitter.getTokens(str));
 	}
-
 
 	public ACESentence(List<ACEToken> tokens) {
 		this.tokens = ImmutableList.copyOf(tokens);

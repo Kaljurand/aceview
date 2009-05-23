@@ -5,13 +5,55 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 
 public class ACESplitter {
 
+	static final Pattern dotSeparator = Pattern.compile("([0-9])[.]([^0-9])");
+
+	// BUG: we fix the bug that the tokenizer has with sentences like
+	// "John's age is 15." where it parses the dot as part of the number
+	// (i.e. 15.0) and leaves the sentence without an end symbol.
+	// It's not the best solution as it also modifies dots in strings.
+	public static String fixNumbers(String str) {
+		String fixedStr = dotSeparator.matcher(str).replaceAll("$1 .$2");
+		return fixedStr;
+	}
+
+	/**
+	 * <p>Returns the first paragraph of the list.</p>
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static List<ACEToken> getTokens(String str) {
+		List<ACESentence> sentences = getSentences(str);
+		if (sentences.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		return sentences.iterator().next().getTokens();
+	}
+
+	/**
+	 * <p>Returns the first paragraph of the list.</p>
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static List<ACESentence> getSentences(String str) {
+		List<List<ACESentence>> paragraphs = getParagraphs(str);
+		if (paragraphs.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		return paragraphs.iterator().next();
+	}
+
+
 	public static List<List<ACESentence>> getParagraphs(String str) {
-		Reader r = new StringReader(str);
+
+		Reader r = new StringReader(fixNumbers(str));
 		StreamTokenizer t = new StreamTokenizer(r);
 
 		t.eolIsSignificant(true);
@@ -110,4 +152,5 @@ public class ACESplitter {
 		}
 		paragraphs.add(sentences);	
 	}
+
 }

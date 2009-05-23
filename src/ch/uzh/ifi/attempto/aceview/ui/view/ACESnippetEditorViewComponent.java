@@ -51,7 +51,7 @@ import org.semanticweb.owl.model.OWLLogicalAxiom;
 import com.google.common.collect.Multimap;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.ace.ACESentenceSplitter;
+import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACESnippetImpl;
 import ch.uzh.ifi.attempto.aceview.ACEText;
@@ -152,7 +152,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 
 		buttonNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				List<ACESentence> sentences = ACESentenceSplitter.splitSentences(snippetEditor.getText());
+				List<ACESentence> sentences = ACESplitter.getSentences(snippetEditor.getText());
 				if (sentences.isEmpty()) {
 					displayWarningMessage("Not added. There are no sentences.");
 				}
@@ -181,7 +181,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 			public void actionPerformed(ActionEvent event) {
 				ACESnippet selectedSnippet = ACETextManager.getSelectedSnippet();
 				if (selectedSnippet != null) {
-					List<ACESentence> sentences = ACESentenceSplitter.splitSentences(snippetEditor.getText());
+					List<ACESentence> sentences = ACESplitter.getSentences(snippetEditor.getText());
 					if (sentences.isEmpty()) {
 						deleteSnippet(selectedSnippet);
 					}
