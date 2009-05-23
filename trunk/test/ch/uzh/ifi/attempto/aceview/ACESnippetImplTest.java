@@ -17,7 +17,7 @@ import uk.ac.manchester.cs.owl.OWLDataFactoryImpl;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.ace.ACESentenceSplitter;
+import ch.uzh.ifi.attempto.ace.ACESplitter;
 
 public class ACESnippetImplTest {
 
@@ -39,7 +39,7 @@ public class ACESnippetImplTest {
 	@Test
 	public final void test0() {
 		String str = "Every man is a human.";
-		List<ACESentence> sents = ACESentenceSplitter.splitSentences(str);
+		List<ACESentence> sents = ACESplitter.getSentences(str);
 
 		ACESnippet s1 = new ACESnippetImpl(URI_TEST, sents);
 		ACESnippet s2 = new ACESnippetImpl(URI_TEST, sents);
@@ -51,7 +51,7 @@ public class ACESnippetImplTest {
 	@Test
 	public final void test1() {
 		String str = "Every man is a human.";
-		List<ACESentence> sents = ACESentenceSplitter.splitSentences(str);
+		List<ACESentence> sents = ACESplitter.getSentences(str);
 
 		ACESnippet s = new ACESnippetImpl(URI_TEST, sents);
 
@@ -65,8 +65,8 @@ public class ACESnippetImplTest {
 		String str1 = "Every man is a human.";
 		String str2 = "If there is a man then the man is a human.";
 
-		List<ACESentence> sents1 = ACESentenceSplitter.splitSentences(str1);
-		List<ACESentence> sents2 = ACESentenceSplitter.splitSentences(str2);
+		List<ACESentence> sents1 = ACESplitter.getSentences(str1);
+		List<ACESentence> sents2 = ACESplitter.getSentences(str2);
 
 		ACESnippet s1 = new ACESnippetImpl(URI_TEST, sents1);
 		ACESnippet s2 = new ACESnippetImpl(URI_TEST, sents2);
@@ -78,7 +78,7 @@ public class ACESnippetImplTest {
 	@Test
 	public final void test3() {
 		String str = "See tekst on vigane.";
-		List<ACESentence> sents = ACESentenceSplitter.splitSentences(str);
+		List<ACESentence> sents = ACESplitter.getSentences(str);
 
 		ACESnippet s = new ACESnippetImpl(URI_TEST, sents);
 
@@ -90,7 +90,7 @@ public class ACESnippetImplTest {
 	@Test
 	public final void test4() {
 		String str = "John likes Mary.";
-		List<ACESentence> sents = ACESentenceSplitter.splitSentences(str);
+		List<ACESentence> sents = ACESplitter.getSentences(str);
 
 		ACESnippet s = new ACESnippetImpl(URI_TEST, sents);
 

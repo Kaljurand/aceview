@@ -23,7 +23,7 @@ import javax.swing.table.AbstractTableModel;
 import org.apache.log4j.Logger;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.ace.ACESentenceSplitter;
+import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
@@ -87,7 +87,7 @@ public abstract class AbstractSnippetsTableModel extends AbstractTableModel {
 			Object object = getValueAt(row, column);
 			if (object != null && object instanceof ACESnippet) {
 				ACESnippet oldSnippet = (ACESnippet) object;
-				List<ACESentence> newSentences = ACESentenceSplitter.splitSentences((String) text);
+				List<ACESentence> newSentences = ACESplitter.getSentences((String) text);
 
 				if (oldSnippet.getSentences().equals(newSentences)) {
 					logger.info("Del/Add nothing: oldSnippet = newSentences = " + oldSnippet.getSentences());

@@ -44,7 +44,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.ace.ACESentenceSplitter;
+import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
@@ -143,7 +143,7 @@ public class ACESnippetImpl implements ACESnippet {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		this.axiomSet = ImmutableSet.of(axiom);
-		this.sentences = ImmutableList.copyOf(ACESentenceSplitter.splitSentences(str));
+		this.sentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
 		if (! sentences.isEmpty()) {
 			if (sentences.get(sentences.size() - 1).isQuestion()) {
 				isQuestion = true;
@@ -157,7 +157,7 @@ public class ACESnippetImpl implements ACESnippet {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		this.axiomSet = ImmutableSet.of(axiom);
-		this.sentences = ImmutableList.copyOf(ACESentenceSplitter.splitSentences(str));
+		this.sentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
 		if (! sentences.isEmpty()) {
 			if (sentences.get(sentences.size() - 1).isQuestion()) {
 				isQuestion = true;
@@ -562,7 +562,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 			if (errorMessages.isEmpty()) {
 				if (paraphrase1Enabled) {
-					para1 = ACESentenceSplitter.splitSentences(result.get(OutputType.PARAPHRASE1));
+					para1 = ACESplitter.getSentences(result.get(OutputType.PARAPHRASE1));
 				}
 				String owlxml = result.get(OutputType.OWLXML);
 				if (owlxml == null || owlxml.length() == 0) {
