@@ -23,14 +23,6 @@ public class ACESentenceSplitter {
 			return Lists.newArrayList();
 		}
 
-		// In case the token-stream does not end with a border symbol then
-		// we assume that the user forgot to add a period at the end of the
-		// sentence(s). We will automatically add it in order to avoid
-		// the confusing disappearance of the (partial) sentence.
-		if (! tokens.get(tokens.size() - 1).isBorderToken()) {
-			tokens.add(ACEToken.DOT);
-		}
-
 		List<ACEToken> tmp = Lists.newArrayList();
 		List<ACESentence> sentences = Lists.newArrayList();
 
@@ -40,6 +32,15 @@ public class ACESentenceSplitter {
 				sentences.add(new ACESentence(tmp));
 				tmp.clear();
 			}
+		}
+
+		// In case the token-stream does not end with a border symbol then
+		// we assume that the user forgot to add a period at the end of the
+		// sentence(s). We will automatically add it in order to avoid
+		// the confusing disappearance of the (partial) sentence.
+		if (! tmp.isEmpty()) {
+			tmp.add(ACEToken.DOT);
+			sentences.add(new ACESentence(tmp));
 		}
 
 		return sentences;
