@@ -84,7 +84,7 @@ public class ACESplitterTest {
 
 
 	@Test
-	public final void testTokenize3() {
+	public final void testTokenize2() {
 		assertEquals(
 				Lists.newArrayList(
 						ACEToken.newNumber(123),
@@ -98,5 +98,26 @@ public class ACESplitterTest {
 						ACEToken.DOT
 				),
 				ACESplitter.getTokens("123man man123 ŠšŸp 123man123 man123man \"ŠšŸpŸp\""));
+	}
+
+	@Test
+	public final void testTokenize3() {
+		assertEquals(
+				Lists.newArrayList(
+						ACEToken.newNumber(1),
+						ACEToken.newNumber(12),
+						ACEToken.newNumber(0),
+						ACEToken.newNumber(-1),
+						ACEToken.newNumber(-12),
+						ACEToken.newNumber(0),
+						ACEToken.newNumber(1.2),
+						ACEToken.newNumber(0.2),
+						ACEToken.newNumber(-1.2),
+						ACEToken.newNumber(-0.2),
+						ACEToken.newNumber(-0.01),
+						ACEToken.newNumber(0),
+						ACEToken.DOT
+				),
+				ACESplitter.getTokens("1 12 0 -1 -12 -0 1.2 0.2 -1.2 -0.2 -.01 -.0 .1"));
 	}
 }
