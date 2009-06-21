@@ -2,7 +2,8 @@
 	<description>Building and deployment of the ACE View jar-file.</description>
 
 	<!-- The location of the local copy of Protege 4 trunk. -->
-	<property name="protege" location="${user.home}/mywork/protege/trunk/"/>
+	<property name="protege" location="${user.home}/mywork/protege4/trunk/"/>
+
 	<property name="swi_home_dir" location="/opt/local/lib/swipl-5.6.61/"/>
 
 	<!-- The following properties you probably do not need to modify. -->
@@ -32,6 +33,7 @@
 	</target>
 
 	<target name="compile" depends="init" description="Compile the ACE View Java files.">
+		<echo>Using Protege jars from: ${protege}</echo>
 		<mkdir dir="classes"/>
 		<javac
 			srcdir="src/"

@@ -79,7 +79,7 @@ public class ACESnippetImpl implements ACESnippet {
 	// BUG: make everything final
 	private ImmutableSet<OWLLogicalAxiom> axiomSet = ImmutableSet.of();
 	// private final Set<SWRLRule> rules = Sets.newHashSet();
-	private List<ACESentence> para1 = Lists.newArrayList();
+	private List<List<ACESentence>> para1 = Lists.newArrayList();
 	private boolean isQuestion = false;
 	private int errorMessagesCount = 0;
 	private int owlErrorMessagesCount = 0;
@@ -386,7 +386,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public List<ACESentence> getParaphrase() {
+	public List<List<ACESentence>> getParaphrase() {
 		return para1;
 	}
 
@@ -562,7 +562,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 			if (errorMessages.isEmpty()) {
 				if (paraphrase1Enabled) {
-					para1 = ACESplitter.getSentences(result.get(OutputType.PARAPHRASE1));
+					para1 = ACESplitter.getParagraphs(result.get(OutputType.PARAPHRASE1));
 				}
 				String owlxml = result.get(OutputType.OWLXML);
 				if (owlxml == null || owlxml.length() == 0) {
