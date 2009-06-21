@@ -34,6 +34,7 @@ import org.semanticweb.owl.model.OWLAnnotation;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLLogicalAxiom;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -93,6 +94,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 
 	private final ColorHighlighter errorHighlighter = new ColorHighlighter(new ErrorMessagePredicate(MessagesTableModel.Column.IMPORTANCE.ordinal()));
 
+	private final Joiner paragraphJoiner = Joiner.on("\n\n");
 
 	@Override
 	protected void initialiseOWLView() throws Exception {
@@ -264,15 +266,19 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 	 * @param snippet ACE snippet
 	 */
 	private void updateParaphrases(ACESnippet snippet) {
-		List<ACESentence> paraphrase = snippet.getParaphrase();
+		List<List<ACESentence>> paraphrase = snippet.getParaphrase();
 		if (paraphrase.isEmpty()) {
 			panelParaphrase.setTitle(PANEL_PARAPHRASES_TITLE + ": " + NONE);
 			textareaParaphrase.setText("");
 		}
 		else {
 			panelParaphrase.setTitle(PANEL_PARAPHRASES_TITLE + ": 1");
-			SnippetRenderer snippetRenderer = new SnippetRenderer(paraphrase);
-			textareaParaphrase.setText(snippetRenderer.getRendering());
+			List<String> snippetRenderings = Lists.newArrayList();
+			for (List<ACESentence> paragraph : paraphrase) {
+				SnippetRenderer snippetRenderer = new SnippetRenderer(paragraph);
+				snippetRenderings.add(snippetRenderer.getRendering());
+			}
+			textareaParaphrase.setText(paragraphJoiner.join(snippetRenderings));
 		}
 	}
 

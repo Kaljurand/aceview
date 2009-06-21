@@ -248,15 +248,13 @@ public interface ACESnippet {
 	Multimap<Integer, Integer> getErrorSpans();
 
 	/**
-	 * <p>Returns a list of ACE sentences that represent the
+	 * <p>Returns a list of ACE paragraphs (sentence lists) that represents the
 	 * paraphrase of this snippet. In case the paraphrase has
 	 * not been generated, then returns an empty list.</p>
 	 * 
-	 * TODO: think about it
-	 * 
-	 * @return List of ACE sentences
+	 * @return List of ACE paragraphs (sentence lists)
 	 */
-	List<ACESentence> getParaphrase();
+	List<List<ACESentence>> getParaphrase();
 
 	/**
 	 * <p>Returns the default namespace of the snippet.</p>
