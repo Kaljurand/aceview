@@ -1,7 +1,7 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2009-04-30
+Version: 2009-06-22
 
 == License ==
 
@@ -16,11 +16,11 @@ information about the used third-party libraries.
 
 == Introduction ==
 
-In the following, "Protege" means "Protege 4 latest build".
+In the following, "Protege" means "Protege 4.0".
 
 == Files ==
 
-* .classpath: classpath configuration for ACE View (used by Eclipse)
+* .classpath: sample classpath configuration for ACE View (used by Eclipse)
 * .project: Eclipse project file
 * .settings/: Eclipse settings files
 * README.txt: this file
