@@ -13,44 +13,16 @@ public class ACESplitter {
 
 	static final Pattern dotSeparator = Pattern.compile("([0-9])[.]([^0-9])");
 
-	// BUG: we fix the bug that the tokenizer has with sentences like
-	// "John's age is 15." where it parses the dot as part of the number
-	// (i.e. 15.0) and leaves the sentence without an end symbol.
-	// It's not the best solution as it also modifies dots in strings.
-	public static String fixNumbers(String str) {
-		String fixedStr = dotSeparator.matcher(str).replaceAll("$1 .$2");
-		return fixedStr;
-	}
 
 	/**
-	 * <p>Returns the first paragraph of the list.</p>
+	 * <p>Tokenizes the given string and returns the result
+	 * as a list of lists of ACE sentences, where each sentence
+	 * is a list of tokens. A list of sentences forms an ACE paragraph.
+	 * A list of paragraphs is an ACE text.</p>
 	 * 
-	 * @param str
-	 * @return
+	 * @param str ACE text as string
+	 * @return ACE text as list of paragraphs (sentence lists)
 	 */
-	public static List<ACEToken> getTokens(String str) {
-		List<ACESentence> sentences = getSentences(str);
-		if (sentences.isEmpty()) {
-			return Lists.newArrayList();
-		}
-		return sentences.iterator().next().getTokens();
-	}
-
-	/**
-	 * <p>Returns the first paragraph of the list.</p>
-	 * 
-	 * @param str
-	 * @return
-	 */
-	public static List<ACESentence> getSentences(String str) {
-		List<List<ACESentence>> paragraphs = getParagraphs(str);
-		if (paragraphs.isEmpty()) {
-			return Lists.newArrayList();
-		}
-		return paragraphs.iterator().next();
-	}
-
-
 	public static List<List<ACESentence>> getParagraphs(String str) {
 
 		Reader r = new StringReader(fixNumbers(str));
@@ -136,6 +108,48 @@ public class ACESplitter {
 		updateParagraphs(paragraphs, sentences, tokens);
 
 		return paragraphs;
+	}
+
+
+	/**
+	 * <p>Tokenizes the given string and returns the first sentence
+	 * of the first paragraph of the resulting list of paragraphs.</p>
+	 * 
+	 * @param str ACE text as string
+	 * @return ACE sentence (as a list of tokens)
+	 */
+	public static List<ACEToken> getTokens(String str) {
+		List<ACESentence> sentences = getSentences(str);
+		if (sentences.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		return sentences.iterator().next().getTokens();
+	}
+
+
+	/**
+	 * <p>Tokenizes the given string and returns the first paragraph
+	 * of the resulting list of paragraphs.</p>
+	 * 
+	 * @param str ACE text as string
+	 * @return ACE paragraph (sentence list)
+	 */
+	public static List<ACESentence> getSentences(String str) {
+		List<List<ACESentence>> paragraphs = getParagraphs(str);
+		if (paragraphs.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		return paragraphs.iterator().next();
+	}	
+
+
+	// BUG: we fix the bug that the tokenizer has with sentences like
+	// "John's age is 15." where it parses the dot as part of the number
+	// (i.e. 15.0) and leaves the sentence without an end symbol.
+	// It's not the best solution as it also modifies dots in strings.
+	private static String fixNumbers(String str) {
+		String fixedStr = dotSeparator.matcher(str).replaceAll("$1 .$2");
+		return fixedStr;
 	}
 
 
