@@ -12,10 +12,25 @@ For more information, see:
 <a href="http://attempto.ifi.uzh.ch/aceview/">http://attempto.ifi.uzh.ch/aceview/</a>.</p>
 
 <p>Version 1.2.20 (Protege 4.0.113 (r14610, OWL API 2.2.1.1138)).
-Release date: 2009-06-21</p>
+Release date: 2009-06-22</p>
 
 <ul>
-	<li>BUG: to be filled in</li>
+	<li>IMPROVED: In ACETextViewComponent, replaced SwingWorker with the new Protege
+	BackgroundTask. This gives a nicer integration with Protege.</li>
+	<li>IMPROVED: Removed the path of the SWI-Prolog executable from
+	the preferences and the preferences panel.
+	This is not needed as libjpl knows this path.</li>
+	<li>IMPROVED: pretty-printing of Saxon genitives
+	(e.g. Polyneikes'child -> Polyneikes' child)
+	<li>CHANGED: The toString-serialization of an ACE text is now a \n\n-connected
+	toString-serializations of its snippets. The ACE text view reflects this,
+	i.e. no longer are <em>sentences</em> added and removed in this view. Instead,
+	<em>snippets</em> are added and removed.
+	This aligns nicely with the new paragraph support in ACE/APE 6.5.</li>
+	<li>CHANGED: Renamed: ace:Superman -> ace:Universe; ace:know -> ace:contain.
+	(These entities are generated in the background to capture the semantics
+	of sentences like "There are exactly 27 EU-countries.")</li>
+	<li>FIXED: Some preferences were not remembered</li>
 	<li>UPDATED: google-collect to v1.0 RC2</li>
 	<li>UPDATED: swingx to v1.0</li>
 </ul>
