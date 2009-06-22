@@ -42,6 +42,7 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.VerticalLayout;
 import org.protege.editor.core.ui.util.Icons;
 import org.protege.editor.owl.OWLEditorKit;
+import org.protege.editor.owl.model.util.OWLAxiomInstance;
 import org.protege.editor.owl.ui.UIHelper;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
 import org.semanticweb.owl.model.OWLAxiom;
@@ -404,7 +405,9 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 		if (axiomAnnotationPanel == null) {
 			axiomAnnotationPanel = new AxiomAnnotationPanel(editorKit);
 		}
-		axiomAnnotationPanel.setAxiom(ax);
+		// TODO: BUG: think about it, we should get the ontology that contains the axiom,
+		// not the active ontology
+		axiomAnnotationPanel.setAxiom(new OWLAxiomInstance(ax, getOWLModelManager().getActiveOntology()));
 		new UIHelper(editorKit).showDialog("Annotations", axiomAnnotationPanel, JOptionPane.CLOSED_OPTION);
 	}
 
