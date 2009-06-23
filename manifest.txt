@@ -6,7 +6,7 @@ Bundle-Category: protege
 Bundle-Description: ACE View plug-in for the Protege OWL Editor
 Bundle-Vendor: Kaarel Kaljurand
 Bundle-DocURL: http://attempto.ifi.uzh.ch/aceview/
-Update-Url: http://attempto.ifi.uzh.ch/aceview/update.properties
+Update-Url: http://aceview.googlecode.com/svn/trunk/update.properties
 Bundle-ContactAddress: kaljurand@gmail.com
 Import-Package: org.osgi.framework,org.apache.log4j
 Bundle-Version: 1.2.20
