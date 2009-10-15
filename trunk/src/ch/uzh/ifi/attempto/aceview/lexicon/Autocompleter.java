@@ -76,14 +76,10 @@ public class Autocompleter {
 	 * is returned.</p>
 	 * 
 	 * @param prefix String to be completed
-	 * @return Completion of the string or <code>null</code>
+	 * @return Completion of the string
 	 */
 	public String complete(String prefix) {
-		String completion = tree.complete(prefix);
-		if (completion == null) {
-			return prefix;
-		}
-		return completion;
+		return tree.complete(prefix);
 	}
 
 

@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="lib/attempto-ape.jar"/>
 	<classpathentry kind="lib" path="lib/attempto-owl.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
-	<classpathentry kind="lib" path="lib/RadixTree.jar"/>
+	<classpathentry kind="lib" path="lib/RadixTree-0.3.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/swing-worker-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/google-collect-1.0-rc2.jar"/>
