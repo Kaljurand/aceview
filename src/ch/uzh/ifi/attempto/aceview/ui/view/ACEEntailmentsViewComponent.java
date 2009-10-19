@@ -28,31 +28,31 @@ import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.semanticweb.owl.inference.OWLReasoner;
-import org.semanticweb.owl.inference.OWLReasonerException;
-import org.semanticweb.owl.io.OWLRendererException;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLClassAssertionAxiom;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEquivalentDataPropertiesAxiom;
-import org.semanticweb.owl.model.OWLEquivalentObjectPropertiesAxiom;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLNaryPropertyAxiom;
-import org.semanticweb.owl.model.OWLOntology;
-import org.semanticweb.owl.model.OWLOntologyChangeException;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
-import org.semanticweb.owl.model.OWLOntologyManager;
-import org.semanticweb.owl.model.OWLSubClassAxiom;
-import org.semanticweb.owl.util.InferredAxiomGenerator;
-import org.semanticweb.owl.util.InferredAxiomGeneratorException;
-import org.semanticweb.owl.util.InferredClassAssertionAxiomGenerator;
-import org.semanticweb.owl.util.InferredEquivalentClassAxiomGenerator;
-import org.semanticweb.owl.util.InferredEquivalentObjectPropertyAxiomGenerator;
-import org.semanticweb.owl.util.InferredObjectPropertyCharacteristicAxiomGenerator;
-import org.semanticweb.owl.util.InferredOntologyGenerator;
-import org.semanticweb.owl.util.InferredPropertyAssertionGenerator;
-import org.semanticweb.owl.util.InferredSubClassAxiomGenerator;
-import org.semanticweb.owl.util.InferredSubObjectPropertyAxiomGenerator;
+import org.semanticweb.owlapi.inference.OWLReasoner;
+import org.semanticweb.owlapi.inference.OWLReasonerException;
+import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyChangeException;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.util.InferredAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredAxiomGeneratorException;
+import org.semanticweb.owlapi.util.InferredClassAssertionAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredEquivalentClassAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredEquivalentObjectPropertyAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredObjectPropertyCharacteristicAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredOntologyGenerator;
+import org.semanticweb.owlapi.util.InferredPropertyAssertionGenerator;
+import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredSubObjectPropertyAxiomGenerator;
 
 import ch.uzh.ifi.attempto.aceview.ACEViewPreferences;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
@@ -245,10 +245,10 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 			if (activeOntology.containsAxiom(ax)) {
 				// Not showing the ASSERTED axiom.
 			}
-			else if (ax instanceof OWLSubClassAxiom && ((OWLSubClassAxiom) ax).getSuperClass().isOWLThing()) {
+			else if (ax instanceof OWLSubClassOfAxiom && ((OWLSubClassOfAxiom) ax).getSuperClass().isOWLThing()) {
 				logger.info("NOT showing: " + ax.toString());
 			}
-			else if (ax instanceof OWLClassAssertionAxiom && ((OWLClassAssertionAxiom) ax).getDescription().isOWLThing()) {
+			else if (ax instanceof OWLClassAssertionAxiom && ((OWLClassAssertionAxiom) ax).getClassExpression().isOWLThing()) {
 				logger.info("NOT showing: " + ax.toString());
 			}
 			else if (ax instanceof OWLEquivalentObjectPropertiesAxiom && ((OWLNaryPropertyAxiom) ax).getProperties().size() < 2) {

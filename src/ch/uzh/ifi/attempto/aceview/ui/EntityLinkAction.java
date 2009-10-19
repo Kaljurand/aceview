@@ -6,7 +6,7 @@ import javax.swing.Action;
 
 import org.jdesktop.swingx.hyperlink.AbstractHyperlinkAction;
 import org.protege.editor.owl.model.OWLWorkspace;
-import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 

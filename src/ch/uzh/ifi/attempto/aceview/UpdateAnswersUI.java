@@ -27,7 +27,7 @@ import javax.swing.ProgressMonitor;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingworker.SwingWorker;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owl.inference.OWLReasonerException;
+import org.semanticweb.owlapi.inference.OWLReasonerException;
 
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
 

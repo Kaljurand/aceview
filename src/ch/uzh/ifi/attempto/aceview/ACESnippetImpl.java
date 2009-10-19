@@ -23,17 +23,17 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
-import org.protege.editor.owl.model.description.OWLExpressionParserException;
-import org.semanticweb.owl.io.StringInputSource;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEquivalentClassesAxiom;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
-import org.semanticweb.owl.model.OWLOntologyManager;
-import org.semanticweb.owl.model.OWLSubClassAxiom;
-import org.semanticweb.owl.model.SWRLRule;
+import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
+import org.semanticweb.owlapi.io.StringInputSource;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.SWRLRule;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -281,13 +281,13 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public boolean isUnsatisfiable() {
 		for (OWLAxiom axiom : axiomSet) {
-			if (axiom instanceof OWLSubClassAxiom) {
-				if (((OWLSubClassAxiom) axiom).getSuperClass().isOWLNothing()) {
+			if (axiom instanceof OWLSubClassOfAxiom) {
+				if (((OWLSubClassOfAxiom) axiom).getSuperClass().isOWLNothing()) {
 					return true;
 				}
 			}
 			if (axiom instanceof OWLEquivalentClassesAxiom) {
-				for (OWLDescription desc : ((OWLEquivalentClassesAxiom) axiom).getDescriptions()) {
+				for (OWLClassExpression desc : ((OWLEquivalentClassesAxiom) axiom).getClassExpressions()) {
 					if (desc.isOWLNothing()) {
 						return true;
 					}
@@ -300,14 +300,14 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public boolean isEqualToThing() {
 		for (OWLAxiom axiom : axiomSet) {
-			if (axiom instanceof OWLSubClassAxiom) {
-				if (((OWLSubClassAxiom) axiom).getSubClass().isOWLThing()) {
+			if (axiom instanceof OWLSubClassOfAxiom) {
+				if (((OWLSubClassOfAxiom) axiom).getSubClass().isOWLThing()) {
 					return true;
 				}
 			}
 
 			if (axiom instanceof OWLEquivalentClassesAxiom) {
-				for (OWLDescription desc : ((OWLEquivalentClassesAxiom) axiom).getDescriptions()) {
+				for (OWLClassExpression desc : ((OWLEquivalentClassesAxiom) axiom).getClassExpressions()) {
 					if (desc.isOWLThing()) {
 						return true;
 					}
@@ -368,13 +368,13 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public OWLDescription getDLQuery() {
+	public OWLClassExpression getDLQuery() {
 		OWLLogicalAxiom rawAxiom = getAxiom();
 		if (rawAxiom == null) {
 			return null;
 		}
-		if (rawAxiom instanceof OWLSubClassAxiom) {
-			OWLSubClassAxiom axiom = (OWLSubClassAxiom) rawAxiom;
+		if (rawAxiom instanceof OWLSubClassOfAxiom) {
+			OWLSubClassOfAxiom axiom = (OWLSubClassOfAxiom) rawAxiom;
 			return axiom.getSubClass();
 		}
 		return null;

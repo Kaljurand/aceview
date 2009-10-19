@@ -5,7 +5,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLWorkspace;
-import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 

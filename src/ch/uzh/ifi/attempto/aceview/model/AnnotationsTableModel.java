@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.semanticweb.owl.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 
 import com.google.common.collect.Lists;
 
@@ -86,13 +86,14 @@ public class AnnotationsTableModel extends AbstractTableModel {
 	}
 
 	// BUG: we ignore the column, otherwise there were refreshing problems
+	// TODO: rename the URI-field
 	public Object getValueAt(int row, int column) {
 		if (row >= 0 && row < comments.size()) {
 			switch (Column.values()[column]) {
 			case VALUE:
-				return comments.get(row).getAnnotationValue();
+				return comments.get(row).getValue();
 			case URI:
-				return comments.get(row).getAnnotationURI();
+				return comments.get(row).getProperty();
 			case CLASS:
 				return comments.get(row).getClass().getSimpleName();
 			default:

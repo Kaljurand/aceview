@@ -36,15 +36,15 @@ import javax.swing.text.StyledDocument;
 import org.jdesktop.swingx.JXHyperlink;
 import org.protege.editor.owl.model.OWLWorkspace;
 import org.protege.editor.owl.ui.UIHelper;
-import org.semanticweb.owl.io.OWLRendererException;
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLIndividual;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLOntologyChangeException;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyChangeException;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import com.google.common.collect.Maps;
 
@@ -96,7 +96,7 @@ public class ACEAnswersPane extends JTextPane {
 			if (answer == null) {
 			}
 			else {
-				final OWLDescription dlquery = question.getDLQuery();
+				final OWLClassExpression dlquery = question.getDLQuery();
 				if (answer.isSatisfiable()) {
 					showAnswers(dlquery, answer);
 				}
@@ -112,9 +112,9 @@ public class ACEAnswersPane extends JTextPane {
 	}
 
 
-	private void showNothingSnippet(OWLDescription dlquery) {
+	private void showNothingSnippet(OWLClassExpression dlquery) {
 		addComponent(ComponentFactory.makeItalicLabel("This question is unsatisfiable because"));
-		OWLLogicalAxiom axiom = df.getOWLSubClassAxiom(dlquery, df.getOWLNothing());
+		OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLNothing());
 		try {
 			ACESnippet nothingSnippet = verbalizationCache.get(axiom);
 			if (nothingSnippet == null) {
@@ -147,7 +147,7 @@ public class ACEAnswersPane extends JTextPane {
 	}
 
 
-	private void showAnswers(final OWLDescription dlquery, final ACEAnswer answer) {
+	private void showAnswers(final OWLClassExpression dlquery, final ACEAnswer answer) {
 
 		final Set<OWLIndividual> individuals = answer.getIndividuals();
 		final Set<OWLClass> subclasses = answer.getSubClasses();
@@ -178,7 +178,7 @@ public class ACEAnswersPane extends JTextPane {
 
 				buttonCompleter.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						OWLLogicalAxiom axiom = df.getOWLSubClassAxiom(dlquery, df.getOWLObjectOneOf(individuals));
+						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectOneOf(individuals));
 						if (confirmAndAdd(buttonCompleter, axiom)) {
 							answer.setIndividualAnswersComplete(true);
 						}
@@ -195,7 +195,7 @@ public class ACEAnswersPane extends JTextPane {
 
 			addComponent(ComponentFactory.makeItalicLabel(dc + " named classes:"));
 			for (OWLEntity entity : subclasses) {
-				addComponent(getHyperlink(entity, df.getOWLSubClassAxiom((OWLClass) entity, dlquery)));
+				addComponent(getHyperlink(entity, df.getOWLSubClassOfAxiom((OWLClass) entity, dlquery)));
 			}
 
 			if (answer.isSubClassesAnswersComplete()) {
@@ -210,7 +210,7 @@ public class ACEAnswersPane extends JTextPane {
 
 				buttonCompleter.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						OWLLogicalAxiom axiom = df.getOWLSubClassAxiom(dlquery, df.getOWLObjectUnionOf(subclasses));
+						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectUnionOf(subclasses));
 						if (confirmAndAdd(buttonCompleter, axiom)) {
 							answer.setSubClassesAnswersComplete(true);
 						}
@@ -227,7 +227,7 @@ public class ACEAnswersPane extends JTextPane {
 
 			addComponent(ComponentFactory.makeItalicLabel("Every answer is:"));
 			for (OWLEntity entity : superclasses) {
-				addComponent(getHyperlink(entity, df.getOWLSubClassAxiom(dlquery, (OWLClass) entity)));
+				addComponent(getHyperlink(entity, df.getOWLSubClassOfAxiom(dlquery, (OWLClass) entity)));
 			}
 			addComponent(ComponentFactory.makeItalicLabel("(" + ac + " named classes)"));
 		}

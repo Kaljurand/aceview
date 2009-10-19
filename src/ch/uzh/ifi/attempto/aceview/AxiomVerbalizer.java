@@ -25,24 +25,24 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 import org.coode.owlapi.owlxml.renderer.OWLXMLRenderer;
-import org.semanticweb.owl.io.OWLRendererException;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLClassAssertionAxiom;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLDisjointClassesAxiom;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEntityAnnotationAxiom;
-import org.semanticweb.owl.model.OWLIndividual;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLObjectPropertyAssertionAxiom;
-import org.semanticweb.owl.model.OWLObjectPropertyExpression;
-import org.semanticweb.owl.model.OWLOntology;
-import org.semanticweb.owl.model.OWLOntologyChangeException;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
-import org.semanticweb.owl.model.OWLOntologyManager;
-import org.semanticweb.owl.model.OWLSubClassAxiom;
+import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyChangeException;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 import com.google.common.collect.Sets;
 
@@ -168,10 +168,10 @@ public class AxiomVerbalizer {
 	 * @return sentence corresponding to the <code>OWLAxiom</code> or <code>null</code>
 	 */
 	private String verbalizeSimpleSubClassAxiom(OWLLogicalAxiom ax) {
-		if (ax instanceof OWLSubClassAxiom) {
-			OWLSubClassAxiom subClassAxiom = (OWLSubClassAxiom) ax;
-			OWLDescription subClass = subClassAxiom.getSubClass();
-			OWLDescription superClass = subClassAxiom.getSuperClass();
+		if (ax instanceof OWLSubClassOfAxiom) {
+			OWLSubClassOfAxiom subClassAxiom = (OWLSubClassOfAxiom) ax;
+			OWLClassExpression subClass = subClassAxiom.getSubClass();
+			OWLClassExpression superClass = subClassAxiom.getSuperClass();
 			// There is a higher chance that superClass.isAnonymous(), that is why we test it first.
 			if (isAnonymousOrNothing(superClass)) {
 				return null;
@@ -184,7 +184,7 @@ public class AxiomVerbalizer {
 		}
 		else if (ax instanceof OWLClassAssertionAxiom) {
 			OWLClassAssertionAxiom classAssertionAxiom = (OWLClassAssertionAxiom) ax;
-			OWLDescription desc = classAssertionAxiom.getDescription();
+			OWLClassExpression desc = classAssertionAxiom.getClassExpression();
 			OWLIndividual ind = classAssertionAxiom.getIndividual();
 
 			if (isAnonymousOrNothing(desc)) {
@@ -212,16 +212,16 @@ public class AxiomVerbalizer {
 		}
 		else if (ax instanceof OWLDisjointClassesAxiom) {
 			OWLDisjointClassesAxiom disjointClassesAxiom = (OWLDisjointClassesAxiom) ax;
-			Set<OWLDescription> descriptions = disjointClassesAxiom.getDescriptions();
+			Set<OWLClassExpression> descriptions = disjointClassesAxiom.getClassExpressions();
 
 			if (descriptions.size() != 2) {
 				return null;
 			}
 
-			Iterator<OWLDescription> iterator = descriptions.iterator();
+			Iterator<OWLClassExpression> iterator = descriptions.iterator();
 
-			OWLDescription desc1 = iterator.next();
-			OWLDescription desc2 = iterator.next();
+			OWLClassExpression desc1 = iterator.next();
+			OWLClassExpression desc2 = iterator.next();
 
 			if (isAnonymousOrNothing(desc1)) {
 				return null;
@@ -265,7 +265,7 @@ public class AxiomVerbalizer {
 	}
 
 
-	private static boolean isAnonymousOrNothing(OWLDescription desc) {
+	private static boolean isAnonymousOrNothing(OWLClassExpression desc) {
 		return (desc.isAnonymous() || desc.isOWLNothing());
 	}
 

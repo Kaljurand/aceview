@@ -20,10 +20,10 @@ import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.SWRLRule;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.SWRLRule;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
@@ -211,7 +211,7 @@ public interface ACESnippet {
 	 * 
 	 * @return OWL class expression representing the DL Query
 	 */
-	OWLDescription getDLQuery();
+	OWLClassExpression getDLQuery();
 
 	/**
 	 * <p>Convenience method that returns <code>true</code>

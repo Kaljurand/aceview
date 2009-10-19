@@ -30,9 +30,9 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
-import org.semanticweb.owl.model.OWLAnnotation;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -189,7 +189,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 	private static String renderSnippetAxioms(OWLModelManager mm, ACESnippet snippet) {
 		StringBuilder html = new StringBuilder();
 		if (snippet.isQuestion()) {
-			OWLDescription dlquery = snippet.getDLQuery();
+			OWLClassExpression dlquery = snippet.getDLQuery();
 			if (dlquery != null) {
 				html.append("<pre>");
 				html.append(mm.getRendering(dlquery));

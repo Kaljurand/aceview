@@ -20,13 +20,14 @@ import java.awt.HeadlessException;
 import java.util.Set;
 
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owl.inference.OWLReasoner;
-import org.semanticweb.owl.inference.OWLReasonerAdapter;
-import org.semanticweb.owl.inference.OWLReasonerException;
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owlapi.inference.OWLReasoner;
+import org.semanticweb.owlapi.inference.OWLReasonerAdapter;
+import org.semanticweb.owlapi.inference.OWLReasonerException;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import com.google.common.collect.Sets;
 
@@ -68,7 +69,7 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  * @author Kaarel Kaljurand
  */
 public class ACEAnswer {
-	private Set<OWLIndividual> individuals = Sets.newTreeSet(new EntityComparator());
+	private Set<OWLNamedIndividual> individuals = Sets.newTreeSet(new EntityComparator());
 	private Set<OWLClass> subClasses = Sets.newTreeSet(new EntityComparator());
 	private Set<OWLClass> supClasses = Sets.newTreeSet(new EntityComparator());
 	private boolean isSatisfiable = true;
@@ -77,7 +78,7 @@ public class ACEAnswer {
 	private boolean isSubClassesAnswersComplete = false;
 
 	public ACEAnswer(OWLModelManager mngr, ACESnippet snippet) {
-		OWLDescription dlquery = snippet.getDLQuery();
+		OWLClassExpression dlquery = snippet.getDLQuery();
 		if (dlquery == null) {
 			setAnswersToNull();
 		}
@@ -160,7 +161,7 @@ public class ACEAnswer {
 		supClasses = null;
 	}
 
-	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLDescription desc) throws OWLReasonerException {
+	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) throws OWLReasonerException {
 		Set<OWLIndividual> answerIndividuals = reasoner.getIndividuals(desc, false);
 
 		setIndividualAnswerList(individuals, answerIndividuals);
@@ -193,8 +194,8 @@ public class ACEAnswer {
 	}
 
 
-	private boolean isCompleteIndividuals(OWLDataFactory df, OWLReasoner reasoner, OWLDescription desc, Set<OWLIndividual> answers) {
-		OWLDescription completenessTest =
+	private boolean isCompleteIndividuals(OWLDataFactory df, OWLReasoner reasoner, OWLClassExpression desc, Set<OWLIndividual> answers) {
+		OWLClassExpression completenessTest =
 			df.getOWLObjectIntersectionOf(
 					desc,
 					df.getOWLObjectComplementOf(
@@ -204,8 +205,8 @@ public class ACEAnswer {
 	}
 
 
-	private boolean isCompleteSubClasses(OWLDataFactory df, OWLReasoner reasoner, OWLDescription desc, Set<OWLClass> answers) {
-		OWLDescription completenessTest =
+	private boolean isCompleteSubClasses(OWLDataFactory df, OWLReasoner reasoner, OWLClassExpression desc, Set<OWLClass> answers) {
+		OWLClassExpression completenessTest =
 			df.getOWLObjectIntersectionOf(
 					desc,
 					df.getOWLObjectComplementOf(
@@ -215,7 +216,7 @@ public class ACEAnswer {
 	}
 
 
-	private boolean isSatisfiable(OWLReasoner reasoner, OWLDescription desc) {
+	private boolean isSatisfiable(OWLReasoner reasoner, OWLClassExpression desc) {
 		try {
 			return reasoner.isSatisfiable(desc);
 		} catch (OWLReasonerException e) {
