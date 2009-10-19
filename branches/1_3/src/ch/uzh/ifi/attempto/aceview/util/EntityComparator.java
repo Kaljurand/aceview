@@ -2,7 +2,7 @@ package ch.uzh.ifi.attempto.aceview.util;
 
 import java.util.Comparator;
 
-import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 

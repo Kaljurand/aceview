@@ -22,12 +22,12 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owl.model.OWLAxiomChange;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEntityAnnotationAxiom;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLAxiomChange;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 import com.google.common.collect.Lists;
 

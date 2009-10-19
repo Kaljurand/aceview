@@ -2,8 +2,8 @@ package ch.uzh.ifi.attempto.aceview.util;
 
 import java.net.URI;
 
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 public final class Showing {
 
@@ -38,7 +38,7 @@ public final class Showing {
 			return false;
 		}
 
-		if (entity.isOWLDataType()) {
+		if (entity.isOWLDatatype()) {
 			return false;
 		}
 
@@ -46,7 +46,7 @@ public final class Showing {
 				entity.isOWLClass() ||
 				entity.isOWLObjectProperty() && !entity.getURI().equals(ENTITY_contain) && !entity.getURI().equals(ENTITY_know) ||
 				entity.isOWLDataProperty() ||
-				entity.isOWLIndividual() && !entity.getURI().equals(ENTITY_Universe) && !entity.getURI().equals(ENTITY_Superman)
+				entity.isOWLNamedIndividual() && !entity.getURI().equals(ENTITY_Universe) && !entity.getURI().equals(ENTITY_Superman)
 		);
 	}
 

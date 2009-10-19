@@ -21,10 +21,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import uk.ac.manchester.cs.bhig.util.Tree;
 import uk.ac.manchester.cs.owl.explanation.ordering.DefaultExplanationOrderer;
@@ -188,7 +188,7 @@ public class AxiomExplainer {
 	private Set<Set<OWLAxiom>> getAxiomSets() {
 		// Converts an axiom into an unsatisfiable class expression.
 		SatisfiabilityConverter satCon = new SatisfiabilityConverter(modelManager.getOWLDataFactory());
-		OWLDescription desc = satCon.convert(axiom);
+		OWLClassExpression desc = satCon.convert(axiom);
 
 		// Sets up the BlackBoxExplanation
 		BlackBoxExplanation exp = new BlackBoxExplanation(ACETextManager.createOWLOntologyManager());

@@ -26,8 +26,8 @@ import javax.swing.SwingUtilities;
 
 import org.protege.editor.core.ui.util.UIUtil;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import com.google.common.collect.Sets;
 

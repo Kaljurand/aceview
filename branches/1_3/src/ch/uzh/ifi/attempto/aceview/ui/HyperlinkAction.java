@@ -6,11 +6,11 @@ import javax.swing.Action;
 
 import org.jdesktop.swingx.hyperlink.AbstractHyperlinkAction;
 import org.protege.editor.owl.model.OWLWorkspace;
-import org.semanticweb.owl.io.OWLRendererException;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLOntologyChangeException;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyChangeException;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 

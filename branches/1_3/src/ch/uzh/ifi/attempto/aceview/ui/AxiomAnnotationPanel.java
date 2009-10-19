@@ -10,7 +10,7 @@ import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.util.OWLAxiomInstance;
 import org.protege.editor.owl.ui.frame.OWLAxiomAnnotationsFrame;
 import org.protege.editor.owl.ui.framelist.OWLFrameList2;
-import org.semanticweb.owl.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLAxiom;
 
 /**
  * <p>Based on the Protege AxiomAnnotationPanel, but does not

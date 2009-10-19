@@ -24,28 +24,12 @@ import javax.swing.JOptionPane;
 
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
-import org.semanticweb.owl.model.AddAxiom;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEntityAnnotationAxiom;
-import org.semanticweb.owl.model.OWLOntology;
-/*
- * This file is part of ACE View.
- * Copyright 2008, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
- *
- * ACE View is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * ACE View is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with ACE View.
- * If not, see http://www.gnu.org/licenses/.
- */
-
-import org.semanticweb.owl.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.AddAxiom;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import com.google.common.collect.Lists;
 

@@ -19,14 +19,14 @@ package ch.uzh.ifi.attempto.aceview;
 import java.net.URI;
 import java.util.Set;
 
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDataProperty;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEntityAnnotationAxiom;
-import org.semanticweb.owl.model.OWLIndividual;
-import org.semanticweb.owl.model.OWLObjectProperty;
-import org.semanticweb.owl.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 import simplenlg.lexicon.lexicalitems.Noun;
 

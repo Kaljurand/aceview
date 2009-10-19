@@ -20,8 +20,8 @@ import org.apache.log4j.Logger;
 import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.core.ui.progress.BackgroundTask;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import com.google.common.collect.Sets;
 

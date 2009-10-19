@@ -27,27 +27,28 @@ import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
 import org.protege.editor.owl.ui.renderer.OWLEntityRenderer;
 import org.protege.editor.owl.ui.renderer.OWLEntityRendererListener;
-import org.semanticweb.owl.io.OWLRendererException;
-import org.semanticweb.owl.model.AddAxiom;
-import org.semanticweb.owl.model.OWLAnnotation;
-import org.semanticweb.owl.model.OWLAnnotationAxiom;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLAxiomAnnotationAxiom;
-import org.semanticweb.owl.model.OWLAxiomChange;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDeclarationAxiom;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEntityAnnotationAxiom;
-import org.semanticweb.owl.model.OWLInverseObjectPropertiesAxiom;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLObjectProperty;
-import org.semanticweb.owl.model.OWLOntology;
-import org.semanticweb.owl.model.OWLOntologyChange;
-import org.semanticweb.owl.model.OWLOntologyChangeException;
-import org.semanticweb.owl.model.OWLOntologyChangeListener;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
-import org.semanticweb.owl.model.OWLOntologyManager;
-import org.semanticweb.owl.model.RemoveAxiom;
+import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.AddAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLAxiomAnnotationAxiom;
+import org.semanticweb.owlapi.model.OWLAxiomChange;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
+import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyChange;
+import org.semanticweb.owlapi.model.OWLOntologyChangeException;
+import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyID;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.RemoveAxiom;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -95,7 +96,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_CREATED)) {
 				// If an ontology is created then this ontology is set as active, therefore
 				// we can get the URI of this ontology by asking for the URI of the active ontology.
-				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getURI());
+				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
 				ACETextManager.fireEvent(EventType.ACETEXT_CREATED);
 			}
 			else {
@@ -276,7 +277,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			}
 
 			OWLOntology changeOnt = change.getOntology();
-			URI uri = changeOnt.getURI();
+			OWLOntologyID uri = changeOnt.getOntologyID();
 			OWLAxiom axiom = change.getAxiom();
 			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(uri);
 			ACELexicon<OWLEntity> acelexicon = acetext.getACELexicon();
