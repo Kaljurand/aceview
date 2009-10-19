@@ -1,0 +1,255 @@
+/**
+@title People and pets
+@author Kaarel Kaljurand
+@version 2008-07-22
+
+This is the automatic ACE verbalization of the people+pets ontology
+with some manual post-editing, namely:
+
+deleted: If something X is-part-of something Y then Y has-part X.
+deleted: If something X has-part something Y then Y is-part-of X.
+deleted: If something X eats something Y then Y eaten-by X.
+deleted: If something X eaten-by something Y then Y eats X.
+deleted: If something X has-pet something Y then Y is-pet-of X.
+deleted: If something X is-pet-of something Y then Y has-pet X.
+deleted: Tom is something. (and other similar assertions)
+changed: is-part-of -> is a part of
+changed: is-pet-of -> is a pet of
+changed: has-pet -> 's pet is; whose pet is, ...
+changed: is has-pet by -> is a pet of
+changed: is has-mother by -> is a mother of
+changed: has-pet was renamed to has-as-pet if it was used with plural noun phrases (at least N, nothing but, ...)
+changed: Every newspaper is something that is a broadsheet or that is a tabloid. (rephrased without 'something', there was one other similar change)
+added: sentences linking has-as-pet and 'is a pet of'
+changed: The42 service-number 42. -> The42's service-number is 42.
+changed: something X -> X (the new version of the verbalizer does this as well)
+
+Note that this text can be parsed with APE's built-in common words' lexicon Clex
+and using guessing. There is no need for a user lexicon, i.e. unknown wordforms
+are already in their lemma form and need no further morphological analysis
+(e.g. although 'cat-liker' is an unknown form, it is already in singular, and
+forms like 'eaten' which need to be transformed into 'eat' can be dealt with because
+Clex knows about them).
+*/
+
+Everything that is read by something is a publication.
+
+Everything that is read by a white-van-man is a tabloid.
+
+Every tree is a plant.
+
+Every person whose pet is a cat is a cat-owner.
+Every cat-owner is a person whose pet is a cat.
+
+Walt's pet is Louie.
+
+Everything that is a mother of something is a woman.
+
+Every dog eats a bone.
+
+Walt's pet is Dewey.
+
+Huey is a duck.
+
+No broadsheet is a tabloid.
+
+Joe's pet is Fido.
+
+Flossie is a cow.
+
+Every elderly is an adult.
+
+Every giraffe is an animal.
+
+Fred is a person.
+
+Everything whose pet is something is a person.
+
+The-Times is a broadsheet.
+
+Every cat-liker is a person that likes a cat.
+Every person that likes a cat is a cat-liker.
+
+Every red-top is a tabloid.
+
+Every quality-broadsheet is a broadsheet.
+
+Every lorry is a vehicle.
+
+Every man is an adult that is a male and that is a person.
+Every adult that is a male and that is a person is a man.
+
+Every driver is an adult.
+
+Every bicycle is a vehicle.
+
+The42's service-number is 42.
+
+Every person is an animal.
+
+Every grownup is an adult that is a person.
+Every adult that is a person is a grownup.
+
+Every old-lady is something whose pet is an animal and that has-as-pet nothing but cats.
+
+Everything that is eaten by a sheep is a grass.
+
+Every kid is a person that is a young.
+Every person that is a young is a kid.
+
+Every sheep is an animal.
+
+The-Guardian is a broadsheet.
+
+Every person that drives a bus is a bus-driver.
+Every bus-driver is a person that drives a bus.
+
+Every man that drives a van that is a white-thing is a white-van-man.
+Every white-van-man is a man that drives a van that is a white-thing.
+
+Every tiger is an animal.
+
+Everything that works-for something that is a haulage-company or that is a part of a haulage-company is a haulage-worker.
+Every haulage-worker works-for something that is a haulage-company or that is a part of a haulage-company.
+
+Every duck is an animal.
+
+Every animal eats something.
+
+Every adult that is a female and that is a person is a woman.
+Every woman is an adult that is a female and that is a person.
+
+Every person whose pet is a dog is a dog-owner.
+Every dog-owner is a person whose pet is a dog.
+
+Everything that is a father of something is a man.
+
+Everything that is eaten by a giraffe is a leaf.
+
+Walt's pet is Huey.
+
+The42 is a bus.
+
+Every cat is an animal.
+
+Rex is a pet of Mick.
+
+Every haulage-company is a company.
+
+Everything that eats something is an animal.
+
+Fred's pet is Tibbs.
+
+Every haulage-truck-driver is a person that drives a truck and that works-for something that is a part of a haulage-company.
+Every person that drives a truck and that works-for something that is a part of a haulage-company is a haulage-truck-driver.
+
+Mick is a male.
+
+Louie is a duck.
+
+Mick reads Daily-Mirror.
+
+If X's pet is Y then X likes Y.
+
+Every elderly that is a female and that is a person is an old-lady.
+Every old-lady is an elderly that is a female and that is a person.
+
+Every newspaper is a publication.
+
+Q123-ABC is a white-thing.
+
+Every lorry-driver is a person that drives a lorry.
+Every person that drives a lorry is a lorry-driver.
+
+Every dog-liker is a person that likes a dog.
+Every person that likes a dog is a dog-liker.
+
+Kevin is a person.
+
+Mick drives Q123-ABC.
+
+Every van is a vehicle.
+
+Every animal-lover is a person that has-as-pet at least 3 things.
+Every person that has-as-pet at least 3 things is an animal-lover.
+
+Every bus-company is a company.
+
+If X's father is Y then X's parent is Y.
+
+Every car is a vehicle.
+
+Joe has-as-pet at most 1 thing.
+
+Fido is a dog.
+
+Minnie is a female.
+
+Everything that is an animal or that is a part of an animal is not a plant and is not a part of a plant.
+
+Every animal that does not eat an animal and that does not eat something that is a part of an animal is a vegetarian.
+Every vegetarian is an animal that does not eat an animal and that does not eat something that is a part of an animal.
+
+Every bus is a vehicle.
+
+Every broadsheet is a newspaper.
+
+Minnie's pet is Tom.
+
+The-Sun is a tabloid.
+
+No cat is a dog.
+
+Tibbs is a cat.
+
+Q123-ABC is a van.
+
+Every truck is a vehicle.
+
+Every tabloid is a newspaper.
+
+Dewey is a duck.
+
+Every person that drives a van is a van-driver.
+Every van-driver is a person that drives a van.
+
+Fluffy is a tiger.
+
+If X's mother is Y then X's parent is Y.
+
+Joe is a person.
+
+Every magazine is a publication.
+
+Every cow is a vegetarian.
+
+Every mad-cow is a cow that eats a brain that is a part of a sheep.
+Every cow that eats a brain that is a part of a sheep is a mad-cow.
+
+Everything that is a pet of something is an animal.
+
+Every driver is a person that drives a vehicle.
+Every person that drives a vehicle is a driver.
+
+Everything that is a pet of something is a pet.
+Every pet is a pet of something.
+
+Every newspaper is a broadsheet or is a tabloid.
+
+Every grass is a plant.
+
+Every person whose pet is an animal is a pet-owner.
+Every pet-owner is a person whose pet is an animal.
+
+No adult is a young.
+
+Minnie is an elderly.
+
+Rex is a dog.
+
+Every leaf is a part of a tree.
+
+Walt is a person.
+
+If X has-as-pet Y then Y is a pet of X.
+If X is a pet of Y then Y has-as-pet X.

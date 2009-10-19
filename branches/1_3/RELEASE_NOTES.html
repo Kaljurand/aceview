@@ -1,0 +1,226 @@
+<html>
+<head>
+<title>ACE View release notes</title>
+<style type="text/css">
+body { font-family: monospace }
+</style>
+</head>
+<body>
+<p>ACE View is an ontology and rule editor that uses Attempto Controlled English (ACE)
+in order to create, view and edit OWL 2 ontologies and SWRL rulesets.
+For more information, see:
+<a href="http://attempto.ifi.uzh.ch/aceview/">http://attempto.ifi.uzh.ch/aceview/</a>.</p>
+
+<p>Version 1.2.20 (Protege 4.0.113 (r14610, OWL API 2.2.1.1138)).
+Release date: 2009-06-22</p>
+
+<ul>
+	<li>IMPROVED: In ACETextViewComponent, replaced SwingWorker with the new Protege
+	BackgroundTask. This gives a nicer integration with Protege.</li>
+	<li>IMPROVED: Removed the path of the SWI-Prolog executable from
+	the preferences and the preferences panel.
+	This is not needed as libjpl knows this path.</li>
+	<li>IMPROVED: pretty-printing of Saxon genitives
+	(e.g. Polyneikes'child -> Polyneikes' child)</li>
+	<li>CHANGED: The toString-serialization of an ACE text is now a \n\n-connected
+	toString-serializations of its snippets. The ACE text view reflects this,
+	i.e. no longer are <em>sentences</em> added and removed in this view. Instead,
+	<em>snippets</em> are added and removed.
+	This aligns nicely with the new paragraph support in ACE/APE 6.5.</li>
+	<li>CHANGED: Renamed: ace:Superman -> ace:Universe; ace:know -> ace:contain.
+	(These entities are generated in the background to capture the semantics
+	of sentences like "There are exactly 27 EU-countries.")</li>
+	<li>FIXED: Some preferences were not remembered</li>
+	<li>UPDATED: google-collect to v1.0 RC2</li>
+	<li>UPDATED: swingx to v1.0</li>
+</ul>
+
+<p>Version 1.2.19 (Protege 4.0.110 (r13753, OWL API 2.2.1.1090)).
+Release date: 2009-04-15</p>
+
+<ul>
+	<li>IMPROVED: Snippet-table tooltips</li>
+	<li>IMPROVED: "Declare complete" dialog</li>
+	<li>FIXED: Snippet table filtering was based on regexp matching which meant that
+	if you clicked on `work-for' then "John works-for Mary." was not shown in the
+	filtering mode. Now filtering is based on whether the snippet references
+	an entity or not.</li>
+	<li>FIXED: Problems with hiding and reordering table columns</li>
+	<li>FIXED: Added <em>equals</em> and <em>hashCode</em> to <em>ACESnippetImpl</em>.
+	This fixed a regression in the entailment tracking, and
+	probably several other regressions as well.</li>
+	<li>UPDATED: google-collect</li>
+	<li>UPDATED: swingx</li>
+</ul>
+
+
+
+<p>Version 1.2.18 (Protege 4.0.109+ (r13523, OWL API 2.2.1.1070)).
+Release date: 2009-03-26</p>
+
+<p>The ACE View source code is now available from:
+<a href="http://code.google.com/p/aceview/">http://code.google.com/p/aceview/</a>.</p>
+
+<ul>
+	<li>ADDED: Completeness checking for sub class answers.</li>
+	<li>ADDED: Confirmation dialog for completeness assertion.</li>
+	<li>ADDED: Tooltips for the cells in the snippets table.</li>
+	<li>REPLACED: lexicon.jar with simplenlg-v37.jar (the latter includes lexicon.jar,
+	and lexicon.jar is not available anymore in any other way).</li>
+	<li>FIXED: Some highlighting/reordering related problems in the tables.</li>
+	<li>FIXED: ACE View didn't reflect SWRL rules being edited, now pops up an error
+	(preliminary solution).</li>
+	<li>Some code cleanup.</li>
+</ul>
+
+
+
+<p>Version 1.2.17 (Protege 4.0.109 (r13181, OWL API 2.2.1.1042)).
+Release date: 2009-03-01</p>
+
+<ul>
+<li>ADDED: highlighter for individual-answer completeness</li>
+<li>ADDED: customized axiom annotation panel (without Manchester Syntax rendering).
+Previously used Protege's axiom annotation panel,
+but this did not load properly anymore at ACE View startup.</li>
+</ul>
+
+
+
+<p>Version 1.2.16 (Protege 4.0.108 (r12625, OWL API 2.2.1.974)).
+Release date: 2009-02-17</p>
+
+<ul>
+<li>ADDED (experimental): in Q&amp;A View: The label "Answer is complete" is added to the set of
+individual-answers, in case the set is complete
+(no new individual can show up as part of the answer unless an existing axiom
+is modified/deleted).
+If the answer is not complete, then a button shows up, allowing the user to declare that the answer is complete.</li>
+<li>ADDED: in Q&amp;A View: now translating an unsatisfiable question (e.g. "Which dog is a cat?",
+provided that "No dog is a cat.") into a snippet ("Nothing is a dog that is a cat.")
+and showing it together with a "Why?" button in the answers pane.</li>
+<li>IMPROVED: Updating the answers automatically after classification is now optional</li>
+<li>IMPROVED: Updating the answers now runs in the background, the progress is reported, and
+the task can be cancelled.</li>
+<li>IMPROVED: The auto-completer now returns a sorted set (sorted case-insensitively)</li>
+<li>IMPROVED: The GUI a bit (nicer buttons, nicer answers pane)</li>
+<li>UPDATED: to google-collect-snapshot-20090211</li>
+<li>Lots of minor bug fixes, cleanup of the code and Javadoc</li>
+</ul>
+
+
+
+<p>Version 1.2.15 (Protege 4.0.107 (r12557, OWL API 2.2.1.972)).
+Release date: 2009-01-16</p>
+
+<ul>
+<li>ADDED: "Annotate" button to Snippet Editor. Launches the standard Protege axiom annotation
+editor to allow the annotation of the axiom that corresponds to the selected snippet.</li>
+<li>FIXED: Data properties are now taken into account when generating AceWiki format</li>
+<li>IMPROVED: now using Swing Worker for background jobs</li>
+<li>UPDATED: to SwingX 0.9.5</li>
+</ul>
+
+
+
+<p>Version 1.2.14 (Protege b104+ (r12512, OWL API r969)).
+Release date: 2008-12-22</p>
+
+<ul>
+<li>ADDED: Action "Export as AceWiki ..." which saves the ACE text in AceWiki format</li>
+<li>ADDED: Action "Update answers" which recalculates the answers to all the questions.
+Previously this was done automatically after classification.</li>
+<li>ADDED: Clicking on an OWL logical axiom or SWRL rule
+in a Protege view selects the corresponding ACE snippet,
+which is then shown in the Snippet Editor and Feedback views.</li>
+<li>IMPROVED: Action "Fill lexicon" is now about 5x faster</li>
+</ul>
+
+
+
+<p>Version 1.2.13 (Protege b104 (r12284, OWL API r962)).
+Release date: 2008-11-26</p>
+
+<ul>
+<li>Now updatable via the P4 plug-in update system</li>
+<li>ADDED: "Why?" button to Snippet Editor. Triggers an explanation of the selected snippet,
+if the reasoner is switched on. For an asserted snippet, it provides a way to find out
+if the snippet is logically redundant. This is marked by the existence of more
+than one explanation.</li>
+<li>ADDED: Similar snippets list to Feedback view. Shows snippets that are
+similar (contain the same content words) to the selected snippet.</li>
+<li>ADDED: Explanation view (previously was included in Entailments View)</li>
+<li>ADDED: Some ACE View related links to the Help-menu</li>
+<li>IMPROVED: Q&amp;A view: Clicking on an answer generates a full answer into the Snippet Editor.
+E.g. for the question "Which EU-country borders a NATO-country?"
+and the answer "Estonia", the full answer
+is "Estonia is a EU-country that borders a NATO-country.".
+This generated snippet can be explained by clicking on the Snippet Editor's "Why?" button.</li>
+<li>IMPROVED: ACE View preferences panel</li>
+<li>CHANGED: The default OWL-to-ACE service is now accessible via the standard port 80.</li>
+<li>FIXED: All views were reacting to the selected snippet event. For many
+views this was unnecessary and slowed down browsing large ontologies.</li>
+</ul>
+
+
+
+<p>Version 1.2.12 (Protege b103 (r11714, OWL API r941))</p>
+
+<ul>
+<li>ADDED: More metrics</li>
+
+<li>ADDED: Possibility to configure the location of SWI and APE</li>
+
+<li>ADDED: Entailment view can now generate snippet selection events</li>
+
+<li>CHANGED: Disabled ACEWordformViewComponent as it
+wasn't compatible with Protege build 102 ("quote problem" in entity surface form annotations)</li>
+
+<li>CHANGED: Improved the layout, gave more prominence to the Snippet Editor and Feedback</li>
+
+<li>FIXED: Several performance problems</li>
+
+<li>FIXED: Some UI problems</li>
+
+<li>CLEANUP: Lexicon handling</li>
+</ul>
+
+
+
+<p>Version 1.2.11 (Protege r11368, before build 101).
+Release date: 2008-09-29</p>
+
+<ul>
+<li>ADDED: new view: ACE Snippet Editor</li>
+
+<li>ADDED: Auto-completion to ACE Snippet Editor and ACE Text view</li>
+
+<li>ADDED: possibility to view the rdfs:comment axiom annotation in the ACE Snippet Editor
+and the number of comments in the ACE Snippets view</li>
+
+<li>ADDED: URI to Snippet table model</li>
+
+<li>REMOVED: Add/Delete View, Debug View, Inferences View</li>
+
+<li>REMOVED: Details-pane from ACE Snippets view</li>
+
+<li>CHANGED: ACE lexicon: lemma is now completely independent from the surface forms,
+lemma corresponds to an OWL entity, surface forms determine how
+to verbalize this entity</li>
+
+<li>CHANGED: ACE Words view now shows all the entities, even those that are not used
+in any ACE snippet. The rendering respects the current entity rendering choice.</li>
+
+<li>FIXED: handling of annotations whose value is not a constant (like in OBI)</li>
+
+<li>FIXED: all views now respect the font that is set in the preferences</li>
+
+<li>UPDATED: to SwingX 0.9.4</li>
+</ul>
+
+
+
+<p>Version 1.2.9 (Protege b100).
+Release date: 2008-08-23</p>
+</body>
+</html>

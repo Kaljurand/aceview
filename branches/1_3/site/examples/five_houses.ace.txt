@@ -1,0 +1,66 @@
+/**
+
+Part of the description of the Zebra Problem.
+Description of a street with 5 houses.
+
+Note that we do not have to assert that the individuals
+House1 ... House5 are all different. This is taken care of
+by the constraints.
+
+pellet-2.0.0-rc3 spends 50 seconds on classifying this tiny ontology (on a G4 laptop).
+
+HermiT 0.9.2 did it in 3 seconds.
+
+java -jar HermiT.jar --classify=- ~/Desktop/houses.owx
+
+@author Kaarel Kaljurand
+@version 2009-04-01
+
+*/
+
+
+/* These constraints make sure that there are AT LEAST 5 houses. */
+
+Every house follows at most 1 house and is followed by at most 1 house.
+
+Every first-house is a house that follows no house and that is followed by a house. /* and vv */
+
+Every last-house is a house that follows a house and that is followed by no house. /* and vv */
+
+Every middle-house is a house that follows a house that follows a first-house.
+
+Every middle-house is a house that is followed by a house that is followed by a last-house.
+/* and vv */
+
+House1 is a first-house.
+
+House2 is a house.
+
+House3 is a middle-house.
+
+House4 is a house.
+
+House5 is a house.
+
+/* This constraint makes sure that there a NOT MORE THAN 5 houses. */
+
+Every house is House1 or is House2 or is House3 or is House4 or is House5.
+
+
+/* answer1 <- middle-house / {House3} */
+Every house that follows a house that follows House1 is an answer1.
+
+/* answer2 <- last-house */
+Every house that follows a house that follows a house that follows a house that follows House1 is an answer2.
+
+Which house does not follow a house?
+
+Which house follows a house?
+
+Which house is not followed by a house?
+
+Which house is not a last-house?
+
+What is an answer1?
+
+What is an answer2?
