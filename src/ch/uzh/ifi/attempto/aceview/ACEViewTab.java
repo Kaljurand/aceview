@@ -73,10 +73,10 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	private final OWLModelManagerListener modelManagerListener = new OWLModelManagerListener() {
 		public void handleChange(OWLModelManagerChangeEvent event) {
 			if (event.isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-				ACETextManager.setActiveACETextURI(getOWLModelManager().getActiveOntology().getURI());
+				ACETextManager.setActiveACETextURI(getOWLModelManager().getActiveOntology().getOntologyID());
 			}
 			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_LOADED)) {
-				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getURI());
+				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
 				try {
 					initACEText();
 					ACETextManager.fireEvent(EventType.ACETEXT_LOADED);
@@ -144,7 +144,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		}
 
 		ACETextManager.setOWLModelManager(getOWLModelManager());
-		ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getURI());
+		ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
 		// Note: We start to listen before filling the ACE text, because
 		// we want to add entity annotations to the lexicon.
 		getOWLModelManager().addOntologyChangeListener(ontologyChangeListener);
@@ -277,9 +277,9 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			}
 
 			OWLOntology changeOnt = change.getOntology();
-			OWLOntologyID uri = changeOnt.getOntologyID();
+			OWLOntologyID oid = changeOnt.getOntologyID();
 			OWLAxiom axiom = change.getAxiom();
-			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(uri);
+			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(oid);
 			ACELexicon<OWLEntity> acelexicon = acetext.getACELexicon();
 
 			if (axiom instanceof OWLLogicalAxiom) {
@@ -305,7 +305,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 					logger.info("Add axiom: " + logicalAxiom + " (" + existingAnnotations.size() + " annotations)" + " (" + entities.size() + " entities)");
 					try {
 						AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce(), acelexicon);
-						processAxiom(changeOnt, df, ontologyManager, acetext, axiomVerbalizer, uri, logicalAxiom, existingAnnotations);
+						processAxiom(changeOnt, df, ontologyManager, acetext, axiomVerbalizer, oid, logicalAxiom, existingAnnotations);
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}
@@ -334,7 +334,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 						// BUG: if there is already a snippet that corresponds to the
 						// axiom that this annotation annotates, then we should just change
 						// the text of this snippet, rather than create a new snippet.
-						ACESnippet snippet = new ACESnippetImpl(uri, text, annotatedAxiom); 
+						ACESnippet snippet = new ACESnippetImpl(oid, text, annotatedAxiom); 
 						acetext.add(snippet);
 						ACETextManager.setSelectedSnippet(snippet);
 					}
@@ -451,7 +451,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @throws OWLOntologyCreationException
 	 * @throws OWLOntologyChangeException
 	 */
-	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, AxiomVerbalizer axiomVerbalizer, URI ns, OWLLogicalAxiom logicalAxiom, Set<OWLAxiomAnnotationAxiom> existingAnnotations) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, AxiomVerbalizer axiomVerbalizer, OWLOntologyID ns, OWLLogicalAxiom logicalAxiom, Set<OWLAxiomAnnotationAxiom> existingAnnotations) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 
 		ACESnippet newSnippet = null;
 
