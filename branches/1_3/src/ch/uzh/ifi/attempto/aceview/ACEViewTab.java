@@ -29,15 +29,16 @@ import org.protege.editor.owl.ui.renderer.OWLEntityRenderer;
 import org.protege.editor.owl.ui.renderer.OWLEntityRendererListener;
 import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.AddAxiom;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAnnotation;
-import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationSubject;
+import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLAxiomAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -184,7 +185,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		ACETextManager.setInitCompleted(false);
 
 		for (OWLOntology ont : ontologies) {
-			URI uri = ont.getURI();
+			OWLOntologyID uri = ont.getOntologyID();
 
 			Set<OWLEntity> entities = ont.getReferencedEntities();
 
@@ -196,9 +197,9 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				// addMorfAnnotations(ontologyManager, df, ont, entity, entity.toString());
 
 				// BUG: replace toString() with something else, maybe
-				Set<OWLEntityAnnotationAxiom> annSet = MorphAnnotation.getMorphAnnotations(df, ont, entity, entity.toString());
+				Set<OWLAnnotationAssertionAxiom> annSet = MorphAnnotation.getMorphAnnotations(df, ont, entity, entity.toString());
 				logger.info("Init: entity " + entity + " adding annotations: " + annSet);
-				for (OWLEntityAnnotationAxiom ax : annSet) {
+				for (OWLAnnotationAssertionAxiom ax : annSet) {
 					changes.add(new AddAxiomByACEView(ont, ax));
 				}
 			}
@@ -208,24 +209,26 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			// Translate every OWLEntityAnnotationAxiom into the corresponding lexicon entry.
 			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(uri);
 			ACELexicon<OWLEntity> acelexicon = acetext.getACELexicon();
-			Set<OWLAnnotationAxiom>	annotationAxioms = ont.getAnnotationAxioms();
 
-			for (OWLAnnotationAxiom annotationAxiom : annotationAxioms) {
-				if (annotationAxiom instanceof OWLEntityAnnotationAxiom) {
+			Set<OWLAnnotationAssertionAxiom> annotationAxioms = ont.getAxioms(AxiomType.ANNOTATION_ASSERTION);
 
-					OWLEntityAnnotationAxiom annAx = (OWLEntityAnnotationAxiom) annotationAxiom;
-					OWLAnnotation ann = annAx.getAnnotation();
-					URI annotationURI = ann.getAnnotationURI();
+			for (OWLAnnotationAssertionAxiom annotationAxiom : annotationAxioms) {
 
-					if (FieldType.isLexiconEntryURI(annotationURI)) {
+				URI annotationURI = annotationAxiom.getProperty().getURI();
 
-						String annValue = getAnnotationValueAsString(ann);
+				if (FieldType.isLexiconEntryURI(annotationURI)) {
 
-						if (annValue == null) {
-							logger.info("Malformed ACE lexicon annotation ignored: " + ann);
-						}
-						else {
-							OWLEntity entity = annAx.getSubject();
+					String annValue = getAnnotationValueAsString(annotationAxiom.getValue());
+
+					if (annValue == null) {
+						logger.info("Malformed ACE lexicon annotation ignored: " + annotationAxiom);
+					}
+					else {
+						// TODO: process all the entities in the signature, not just the first one
+						OWLAnnotationSubject subject = annotationAxiom.getSubject();
+						Set<OWLEntity> sigEntities = subject.getSignature();
+						if (! sigEntities.isEmpty()) {
+							OWLEntity entity = entities.iterator().next(); // TOOD
 							try {
 								acelexicon.addEntry(entity, FieldType.getField(annotationURI), annValue);
 							} catch (IncompatibleMorphTagException e) {
@@ -242,7 +245,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce(), acelexicon);
 
 			for (OWLLogicalAxiom logicalAxiom : ont.getLogicalAxioms()) {
-				Set<OWLAxiomAnnotationAxiom> existingAnnotations = logicalAxiom.getAnnotationAxioms(ont);
+				Set<OWLAnnotation> existingAnnotations = logicalAxiom.getAnnotations();
 				logger.info("Init: Add axiom: " + logicalAxiom + " (" + existingAnnotations.size() + " annotations)");
 				processAxiom(ont, df, ontologyManager, acetext, axiomVerbalizer, uri, logicalAxiom, existingAnnotations);
 			}
@@ -300,7 +303,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 				else if (change instanceof AddAxiom) {
 					textAxiomCounter++;
-					Set<OWLAxiomAnnotationAxiom> existingAnnotations = logicalAxiom.getAnnotationAxioms(changeOnt);
+					Set<OWLAnnotation> existingAnnotations = logicalAxiom.getAnnotations();
 					Set<OWLEntity> entities = ((OWLAxiomChange) change).getEntities();
 					logger.info("Add axiom: " + logicalAxiom + " (" + existingAnnotations.size() + " annotations)" + " (" + entities.size() + " entities)");
 					try {
@@ -320,69 +323,43 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 					logger.warn("AxiomChange was neither addition nor removal: " + change.getClass());
 				}
 			}
-			else if (axiom instanceof OWLAxiomAnnotationAxiom && !(change instanceof AddAxiomByACEView)) {
-				OWLAxiomAnnotationAxiom axannax = (OWLAxiomAnnotationAxiom) axiom;
-				OWLAnnotation annotation = axannax.getAnnotation();
-				OWLLogicalAxiom annotatedAxiom = (OWLLogicalAxiom) axannax.getSubject();
-				if (annotation.getAnnotationURI().equals(ACETextManager.acetextURI)) {
-					String text = getAnnotationValueAsString(annotation);
-					if (text == null) {
-						logger.error("Malformed ACE annotation ignored: " + annotation);
-					}
-					else {
-						logger.info("Axiom is annotated with ACE text.");
-						// BUG: if there is already a snippet that corresponds to the
-						// axiom that this annotation annotates, then we should just change
-						// the text of this snippet, rather than create a new snippet.
-						ACESnippet snippet = new ACESnippetImpl(oid, text, annotatedAxiom); 
-						acetext.add(snippet);
-						ACETextManager.setSelectedSnippet(snippet);
-					}
-				}
-				else {
-					// Select the snippet that corresponds to the annotated axiom.
-					// If more than one snippets correspond, then select the snippet
-					// that comes first in the iteration order.
-					Set<ACESnippet> snippets = acetext.getAxiomSnippets(annotatedAxiom);
-					logger.info("Axiom annotation is not ACE text. Selecting corresponding snippet from: " + snippets);
-					if (! snippets.isEmpty()) {
-						ACETextManager.setSelectedSnippet(snippets.iterator().next());
-					}
-				}
-			}
 			// TODO: BUG: We process also the AxiomByACEView axioms?
-			else if (axiom instanceof OWLEntityAnnotationAxiom) {
+			else if (axiom instanceof OWLAnnotationAssertionAxiom) {
 
-				OWLEntityAnnotationAxiom annAx = (OWLEntityAnnotationAxiom) axiom;
-				OWLAnnotation ann = annAx.getAnnotation();
-				URI annotationURI = ann.getAnnotationURI();
+				OWLAnnotationAssertionAxiom annAx = (OWLAnnotationAssertionAxiom) axiom;
+				URI annotationURI = annAx.getProperty().getURI();
 
 				if (FieldType.isLexiconEntryURI(annotationURI)) {
 
-					String annValue = getAnnotationValueAsString(ann);
+					String annValue = getAnnotationValueAsString(annAx.getValue());
 
 					if (annValue == null) {
 						// The annotation value is not a constant.
-						logger.error("Malformed ACE lexicon annotation ignored: " + ann);
+						logger.error("Malformed ACE lexicon annotation ignored: " + annAx);
 					}
 					else {
 						lexiconAxiomCounter++;
-						OWLEntity entity = annAx.getSubject();
 
-						if (change instanceof AddAxiom) {
-							logger.info("Add ann axiom: " + annAx);
-							try {
-								acelexicon.addEntry(entity, FieldType.getField(annotationURI), annValue);
-							} catch (IncompatibleMorphTagException e) {
-								logger.warn(e.getMessage());
+						// TODO: BUG: we only consider the first entity in the signature
+						Set<OWLEntity> signature = annAx.getSubject().getSignature();
+						if (! signature.isEmpty()) {
+							OWLEntity entity = signature.iterator().next();
+
+							if (change instanceof AddAxiom) {
+								logger.info("Add ann axiom: " + annAx);
+								try {
+									acelexicon.addEntry(entity, FieldType.getField(annotationURI), annValue);
+								} catch (IncompatibleMorphTagException e) {
+									logger.warn(e.getMessage());
+								}
 							}
-						}
-						else if (change instanceof RemoveAxiom) {
-							logger.info("Del ann axiom: " + annAx);
-							try {
-								acelexicon.removeEntry(entity, FieldType.getField(annotationURI));
-							} catch (IncompatibleMorphTagException e) {
-								logger.warn(e.getMessage());
+							else if (change instanceof RemoveAxiom) {
+								logger.info("Del ann axiom: " + annAx);
+								try {
+									acelexicon.removeEntry(entity, FieldType.getField(annotationURI));
+								} catch (IncompatibleMorphTagException e) {
+									logger.warn(e.getMessage());
+								}
 							}
 						}
 					}
@@ -451,14 +428,13 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @throws OWLOntologyCreationException
 	 * @throws OWLOntologyChangeException
 	 */
-	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, AxiomVerbalizer axiomVerbalizer, OWLOntologyID ns, OWLLogicalAxiom logicalAxiom, Set<OWLAxiomAnnotationAxiom> existingAnnotations) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, AxiomVerbalizer axiomVerbalizer, OWLOntologyID ns, OWLLogicalAxiom logicalAxiom, Set<OWLAnnotation> existingAnnotations) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 
 		ACESnippet newSnippet = null;
 
-		for (OWLAxiomAnnotationAxiom axiom : existingAnnotations) {
-			OWLAnnotation annotation = axiom.getAnnotation();
-			if (annotation.getAnnotationURI().equals(ACETextManager.acetextURI)) {
-				String aceAnnotationValue = getAnnotationValueAsString(annotation);
+		for (OWLAnnotation annotation : existingAnnotations) {
+			if (annotation.getProperty().getIRI().equals(ACETextManager.acetextIRI)) {
+				String aceAnnotationValue = getAnnotationValueAsString(annotation.getValue());
 				if (aceAnnotationValue == null) {
 					logger.error("Malformed ACE annotation ignored: " + annotation);
 				}
@@ -501,7 +477,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 				// BUG: removes all, not just the vbg-annotations
 				OntologyUtils.changeOntology(ontologyManager,
-						ACETextManager.getRemoveChanges(ont, p1.getAnnotationAxioms(ont)));
+						ACETextManager.getRemoveChanges(ont, p1.getAnnotationAssertionAxioms(ont)));
 				Set<OWLAxiom> set = Sets.newHashSet();
 				set.add(getVbg(df, p1, p2));
 				set.add(getVbg(df, p2, p1));
@@ -519,11 +495,23 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @param acetext
 	 * @param logicalAxiom
 	 */
+	/*
 	private static void addToText(ACESnippet snippet, OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, OWLLogicalAxiom logicalAxiom) {
 		acetext.add(snippet);
 		OWLAnnotation ann = df.getOWLConstantAnnotation(ACETextManager.acetextURI, df.getOWLUntypedConstant(snippet.toString()));
 		OWLAxiomAnnotationAxiom axannax = df.getOWLAxiomAnnotationAxiom(logicalAxiom, ann);
 		ACETextManager.addAxiomsToOntology(ontologyManager, ont, Sets.newHashSet(axannax));
+	}
+	*/
+
+	/**
+	 * TODO: ACE annotations are currently not added
+	 */
+	private static void addToText(ACESnippet snippet, OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, OWLLogicalAxiom logicalAxiom) {
+		acetext.add(snippet);
+		// Create and apply the changeset with the following changes:
+		// 1. Remove the logical axiom
+		// 2. Add the logical axiom with the ACE text as annotation
 	}
 
 
@@ -535,6 +523,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @param annotation OWL annotation
 	 * @return String that represents the value of the annotation
 	 */
+	/*
 	private static String getAnnotationValueAsString(OWLAnnotation annotation) {
 		String str = null;
 		if (annotation.isAnnotationByConstant()) {
@@ -545,6 +534,11 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		}
 		return str;
 	}
+	 */
+
+	private static String getAnnotationValueAsString(OWLAnnotationValue value) {
+		return value.toString();
+	}
 
 
 	/**
@@ -554,22 +548,22 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @param p2
 	 * @return A single <code>OWLEntityAnnotationAxiom</code>
 	 */
-	private static OWLEntityAnnotationAxiom getVbg(OWLDataFactory df, OWLObjectProperty p1, OWLObjectProperty p2) {
+	private static OWLAnnotationAssertionAxiom getVbg(OWLDataFactory df, OWLObjectProperty p1, OWLObjectProperty p2) {
 		String vbgForm = p2.toString();
 		//String vbgForm = getOWLModelManager().getRendering(p2);
-		return df.getOWLEntityAnnotationAxiom(p1, FieldType.VBG.getURI(), df.getOWLUntypedConstant(vbgForm));
+		return OntologyUtils.createEntityAnnotationAxiom(df, FieldType.VBG.getURI(), p1, vbgForm);
 	}
 
 
 	private static List<OWLAxiomChange> addMorfAnnotations(OWLDataFactory df, OWLOntology ont, OWLEntity entity, String lemma) {
 		List<OWLAxiomChange> addList = Lists.newArrayList();
-		Set<OWLEntityAnnotationAxiom> entityAnnotationAxioms = MorphAnnotation.createMorphAnnotations(df, entity, lemma);
+		Set<OWLAnnotationAssertionAxiom> entityAnnotationAxioms = MorphAnnotation.createMorphAnnotations(df, entity, lemma);
 		if (entityAnnotationAxioms.isEmpty()) {
 			logger.info("Init: entity " + entity + " is already annotated");
 		}
 		else {
 			logger.info("Init: entity " + entity + " adding annotations: " + entityAnnotationAxioms);
-			for (OWLEntityAnnotationAxiom ax : entityAnnotationAxioms) {
+			for (OWLAnnotationAssertionAxiom ax : entityAnnotationAxioms) {
 				addList.add(new AddAxiom(ont, ax));
 			}
 		}
@@ -581,8 +575,8 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		List<OWLAxiomChange> removeList = Lists.newArrayList();
 		Set<OWLAxiom> rAxioms = ont.getReferencingAxioms(entity);
 		for (OWLAxiom rAx : rAxioms) {
-			if (rAx instanceof OWLEntityAnnotationAxiom &&
-					FieldType.isLexiconEntryURI(((OWLEntityAnnotationAxiom) rAx).getAnnotation().getAnnotationURI())) {
+			if (rAx instanceof OWLAnnotationAssertionAxiom &&
+					FieldType.isLexiconEntryURI(((OWLAnnotationAssertionAxiom) rAx).getAnnotation().getProperty().getURI())) {
 				removeList.add(new RemoveAxiom(ont, rAx));
 			}
 		}
