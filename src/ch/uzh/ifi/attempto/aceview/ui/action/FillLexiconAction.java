@@ -25,9 +25,9 @@ import javax.swing.JOptionPane;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 import org.semanticweb.owlapi.model.AddAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
@@ -75,10 +75,10 @@ public class FillLexiconAction extends ProtegeOWLAction {
 			for (OWLEntity entity : ont.getReferencedEntities()) {
 				entityCounter++;
 				String entityRendering = getOWLModelManager().getRendering(entity);
-				Set<OWLEntityAnnotationAxiom> entityAnnotationAxioms = MorphAnnotation.getMorphAnnotations(df, ont, entity, entityRendering);
+				Set<OWLAnnotationAssertionAxiom> entityAnnotationAxioms = MorphAnnotation.getMorphAnnotations(df, ont, entity, entityRendering);
 				int size = entityAnnotationAxioms.size();
 				if (size > 0) {
-					for (OWLEntityAnnotationAxiom ax : entityAnnotationAxioms) {
+					for (OWLAnnotationAssertionAxiom ax : entityAnnotationAxioms) {
 						additions.add(new AddAxiom(ont, ax));
 					}
 					annotatedEntityCounter++;

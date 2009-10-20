@@ -17,7 +17,6 @@
 package ch.uzh.ifi.attempto.aceview;
 
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -26,6 +25,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.coode.owlapi.owlxml.renderer.OWLXMLRenderer;
 import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -33,7 +33,6 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -151,7 +150,7 @@ public class AxiomVerbalizer {
 		Set<OWLAxiom> allAxioms = Sets.newHashSet((OWLAxiom) axiom);
 
 		for (OWLEntity entity : axiom.getReferencedEntities()) {
-			Set<OWLEntityAnnotationAxiom> annotationAxioms = MorphAnnotation.getMorphAnnotationsFromLexicon(df, lexicon, entity);
+			Set<OWLAnnotationAssertionAxiom> annotationAxioms = MorphAnnotation.getMorphAnnotationsFromLexicon(df, lexicon, entity);
 			allAxioms.addAll(annotationAxioms);
 		}
 

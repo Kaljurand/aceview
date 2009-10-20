@@ -30,12 +30,11 @@ import org.protege.editor.owl.model.find.OWLEntityFinder;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
-import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLAxiomAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -76,8 +75,11 @@ import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 public final class ACETextManager {
 	private static final Logger logger = Logger.getLogger(ACETextManager.class);
 
-	public static final URI acetextURI = URI.create("http://attempto.ifi.uzh.ch/acetext#acetext");
-	private static final URI timestampURI = URI.create("http://purl.org/dc/elements/1.1/date");
+	public static final IRI acetextIRI = IRI.create("http://attempto.ifi.uzh.ch/acetext#acetext");
+	//public static final URI acetextURI = URI.create("http://attempto.ifi.uzh.ch/acetext#acetext");
+
+	//private static final IRI timestampIRI = IRI.create("http://purl.org/dc/elements/1.1/date");
+	//private static final URI timestampURI = URI.create("http://purl.org/dc/elements/1.1/date");
 
 	private static final Map<OWLOntologyID, ACEText<OWLEntity, OWLLogicalAxiom>> acetexts = Maps.newHashMap();
 	private static OWLModelManager owlModelManager;
@@ -506,6 +508,8 @@ public final class ACETextManager {
 	 * 
 	 * @return List of annotations for the given snippet
 	 */
+	/*
+	// This is Protege 4.0 style
 	public static List<OWLAnnotation> getAnnotations(ACESnippet snippet) {
 		List<OWLAnnotation> annotations = Lists.newArrayList();
 		OWLOntology ont = ACETextManager.getOWLModelManager().getActiveOntology();
@@ -513,6 +517,19 @@ public final class ACETextManager {
 			for (OWLAxiomAnnotationAxiom axannax : ont.getAnnotations(ax)) {
 				OWLAnnotation annotation = axannax.getAnnotation();
 				if (! annotation.getAnnotationURI().equals(ACETextManager.acetextURI)) {
+					annotations.add(annotation);
+				}
+			}
+		}
+		return annotations;
+	}
+	 */
+
+	public static List<OWLAnnotation> getAnnotations(ACESnippet snippet) {
+		List<OWLAnnotation> annotations = Lists.newArrayList();
+		for (OWLLogicalAxiom ax : snippet.getLogicalAxioms()) {
+			for (OWLAnnotation annotation : ax.getAnnotations()) {
+				if (! annotation.getProperty().getIRI().equals(ACETextManager.acetextIRI)) {
 					annotations.add(annotation);
 				}
 			}
@@ -533,8 +550,8 @@ public final class ACETextManager {
 	 */
 	public static List<RemoveAxiomByACEView> findEntityAnnotationAxioms(OWLOntology ont, OWLEntity entity, URI uri) {
 		List<RemoveAxiomByACEView> axioms = Lists.newArrayList();
-		for (OWLAnnotationAxiom axiom : entity.getAnnotationAxioms(ont)) {
-			if (axiom.getAnnotation().getAnnotationURI().equals(uri)) {
+		for (OWLAnnotationAssertionAxiom axiom : entity.getAnnotationAssertionAxioms(ont)) {
+			if (axiom.getProperty().getURI().equals(uri)) {
 				axioms.add(new RemoveAxiomByACEView(ont, axiom));
 			}
 		}
@@ -656,12 +673,15 @@ public final class ACETextManager {
 
 		// In case the snippet has only one axiom, then we annotate it as well
 		if (snippetAxioms.size() == 1) {
+			// TODO: add the ACE annotation together with the axiom
+			/*
 			OWLDataFactory df = owlModelManager.getOWLDataFactory();
 			OWLLogicalAxiom axiom = snippetAxioms.iterator().next();
 			OWLAxiomAnnotationAxiom annAcetext = OntologyUtils.createAxiomAnnotation(df, axiom, acetextURI, snippet.toString());
 			OWLAxiomAnnotationAxiom annTimestamp = OntologyUtils.createAxiomAnnotation(df, axiom, timestampURI, snippet.getTimestamp().toString());
 			changes.add(new AddAxiomByACEView(ontology, annAcetext));
 			changes.add(new AddAxiomByACEView(ontology, annTimestamp));
+			 */
 		}
 
 		return changes;
@@ -687,13 +707,16 @@ public final class ACETextManager {
 		}
 		if (snippet != null) {
 			acetext.add(snippet);
+			// TODO: remove the axiom and add it back with the ACE annotation
+			/*
 			OWLDataFactory df = owlModelManager.getOWLDataFactory();
-			OWLAxiomAnnotationAxiom annAcetext = OntologyUtils.createAxiomAnnotation(df, axiom, acetextURI, snippet.toString());
+			OWLAxiomAnnotationAxiom annAcetext = OntologyUtils.createAxiomAnnotation(df, axiom, acetextIRI, snippet.toString());
 			OWLAxiomAnnotationAxiom annTimestamp = OntologyUtils.createAxiomAnnotation(df, axiom, timestampURI, snippet.getTimestamp().toString());
 			List<OWLAxiomChange> changes = Lists.newArrayList();
 			changes.add(new AddAxiomByACEView(ont, annAcetext));
 			changes.add(new AddAxiomByACEView(ont, annTimestamp));
 			changeOntology(changes);
+			 */
 		}
 		else {
 			logger.warn("AxiomVerbalizer produced a null-snippet for: " + axiom.toString());

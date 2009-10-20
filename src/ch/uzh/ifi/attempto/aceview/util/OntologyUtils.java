@@ -12,8 +12,11 @@ import org.protege.editor.owl.model.parser.ParserUtil;
 import org.protege.editor.owl.model.parser.ProtegeOWLEntityChecker;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAnnotationSubject;
+import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLAxiomAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -69,19 +72,30 @@ public final class OntologyUtils {
 	}
 
 
+	/**
+	 * TODO: URI -> IRI
+	 * 
+	 * @param ontology
+	 * @param entity
+	 * @return
+	 * 
+	 */
 	public static Set<URI> getAnnotationURIs(OWLOntology ontology, OWLEntity entity) {
 		Set<URI> annotationURIs = Sets.newHashSet();
 		for (OWLAnnotation annotation : entity.getAnnotations(ontology)) {
-			annotationURIs.add(annotation.getAnnotationURI());
+			annotationURIs.add(annotation.getProperty().getURI());
 		}
 		return annotationURIs;
 	}
 
 
+	/*
+	// This makes no logner sense in OWL-API 3
 	public static OWLAxiomAnnotationAxiom createAxiomAnnotation(OWLDataFactory df, OWLAxiom axiom, URI uri, String str) {
 		OWLAnnotation ann = df.getOWLConstantAnnotation(uri, df.getOWLUntypedConstant(str));
 		return df.getOWLAxiomAnnotationAxiom(axiom, ann);
 	}
+	 */
 
 
 	/**
@@ -114,5 +128,27 @@ public final class OntologyUtils {
 		catch (ParserException e) {
 			throw ParserUtil.convertException(e);
 		}
+	}
+
+
+	/**
+	 * TODO: make it work
+	 * TODO: URI -> IRI
+	 */
+	public static OWLAnnotationAssertionAxiom createEntityAnnotationAxiom(OWLDataFactory df, URI uri, OWLEntity entity, String lexem) {
+
+		// e.g. morph#pl
+		OWLAnnotationProperty property = df.getOWLAnnotationProperty(uri);
+
+		// IRI of the entity, e.g. http://www/man
+		OWLAnnotationSubject subject = entity.getIRI();
+
+		// e.g. "men"
+		OWLAnnotationValue value = df.getOWLTypedLiteral(lexem);
+
+		// e.g. morph#pl -> "men"
+		// OWLAnnotation ann = df.getOWLAnnotation(property, value);
+
+		return df.getOWLAnnotationAssertionAxiom(property, subject, value);
 	}
 }

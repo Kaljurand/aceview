@@ -22,10 +22,10 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -223,7 +223,12 @@ public class LexiconTableModel extends AbstractTableModel {
 				// a non-empty string.
 				if (newValueAsString.length() > 0) {
 					OWLDataFactory df = mm.getOWLDataFactory();
-					OWLEntityAnnotationAxiom newAnnot = df.getOWLEntityAnnotationAxiom(entity, field.getURI(), df.getOWLUntypedConstant(newValueAsString));
+
+					// Protege 4.0 style
+					// OWLEntityAnnotationAxiom newAnnot = df.getOWLEntityAnnotationAxiom(entity, field.getURI(), df.getOWLUntypedConstant(newValueAsString));
+
+					// TODO: test this
+					OWLAnnotationAssertionAxiom newAnnot = OntologyUtils.createEntityAnnotationAxiom(df, field.getURI(), entity, newValueAsString);
 					changes.add(new AddAxiomByACEView(ont, newAnnot));
 				}
 
