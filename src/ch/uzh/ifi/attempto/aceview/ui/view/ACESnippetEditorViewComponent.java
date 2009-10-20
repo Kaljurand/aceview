@@ -407,7 +407,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 		}
 		// TODO: BUG: think about it, we should get the ontology that contains the axiom,
 		// not the active ontology
-		axiomAnnotationPanel.setAxiom(new OWLAxiomInstance(ax, getOWLModelManager().getActiveOntology()));
+		axiomAnnotationPanel.setAxiomInstance(new OWLAxiomInstance(ax, getOWLModelManager().getActiveOntology()));
 		new UIHelper(editorKit).showDialog("Annotations", axiomAnnotationPanel, JOptionPane.CLOSED_OPTION);
 	}
 
