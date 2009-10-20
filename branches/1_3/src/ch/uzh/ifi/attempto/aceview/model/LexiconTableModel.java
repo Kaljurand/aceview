@@ -224,9 +224,6 @@ public class LexiconTableModel extends AbstractTableModel {
 				if (newValueAsString.length() > 0) {
 					OWLDataFactory df = mm.getOWLDataFactory();
 
-					// Protege 4.0 style
-					// OWLEntityAnnotationAxiom newAnnot = df.getOWLEntityAnnotationAxiom(entity, field.getURI(), df.getOWLUntypedConstant(newValueAsString));
-
 					// TODO: test this
 					OWLAnnotationAssertionAxiom newAnnot = OntologyUtils.createEntityAnnotationAxiom(df, field.getURI(), entity, newValueAsString);
 					changes.add(new AddAxiomByACEView(ont, newAnnot));

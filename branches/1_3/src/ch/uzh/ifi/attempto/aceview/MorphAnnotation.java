@@ -44,7 +44,7 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  * <p>Adds linguistic annotations (sg, pl, vbg) to OWL entities (named classes, properties, and
  * individuals). Object and data properties are currently treated in the same way,
  * i.e. as English transitive verbs.
- * In the future they will be applied different ACE categories.</p>
+ * In the future they will be considered to be of different ACE categories.</p>
  * 
  * <p>Note that the built-in entities <code>owl:Thing</code>, <code>owl:Nothing</code>,
  * are not linguistically annotated, see {@link Showing#isShow(OWLEntity)}.</p>
@@ -57,11 +57,24 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
 public class MorphAnnotation {
 
 	/**
+	 * <p>The "lemma" of an entity is its IRI fragment.</p>
+	 * 
+	 * @param df
+	 * @param ont
+	 * @param entity
+	 * @return
+	 */
+	public static Set<OWLAnnotationAssertionAxiom> getMorphAnnotations(OWLDataFactory df, OWLOntology ont, OWLEntity entity) {
+		String lemma = entity.getIRI().getFragment();
+		return getMorphAnnotations(df, ont, entity, lemma);
+	}
+
+	/**
 	 * <p>Returns an empty set of axioms if the input entity corresponds to
 	 * a function word (<code>owl:Thing</code>, <code>owl:Nothing</code>, ...) which is not to be annotated
 	 * with surface forms.</p>
 	 * 
-	 * <p>Otherwise returns a set of entity annotation axioms for the given entity.
+	 * <p>Otherwise returns a set of entity annotation axioms [BUG: update] for the given entity.
 	 * An annotation is not generated in case the entity has already been annotated
 	 * with the annotation. This means that surface form is a functional property of the entity.</p>
 	 * 

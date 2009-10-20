@@ -196,8 +196,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			for (OWLEntity entity : entities) {
 				// addMorfAnnotations(ontologyManager, df, ont, entity, entity.toString());
 
-				// BUG: replace toString() with something else, maybe
-				Set<OWLAnnotationAssertionAxiom> annSet = MorphAnnotation.getMorphAnnotations(df, ont, entity, entity.toString());
+				Set<OWLAnnotationAssertionAxiom> annSet = MorphAnnotation.getMorphAnnotations(df, ont, entity);
 				logger.info("Init: entity " + entity + " adding annotations: " + annSet);
 				for (OWLAnnotationAssertionAxiom ax : annSet) {
 					changes.add(new AddAxiomByACEView(ont, ax));
@@ -372,7 +371,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 					logger.info("Add declaration axiom: " + declarationAxiom);
 					OWLEntity entity = declarationAxiom.getEntity();
 					// BUG: replace toString() with something else, maybe?
-					ACETextManager.addAxiomsToOntology(ontologyManager, changeOnt, MorphAnnotation.getMorphAnnotations(df, changeOnt, entity, entity.toString()));
+					ACETextManager.addAxiomsToOntology(ontologyManager, changeOnt, MorphAnnotation.getMorphAnnotations(df, changeOnt, entity));
 				}
 				else if (change instanceof RemoveAxiom) {
 					logger.info("Del declaration axiom: " + declarationAxiom);
@@ -502,7 +501,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		OWLAxiomAnnotationAxiom axannax = df.getOWLAxiomAnnotationAxiom(logicalAxiom, ann);
 		ACETextManager.addAxiomsToOntology(ontologyManager, ont, Sets.newHashSet(axannax));
 	}
-	*/
+	 */
 
 	/**
 	 * TODO: ACE annotations are currently not added

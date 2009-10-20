@@ -85,9 +85,10 @@ public class AxiomVerbalizer {
 		// the verbalizer webservice. It seems that about 50% of
 		// the axioms in real-world ontologies are simple SubClassOf-axioms,
 		// so it really pays off performancewise to verbalize them directly in Java.
-		String verbalization = verbalizeSimpleSubClassAxiom(axiom);
+		String verbalization = verbalizeSimpleSubClassOfAxiom(axiom);
 
 		if (verbalization != null) {
+			logger.info("Simple axiom verbalized: " + verbalization);
 			return new ACESnippetImpl(ontologyID, verbalization, axiom);
 		}
 
@@ -170,7 +171,7 @@ public class AxiomVerbalizer {
 	 * @param ax an instance of <code>OWLAxiom</code> to be verbalized
 	 * @return sentence corresponding to the <code>OWLAxiom</code> or <code>null</code>
 	 */
-	private String verbalizeSimpleSubClassAxiom(OWLLogicalAxiom ax) {
+	private String verbalizeSimpleSubClassOfAxiom(OWLLogicalAxiom ax) {
 		if (ax instanceof OWLSubClassOfAxiom) {
 			OWLSubClassOfAxiom subClassAxiom = (OWLSubClassOfAxiom) ax;
 			OWLClassExpression subClass = subClassAxiom.getSubClass();
@@ -311,11 +312,13 @@ public class AxiomVerbalizer {
 	private String getSg(OWLEntity entity) {
 		ACELexiconEntry lexiconEntry = lexicon.getEntry(entity);
 		if (lexiconEntry == null) {
-			return entity.toString();
+			logger.warn("BUG: No ACELexiconEntry for OWLEntity: " + entity);
+			return entity.getIRI().getFragment();
 		}
 		String sg = lexiconEntry.getSg();
 		if (sg == null) {
-			return entity.toString();
+			logger.warn("BUG: No 'sg' for entry: " + lexiconEntry);
+			return entity.getIRI().getFragment();
 		}
 		return sg;
 	}
