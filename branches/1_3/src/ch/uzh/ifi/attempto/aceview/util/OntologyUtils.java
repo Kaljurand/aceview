@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.coode.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser;
+import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
 import org.protege.editor.owl.model.parser.ParserUtil;
@@ -21,6 +21,7 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import com.google.common.collect.Sets;
@@ -99,10 +100,10 @@ public final class OntologyUtils {
 	 * @return OWL logical axiom that corresponds to the given string.
 	 * @throws OWLExpressionParserException 
 	 */
-	public static OWLLogicalAxiom parseWithManchesterSyntaxParser(OWLModelManager mngr, URI uri, String str) throws OWLExpressionParserException {
+	public static OWLLogicalAxiom parseWithManchesterSyntaxParser(OWLModelManager mngr, OWLOntologyID oid, String str) throws OWLExpressionParserException {
 		ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(mngr.getOWLDataFactory(), str);
-		parser.setOWLEntityChecker(new ProtegeOWLEntityChecker(mngr));
-		parser.setBase(uri.toString());
+		parser.setOWLEntityChecker(new ProtegeOWLEntityChecker(mngr.getOWLEntityFinder()));
+		parser.setBase(oid.toString());
 		try {
 			OWLAxiom axiom = parser.parseClassAxiom();
 			if (axiom instanceof OWLLogicalAxiom) {

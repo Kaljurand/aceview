@@ -26,7 +26,6 @@ import org.semanticweb.owlapi.inference.OWLReasonerException;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import com.google.common.collect.Sets;
@@ -101,7 +100,7 @@ public class ACEAnswer {
 		}
 	}
 
-	public Set<OWLIndividual> getIndividuals() {
+	public Set<OWLNamedIndividual> getIndividuals() {
 		return individuals;
 	}
 
@@ -162,14 +161,14 @@ public class ACEAnswer {
 	}
 
 	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) throws OWLReasonerException {
-		Set<OWLIndividual> answerIndividuals = reasoner.getIndividuals(desc, false);
+		Set<OWLNamedIndividual> answerIndividuals = reasoner.getIndividuals(desc, false);
 
 		setIndividualAnswerList(individuals, answerIndividuals);
 		setClassAnswerList(subClasses, OWLReasonerAdapter.flattenSetOfSets(reasoner.getDescendantClasses(desc)));
 		setClassAnswerList(supClasses, OWLReasonerAdapter.flattenSetOfSets(reasoner.getAncestorClasses(desc)));
 
-		// We remove inconsistent classes as they might be confusing when presented as answers.
-		subClasses.removeAll(reasoner.getInconsistentClasses());
+		// We remove unsatisfiable classes as they might be confusing when presented as answers.
+		subClasses.removeAll(reasoner.getUnsatisfiableClasses());
 
 		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, individuals);
 		isSubClassesAnswersComplete = isCompleteSubClasses(mngr.getOWLDataFactory(), reasoner, desc, subClasses);
@@ -185,8 +184,8 @@ public class ACEAnswer {
 	}
 
 
-	private void setIndividualAnswerList(Set<OWLIndividual> answerList, Set<OWLIndividual> individuals) {
-		for (OWLIndividual answer : individuals) {
+	private void setIndividualAnswerList(Set<OWLNamedIndividual> answerList, Set<OWLNamedIndividual> individuals) {
+		for (OWLNamedIndividual answer : individuals) {
 			if (Showing.isShow(answer)) {
 				answerList.add(answer);
 			}
@@ -194,7 +193,7 @@ public class ACEAnswer {
 	}
 
 
-	private boolean isCompleteIndividuals(OWLDataFactory df, OWLReasoner reasoner, OWLClassExpression desc, Set<OWLIndividual> answers) {
+	private boolean isCompleteIndividuals(OWLDataFactory df, OWLReasoner reasoner, OWLClassExpression desc, Set<OWLNamedIndividual> answers) {
 		OWLClassExpression completenessTest =
 			df.getOWLObjectIntersectionOf(
 					desc,

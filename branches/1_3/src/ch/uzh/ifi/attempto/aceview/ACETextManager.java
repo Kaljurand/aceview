@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
-import org.protege.editor.owl.model.find.EntityFinder;
+import org.protege.editor.owl.model.find.OWLEntityFinder;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLRendererException;
@@ -41,6 +41,7 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import com.google.common.collect.ImmutableSet;
@@ -78,9 +79,9 @@ public final class ACETextManager {
 	public static final URI acetextURI = URI.create("http://attempto.ifi.uzh.ch/acetext#acetext");
 	private static final URI timestampURI = URI.create("http://purl.org/dc/elements/1.1/date");
 
-	private static final Map<URI, ACEText<OWLEntity, OWLLogicalAxiom>> acetexts = Maps.newHashMap();
+	private static final Map<OWLOntologyID, ACEText<OWLEntity, OWLLogicalAxiom>> acetexts = Maps.newHashMap();
 	private static OWLModelManager owlModelManager;
-	private static URI activeACETextURI;
+	private static OWLOntologyID activeACETextURI;
 
 	// BUG: maybe we should get a new instance whenever we need to query the renderer preferences?
 	private static final OWLRendererPreferences owlRendererPreferences = OWLRendererPreferences.getInstance();
@@ -102,7 +103,7 @@ public final class ACETextManager {
 	// No instances allowed
 	private ACETextManager() {}
 
-	public static void createACEText(URI uri) {
+	public static void createACEText(OWLOntologyID uri) {
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = new ACETextImpl();
 		acetexts.put(uri, acetext);
 		// BUG: would be better if we didn't have to set the active URI here
@@ -110,9 +111,9 @@ public final class ACETextManager {
 	}
 
 
-	public static void setActiveACETextURI(URI uri) {
-		if (activeACETextURI.compareTo(uri) != 0) {
-			activeACETextURI = uri;
+	public static void setActiveACETextURI(OWLOntologyID ontologyID) {
+		if (activeACETextURI.compareTo(ontologyID) != 0) {
+			activeACETextURI = ontologyID;
 			fireEvent(EventType.ACTIVE_ACETEXT_CHANGED);
 		}
 	}
@@ -125,7 +126,7 @@ public final class ACETextManager {
 	 * 
 	 * @return URI of the active ACE text.
 	 */
-	public static URI getActiveACETextURI() {
+	public static OWLOntologyID getActiveACETextURI() {
 		return activeACETextURI;
 	}
 
@@ -135,7 +136,7 @@ public final class ACETextManager {
 	}
 
 
-	public static ACEText<OWLEntity, OWLLogicalAxiom> getACEText(URI uri) {
+	public static ACEText<OWLEntity, OWLLogicalAxiom> getACEText(OWLOntologyID uri) {
 		if (uri == null) {
 			logger.error("getACEText: URI == null; THIS SHOULD NOT HAPPEN");
 			return new ACETextImpl();
@@ -358,7 +359,7 @@ public final class ACETextManager {
 	public static OWLEntity findEntity(EntryType type, String lemma) {
 		if (lemma != null) {
 			Set<? extends OWLEntity> entities;
-			EntityFinder entityFinder = getOWLModelManager().getEntityFinder();
+			OWLEntityFinder entityFinder = getOWLModelManager().getOWLEntityFinder();
 			switch (type) {
 			case CN:
 				entities = entityFinder.getMatchingOWLClasses(lemma, false);
@@ -565,8 +566,8 @@ public final class ACETextManager {
 		// Remove the last token (a dot or a question mark) of the given sentence.
 		String mosStr = sentence.toMOSString();
 		logger.info("Parsing with the MOS parser: " + mosStr);
-		URI uri = getOWLModelManager().getActiveOntology().getURI();
-		return OntologyUtils.parseWithManchesterSyntaxParser(getOWLModelManager(), uri, mosStr);
+		OWLOntologyID oid = getOWLModelManager().getActiveOntology().getOntologyID();
+		return OntologyUtils.parseWithManchesterSyntaxParser(getOWLModelManager(), oid, mosStr);
 	}
 
 
@@ -680,7 +681,7 @@ public final class ACETextManager {
 	private static void verbalizeAndAdd(ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLOntology ont, AxiomVerbalizer axiomVerbalizer, OWLLogicalAxiom axiom) {
 		ACESnippet snippet = null;
 		try {
-			snippet = axiomVerbalizer.verbalizeAxiom(ont.getURI(), axiom);
+			snippet = axiomVerbalizer.verbalizeAxiom(ont.getOntologyID(), axiom);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

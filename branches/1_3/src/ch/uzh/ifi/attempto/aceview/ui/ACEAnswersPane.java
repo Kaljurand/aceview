@@ -41,8 +41,8 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
@@ -149,7 +149,7 @@ public class ACEAnswersPane extends JTextPane {
 
 	private void showAnswers(final OWLClassExpression dlquery, final ACEAnswer answer) {
 
-		final Set<OWLIndividual> individuals = answer.getIndividuals();
+		final Set<OWLNamedIndividual> individuals = answer.getIndividuals();
 		final Set<OWLClass> subclasses = answer.getSubClasses();
 		final Set<OWLClass> superclasses = answer.getSuperClasses();
 
@@ -162,8 +162,8 @@ public class ACEAnswersPane extends JTextPane {
 		}
 		else {
 			addComponent(ComponentFactory.makeItalicLabel(ic + " named individuals:"));
-			for (OWLEntity entity : individuals) {
-				addComponent(getHyperlink(entity, df.getOWLClassAssertionAxiom((OWLIndividual) entity, dlquery)));
+			for (OWLNamedIndividual ind : individuals) {
+				addComponent(getHyperlink(ind, df.getOWLClassAssertionAxiom(dlquery, ind)));
 			}
 
 			if (answer.isIndividualAnswersComplete()) {

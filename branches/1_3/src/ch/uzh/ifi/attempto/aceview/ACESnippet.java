@@ -16,13 +16,13 @@
 
 package ch.uzh.ifi.attempto.aceview;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.SWRLRule;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
@@ -263,7 +263,7 @@ public interface ACESnippet {
 	 * 
 	 * @return URI of the default namespace
 	 */
-	URI getDefaultNamespace();
+	OWLOntologyID getDefaultNamespace();
 
 	/**
 	 * <p>Returns the timestamp of the snippet.

@@ -263,7 +263,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 				logger.info("NOT showing: " + ax + ", contains tricks");
 			}
 			else {
-				ACESnippet snippet = axiomVerbalizer.verbalizeAxiom(activeOntology.getURI(), ax);
+				ACESnippet snippet = axiomVerbalizer.verbalizeAxiom(activeOntology.getOntologyID(), ax);
 				if (ACETextManager.getActiveACEText().contains(snippet)) {
 					logger.info("NOT showing: " + ax.toString() + ", snippet matches asserted snippet: " + snippet);
 				}
@@ -274,8 +274,11 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 			}
 		}
 
-		logger.info("removing: " + inferredOnt.getURI());
-		ontologyManager.removeOntology(inferredOnt.getURI());
+		logger.info("removing: " + inferredOnt.getOntologyID());
+
+		// TODO: Check if this works like this as before removeOntology
+		// took the URI as the argument, rather than the ontology object.
+		ontologyManager.removeOntology(inferredOnt);
 	}
 
 

@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.net.URI;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -48,6 +47,7 @@ import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import com.google.common.collect.Multimap;
 
@@ -161,7 +161,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 					ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 					ACESnippet oldSnippet = acetext.find(sentences);
 					if (oldSnippet == null) {
-						URI name = ACETextManager.getActiveACETextURI();
+						OWLOntologyID name = ACETextManager.getActiveACETextURI();
 						ACESnippetImpl newSnippet = new ACESnippetImpl(name, sentences);
 						ACETextManager.addSnippet(newSnippet);
 						ACETextManager.setSelectedSnippet(newSnippet);

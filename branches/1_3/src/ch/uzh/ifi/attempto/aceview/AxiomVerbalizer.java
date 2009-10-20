@@ -36,11 +36,13 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEntityAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
@@ -70,14 +72,14 @@ public class AxiomVerbalizer {
 	/**
 	 * <p>Verbalizes a single logical OWL axiom as an ACE snippet.</p>
 	 * 
-	 * @param ns Namespace for the snippet to be created
+	 * @param ontologyID Namespace for the snippet to be created
 	 * @param axiom OWL logical axiom to be verbalized
 	 * @return ACE snippet containing the verbalization of the given axiom
 	 * @throws OWLRendererException 
 	 * @throws OWLOntologyChangeException 
 	 * @throws OWLOntologyCreationException 
 	 */
-	public ACESnippet verbalizeAxiom(URI ns, OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	public ACESnippet verbalizeAxiom(OWLOntologyID ontologyID, OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 
 		// BUG: this is a bit of a hack for performance reasons.
 		// We verbalize simple axioms without having to use
@@ -87,13 +89,13 @@ public class AxiomVerbalizer {
 		String verbalization = verbalizeSimpleSubClassAxiom(axiom);
 
 		if (verbalization != null) {
-			return new ACESnippetImpl(ns, verbalization, axiom);
+			return new ACESnippetImpl(ontologyID, verbalization, axiom);
 		}
 
 		logger.info("Verbalizing the axiom using WS");
 		OWLDataFactory df = ACETextManager.getOWLModelManager().getOWLDataFactory();
 		try {
-			verbalization = verbalizeWithWS(ns, axiom, df);
+			verbalization = verbalizeWithWS(ontologyID, axiom, df);
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "OWL verbalizer error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -105,14 +107,14 @@ public class AxiomVerbalizer {
 			logger.info("Axioms not verbalized, using Manchester Syntax rendering");
 			String manSynRendering = ACETextManager.getOWLModelManager().getRendering(axiom);
 			if (manSynRendering == null) {
-				snippet = new ACESnippetImpl(ns, "", axiom, axiom.toString());
+				snippet = new ACESnippetImpl(ontologyID, "", axiom, axiom.toString());
 			}
 			else {
-				snippet = new ACESnippetImpl(ns, "", axiom, manSynRendering);
+				snippet = new ACESnippetImpl(ontologyID, "", axiom, manSynRendering);
 			}			
 		}
 		else {
-			snippet = new ACESnippetImpl(ns, verbalization, axiom);
+			snippet = new ACESnippetImpl(ontologyID, verbalization, axiom);
 		}
 
 		return snippet;
@@ -138,14 +140,14 @@ public class AxiomVerbalizer {
 	/**
 	 * <p>Verbalizes the OWL axiom using the Verbalizer webservice.</p>
 	 * 
-	 * @param uri URI
+	 * @param ontologyID URI
 	 * @param axiom OWL axiom
 	 * @return Verbalization of the given axiom
 	 * @throws OWLRendererException 
 	 * @throws OWLOntologyChangeException 
 	 * @throws OWLOntologyCreationException 
 	 */
-	private String verbalizeWithWS(URI uri, OWLLogicalAxiom axiom, OWLDataFactory df) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	private String verbalizeWithWS(OWLOntologyID ontologyID, OWLLogicalAxiom axiom, OWLDataFactory df) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		Set<OWLAxiom> allAxioms = Sets.newHashSet((OWLAxiom) axiom);
 
 		for (OWLEntity entity : axiom.getReferencedEntities()) {
@@ -154,7 +156,9 @@ public class AxiomVerbalizer {
 		}
 
 		OWLOntologyManager ontologyManager = ACETextManager.createOWLOntologyManager();
-		OWLOntology ontology = ontologyManager.createOntology(allAxioms, uri);
+		// TODO: think: it would also be possible to set the IRI, but
+		// I guess naming the ontology is not necessary if one just wants to verbalize it.
+		OWLOntology ontology = ontologyManager.createOntology(allAxioms);
 		return verbalizeOntology(ontologyManager, ontology);
 	}
 
@@ -187,16 +191,18 @@ public class AxiomVerbalizer {
 			OWLClassExpression desc = classAssertionAxiom.getClassExpression();
 			OWLIndividual ind = classAssertionAxiom.getIndividual();
 
-			if (isAnonymousOrNothing(desc)) {
+			if (isAnonymousOrNothing(desc) || isAnonymous(ind)) {
 				return null;
 			}
 
+			OWLNamedIndividual namedIndividual = ind.asNamedIndividual();
+
 			if (desc.isOWLThing()) {
-				return getSg(ind) + " is something.";
+				return getSg(namedIndividual) + " is something.";
 			}
 
 			String descAsString = getSg((OWLClass) desc);
-			return getSg(ind) + " is " + getIndefiniteArticle(descAsString) + " " + descAsString + ".";
+			return getSg(namedIndividual) + " is " + getIndefiniteArticle(descAsString) + " " + descAsString + ".";
 		}
 		else if (ax instanceof OWLObjectPropertyAssertionAxiom) {
 			OWLObjectPropertyAssertionAxiom opAssertionAxiom = (OWLObjectPropertyAssertionAxiom) ax;
@@ -204,11 +210,11 @@ public class AxiomVerbalizer {
 			OWLIndividual subject = opAssertionAxiom.getSubject();
 			OWLIndividual object = opAssertionAxiom.getObject();
 
-			if (opExpression.isAnonymous()) {
+			if (opExpression.isAnonymous() || isAnonymous(subject) || isAnonymous(object)) {
 				return null;
 			}
 
-			return getSg(subject) + " " + getSg(opExpression.asOWLObjectProperty()) + " " + getSg(object) + ".";
+			return getSg(subject.asNamedIndividual()) + " " + getSg(opExpression.asOWLObjectProperty()) + " " + getSg(object.asNamedIndividual()) + ".";
 		}
 		else if (ax instanceof OWLDisjointClassesAxiom) {
 			OWLDisjointClassesAxiom disjointClassesAxiom = (OWLDisjointClassesAxiom) ax;
@@ -269,6 +275,9 @@ public class AxiomVerbalizer {
 		return (desc.isAnonymous() || desc.isOWLNothing());
 	}
 
+	private static boolean isAnonymous(OWLIndividual ind) {
+		return (ind.isAnonymous());
+	}
 
 	private String getSimpleClassRelationVerbalization(OWLClass class1, OWLClass class2, String prefix) {
 		String subClassAsString;
