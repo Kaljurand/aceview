@@ -33,6 +33,7 @@ import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -50,6 +51,7 @@ import com.google.common.collect.Maps;
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetListener;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
@@ -386,6 +388,15 @@ public final class ACETextManager {
 					}
 				}
 			}
+		}
+		return null;
+	}
+
+	// TODO: there must be a better way to do this
+	public static OWLEntity mapAnnotationSubjectToEntity(OWLAnnotationSubject subject, URI uri) {
+		if (subject instanceof IRI) {
+			IRI iri = (IRI) subject;
+			return findEntity(MorphType.getMorphType(uri).getEntryType(), iri.getFragment());
 		}
 		return null;
 	}

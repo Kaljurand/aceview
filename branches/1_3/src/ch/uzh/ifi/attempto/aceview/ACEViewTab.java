@@ -57,6 +57,7 @@ import com.google.common.collect.Sets;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.IncompatibleMorphTagException;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
+import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
@@ -223,16 +224,11 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 						logger.info("Malformed ACE lexicon annotation ignored: " + annotationAxiom);
 					}
 					else {
-						// TODO: process all the entities in the signature, not just the first one
-						OWLAnnotationSubject subject = annotationAxiom.getSubject();
-						Set<OWLEntity> sigEntities = subject.getSignature();
-						if (! sigEntities.isEmpty()) {
-							OWLEntity entity = entities.iterator().next(); // TOOD
-							try {
-								acelexicon.addEntry(entity, FieldType.getField(annotationURI), annValue);
-							} catch (IncompatibleMorphTagException e) {
-								logger.warn(e.getMessage());
-							}
+						try {
+							OWLEntity annEntity = ACETextManager.mapAnnotationSubjectToEntity(annotationAxiom.getSubject(), annotationURI);
+							acelexicon.addEntry(annEntity, FieldType.getField(annotationURI), annValue);
+						} catch (IncompatibleMorphTagException e) {
+							logger.warn(e.getMessage());
 						}
 					}
 				}
@@ -328,7 +324,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				OWLAnnotationAssertionAxiom annAx = (OWLAnnotationAssertionAxiom) axiom;
 				URI annotationURI = annAx.getProperty().getURI();
 
-				if (FieldType.isLexiconEntryURI(annotationURI)) {
+				if (MorphType.isMorphTypeURI(annotationURI)) {
 
 					String annValue = getAnnotationValueAsString(annAx.getValue());
 
@@ -339,26 +335,24 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 					else {
 						lexiconAxiomCounter++;
 
-						// TODO: BUG: we only consider the first entity in the signature
-						Set<OWLEntity> signature = annAx.getSubject().getSignature();
-						if (! signature.isEmpty()) {
-							OWLEntity entity = signature.iterator().next();
+						OWLEntity annEntity = ACETextManager.mapAnnotationSubjectToEntity(annAx.getSubject(), annotationURI);
 
-							if (change instanceof AddAxiom) {
-								logger.info("Add ann axiom: " + annAx);
-								try {
-									acelexicon.addEntry(entity, FieldType.getField(annotationURI), annValue);
-								} catch (IncompatibleMorphTagException e) {
-									logger.warn(e.getMessage());
-								}
+						logger.info("Found annEntity: " + annEntity);
+
+						if (change instanceof AddAxiom) {
+							logger.info("Add ann axiom: " + annAx);
+							try {
+								acelexicon.addEntry(annEntity, FieldType.getField(annotationURI), annValue);
+							} catch (IncompatibleMorphTagException e) {
+								logger.warn(e.getMessage());
 							}
-							else if (change instanceof RemoveAxiom) {
-								logger.info("Del ann axiom: " + annAx);
-								try {
-									acelexicon.removeEntry(entity, FieldType.getField(annotationURI));
-								} catch (IncompatibleMorphTagException e) {
-									logger.warn(e.getMessage());
-								}
+						}
+						else if (change instanceof RemoveAxiom) {
+							logger.info("Del ann axiom: " + annAx);
+							try {
+								acelexicon.removeEntry(annEntity, FieldType.getField(annotationURI));
+							} catch (IncompatibleMorphTagException e) {
+								logger.warn(e.getMessage());
 							}
 						}
 					}
@@ -368,10 +362,11 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				OWLDeclarationAxiom declarationAxiom = (OWLDeclarationAxiom) axiom;
 
 				if (change instanceof AddAxiom) {
-					logger.info("Add declaration axiom: " + declarationAxiom);
 					OWLEntity entity = declarationAxiom.getEntity();
-					// BUG: replace toString() with something else, maybe?
-					ACETextManager.addAxiomsToOntology(ontologyManager, changeOnt, MorphAnnotation.getMorphAnnotations(df, changeOnt, entity));
+					logger.info("Add declaration axiom: " + entity);
+					Set<OWLAnnotationAssertionAxiom> morphAnnotations = MorphAnnotation.getMorphAnnotations(df, changeOnt, entity);
+					logger.info("Triggered: add: " + morphAnnotations);
+					ACETextManager.addAxiomsToOntology(ontologyManager, changeOnt, morphAnnotations);
 				}
 				else if (change instanceof RemoveAxiom) {
 					logger.info("Del declaration axiom: " + declarationAxiom);
