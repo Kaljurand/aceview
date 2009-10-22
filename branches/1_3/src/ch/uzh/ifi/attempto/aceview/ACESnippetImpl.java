@@ -24,11 +24,18 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
 import org.semanticweb.owlapi.io.StringInputSource;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationSubject;
+import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -49,9 +56,12 @@ import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.aceview.util.SnippetDate;
 import ch.uzh.ifi.attempto.ape.ACEParser;
+import ch.uzh.ifi.attempto.ape.Gender;
 import ch.uzh.ifi.attempto.ape.Lexicon;
+import ch.uzh.ifi.attempto.ape.LexiconEntry;
 import ch.uzh.ifi.attempto.ape.Message;
 import ch.uzh.ifi.attempto.ape.MessageContainer;
 import ch.uzh.ifi.attempto.ape.OutputType;
@@ -524,8 +534,11 @@ public class ACESnippetImpl implements ACESnippet {
 
 
 	private void parseWithAceParser(ACEViewPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms) throws OWLOntologyCreationException {
-		Lexicon lexicon = aceLexicon.createLexicon(contentWordForms);
+		//Lexicon lexicon = aceLexicon.createLexicon(contentWordForms);
 
+		OWLOntology ont = ACETextManager.getOWLModelManager().getActiveOntology();
+
+		Lexicon lexicon = createLexicon(ont, contentWordForms);
 		if (lexicon.getEntries().isEmpty()) {
 			logger.info("Parsing with empty lexicon.");
 			lexicon = null;
@@ -568,6 +581,9 @@ public class ACESnippetImpl implements ACESnippet {
 				if (owlxml == null || owlxml.length() == 0) {
 					throw new OWLOntologyCreationException("get(OutputType.OWLXML) is null or empty");
 				}
+				
+				logger.info("OWL: " + owlxml);
+
 				// TODO: BUG: creating a new ontology manager just to parse a snippet
 				// might be bad for performance
 				OWLOntologyManager manager = ACETextManager.createOWLOntologyManager();
@@ -630,5 +646,44 @@ public class ACESnippetImpl implements ACESnippet {
 	 */
 	private boolean hasErrors() {
 		return (errorMessagesCount > 0);
+	}
+
+
+	private static Lexicon createLexicon(OWLOntology ont, Set<String> contentWordForms) {
+		logger.info("Wordforms: " + contentWordForms);
+		Set<LexiconEntry> entries = Sets.newHashSet();
+		Set<OWLAnnotationAssertionAxiom> annAxioms = ont.getAxioms(AxiomType.ANNOTATION_ASSERTION);
+		for (OWLAnnotationAssertionAxiom ax : annAxioms) {
+			logger.info("Annotation: " + ax);
+
+			OWLAnnotationValue value = ax.getValue();
+			logger.info("Value: " + value);
+
+			if (value instanceof OWLLiteral) {
+				String wordFrom = ((OWLLiteral) value).getLiteral();
+				logger.info("Wordform: " + wordFrom);
+				if (contentWordForms.contains(wordFrom)) {
+
+					OWLAnnotationSubject subject = ax.getSubject();
+					logger.info("Subject: " + subject);
+
+					if (subject instanceof IRI) {
+
+						String lemma = ((IRI) subject).toString();
+						logger.info("Lemma: " + lemma);
+
+						entries.add(LexiconEntry.createNounSgEntry(wordFrom, lemma, Gender.NEUTRAL));
+						entries.add(LexiconEntry.createNounPlEntry(wordFrom, lemma, Gender.NEUTRAL));
+						entries.add(LexiconEntry.createTrVerbThirdEntry(wordFrom, lemma));
+						entries.add(LexiconEntry.createTrVerbInfEntry(wordFrom, lemma));
+						entries.add(LexiconEntry.createTrVerbPPEntry(wordFrom, lemma));
+						entries.add(LexiconEntry.createPropernameSgEntry(wordFrom, lemma, Gender.NEUTRAL));
+					}
+				}
+			}
+		}
+		Lexicon lexicon = new Lexicon();
+		lexicon.addEntries(entries);
+		return lexicon;
 	}
 }
