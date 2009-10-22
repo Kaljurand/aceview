@@ -25,11 +25,9 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.coode.owlapi.owlxml.renderer.OWLXMLRenderer;
 import org.semanticweb.owlapi.io.OWLRendererException;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -47,24 +45,20 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 import com.google.common.collect.Sets;
 
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 
 public class AxiomVerbalizer {
 
 	private static final Logger logger = Logger.getLogger(AxiomVerbalizer.class);
 	private final VerbalizerWebservice verbalizerWS;
-	private final ACELexicon<OWLEntity> lexicon;
 
-	public AxiomVerbalizer(String verbalizerWSURL, ACELexicon<OWLEntity> lexicon) {
+	public AxiomVerbalizer(String verbalizerWSURL) {
 		this.verbalizerWS = new VerbalizerWebservice(verbalizerWSURL);
-		this.lexicon = lexicon;
 	}
 
-	public AxiomVerbalizer(VerbalizerWebservice verbalizerWS, ACELexicon<OWLEntity> lexicon) {
+	public AxiomVerbalizer(VerbalizerWebservice verbalizerWS) {
 		this.verbalizerWS = verbalizerWS;
-		this.lexicon = lexicon;
 	}
 
 
@@ -78,7 +72,7 @@ public class AxiomVerbalizer {
 	 * @throws OWLOntologyChangeException 
 	 * @throws OWLOntologyCreationException 
 	 */
-	public ACESnippet verbalizeAxiom(OWLOntologyID ontologyID, OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	public ACESnippet verbalizeAxiom(OWLOntology ont, OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 
 		// BUG: this is a bit of a hack for performance reasons.
 		// We verbalize simple axioms without having to use
@@ -87,15 +81,16 @@ public class AxiomVerbalizer {
 		// so it really pays off performancewise to verbalize them directly in Java.
 		String verbalization = verbalizeSimpleSubClassOfAxiom(axiom);
 
+		OWLOntologyID ontologyID = ont.getOntologyID();
+
 		if (verbalization != null) {
 			logger.info("Simple axiom verbalized: " + verbalization);
 			return new ACESnippetImpl(ontologyID, verbalization, axiom);
 		}
 
 		logger.info("Verbalizing the axiom using WS");
-		OWLDataFactory df = ACETextManager.getOWLModelManager().getOWLDataFactory();
 		try {
-			verbalization = verbalizeWithWS(ontologyID, axiom, df);
+			verbalization = verbalizeWithWS(ont, axiom);
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "OWL verbalizer error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -134,6 +129,7 @@ public class AxiomVerbalizer {
 		StringWriter sw = new StringWriter();
 		OWLXMLRenderer renderer = new OWLXMLRenderer(manager);
 		renderer.render(ont, sw);
+		logger.info("TO BE VERBALIZED: " + sw.toString());
 		return verbalizerWS.call(sw.toString());
 	}
 
@@ -147,12 +143,11 @@ public class AxiomVerbalizer {
 	 * @throws OWLOntologyChangeException 
 	 * @throws OWLOntologyCreationException 
 	 */
-	private String verbalizeWithWS(OWLOntologyID ontologyID, OWLLogicalAxiom axiom, OWLDataFactory df) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	private String verbalizeWithWS(OWLOntology ont, OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		Set<OWLAxiom> allAxioms = Sets.newHashSet((OWLAxiom) axiom);
 
 		for (OWLEntity entity : axiom.getReferencedEntities()) {
-			Set<OWLAnnotationAssertionAxiom> annotationAxioms = MorphAnnotation.getMorphAnnotationsFromLexicon(df, lexicon, entity);
-			allAxioms.addAll(annotationAxioms);
+			allAxioms.addAll(OntologyUtils.entityToAnnotations(entity, ont));
 		}
 
 		OWLOntologyManager ontologyManager = ACETextManager.createOWLOntologyManager();
@@ -306,10 +301,13 @@ public class AxiomVerbalizer {
 	 * <p>Convenience method that returns the singular form of the given OWL entity,
 	 * or the toString() of the entity if the singular form is not defined.</p>
 	 * 
+	 * TODO: rewrite this
+	 * 
 	 * @param entity OWL entity
 	 * @return Singular form of the entity
 	 */
 	private String getSg(OWLEntity entity) {
+		/*
 		ACELexiconEntry lexiconEntry = lexicon.getEntry(entity);
 		if (lexiconEntry == null) {
 			logger.warn("BUG: No ACELexiconEntry for OWLEntity: " + entity);
@@ -321,5 +319,7 @@ public class AxiomVerbalizer {
 			return entity.getIRI().getFragment();
 		}
 		return sg;
+		 */
+		return entity.getIRI().getFragment();
 	}
 }

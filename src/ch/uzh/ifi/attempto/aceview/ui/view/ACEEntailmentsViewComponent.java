@@ -236,7 +236,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 
 		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 		ACELexicon<OWLEntity> lexicon = ACETextManager.getActiveACELexicon();
-		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(new VerbalizerWebservice(prefs.getOwlToAce()), lexicon);
+		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(new VerbalizerWebservice(prefs.getOwlToAce()));
 
 		OWLOntology activeOntology = mm.getActiveOntology();
 
@@ -263,7 +263,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 				logger.info("NOT showing: " + ax + ", contains tricks");
 			}
 			else {
-				ACESnippet snippet = axiomVerbalizer.verbalizeAxiom(activeOntology.getOntologyID(), ax);
+				ACESnippet snippet = axiomVerbalizer.verbalizeAxiom(activeOntology, ax);
 				if (ACETextManager.getActiveACEText().contains(snippet)) {
 					logger.info("NOT showing: " + ax.toString() + ", snippet matches asserted snippet: " + snippet);
 				}

@@ -483,7 +483,7 @@ public final class ACETextManager {
 	 */
 	public static ACESnippet makeSnippetFromAxiom(OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer(getActiveACEText().getACELexicon());
-		return axiomVerbalizer.verbalizeAxiom(getActiveACETextURI(), axiom);
+		return axiomVerbalizer.verbalizeAxiom(getOWLModelManager().getActiveOntology(), axiom);
 	}
 
 
@@ -712,7 +712,7 @@ public final class ACETextManager {
 	private static void verbalizeAndAdd(ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLOntology ont, AxiomVerbalizer axiomVerbalizer, OWLLogicalAxiom axiom) {
 		ACESnippet snippet = null;
 		try {
-			snippet = axiomVerbalizer.verbalizeAxiom(ont.getOntologyID(), axiom);
+			snippet = axiomVerbalizer.verbalizeAxiom(ont, axiom);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -737,7 +737,7 @@ public final class ACETextManager {
 
 	private static AxiomVerbalizer createAxiomVerbalizer(ACELexicon<OWLEntity> lexicon) {
 		return new AxiomVerbalizer(
-				new VerbalizerWebservice(ACEViewPreferences.getInstance().getOwlToAce()), lexicon);
+				new VerbalizerWebservice(ACEViewPreferences.getInstance().getOwlToAce()));
 	}
 
 

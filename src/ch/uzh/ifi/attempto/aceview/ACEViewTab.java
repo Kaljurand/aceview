@@ -32,7 +32,6 @@ import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
@@ -237,7 +236,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 			// Translate every OWL logical axiom into ACE snippet and add it to the ACE text.
 			// If the logical axiom is already annotated with an ACE snippet then add the snippet instead.
-			AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce(), acelexicon);
+			AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce());
 
 			for (OWLLogicalAxiom logicalAxiom : ont.getLogicalAxioms()) {
 				Set<OWLAnnotation> existingAnnotations = logicalAxiom.getAnnotations();
@@ -302,7 +301,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 					Set<OWLEntity> entities = ((OWLAxiomChange) change).getEntities();
 					logger.info("Add axiom: " + logicalAxiom + " (" + existingAnnotations.size() + " annotations)" + " (" + entities.size() + " entities)");
 					try {
-						AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce(), acelexicon);
+						AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce());
 						processAxiom(changeOnt, df, ontologyManager, acetext, axiomVerbalizer, oid, logicalAxiom, existingAnnotations);
 					} catch (Exception e) {
 						logger.error(e.getMessage());
@@ -441,7 +440,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		}
 
 		if (newSnippet == null) {
-			newSnippet = axiomVerbalizer.verbalizeAxiom(ns, logicalAxiom);
+			newSnippet = axiomVerbalizer.verbalizeAxiom(ont, logicalAxiom);
 			if (newSnippet == null) {
 				logger.warn("AxiomVerbalizer produced a null-snippet for: " + logicalAxiom);
 			}

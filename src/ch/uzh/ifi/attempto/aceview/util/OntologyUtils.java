@@ -11,6 +11,7 @@ import org.protege.editor.owl.model.classexpression.OWLExpressionParserException
 import org.protege.editor.owl.model.parser.ParserUtil;
 import org.protege.editor.owl.model.parser.ProtegeOWLEntityChecker;
 import org.semanticweb.owlapi.expression.ParserException;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -26,6 +27,11 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+
+import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.ape.Gender;
+import ch.uzh.ifi.attempto.ape.Lexicon;
+import ch.uzh.ifi.attempto.ape.LexiconEntry;
 
 import com.google.common.collect.Sets;
 
@@ -150,5 +156,18 @@ public final class OntologyUtils {
 		// OWLAnnotation ann = df.getOWLAnnotation(property, value);
 
 		return df.getOWLAnnotationAssertionAxiom(property, subject, value);
+	}
+
+
+	public static Set<OWLAnnotationAssertionAxiom> entityToAnnotations(OWLEntity entity, OWLOntology ont) {
+		Set<OWLAnnotationAssertionAxiom> set;
+
+		set = entity.getAnnotationAssertionAxioms(ont);
+
+		// We could also filter out only those annotations
+		// that go along the ace_lexicon-properties.
+		// entity.getAnnotations(ont, property);
+
+		return set;
 	}
 }
