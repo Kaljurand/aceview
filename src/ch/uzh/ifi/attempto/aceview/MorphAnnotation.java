@@ -36,6 +36,7 @@ import ch.uzh.ifi.attempto.ace.ACEVerb;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
+import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
@@ -97,33 +98,33 @@ public class MorphAnnotation {
 
 		if (entity instanceof OWLClass) {
 
-			if (! annotationURIs.contains(FieldType.SG.getURI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.SG.getURI(), entity, lemma));
+			if (! annotationURIs.contains(MorphType.CN_SG.getURI())) {
+				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_SG.getURI(), entity, lemma));
 			}
 
-			if (! annotationURIs.contains(FieldType.PL.getURI())) {
+			if (! annotationURIs.contains(MorphType.CN_PL.getURI())) {
 				Noun noun = new Noun(lemma);
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.PL.getURI(), entity, noun.getPlural()));
+				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_PL.getURI(), entity, noun.getPlural()));
 			}
 		}
 		else if (isVerblike(entity)) {
 			ACEVerb verb = new ACEVerb(lemma);
 
-			if (! annotationURIs.contains(FieldType.SG.getURI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.SG.getURI(), entity, verb.getPresent3SG()));
+			if (! annotationURIs.contains(MorphType.TV_SG.getURI())) {
+				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getURI(), entity, verb.getPresent3SG()));
 			}
 
-			if (! annotationURIs.contains(FieldType.PL.getURI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.PL.getURI(), entity, lemma));
+			if (! annotationURIs.contains(MorphType.TV_PL.getURI())) {
+				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_PL.getURI(), entity, lemma));
 			}
 
-			if (! annotationURIs.contains(FieldType.VBG.getURI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.VBG.getURI(), entity, verb.getPastParticiple()));
+			if (! annotationURIs.contains(MorphType.TV_VBG.getURI())) {
+				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getURI(), entity, verb.getPastParticiple()));
 			}
 		}
 		else if (entity instanceof OWLIndividual) {
-			if (! annotationURIs.contains(FieldType.SG.getURI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.SG.getURI(), entity, lemma));
+			if (! annotationURIs.contains(MorphType.PN_SG.getURI())) {
+				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.PN_SG.getURI(), entity, lemma));
 			}
 		}
 
