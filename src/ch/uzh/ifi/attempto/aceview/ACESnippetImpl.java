@@ -56,6 +56,7 @@ import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.aceview.util.SnippetDate;
 import ch.uzh.ifi.attempto.ape.ACEParser;
@@ -218,7 +219,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public String toHtmlString(ACELexicon<OWLEntity> aceLexicon) {
+	public String toHtmlString(TokenMapper aceLexicon) {
 
 		if (isEmpty() && altRendering != null) {
 			return "<span color='red'>" + altRendering + "</span>";
@@ -509,7 +510,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 
 	private void parse(ACEViewPreferences prefs) throws OWLOntologyCreationException {
-		ACELexicon<OWLEntity> aceLexicon = ACETextManager.getActiveACELexicon();
+		TokenMapper aceLexicon = ACETextManager.getActiveACELexicon();
 		Set<String> contentWordForms = getContentWordsAsStrings();
 
 		if (! prefs.getParseWithUndefinedTokens()) {
@@ -533,12 +534,9 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	private void parseWithAceParser(ACEViewPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms) throws OWLOntologyCreationException {
-		//Lexicon lexicon = aceLexicon.createLexicon(contentWordForms);
-
-		OWLOntology ont = ACETextManager.getOWLModelManager().getActiveOntology();
-
-		Lexicon lexicon = createLexicon(ont, contentWordForms);
+	private void parseWithAceParser(ACEViewPreferences prefs, TokenMapper aceLexicon, Set<String> contentWordforms) throws OWLOntologyCreationException {
+		logger.info("Wordforms: " + contentWordforms);
+		Lexicon lexicon = aceLexicon.createLexicon(contentWordforms);
 		if (lexicon.getEntries().isEmpty()) {
 			logger.info("Parsing with empty lexicon.");
 			lexicon = null;
@@ -551,7 +549,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 		// Note: parser might by null in case the ParserHolder has not been initialized
 		ACEParser parser = ParserHolder.getACEParser();
-		parser.setURI(ns.toString());
+		parser.setURI(ns.getOntologyIRI().toString());
 
 		ACEParserResult result = null;
 
@@ -581,7 +579,7 @@ public class ACESnippetImpl implements ACESnippet {
 				if (owlxml == null || owlxml.length() == 0) {
 					throw new OWLOntologyCreationException("get(OutputType.OWLXML) is null or empty");
 				}
-				
+
 				logger.info("OWL: " + owlxml);
 
 				// TODO: BUG: creating a new ontology manager just to parse a snippet

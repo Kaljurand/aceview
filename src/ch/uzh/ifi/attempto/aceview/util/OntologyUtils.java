@@ -1,6 +1,5 @@
 package ch.uzh.ifi.attempto.aceview.util;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +10,7 @@ import org.protege.editor.owl.model.classexpression.OWLExpressionParserException
 import org.protege.editor.owl.model.parser.ParserUtil;
 import org.protege.editor.owl.model.parser.ProtegeOWLEntityChecker;
 import org.semanticweb.owlapi.expression.ParserException;
-import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -86,10 +85,10 @@ public final class OntologyUtils {
 	 * @return
 	 * 
 	 */
-	public static Set<URI> getAnnotationURIs(OWLOntology ontology, OWLEntity entity) {
-		Set<URI> annotationURIs = Sets.newHashSet();
+	public static Set<IRI> getAnnotationURIs(OWLOntology ontology, OWLEntity entity) {
+		Set<IRI> annotationURIs = Sets.newHashSet();
 		for (OWLAnnotation annotation : entity.getAnnotations(ontology)) {
-			annotationURIs.add(annotation.getProperty().getURI());
+			annotationURIs.add(annotation.getProperty().getIRI());
 		}
 		return annotationURIs;
 	}
@@ -141,7 +140,7 @@ public final class OntologyUtils {
 	 * TODO: make it work
 	 * TODO: URI -> IRI
 	 */
-	public static OWLAnnotationAssertionAxiom createEntityAnnotationAxiom(OWLDataFactory df, URI uri, OWLEntity entity, String lexem) {
+	public static OWLAnnotationAssertionAxiom createEntityAnnotationAxiom(OWLDataFactory df, IRI uri, OWLEntity entity, String lexem) {
 
 		// e.g. morph#pl
 		OWLAnnotationProperty property = df.getOWLAnnotationProperty(uri);

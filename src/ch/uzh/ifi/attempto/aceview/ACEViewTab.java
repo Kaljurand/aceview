@@ -30,8 +30,10 @@ import org.protege.editor.owl.ui.renderer.OWLEntityRendererListener;
 import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
@@ -39,6 +41,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -57,6 +60,7 @@ import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.IncompatibleMorphTagException;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
@@ -207,29 +211,14 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 			// Translate every OWLEntityAnnotationAxiom into the corresponding lexicon entry.
 			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(uri);
-			ACELexicon<OWLEntity> acelexicon = acetext.getACELexicon();
-
+			TokenMapper acelexicon = acetext.getTokenMapper();
 			Set<OWLAnnotationAssertionAxiom> annotationAxioms = ont.getAxioms(AxiomType.ANNOTATION_ASSERTION);
 
 			for (OWLAnnotationAssertionAxiom annotationAxiom : annotationAxioms) {
-
-				URI annotationURI = annotationAxiom.getProperty().getURI();
-
-				if (FieldType.isLexiconEntryURI(annotationURI)) {
-
+				OWLAnnotationSubject subject = annotationAxiom.getSubject();
+				if (subject instanceof IRI) {
 					String annValue = getAnnotationValueAsString(annotationAxiom.getValue());
-
-					if (annValue == null) {
-						logger.info("Malformed ACE lexicon annotation ignored: " + annotationAxiom);
-					}
-					else {
-						try {
-							OWLEntity annEntity = ACETextManager.mapAnnotationSubjectToEntity(annotationAxiom.getSubject(), annotationURI);
-							acelexicon.addEntry(annEntity, FieldType.getField(annotationURI), annValue);
-						} catch (IncompatibleMorphTagException e) {
-							logger.warn(e.getMessage());
-						}
-					}
+					acelexicon.addEntry(annValue, (IRI) subject, annotationAxiom.getProperty().getIRI());
 				}
 			}
 
@@ -277,7 +266,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			OWLOntologyID oid = changeOnt.getOntologyID();
 			OWLAxiom axiom = change.getAxiom();
 			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(oid);
-			ACELexicon<OWLEntity> acelexicon = acetext.getACELexicon();
+			TokenMapper acelexicon = acetext.getTokenMapper();
 
 			if (axiom instanceof OWLLogicalAxiom) {
 
@@ -321,37 +310,25 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			else if (axiom instanceof OWLAnnotationAssertionAxiom) {
 
 				OWLAnnotationAssertionAxiom annAx = (OWLAnnotationAssertionAxiom) axiom;
-				URI annotationURI = annAx.getProperty().getURI();
+				OWLAnnotationSubject subject = annAx.getSubject();
+				if (subject instanceof IRI) {
+					IRI annotationIRI = annAx.getProperty().getIRI();
 
-				if (MorphType.isMorphTypeURI(annotationURI)) {
+					if (MorphType.isMorphTypeIRI(annotationIRI)) {
 
-					String annValue = getAnnotationValueAsString(annAx.getValue());
+						String annValue = getAnnotationValueAsString(annAx.getValue());
 
-					if (annValue == null) {
-						// The annotation value is not a constant.
-						logger.error("Malformed ACE lexicon annotation ignored: " + annAx);
-					}
-					else {
-						lexiconAxiomCounter++;
-
-						OWLEntity annEntity = ACETextManager.mapAnnotationSubjectToEntity(annAx.getSubject(), annotationURI);
-
-						logger.info("Found annEntity: " + annEntity);
-
-						if (change instanceof AddAxiom) {
-							logger.info("Add ann axiom: " + annAx);
-							try {
-								acelexicon.addEntry(annEntity, FieldType.getField(annotationURI), annValue);
-							} catch (IncompatibleMorphTagException e) {
-								logger.warn(e.getMessage());
-							}
+						if (annValue == null) {
+							// The annotation value is not a constant.
+							logger.error("Malformed ACE lexicon annotation ignored: " + annAx);
 						}
-						else if (change instanceof RemoveAxiom) {
-							logger.info("Del ann axiom: " + annAx);
-							try {
-								acelexicon.removeEntry(annEntity, FieldType.getField(annotationURI));
-							} catch (IncompatibleMorphTagException e) {
-								logger.warn(e.getMessage());
+						else {
+							lexiconAxiomCounter++;
+							if (change instanceof AddAxiom) {
+								acelexicon.addEntry(annValue, (IRI) subject, annotationIRI);
+							}
+							else if (change instanceof RemoveAxiom) {
+								acelexicon.removeEntry(annValue, (IRI) subject, annotationIRI);
 							}
 						}
 					}
@@ -508,28 +485,10 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	}
 
 
-	/**
-	 * <p>Returns the content of the annotation (i.e. the annotation value) as
-	 * a string. The type of the annotation is ignored. In case the value is
-	 * not a constant but e.g. an OWL individual, then returns <code>null</code>.</p>
-	 * 
-	 * @param annotation OWL annotation
-	 * @return String that represents the value of the annotation
-	 */
-	/*
-	private static String getAnnotationValueAsString(OWLAnnotation annotation) {
-		String str = null;
-		if (annotation.isAnnotationByConstant()) {
-			String literal = annotation.getAnnotationValueAsConstant().getLiteral();
-			//String string = annotation.getAnnotationValueAsConstant().toString();
-			//logger.info("Annotation value: literal = [" + literal + "] and string = [" + string + "]");
-			return literal;
-		}
-		return str;
-	}
-	 */
-
 	private static String getAnnotationValueAsString(OWLAnnotationValue value) {
+		if (value instanceof OWLLiteral) {
+			return ((OWLLiteral) value).getLiteral();
+		}
 		return value.toString();
 	}
 
@@ -544,7 +503,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	private static OWLAnnotationAssertionAxiom getVbg(OWLDataFactory df, OWLObjectProperty p1, OWLObjectProperty p2) {
 		String vbgForm = p2.toString();
 		//String vbgForm = getOWLModelManager().getRendering(p2);
-		return OntologyUtils.createEntityAnnotationAxiom(df, FieldType.VBG.getURI(), p1, vbgForm);
+		return OntologyUtils.createEntityAnnotationAxiom(df, FieldType.VBG.getIRI(), p1, vbgForm);
 	}
 
 
@@ -569,7 +528,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		Set<OWLAxiom> rAxioms = ont.getReferencingAxioms(entity);
 		for (OWLAxiom rAx : rAxioms) {
 			if (rAx instanceof OWLAnnotationAssertionAxiom &&
-					FieldType.isLexiconEntryURI(((OWLAnnotationAssertionAxiom) rAx).getAnnotation().getProperty().getURI())) {
+					FieldType.isLexiconEntryIRI(((OWLAnnotationAssertionAxiom) rAx).getAnnotation().getProperty().getIRI())) {
 				removeList.add(new RemoveAxiom(ont, rAx));
 			}
 		}

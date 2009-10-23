@@ -71,13 +71,13 @@ public class MetricsTableModel extends AbstractTableModel {
 			case QUESTION_COUNT:
 				return acetext.getQuestions().size();
 			case CONTENT_WORD_COUNT:
-				return acetext.getACELexicon().size();
+				return acetext.getTokenMapper().size();
 			case CN_COUNT:
-				return acetext.getACELexicon().getCNCount();
+				return acetext.getTokenMapper().getCNCount();
 			case TV_COUNT:
-				return acetext.getACELexicon().getTVCount();
+				return acetext.getTokenMapper().getTVCount();
 			case PN_COUNT:
-				return acetext.getACELexicon().getPNCount();
+				return acetext.getTokenMapper().getPNCount();
 			case NOTHING_BUT_COUNT:
 				return acetext.getNothingbutCount();
 			case SWRL_SNIPPET_COUNT:
@@ -87,15 +87,15 @@ public class MetricsTableModel extends AbstractTableModel {
 			case UNVERBALIZED_AXIOM_COUNT:
 				return acetext.getUnverbalizedCount();
 			case UNUSED_CONTENT_WORD_COUNT:
-				return (acetext.getACELexicon().size() - acetext.getReferencedEntities().size());
+				return (acetext.getTokenMapper().size() - acetext.getReferencedEntities().size());
 			case WORDFORM_COUNT:
-				return acetext.getACELexicon().getWordformCount();
+				return acetext.getTokenMapper().getWordformCount();
 			case AMBIGUOUS_WORDFORM_COUNT:
-				return acetext.getACELexicon().getAmbiguousWordformCount();
+				return acetext.getTokenMapper().getAmbiguousWordformCount();
 			case WORDCLASS_AMBIGUOUS_WORDFORM_COUNT:
-				return acetext.getACELexicon().getWordclassAmbiguousWordformCount();
+				return acetext.getTokenMapper().getWordclassAmbiguousWordformCount();
 			case PARTIAL_ENTRY_COUNT:
-				return acetext.getACELexicon().getPartialEntryCount();
+				return acetext.getTokenMapper().getPartialEntryCount();
 			default:
 				throw new RuntimeException("Programmer error.");
 			}

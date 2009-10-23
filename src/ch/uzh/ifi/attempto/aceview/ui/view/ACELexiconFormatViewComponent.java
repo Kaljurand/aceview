@@ -25,6 +25,7 @@ import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
@@ -68,7 +69,7 @@ public class ACELexiconFormatViewComponent extends AbstractOWLViewComponent {
 
 
 	private void showLexicon() {
-		ACELexicon aceLexicon = ACETextManager.getActiveACELexicon();
+		TokenMapper aceLexicon = ACETextManager.getActiveACELexicon();
 		textareaLexicon.setText(aceLexicon.toACELexiconFormat());
 
 		int numberOfEntries = aceLexicon.size();

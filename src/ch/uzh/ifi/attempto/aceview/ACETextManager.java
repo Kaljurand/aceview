@@ -52,6 +52,7 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetListener;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
@@ -155,8 +156,8 @@ public final class ACETextManager {
 	}
 
 
-	public static ACELexicon<OWLEntity> getActiveACELexicon() {
-		return getACEText(activeACETextURI).getACELexicon();
+	public static TokenMapper getActiveACELexicon() {
+		return getACEText(activeACETextURI).getTokenMapper();
 	}
 
 
@@ -393,7 +394,7 @@ public final class ACETextManager {
 	}
 
 	// TODO: there must be a better way to do this
-	public static OWLEntity mapAnnotationSubjectToEntity(OWLAnnotationSubject subject, URI uri) {
+	public static OWLEntity mapAnnotationSubjectToEntity(OWLAnnotationSubject subject, IRI uri) {
 		if (subject instanceof IRI) {
 			IRI iri = (IRI) subject;
 			return findEntity(MorphType.getMorphType(uri).getEntryType(), iri.getFragment());
@@ -482,7 +483,7 @@ public final class ACETextManager {
 	 * @throws OWLOntologyChangeException
 	 */
 	public static ACESnippet makeSnippetFromAxiom(OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
-		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer(getActiveACEText().getACELexicon());
+		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer();
 		return axiomVerbalizer.verbalizeAxiom(getOWLModelManager().getActiveOntology(), axiom);
 	}
 
@@ -494,7 +495,7 @@ public final class ACETextManager {
 
 
 	public static void processTanglingAxioms(ACEText<OWLEntity, OWLLogicalAxiom> acetext, Set<OWLLogicalAxiom> tanglingAxioms) {		
-		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer(acetext.getACELexicon());
+		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer();
 		OWLOntology ont = getOWLModelManager().getActiveOntology();
 
 		for (OWLLogicalAxiom newAxiom : tanglingAxioms) {
@@ -735,7 +736,7 @@ public final class ACETextManager {
 	}
 
 
-	private static AxiomVerbalizer createAxiomVerbalizer(ACELexicon<OWLEntity> lexicon) {
+	private static AxiomVerbalizer createAxiomVerbalizer() {
 		return new AxiomVerbalizer(
 				new VerbalizerWebservice(ACEViewPreferences.getInstance().getOwlToAce()));
 	}

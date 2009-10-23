@@ -27,6 +27,7 @@ import org.semanticweb.owlapi.model.SWRLRule;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.util.SnippetDate;
 import ch.uzh.ifi.attempto.ape.Message;
 
@@ -90,10 +91,10 @@ public interface ACESnippet {
 	 * this snippet, but does not add the &lt;html&gt;-tags
 	 * around the string.</p>
 	 * 
-	 * @param aceLexicon ACE lexicon that maps wordforms to entities
+	 * @param tokenMapper ACE lexicon that maps wordforms to entities
 	 * @return This snippet formatted in HTML
 	 */
-	String toHtmlString(ACELexicon<OWLEntity> aceLexicon);
+	String toHtmlString(TokenMapper tokenMapper);
 
 	/**
 	 * <p>Returns an HTML-formatted string with some
