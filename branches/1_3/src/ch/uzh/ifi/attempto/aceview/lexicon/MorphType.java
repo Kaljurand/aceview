@@ -1,6 +1,6 @@
 package ch.uzh.ifi.attempto.aceview.lexicon;
 
-import java.net.URI;
+import org.semanticweb.owlapi.model.IRI;
 
 public enum MorphType {
 
@@ -11,18 +11,18 @@ public enum MorphType {
 	TV_PL("http://attempto.ifi.uzh.ch/ace_lexicon#TV_pl", EntryType.TV, FieldType.PL),
 	TV_VBG("http://attempto.ifi.uzh.ch/ace_lexicon#TV_vbg", EntryType.TV, FieldType.VBG);
 
-	private final URI uri;
+	private final IRI iri;
 	private final EntryType entryType;
 	private final FieldType fieldType;
 
 	private MorphType(String uriAsString, EntryType entryType, FieldType fieldType) {
-		this.uri = URI.create(uriAsString);
+		this.iri = IRI.create(uriAsString);
 		this.entryType = entryType;
 		this.fieldType = fieldType;
 	}
 
-	public URI getURI() {
-		return uri;
+	public IRI getIRI() {
+		return iri;
 	}
 
 	public EntryType getEntryType() {
@@ -33,8 +33,8 @@ public enum MorphType {
 		return fieldType;
 	}
 
-	public boolean hasURI(URI uri) {
-		return this.uri.equals(uri);
+	public boolean hasIRI(IRI iri) {
+		return this.iri.equals(iri);
 	}
 
 	/**
@@ -43,30 +43,30 @@ public enum MorphType {
 	 * @param uri URI
 	 * @return {@link FieldType} of the given URI
 	 */
-	public static MorphType getMorphType(URI uri) {
-		if (uri.equals(CN_SG.getURI())) {
+	public static MorphType getMorphType(IRI iri) {
+		if (iri.equals(CN_SG.getIRI())) {
 			return CN_SG;
 		}
-		else if (uri.equals(CN_PL.getURI())) {
+		else if (iri.equals(CN_PL.getIRI())) {
 			return CN_PL;
 		}
-		else if (uri.equals(TV_SG.getURI())) {
+		else if (iri.equals(TV_SG.getIRI())) {
 			return TV_SG;
 		}
-		else if (uri.equals(TV_PL.getURI())) {
+		else if (iri.equals(TV_PL.getIRI())) {
 			return TV_PL;
 		}
-		else if (uri.equals(TV_VBG.getURI())) {
+		else if (iri.equals(TV_VBG.getIRI())) {
 			return TV_VBG;
 		}
-		else if (uri.equals(PN_SG.getURI())) {
+		else if (iri.equals(PN_SG.getIRI())) {
 			return PN_SG;
 		}
 
 		return null;
 	}
 
-	public static boolean isMorphTypeURI(URI annotationURI) {
-		return getMorphType(annotationURI) != null;
+	public static boolean isMorphTypeIRI(IRI annotationIRI) {
+		return getMorphType(annotationIRI) != null;
 	}
 }

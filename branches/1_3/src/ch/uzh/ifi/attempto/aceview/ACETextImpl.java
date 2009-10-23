@@ -41,6 +41,8 @@ import com.google.common.collect.Sets;
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.OwlApiACELexicon;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapperImpl;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
@@ -69,7 +71,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	private final List<ACESnippet> questions = Lists.newArrayList();
 
 	// The ACE lexicon that decides the surface forms of the snippets in this text.
-	private ACELexicon<OWLEntity> lexicon = null;
+	private TokenMapper lexicon = null;
 
 	// Number of ACE snippets that reference one or more SWRL rules
 	private int ruleCount = 0;
@@ -84,7 +86,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 
 	public ACETextImpl() {
-		lexicon = new OwlApiACELexicon();
+		lexicon = new TokenMapperImpl();
 	}
 
 
@@ -337,7 +339,8 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 			OWLEntity word = entry.getKey();
 			Set<ACESnippet> snippets = entry.getValue();
 			html += "<p><strong><a name='" + word + "'>" + word + "</a></strong> (" + snippets.size() + ")</p>\n";
-			html += snippetsToHtml(snippets, lexicon);
+			// TODO
+			//html += snippetsToHtml(snippets, lexicon);
 		}
 		return html;
 	}
@@ -350,7 +353,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 		}
 		SortedSet<ACESnippet> snippetsSorted = new TreeSet<ACESnippet>(new SnippetComparator());
 		snippetsSorted.addAll(snippets);
-		return snippetsToHtml(snippetsSorted, lexicon);
+		return ""; // TODO: snippetsToHtml(snippetsSorted, lexicon);
 	}
 
 
@@ -360,7 +363,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	 * @param snippets Set of ACE snippets
 	 * @return <code>String</code> representing an HTML list
 	 */
-	private static String snippetsToHtml(Set<ACESnippet> snippets, ACELexicon<OWLEntity> lexicon) {
+	private static String snippetsToHtml(Set<ACESnippet> snippets, TokenMapper lexicon) {
 		if (snippets.isEmpty()) {
 			return "<em>No snippets.</em>";
 		}
@@ -455,7 +458,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	}
 
 
-	public ACELexicon<OWLEntity> getACELexicon() {
+	public TokenMapper getTokenMapper() {
 		return lexicon;
 	}
 

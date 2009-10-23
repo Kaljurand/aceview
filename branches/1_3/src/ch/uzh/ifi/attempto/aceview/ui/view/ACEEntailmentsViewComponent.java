@@ -59,6 +59,7 @@ import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.AxiomVerbalizer;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.EntailmentsTableModel;
 import ch.uzh.ifi.attempto.aceview.ui.ACETable;
 import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
@@ -235,7 +236,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 		}
 
 		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
-		ACELexicon<OWLEntity> lexicon = ACETextManager.getActiveACELexicon();
+		TokenMapper lexicon = ACETextManager.getActiveACELexicon();
 		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(new VerbalizerWebservice(prefs.getOwlToAce()));
 
 		OWLOntology activeOntology = mm.getActiveOntology();

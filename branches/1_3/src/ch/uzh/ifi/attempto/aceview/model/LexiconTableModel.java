@@ -37,6 +37,7 @@ import ch.uzh.ifi.attempto.aceview.AddAxiomByACEView;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
@@ -66,7 +67,7 @@ import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 public class LexiconTableModel extends AbstractTableModel {
 
 	private ACEText<OWLEntity, OWLLogicalAxiom> acetext;
-	private ACELexicon<OWLEntity> acelexicon;
+	private TokenMapper acelexicon;
 	private Object[] entityArray;
 	private static final Logger logger = Logger.getLogger(LexiconTableModel.class);
 
@@ -75,7 +76,7 @@ public class LexiconTableModel extends AbstractTableModel {
 			if (event.isType(EventType.ACELEXICON_CHANGED) ||
 					event.isType(EventType.ACTIVE_ACETEXT_CHANGED)) {
 				acetext = ACETextManager.getActiveACEText();
-				acelexicon = acetext.getACELexicon();
+				acelexicon = acetext.getTokenMapper();
 				entityArray = ACETextManager.getOWLModelManager().getActiveOntology().getReferencedEntities().toArray();
 				fireTableDataChanged();
 			}
@@ -123,7 +124,7 @@ public class LexiconTableModel extends AbstractTableModel {
 
 	public LexiconTableModel() {
 		acetext = ACETextManager.getActiveACEText();
-		acelexicon = acetext.getACELexicon();
+		acelexicon = acetext.getTokenMapper();
 		entityArray = ACETextManager.getOWLModelManager().getActiveOntology().getReferencedEntities().toArray();
 		ACETextManager.addListener(aceTextManagerListener);
 	}
@@ -150,6 +151,7 @@ public class LexiconTableModel extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int row, int column) {
+		/*
 		if (row >= 0 && row < entityArray.length) {
 			OWLEntity entity = (OWLEntity) entityArray[row];
 			ACELexiconEntry entry;
@@ -188,6 +190,7 @@ public class LexiconTableModel extends AbstractTableModel {
 				throw new RuntimeException("Programmer error: missed a case for: " + column);
 			}
 		}
+		 */
 		// TODO: throw exception instead
 		return "NULL";
 	}
@@ -217,7 +220,8 @@ public class LexiconTableModel extends AbstractTableModel {
 				List<OWLAxiomChange> changes = Lists.newArrayList();
 
 				// Remove the respective annotation (if present)
-				changes.addAll(ACETextManager.findEntityAnnotationAxioms(ont, entity, field.getURI()));
+				// TODO
+				//changes.addAll(ACETextManager.findEntityAnnotationAxioms(ont, entity, field.getIRI()));
 
 				// We add a new annotation only if the modification of the table cell is
 				// a non-empty string.
@@ -225,7 +229,7 @@ public class LexiconTableModel extends AbstractTableModel {
 					OWLDataFactory df = mm.getOWLDataFactory();
 
 					// TODO: test this
-					OWLAnnotationAssertionAxiom newAnnot = OntologyUtils.createEntityAnnotationAxiom(df, field.getURI(), entity, newValueAsString);
+					OWLAnnotationAssertionAxiom newAnnot = OntologyUtils.createEntityAnnotationAxiom(df, field.getIRI(), entity, newValueAsString);
 					changes.add(new AddAxiomByACEView(ont, newAnnot));
 				}
 
@@ -241,6 +245,8 @@ public class LexiconTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public boolean isCellEditable(int row, int column) {
+		return false;
+		/*
 		ACELexiconEntry entry = acelexicon.getEntry((OWLEntity) entityArray[row]);
 		if (entry == null) {
 			return false;
@@ -255,6 +261,7 @@ public class LexiconTableModel extends AbstractTableModel {
 		default:
 			return false;
 		}
+		 */
 	}
 
 

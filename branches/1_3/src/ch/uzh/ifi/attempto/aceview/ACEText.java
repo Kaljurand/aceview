@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 
 /**
  * <p>Every ACE text is a sequence of ACE snippets.
@@ -299,7 +300,7 @@ public interface ACEText<E, A> {
 	 * 
 	 * @return ACE lexicon
 	 */
-	ACELexicon<E> getACELexicon();
+	TokenMapper getTokenMapper();
 
 	/**
 	 * <p>Returns the number of snippets whose axioms reference
