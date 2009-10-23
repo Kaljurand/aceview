@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.coode.owlapi.owlxml.renderer.OWLXMLRenderer;
 import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -39,7 +40,6 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
@@ -81,11 +81,11 @@ public class AxiomVerbalizer {
 		// so it really pays off performancewise to verbalize them directly in Java.
 		String verbalization = verbalizeSimpleSubClassOfAxiom(axiom);
 
-		OWLOntologyID ontologyID = ont.getOntologyID();
+		IRI iri = ont.getOntologyID().getOntologyIRI();
 
 		if (verbalization != null) {
 			logger.info("Simple axiom verbalized: " + verbalization);
-			return new ACESnippetImpl(ontologyID, verbalization, axiom);
+			return new ACESnippetImpl(iri, verbalization, axiom);
 		}
 
 		logger.info("Verbalizing the axiom using WS");
@@ -102,14 +102,14 @@ public class AxiomVerbalizer {
 			logger.info("Axioms not verbalized, using Manchester Syntax rendering");
 			String manSynRendering = ACETextManager.getOWLModelManager().getRendering(axiom);
 			if (manSynRendering == null) {
-				snippet = new ACESnippetImpl(ontologyID, "", axiom, axiom.toString());
+				snippet = new ACESnippetImpl(iri, "", axiom, axiom.toString());
 			}
 			else {
-				snippet = new ACESnippetImpl(ontologyID, "", axiom, manSynRendering);
+				snippet = new ACESnippetImpl(iri, "", axiom, manSynRendering);
 			}			
 		}
 		else {
-			snippet = new ACESnippetImpl(ontologyID, verbalization, axiom);
+			snippet = new ACESnippetImpl(iri, verbalization, axiom);
 		}
 
 		return snippet;

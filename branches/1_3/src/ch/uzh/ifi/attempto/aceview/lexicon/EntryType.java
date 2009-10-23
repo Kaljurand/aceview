@@ -16,6 +16,12 @@
 
 package ch.uzh.ifi.attempto.aceview.lexicon;
 
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+
 /**
  * 
  * @author Kaarel Kaljurand
@@ -46,5 +52,22 @@ public enum EntryType {
 
 	public String toAceWikiType() {
 		return awType;
+	}
+
+
+	public static EntryType getEntryType(OWLEntity entity) {
+		if (entity instanceof OWLClass) {
+			return CN;
+		}
+		else if (entity instanceof OWLObjectProperty) {
+			return TV;
+		}
+		else if (entity instanceof OWLDataProperty) {
+			return TV;
+		}
+		else if (entity instanceof OWLIndividual) {
+			return PN;
+		}
+		return null;
 	}
 }

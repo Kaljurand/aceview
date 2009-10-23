@@ -22,6 +22,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -34,8 +35,9 @@ import com.google.common.collect.Lists;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.AddAxiomByACEView;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
+import ch.uzh.ifi.attempto.aceview.RemoveAxiomByACEView;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
+import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
@@ -49,12 +51,12 @@ import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
  * <p>There are 7 columns:</p>
  * 
  * <ul>
- * <li>entity</li>
- * <li>entity rendering</li>
+ * <li>IRI</li>
+ * <li>IRI rendering</li>
  * <li>type (CN, TV, PN)</li>
  * <li>sg</li>
- * <li>pl</li>
- * <li>vbg</li>
+ * <li>pl (in case of CN and TV)</li>
+ * <li>vbg (in case of TV)</li>
  * <li>frequency</li>
  * </ul>
  * 
@@ -85,7 +87,7 @@ public class LexiconTableModel extends AbstractTableModel {
 
 
 	public enum Column implements TableColumn {
-		ENTITY("Entity", null, false, OWLEntity.class),
+		ENTITY("Entity", null, false, IRI.class),
 		ENTITY_RENDERING("Entity rendering", null, true, String.class),
 		TYPE("Type", null, true, String.class),
 		SG("Singular", null, true, String.class),
@@ -151,9 +153,9 @@ public class LexiconTableModel extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int row, int column) {
-		/*
 		if (row >= 0 && row < entityArray.length) {
 			OWLEntity entity = (OWLEntity) entityArray[row];
+			EntryType entryType = EntryType.getEntryType(entity);
 			ACELexiconEntry entry;
 			switch (Column.values()[column]) {
 			case ENTITY:
@@ -161,36 +163,34 @@ public class LexiconTableModel extends AbstractTableModel {
 			case ENTITY_RENDERING:
 				return ACETextManager.getOWLModelManager().getRendering(entity);
 			case TYPE:
-				entry = acelexicon.getEntry(entity);
-				if (entry == null) {
+				if (entryType == null) {
 					return "";
 				}
-				return entry.getType();
+				return entryType;
 			case SG:
-				entry = acelexicon.getEntry(entity);
-				if (entry == null) {
+				String wordfrom1 = "BUG";
+				if (wordfrom1 == null) {
 					return "";
 				}
-				return entry.getSg();
+				return wordfrom1;
 			case PL:
-				entry = acelexicon.getEntry(entity);
-				if (entry == null) {
+				String wordfrom2 = "BUG"; //acelexicon.getEntry(entryType, Column.PL);
+				if (wordfrom2 == null) {
 					return "";
 				}
-				return entry.getPl();
+				return wordfrom2;
 			case VBG:
-				entry = acelexicon.getEntry(entity);
-				if (entry == null) {
+				String wordfrom3 = "BUG"; // acelexicon.getEntry(entryType, Column.VBG);
+				if (wordfrom3 == null) {
 					return "";
 				}
-				return entry.getVbg();
+				return wordfrom3;
 			case FREQUENCY:
 				return acetext.getSnippetCount(entity);
 			default:
 				throw new RuntimeException("Programmer error: missed a case for: " + column);
 			}
 		}
-		 */
 		// TODO: throw exception instead
 		return "NULL";
 	}
@@ -219,16 +219,17 @@ public class LexiconTableModel extends AbstractTableModel {
 				FieldType field = FieldType.values()[column - 3];
 				List<OWLAxiomChange> changes = Lists.newArrayList();
 
+				OWLDataFactory df = mm.getOWLDataFactory();
+
 				// Remove the respective annotation (if present)
-				// TODO
-				//changes.addAll(ACETextManager.findEntityAnnotationAxioms(ont, entity, field.getIRI()));
+				// TODO: we construct a new axiom just to use it to match an axiom
+				// to be removed, is is smart? Maybe we should search for it in the ontology?
+				OWLAnnotationAssertionAxiom oldAnnot = OntologyUtils.createEntityAnnotationAxiom(df, field.getIRI(), entity, oldValueAsString);
+				changes.add(new RemoveAxiomByACEView(ont, oldAnnot));
 
 				// We add a new annotation only if the modification of the table cell is
 				// a non-empty string.
 				if (newValueAsString.length() > 0) {
-					OWLDataFactory df = mm.getOWLDataFactory();
-
-					// TODO: test this
 					OWLAnnotationAssertionAxiom newAnnot = OntologyUtils.createEntityAnnotationAxiom(df, field.getIRI(), entity, newValueAsString);
 					changes.add(new AddAxiomByACEView(ont, newAnnot));
 				}
@@ -245,13 +246,11 @@ public class LexiconTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		return false;
-		/*
-		ACELexiconEntry entry = acelexicon.getEntry((OWLEntity) entityArray[row]);
-		if (entry == null) {
+		EntryType entryType = EntryType.getEntryType((OWLEntity) entityArray[row]);
+		if (entryType == null) {
 			return false;
 		}
-		switch (entry.getType()) {
+		switch (entryType) {
 		case CN:
 			return (column == 3 || column == 4);
 		case TV:
@@ -261,7 +260,6 @@ public class LexiconTableModel extends AbstractTableModel {
 		default:
 			return false;
 		}
-		 */
 	}
 
 

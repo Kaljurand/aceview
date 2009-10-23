@@ -19,14 +19,13 @@ package ch.uzh.ifi.attempto.aceview;
 import java.util.List;
 import java.util.Set;
 
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.SWRLRule;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.util.SnippetDate;
 import ch.uzh.ifi.attempto.ape.Message;
@@ -262,9 +261,9 @@ public interface ACESnippet {
 	 * 
 	 * TODO: think about it
 	 * 
-	 * @return URI of the default namespace
+	 * @return IRI of the default namespace
 	 */
-	OWLOntologyID getDefaultNamespace();
+	IRI getDefaultNamespace();
 
 	/**
 	 * <p>Returns the timestamp of the snippet.

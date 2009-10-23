@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 
 /**

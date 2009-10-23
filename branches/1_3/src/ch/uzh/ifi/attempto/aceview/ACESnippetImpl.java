@@ -24,20 +24,13 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
 import org.semanticweb.owlapi.io.StringInputSource;
-import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLAnnotationSubject;
-import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
-import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
@@ -53,16 +46,12 @@ import com.google.common.collect.Sets;
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.ace.ACEToken;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
-import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.aceview.util.SnippetDate;
 import ch.uzh.ifi.attempto.ape.ACEParser;
-import ch.uzh.ifi.attempto.ape.Gender;
 import ch.uzh.ifi.attempto.ape.Lexicon;
-import ch.uzh.ifi.attempto.ape.LexiconEntry;
 import ch.uzh.ifi.attempto.ape.Message;
 import ch.uzh.ifi.attempto.ape.MessageContainer;
 import ch.uzh.ifi.attempto.ape.OutputType;
@@ -80,7 +69,7 @@ public class ACESnippetImpl implements ACESnippet {
 	private static final Logger logger = Logger.getLogger(ACESnippetImpl.class);
 
 	private final ImmutableList<ACESentence> sentences;
-	private final OWLOntologyID ns;
+	private final IRI ns;
 	// Alternative rendering which could be used if this snippet is empty.
 	private final String altRendering;
 	private final SnippetDate timestamp;
@@ -104,7 +93,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 * @param ns Default namespace of the snippet
 	 * @param sentences List of sentences that the snippet contains
 	 */
-	public ACESnippetImpl(OWLOntologyID ns, List<ACESentence> sentences) {
+	public ACESnippetImpl(IRI ns, List<ACESentence> sentences) {
 		if (sentences == null) {
 			throw new IllegalArgumentException("Sentences must not be null!");
 		}
@@ -128,7 +117,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 * @param ns Default namespace of the snippet
 	 * @param sentence Sentence that the snippet contains
 	 */
-	public ACESnippetImpl(OWLOntologyID ns, ACESentence sentence) {
+	public ACESnippetImpl(IRI ns, ACESentence sentence) {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		if (sentence.isQuestion()) {
@@ -150,9 +139,9 @@ public class ACESnippetImpl implements ACESnippet {
 	 * @param str Textual content of the snippet
 	 * @param axiom OWL axiom that the snippet corresponds to
 	 */
-	public ACESnippetImpl(OWLOntologyID ontologyID, String str, OWLLogicalAxiom axiom) {
+	public ACESnippetImpl(IRI ns, String str, OWLLogicalAxiom axiom) {
 		this.timestamp = new SnippetDate();
-		this.ns = ontologyID;
+		this.ns = ns;
 		this.axiomSet = ImmutableSet.of(axiom);
 		this.sentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
 		if (! sentences.isEmpty()) {
@@ -164,7 +153,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public ACESnippetImpl(OWLOntologyID ns, String str, OWLLogicalAxiom axiom, String altRendering) {
+	public ACESnippetImpl(IRI ns, String str, OWLLogicalAxiom axiom, String altRendering) {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		this.axiomSet = ImmutableSet.of(axiom);
@@ -360,7 +349,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public OWLOntologyID getDefaultNamespace() {
+	public IRI getDefaultNamespace() {
 		return ns;
 	}
 
@@ -549,7 +538,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 		// Note: parser might by null in case the ParserHolder has not been initialized
 		ACEParser parser = ParserHolder.getACEParser();
-		parser.setURI(ns.getOntologyIRI().toString());
+		parser.setURI(ns.toString());
 
 		ACEParserResult result = null;
 
@@ -644,44 +633,5 @@ public class ACESnippetImpl implements ACESnippet {
 	 */
 	private boolean hasErrors() {
 		return (errorMessagesCount > 0);
-	}
-
-
-	private static Lexicon createLexicon(OWLOntology ont, Set<String> contentWordForms) {
-		logger.info("Wordforms: " + contentWordForms);
-		Set<LexiconEntry> entries = Sets.newHashSet();
-		Set<OWLAnnotationAssertionAxiom> annAxioms = ont.getAxioms(AxiomType.ANNOTATION_ASSERTION);
-		for (OWLAnnotationAssertionAxiom ax : annAxioms) {
-			logger.info("Annotation: " + ax);
-
-			OWLAnnotationValue value = ax.getValue();
-			logger.info("Value: " + value);
-
-			if (value instanceof OWLLiteral) {
-				String wordFrom = ((OWLLiteral) value).getLiteral();
-				logger.info("Wordform: " + wordFrom);
-				if (contentWordForms.contains(wordFrom)) {
-
-					OWLAnnotationSubject subject = ax.getSubject();
-					logger.info("Subject: " + subject);
-
-					if (subject instanceof IRI) {
-
-						String lemma = ((IRI) subject).toString();
-						logger.info("Lemma: " + lemma);
-
-						entries.add(LexiconEntry.createNounSgEntry(wordFrom, lemma, Gender.NEUTRAL));
-						entries.add(LexiconEntry.createNounPlEntry(wordFrom, lemma, Gender.NEUTRAL));
-						entries.add(LexiconEntry.createTrVerbThirdEntry(wordFrom, lemma));
-						entries.add(LexiconEntry.createTrVerbInfEntry(wordFrom, lemma));
-						entries.add(LexiconEntry.createTrVerbPPEntry(wordFrom, lemma));
-						entries.add(LexiconEntry.createPropernameSgEntry(wordFrom, lemma, Gender.NEUTRAL));
-					}
-				}
-			}
-		}
-		Lexicon lexicon = new Lexicon();
-		lexicon.addEntries(entries);
-		return lexicon;
 	}
 }
