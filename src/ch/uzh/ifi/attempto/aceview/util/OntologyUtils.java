@@ -27,11 +27,6 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
-import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
-import ch.uzh.ifi.attempto.ape.Gender;
-import ch.uzh.ifi.attempto.ape.Lexicon;
-import ch.uzh.ifi.attempto.ape.LexiconEntry;
-
 import com.google.common.collect.Sets;
 
 public final class OntologyUtils {
@@ -78,29 +73,18 @@ public final class OntologyUtils {
 
 
 	/**
-	 * TODO: URI -> IRI
-	 * 
 	 * @param ontology
 	 * @param entity
 	 * @return
 	 * 
 	 */
 	public static Set<IRI> getAnnotationURIs(OWLOntology ontology, OWLEntity entity) {
-		Set<IRI> annotationURIs = Sets.newHashSet();
+		Set<IRI> annotationIRIs = Sets.newHashSet();
 		for (OWLAnnotation annotation : entity.getAnnotations(ontology)) {
-			annotationURIs.add(annotation.getProperty().getIRI());
+			annotationIRIs.add(annotation.getProperty().getIRI());
 		}
-		return annotationURIs;
+		return annotationIRIs;
 	}
-
-
-	/*
-	// This makes no logner sense in OWL-API 3
-	public static OWLAxiomAnnotationAxiom createAxiomAnnotation(OWLDataFactory df, OWLAxiom axiom, URI uri, String str) {
-		OWLAnnotation ann = df.getOWLConstantAnnotation(uri, df.getOWLUntypedConstant(str));
-		return df.getOWLAxiomAnnotationAxiom(axiom, ann);
-	}
-	 */
 
 
 	/**
@@ -136,14 +120,10 @@ public final class OntologyUtils {
 	}
 
 
-	/**
-	 * TODO: make it work
-	 * TODO: URI -> IRI
-	 */
-	public static OWLAnnotationAssertionAxiom createEntityAnnotationAxiom(OWLDataFactory df, IRI uri, OWLEntity entity, String lexem) {
+	public static OWLAnnotationAssertionAxiom createEntityAnnotationAxiom(OWLDataFactory df, IRI iri, OWLEntity entity, String lexem) {
 
 		// e.g. morph#pl
-		OWLAnnotationProperty property = df.getOWLAnnotationProperty(uri);
+		OWLAnnotationProperty property = df.getOWLAnnotationProperty(iri);
 
 		// IRI of the entity, e.g. http://www/man
 		OWLAnnotationSubject subject = entity.getIRI();

@@ -16,7 +16,6 @@
 
 package ch.uzh.ifi.attempto.aceview;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
@@ -49,15 +48,12 @@ import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.RemoveAxiom;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
-import ch.uzh.ifi.attempto.aceview.lexicon.IncompatibleMorphTagException;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
@@ -78,10 +74,10 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	private final OWLModelManagerListener modelManagerListener = new OWLModelManagerListener() {
 		public void handleChange(OWLModelManagerChangeEvent event) {
 			if (event.isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-				ACETextManager.setActiveACETextURI(getOWLModelManager().getActiveOntology().getOntologyID());
+				ACETextManager.setActiveACETextIRI(getOWLModelManager().getActiveOntology().getOntologyID().getOntologyIRI());
 			}
 			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_LOADED)) {
-				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
+				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID().getOntologyIRI());
 				try {
 					initACEText();
 					ACETextManager.fireEvent(EventType.ACETEXT_LOADED);
@@ -101,7 +97,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_CREATED)) {
 				// If an ontology is created then this ontology is set as active, therefore
 				// we can get the URI of this ontology by asking for the URI of the active ontology.
-				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
+				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID().getOntologyIRI());
 				ACETextManager.fireEvent(EventType.ACETEXT_CREATED);
 			}
 			else {
@@ -149,7 +145,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		}
 
 		ACETextManager.setOWLModelManager(getOWLModelManager());
-		ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
+		ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID().getOntologyIRI());
 		// Note: We start to listen before filling the ACE text, because
 		// we want to add entity annotations to the lexicon.
 		getOWLModelManager().addOntologyChangeListener(ontologyChangeListener);
@@ -189,11 +185,11 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		ACETextManager.setInitCompleted(false);
 
 		for (OWLOntology ont : ontologies) {
-			OWLOntologyID uri = ont.getOntologyID();
+			IRI iri = ont.getOntologyID().getOntologyIRI();
 
 			Set<OWLEntity> entities = ont.getReferencedEntities();
 
-			logger.info("Init: ontology " + uri + " contains " + entities.size() + " referenced entities");
+			logger.info("Init: ontology " + iri + " contains " + entities.size() + " referenced entities");
 
 			// Add morphological annotations (sg, pl, vbg) to each entity.
 			List<AddAxiomByACEView> changes = Lists.newArrayList();
@@ -210,7 +206,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 
 			// Translate every OWLEntityAnnotationAxiom into the corresponding lexicon entry.
-			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(uri);
+			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(iri);
 			TokenMapper acelexicon = acetext.getTokenMapper();
 			Set<OWLAnnotationAssertionAxiom> annotationAxioms = ont.getAxioms(AxiomType.ANNOTATION_ASSERTION);
 
@@ -230,7 +226,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			for (OWLLogicalAxiom logicalAxiom : ont.getLogicalAxioms()) {
 				Set<OWLAnnotation> existingAnnotations = logicalAxiom.getAnnotations();
 				logger.info("Init: Add axiom: " + logicalAxiom + " (" + existingAnnotations.size() + " annotations)");
-				processAxiom(ont, df, ontologyManager, acetext, axiomVerbalizer, uri, logicalAxiom, existingAnnotations);
+				processAxiom(ont, df, ontologyManager, acetext, axiomVerbalizer, iri, logicalAxiom, existingAnnotations);
 			}
 		}
 
@@ -263,7 +259,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			}
 
 			OWLOntology changeOnt = change.getOntology();
-			OWLOntologyID oid = changeOnt.getOntologyID();
+			IRI oid = changeOnt.getOntologyID().getOntologyIRI();
 			OWLAxiom axiom = change.getAxiom();
 			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(oid);
 			TokenMapper acelexicon = acetext.getTokenMapper();
@@ -398,7 +394,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @throws OWLOntologyCreationException
 	 * @throws OWLOntologyChangeException
 	 */
-	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, AxiomVerbalizer axiomVerbalizer, OWLOntologyID ns, OWLLogicalAxiom logicalAxiom, Set<OWLAnnotation> existingAnnotations) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, AxiomVerbalizer axiomVerbalizer, IRI ns, OWLLogicalAxiom logicalAxiom, Set<OWLAnnotation> existingAnnotations) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 
 		ACESnippet newSnippet = null;
 

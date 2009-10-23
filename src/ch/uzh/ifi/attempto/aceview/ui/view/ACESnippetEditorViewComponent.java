@@ -44,10 +44,10 @@ import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.util.OWLAxiomInstance;
 import org.protege.editor.owl.ui.UIHelper;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import com.google.common.collect.Multimap;
 
@@ -161,7 +161,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 					ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 					ACESnippet oldSnippet = acetext.find(sentences);
 					if (oldSnippet == null) {
-						OWLOntologyID name = ACETextManager.getActiveACETextURI();
+						IRI name = ACETextManager.getActiveACETextIRI();
 						ACESnippetImpl newSnippet = new ACESnippetImpl(name, sentences);
 						ACETextManager.addSnippet(newSnippet);
 						ACETextManager.setSelectedSnippet(newSnippet);

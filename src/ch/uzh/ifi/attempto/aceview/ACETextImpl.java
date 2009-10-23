@@ -39,8 +39,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
-import ch.uzh.ifi.attempto.aceview.lexicon.OwlApiACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapperImpl;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;

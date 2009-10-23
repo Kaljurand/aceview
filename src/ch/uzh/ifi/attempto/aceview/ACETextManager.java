@@ -49,7 +49,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
@@ -84,9 +83,9 @@ public final class ACETextManager {
 	//private static final IRI timestampIRI = IRI.create("http://purl.org/dc/elements/1.1/date");
 	//private static final URI timestampURI = URI.create("http://purl.org/dc/elements/1.1/date");
 
-	private static final Map<OWLOntologyID, ACEText<OWLEntity, OWLLogicalAxiom>> acetexts = Maps.newHashMap();
+	private static final Map<IRI, ACEText<OWLEntity, OWLLogicalAxiom>> acetexts = Maps.newHashMap();
 	private static OWLModelManager owlModelManager;
-	private static OWLOntologyID activeACETextURI;
+	private static IRI activeACETextIRI;
 
 	// BUG: maybe we should get a new instance whenever we need to query the renderer preferences?
 	private static final OWLRendererPreferences owlRendererPreferences = OWLRendererPreferences.getInstance();
@@ -108,17 +107,17 @@ public final class ACETextManager {
 	// No instances allowed
 	private ACETextManager() {}
 
-	public static void createACEText(OWLOntologyID uri) {
+	public static void createACEText(IRI iri) {
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = new ACETextImpl();
-		acetexts.put(uri, acetext);
+		acetexts.put(iri, acetext);
 		// BUG: would be better if we didn't have to set the active URI here
-		activeACETextURI = uri;
+		activeACETextIRI = iri;
 	}
 
 
-	public static void setActiveACETextURI(OWLOntologyID ontologyID) {
-		if (activeACETextURI.compareTo(ontologyID) != 0) {
-			activeACETextURI = ontologyID;
+	public static void setActiveACETextIRI(IRI iri) {
+		if (activeACETextIRI.compareTo(iri) != 0) {
+			activeACETextIRI = iri;
 			fireEvent(EventType.ACTIVE_ACETEXT_CHANGED);
 		}
 	}
@@ -131,33 +130,33 @@ public final class ACETextManager {
 	 * 
 	 * @return URI of the active ACE text.
 	 */
-	public static OWLOntologyID getActiveACETextURI() {
-		return activeACETextURI;
+	public static IRI getActiveACETextIRI() {
+		return activeACETextIRI;
 	}
 
 
 	public static ACEText<OWLEntity, OWLLogicalAxiom> getActiveACEText() {
-		return getACEText(getActiveACETextURI());
+		return getACEText(getActiveACETextIRI());
 	}
 
 
-	public static ACEText<OWLEntity, OWLLogicalAxiom> getACEText(OWLOntologyID uri) {
-		if (uri == null) {
+	public static ACEText<OWLEntity, OWLLogicalAxiom> getACEText(IRI iri) {
+		if (iri == null) {
 			logger.error("getACEText: URI == null; THIS SHOULD NOT HAPPEN");
 			return new ACETextImpl();
 		}
-		ACEText<OWLEntity, OWLLogicalAxiom> acetext = acetexts.get(uri);
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = acetexts.get(iri);
 		if (acetext == null) {
-			logger.error("getACEText: acetext == null, where URI: " + uri);
-			createACEText(uri);
-			return getACEText(uri);
+			logger.error("getACEText: acetext == null, where IRI: " + iri);
+			createACEText(iri);
+			return getACEText(iri);
 		}
 		return acetext;
 	}
 
 
 	public static TokenMapper getActiveACELexicon() {
-		return getACEText(activeACETextURI).getTokenMapper();
+		return getACEText(activeACETextIRI).getTokenMapper();
 	}
 
 
@@ -237,7 +236,7 @@ public final class ACETextManager {
 		List<OWLAxiomChange> changes = Lists.newArrayList();
 
 		for (ACESentence sentence : addedSentences) {
-			ACESnippet snippet = new ACESnippetImpl(activeACETextURI, sentence);
+			ACESnippet snippet = new ACESnippetImpl(activeACETextIRI, sentence);
 			activeAceText.add(snippet);
 			changes.addAll(getAddChanges(owlModelManager.getActiveOntology(), snippet));
 		}
@@ -257,7 +256,7 @@ public final class ACETextManager {
 		List<OWLAxiomChange> changes = Lists.newArrayList();
 
 		for (List<ACESentence> sentenceList : addedSentences) {
-			ACESnippet snippet = new ACESnippetImpl(activeACETextURI, sentenceList);
+			ACESnippet snippet = new ACESnippetImpl(activeACETextIRI, sentenceList);
 			activeAceText.add(snippet);
 			changes.addAll(getAddChanges(owlModelManager.getActiveOntology(), snippet));
 		}
@@ -634,7 +633,7 @@ public final class ACETextManager {
 			if (oldSnippet.getSentences().size() > 1) {
 				logger.info("Found super snippet: " + oldSnippet.toString());
 				List<ACESentence> sentences = oldSnippet.getRest(sentence);
-				ACESnippet snippet = new ACESnippetImpl(activeACETextURI, sentences);
+				ACESnippet snippet = new ACESnippetImpl(activeACETextIRI, sentences);
 				acetext.add(snippet);
 				changes.addAll(getAddChanges(ontology, snippet));
 			}
