@@ -66,6 +66,30 @@ public enum MorphType {
 		return null;
 	}
 
+
+	public static MorphType getMorphType(EntryType entryType, FieldType fieldType) {
+		if (entryType == EntryType.CN && fieldType == FieldType.SG) {
+			return CN_SG;
+		}
+		else if (entryType == EntryType.CN && fieldType == FieldType.PL) {
+			return CN_PL;
+		}
+		else if (entryType == EntryType.PN && fieldType == FieldType.SG) {
+			return PN_SG;
+		}
+		else if (entryType == EntryType.TV && fieldType == FieldType.SG) {
+			return TV_SG;
+		}
+		else if (entryType == EntryType.TV && fieldType == FieldType.PL) {
+			return TV_PL;
+		}
+		else if (entryType == EntryType.TV && fieldType == FieldType.VBG) {
+			return TV_VBG;
+		}
+
+		return null;
+	}
+
 	public static boolean isMorphTypeIRI(IRI annotationIRI) {
 		return getMorphType(annotationIRI) != null;
 	}

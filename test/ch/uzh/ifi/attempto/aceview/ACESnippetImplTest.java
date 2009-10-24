@@ -11,7 +11,6 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
@@ -24,7 +23,6 @@ public class ACESnippetImplTest {
 
 	private static final String PREFIX = "http://attempto.ifi.uzh.ch/aceview_test";
 	private static final IRI IRI_TEST = IRI.create(PREFIX);
-	private static final OWLOntologyID ID_TEST = new OWLOntologyID(IRI_TEST);
 
 	private static final OWLDataFactory df = new OWLDataFactoryImpl();
 
@@ -44,8 +42,8 @@ public class ACESnippetImplTest {
 		String str = "Every man is a human.";
 		List<ACESentence> sents = ACESplitter.getSentences(str);
 
-		ACESnippet s1 = new ACESnippetImpl(ID_TEST, sents);
-		ACESnippet s2 = new ACESnippetImpl(ID_TEST, sents);
+		ACESnippet s1 = new ACESnippetImpl(IRI_TEST, sents);
+		ACESnippet s2 = new ACESnippetImpl(IRI_TEST, sents);
 
 		assertEquals(s1, s2);
 	}
@@ -56,7 +54,7 @@ public class ACESnippetImplTest {
 		String str = "Every man is a human.";
 		List<ACESentence> sents = ACESplitter.getSentences(str);
 
-		ACESnippet s = new ACESnippetImpl(ID_TEST, sents);
+		ACESnippet s = new ACESnippetImpl(IRI_TEST, sents);
 
 		assertEquals(s.getAxiom(), every_man_is_a_human);
 		assertEquals(s.getLogicalAxioms(), Sets.newHashSet(every_man_is_a_human));
@@ -71,8 +69,8 @@ public class ACESnippetImplTest {
 		List<ACESentence> sents1 = ACESplitter.getSentences(str1);
 		List<ACESentence> sents2 = ACESplitter.getSentences(str2);
 
-		ACESnippet s1 = new ACESnippetImpl(ID_TEST, sents1);
-		ACESnippet s2 = new ACESnippetImpl(ID_TEST, sents2);
+		ACESnippet s1 = new ACESnippetImpl(IRI_TEST, sents1);
+		ACESnippet s2 = new ACESnippetImpl(IRI_TEST, sents2);
 
 		assertEquals(s1.getLogicalAxioms(), s2.getLogicalAxioms());
 	}
@@ -83,7 +81,7 @@ public class ACESnippetImplTest {
 		String str = "See tekst on vigane.";
 		List<ACESentence> sents = ACESplitter.getSentences(str);
 
-		ACESnippet s = new ACESnippetImpl(ID_TEST, sents);
+		ACESnippet s = new ACESnippetImpl(IRI_TEST, sents);
 
 		assertEquals(s.getAxiom(), null);
 		assertEquals(s.getLogicalAxioms(), Sets.newHashSet());
@@ -95,7 +93,7 @@ public class ACESnippetImplTest {
 		String str = "John likes Mary.";
 		List<ACESentence> sents = ACESplitter.getSentences(str);
 
-		ACESnippet s = new ACESnippetImpl(ID_TEST, sents);
+		ACESnippet s = new ACESnippetImpl(IRI_TEST, sents);
 
 		assertEquals(s.getLogicalAxioms(), Sets.newHashSet(john_likes_mary));
 	}

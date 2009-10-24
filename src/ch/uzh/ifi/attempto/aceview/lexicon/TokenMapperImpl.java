@@ -38,6 +38,7 @@ public class TokenMapperImpl implements TokenMapper {
 	//private final Map<OWLEntity, ACELexiconEntry> entityToEntry = Maps.newHashMap();
 
 	private final Multimap<String, Triple> map = HashMultimap.create();
+	private final Multimap<IRI, Triple> map2 = HashMultimap.create();
 
 	private final Autocompleter ac;
 	private int ambiguousWordformCount = 0;
@@ -66,6 +67,7 @@ public class TokenMapperImpl implements TokenMapper {
 	public void addEntry(String wordform, IRI lemma, IRI morph) {
 		Triple triple = new Triple(lemma, morph, wordform); 
 		map.put(wordform, triple);
+		map2.put(lemma, triple);
 		ac.add(wordform);
 		logger.info("Added: " + wordform + " -> " + triple);
 	}
@@ -74,6 +76,7 @@ public class TokenMapperImpl implements TokenMapper {
 	public void removeEntry(String wordform, IRI lemma, IRI morph) {
 		Triple triple = new Triple(lemma, morph, wordform);
 		map.remove(wordform, triple);
+		map2.remove(lemma, triple);
 		if (! map.containsKey(wordform)) {
 			ac.remove(wordform);
 			logger.info("Removed: " + wordform + " -> " + triple + " (no tokens remaining)");
@@ -229,6 +232,16 @@ public class TokenMapperImpl implements TokenMapper {
 
 	public Set<OWLEntity> getWordformEntities(String string) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public String getWordform(IRI entityIRI, IRI morphIRI) {
+		for (Triple t : map2.get(entityIRI)) {
+			if (t.hasProperty(morphIRI)) {
+				return t.getObject();
+			}
+		}
 		return null;
 	}
 }
