@@ -302,9 +302,9 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 					logger.warn("AxiomChange was neither addition nor removal: " + change.getClass());
 				}
 			}
-			// TODO: BUG: We process also the AxiomByACEView axioms?
 			else if (axiom instanceof OWLAnnotationAssertionAxiom) {
 
+				logger.info("Processing: " + axiom);
 				OWLAnnotationAssertionAxiom annAx = (OWLAnnotationAssertionAxiom) axiom;
 				OWLAnnotationSubject subject = annAx.getSubject();
 				if (subject instanceof IRI) {

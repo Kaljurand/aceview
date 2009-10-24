@@ -172,5 +172,6 @@ public interface TokenMapper {
 
 
 	Set<OWLEntity> getWordformEntities(String string);
-}
 
+	String getWordform(IRI entityIRI, IRI morphIRI);
+}

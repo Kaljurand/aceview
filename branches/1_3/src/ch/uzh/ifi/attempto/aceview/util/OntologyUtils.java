@@ -72,13 +72,13 @@ public final class OntologyUtils {
 	}
 
 
+
 	/**
 	 * @param ontology
 	 * @param entity
 	 * @return
-	 * 
 	 */
-	public static Set<IRI> getAnnotationURIs(OWLOntology ontology, OWLEntity entity) {
+	public static Set<IRI> getAnnotationIRIs(OWLOntology ontology, OWLEntity entity) {
 		Set<IRI> annotationIRIs = Sets.newHashSet();
 		for (OWLAnnotation annotation : entity.getAnnotations(ontology)) {
 			annotationIRIs.add(annotation.getProperty().getIRI());
@@ -122,7 +122,7 @@ public final class OntologyUtils {
 
 	public static OWLAnnotationAssertionAxiom createEntityAnnotationAxiom(OWLDataFactory df, IRI iri, OWLEntity entity, String lexem) {
 
-		// e.g. morph#pl
+		// e.g. morph#TV_pl
 		OWLAnnotationProperty property = df.getOWLAnnotationProperty(iri);
 
 		// IRI of the entity, e.g. http://www/man

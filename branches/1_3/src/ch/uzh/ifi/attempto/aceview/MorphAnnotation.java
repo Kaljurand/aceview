@@ -93,8 +93,8 @@ public class MorphAnnotation {
 			return axioms;
 		}
 
-		// Existing annotation URIs for the entity.
-		Set<IRI> annotationURIs = OntologyUtils.getAnnotationURIs(ontology, entity);
+		// Existing annotation IRIs for the entity.
+		Set<IRI> annotationURIs = OntologyUtils.getAnnotationIRIs(ontology, entity);
 
 		if (entity instanceof OWLClass) {
 

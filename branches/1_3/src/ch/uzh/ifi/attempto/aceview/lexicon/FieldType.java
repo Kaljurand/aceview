@@ -29,11 +29,11 @@ public enum FieldType {
 	VBG("P. participle", "http://attempto.ifi.uzh.ch/ace_lexicon#vbg");
 
 	private final String name;
-	private final IRI uri;
+	private final IRI iri;
 
-	private FieldType(String name, String strURI) {
+	private FieldType(String name, String iriAsString) {
 		this.name = name;
-		this.uri = IRI.create(strURI);
+		this.iri = IRI.create(iriAsString);
 	}
 
 	public String getName() {
@@ -41,30 +41,30 @@ public enum FieldType {
 	}
 
 	public IRI getIRI() {
-		return uri;
+		return iri;
 	}
 
 	/**
 	 * <p>Returns the {@link FieldType} that corresponds to the given URI.</p>
 	 * 
-	 * @param uri URI
-	 * @return {@link FieldType} of the given URI
+	 * @param iri IRI
+	 * @return {@link FieldType} of the given IRI
 	 */
-	public static FieldType getField(IRI uri) {
-		if (uri.equals(SG.getIRI())) {
+	public static FieldType getField(IRI iri) {
+		if (iri.equals(SG.getIRI())) {
 			return SG;
 		}
-		else if (uri.equals(PL.getIRI())) {
+		else if (iri.equals(PL.getIRI())) {
 			return PL;
 		}
-		else if (uri.equals(VBG.getIRI())) {
+		else if (iri.equals(VBG.getIRI())) {
 			return VBG;
 		}
 		// BUG: throw an exception instead, e.g. UnsupportedURIException
 		return SG;
 	}
 
-	public static boolean isLexiconEntryIRI(IRI uri) {
-		return (uri.equals(SG.getIRI()) || uri.equals(PL.getIRI()) || uri.equals(VBG.getIRI()));
+	public static boolean isLexiconEntryIRI(IRI iri) {
+		return (iri.equals(SG.getIRI()) || iri.equals(PL.getIRI()) || iri.equals(VBG.getIRI()));
 	}
 }

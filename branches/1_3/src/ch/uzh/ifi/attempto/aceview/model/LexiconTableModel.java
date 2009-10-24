@@ -36,9 +36,9 @@ import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.AddAxiomByACEView;
 import ch.uzh.ifi.attempto.aceview.RemoveAxiomByACEView;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
+import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
@@ -155,8 +155,9 @@ public class LexiconTableModel extends AbstractTableModel {
 	public Object getValueAt(int row, int column) {
 		if (row >= 0 && row < entityArray.length) {
 			OWLEntity entity = (OWLEntity) entityArray[row];
+			IRI entityIRI = entity.getIRI();
 			EntryType entryType = EntryType.getEntryType(entity);
-			ACELexiconEntry entry;
+
 			switch (Column.values()[column]) {
 			case ENTITY:
 				return entity;
@@ -168,23 +169,11 @@ public class LexiconTableModel extends AbstractTableModel {
 				}
 				return entryType;
 			case SG:
-				String wordfrom1 = "BUG";
-				if (wordfrom1 == null) {
-					return "";
-				}
-				return wordfrom1;
+				return process(entityIRI, entryType, FieldType.SG);
 			case PL:
-				String wordfrom2 = "BUG"; //acelexicon.getEntry(entryType, Column.PL);
-				if (wordfrom2 == null) {
-					return "";
-				}
-				return wordfrom2;
+				return process(entityIRI, entryType, FieldType.PL);
 			case VBG:
-				String wordfrom3 = "BUG"; // acelexicon.getEntry(entryType, Column.VBG);
-				if (wordfrom3 == null) {
-					return "";
-				}
-				return wordfrom3;
+				return process(entityIRI, entryType, FieldType.VBG);
 			case FREQUENCY:
 				return acetext.getSnippetCount(entity);
 			default:
@@ -216,26 +205,32 @@ public class LexiconTableModel extends AbstractTableModel {
 				OWLModelManager mm = ACETextManager.getOWLModelManager();
 				OWLOntology ont = mm.getActiveOntology();
 				// TODO: BUG: This way of finding the URI is waiting to be broken.
-				FieldType field = FieldType.values()[column - 3];
+				FieldType fieldType = FieldType.values()[column - 3];
 				List<OWLAxiomChange> changes = Lists.newArrayList();
 
 				OWLDataFactory df = mm.getOWLDataFactory();
 
-				// Remove the respective annotation (if present)
-				// TODO: we construct a new axiom just to use it to match an axiom
-				// to be removed, is is smart? Maybe we should search for it in the ontology?
-				OWLAnnotationAssertionAxiom oldAnnot = OntologyUtils.createEntityAnnotationAxiom(df, field.getIRI(), entity, oldValueAsString);
-				changes.add(new RemoveAxiomByACEView(ont, oldAnnot));
+				EntryType entryType = EntryType.getEntryType(entity);
+				MorphType morphType = MorphType.getMorphType(entryType, fieldType);
 
-				// We add a new annotation only if the modification of the table cell is
-				// a non-empty string.
-				if (newValueAsString.length() > 0) {
-					OWLAnnotationAssertionAxiom newAnnot = OntologyUtils.createEntityAnnotationAxiom(df, field.getIRI(), entity, newValueAsString);
-					changes.add(new AddAxiomByACEView(ont, newAnnot));
+				if (entryType != null && morphType != null) {
+
+					// Remove the respective annotation (if present)
+					// TODO: we construct a new axiom just to use it to match an axiom
+					// to be removed, is is smart? Maybe we should search for it in the ontology?
+					OWLAnnotationAssertionAxiom oldAnnot = OntologyUtils.createEntityAnnotationAxiom(df, morphType.getIRI(), entity, oldValueAsString);
+					changes.add(new RemoveAxiomByACEView(ont, oldAnnot));
+
+					// We add a new annotation only if the modification of the table cell is
+					// a non-empty string.
+					if (newValueAsString.length() > 0) {
+						OWLAnnotationAssertionAxiom newAnnot = OntologyUtils.createEntityAnnotationAxiom(df, morphType.getIRI(), entity, newValueAsString);
+						changes.add(new AddAxiomByACEView(ont, newAnnot));
+					}
+
+					OntologyUtils.changeOntology(mm.getOWLOntologyManager(), changes);
+					fireTableCellUpdated(row, column);
 				}
-
-				OntologyUtils.changeOntology(mm.getOWLOntologyManager(), changes);
-				fireTableCellUpdated(row, column);
 			}
 		}
 	}
@@ -270,5 +265,19 @@ public class LexiconTableModel extends AbstractTableModel {
 
 	public void dispose() {
 		ACETextManager.removeListener(aceTextManagerListener);
+	}
+
+
+	private String process(IRI entityIRI, EntryType entryType, FieldType fieldType) {
+		logger.info("Table cell: " + entityIRI + " -> " + entryType + " -> " + fieldType);
+		MorphType morphType = MorphType.getMorphType(entryType, fieldType);
+		if (morphType == null) {
+			return "";
+		}
+		String wordfrom = acelexicon.getWordform(entityIRI, morphType.getIRI());
+		if (wordfrom == null) {
+			return "";
+		}
+		return wordfrom;
 	}
 }
