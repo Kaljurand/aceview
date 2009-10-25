@@ -36,6 +36,7 @@ import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.AddAxiomByACEView;
 import ch.uzh.ifi.attempto.aceview.RemoveAxiomByACEView;
+import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
@@ -156,7 +157,7 @@ public class LexiconTableModel extends AbstractTableModel {
 		if (row >= 0 && row < entityArray.length) {
 			OWLEntity entity = (OWLEntity) entityArray[row];
 			IRI entityIRI = entity.getIRI();
-			EntryType entryType = EntryType.getEntryType(entity);
+			EntryType entryType = LexiconUtils.getLexiconEntryType(entity);
 
 			switch (Column.values()[column]) {
 			case ENTITY:
@@ -210,7 +211,7 @@ public class LexiconTableModel extends AbstractTableModel {
 
 				OWLDataFactory df = mm.getOWLDataFactory();
 
-				EntryType entryType = EntryType.getEntryType(entity);
+				EntryType entryType = LexiconUtils.getLexiconEntryType(entity);
 				MorphType morphType = MorphType.getMorphType(entryType, fieldType);
 
 				if (entryType != null && morphType != null) {
@@ -241,7 +242,7 @@ public class LexiconTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		EntryType entryType = EntryType.getEntryType((OWLEntity) entityArray[row]);
+		EntryType entryType = LexiconUtils.getLexiconEntryType((OWLEntity) entityArray[row]);
 		if (entryType == null) {
 			return false;
 		}
@@ -269,14 +270,14 @@ public class LexiconTableModel extends AbstractTableModel {
 
 
 	private String process(IRI entityIRI, EntryType entryType, FieldType fieldType) {
-		logger.info("Table cell: " + entityIRI + " -> " + entryType + " -> " + fieldType);
+		// logger.info("Table cell: " + entityIRI + " -> " + entryType + " -> " + fieldType);
 		MorphType morphType = MorphType.getMorphType(entryType, fieldType);
 		if (morphType == null) {
-			return "";
+			return "null1";
 		}
 		String wordfrom = acelexicon.getWordform(entityIRI, morphType.getIRI());
 		if (wordfrom == null) {
-			return "";
+			return "null2";
 		}
 		return wordfrom;
 	}
