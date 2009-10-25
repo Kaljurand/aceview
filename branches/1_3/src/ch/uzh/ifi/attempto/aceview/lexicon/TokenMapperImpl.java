@@ -34,9 +34,6 @@ public class TokenMapperImpl implements TokenMapper {
 
 	private static final Logger logger = Logger.getLogger(OwlApiACELexicon.class);
 
-	//private final Multimap<String, OWLEntity> wordformToEntities = HashMultimap.create();
-	//private final Map<OWLEntity, ACELexiconEntry> entityToEntry = Maps.newHashMap();
-
 	private final Multimap<String, Triple> map = HashMultimap.create();
 	private final Multimap<IRI, Triple> map2 = HashMultimap.create();
 
@@ -64,24 +61,49 @@ public class TokenMapperImpl implements TokenMapper {
 	}
 
 
-	public void addEntry(String wordform, IRI lemma, IRI morph) {
-		Triple triple = new Triple(lemma, morph, wordform); 
-		map.put(wordform, triple);
-		map2.put(lemma, triple);
-		ac.add(wordform);
-		logger.info("Added: " + wordform + " -> " + triple);
+	public void addEntry(String wordform, IRI lemma, IRI morphIRI) {
+		if (MorphType.isMorphTypeIRI(morphIRI)) {
+			Triple triple = new Triple(lemma, morphIRI, wordform); 
+			map.put(wordform, triple);
+			map2.put(lemma, triple);
+			ac.add(wordform);
+
+			switch (MorphType.getWordClass(morphIRI)) {
+			case CN:
+				cnCount++; break;
+			case TV:
+				tvCount++; break;
+			case PN:
+				pnCount++; break;
+			default:
+				throw new RuntimeException("Programmer expected CN/TV/PN");
+			}
+			logger.info("Added: " + wordform + " -> " + triple);
+		}
 	}
 
 
-	public void removeEntry(String wordform, IRI lemma, IRI morph) {
-		Triple triple = new Triple(lemma, morph, wordform);
-		map.remove(wordform, triple);
-		map2.remove(lemma, triple);
-		if (! map.containsKey(wordform)) {
-			ac.remove(wordform);
-			logger.info("Removed: " + wordform + " -> " + triple + " (no tokens remaining)");
+	public void removeEntry(String wordform, IRI lemma, IRI morphIRI) {
+		if (MorphType.isMorphTypeIRI(morphIRI)) {
+			Triple triple = new Triple(lemma, morphIRI, wordform);
+			map.remove(wordform, triple);
+			map2.remove(lemma, triple);
+			if (! map.containsKey(wordform)) {
+				ac.remove(wordform);
+				logger.info("Removed: " + wordform + " -> " + triple + " (no tokens remaining)");
+			}
+			switch (MorphType.getWordClass(morphIRI)) {
+			case CN:
+				cnCount--; break;
+			case TV:
+				tvCount--; break;
+			case PN:
+				pnCount--; break;
+			default:
+				throw new RuntimeException("Programmer expected CN/TV/PN");
+			}
+			logger.info("Removed: " + wordform + " -> " + triple);
 		}
-		logger.info("Removed: " + wordform + " -> " + triple);
 	}
 
 
@@ -113,22 +135,6 @@ public class TokenMapperImpl implements TokenMapper {
 		}
 		return entities.iterator().next().getSubjectIRI();
 	}
-
-
-	/*
-	public Set<OWLEntity> getWordformEntities(String wordform) {
-		return (Set<OWLEntity>) wordformToEntities.get(wordform);
-	}
-
-
-	public Set<OWLEntity> getWordformEntities(Set<String> wordforms) {
-		Set<OWLEntity> entries = Sets.newHashSet();
-		for (String wordform : wordforms) {
-			entries.addAll(wordformToEntities.get(wordform));
-		}
-		return entries;
-	}
-	 */
 
 
 	public Autocompleter getAutocompleter() {

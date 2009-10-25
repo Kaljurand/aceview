@@ -67,6 +67,30 @@ public enum MorphType {
 	}
 
 
+	public static EntryType getWordClass(IRI iri) {
+		if (iri.equals(CN_SG.getIRI())) {
+			return EntryType.CN;
+		}
+		else if (iri.equals(CN_PL.getIRI())) {
+			return EntryType.CN;
+		}
+		else if (iri.equals(TV_SG.getIRI())) {
+			return EntryType.TV;
+		}
+		else if (iri.equals(TV_PL.getIRI())) {
+			return EntryType.TV;
+		}
+		else if (iri.equals(TV_VBG.getIRI())) {
+			return EntryType.TV;
+		}
+		else if (iri.equals(PN_SG.getIRI())) {
+			return EntryType.PN;
+		}
+
+		return null;
+	}
+
+
 	public static MorphType getMorphType(EntryType entryType, FieldType fieldType) {
 		if (entryType == EntryType.CN && fieldType == FieldType.SG) {
 			return CN_SG;

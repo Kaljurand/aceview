@@ -24,7 +24,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -35,7 +35,6 @@ import com.google.common.collect.Sets;
 import ch.uzh.ifi.attempto.ace.ACEVerb;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
-import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
@@ -69,6 +68,7 @@ public class MorphAnnotation {
 		String lemma = entity.getIRI().getFragment();
 		return getMorphAnnotations(df, ont, entity, lemma);
 	}
+
 
 	/**
 	 * <p>Returns an empty set of axioms if the input entity corresponds to
@@ -122,7 +122,7 @@ public class MorphAnnotation {
 				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), entity, verb.getPastParticiple()));
 			}
 		}
-		else if (entity instanceof OWLIndividual) {
+		else if (entity instanceof OWLNamedIndividual) {
 			if (! annotationURIs.contains(MorphType.PN_SG.getIRI())) {
 				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.PN_SG.getIRI(), entity, lemma));
 			}
@@ -150,17 +150,17 @@ public class MorphAnnotation {
 
 		if (entity instanceof OWLClass) {
 			Noun noun = new Noun(lemma);
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.SG.getIRI(), entity, lemma));
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.PL.getIRI(), entity, noun.getPlural()));
+			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_SG.getIRI(), entity, lemma));
+			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entity, noun.getPlural()));
 		}
 		else if (isVerblike(entity)) {
 			ACEVerb verb = new ACEVerb(lemma);
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.SG.getIRI(), entity, verb.getPresent3SG()));
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.PL.getIRI(), entity, lemma));
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.VBG.getIRI(), entity, verb.getPastParticiple()));
+			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getIRI(), entity, verb.getPresent3SG()));
+			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_PL.getIRI(), entity, lemma));
+			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), entity, verb.getPastParticiple()));
 		}
-		else if (entity instanceof OWLIndividual) {
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, FieldType.SG.getIRI(), entity, lemma));
+		else if (entity instanceof OWLNamedIndividual) {
+			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.PN_SG.getIRI(), entity, lemma));
 		}
 
 		return axioms;
@@ -192,16 +192,16 @@ public class MorphAnnotation {
 
 
 		if (entity instanceof OWLClass) {
-			addToAxioms(df, axioms, FieldType.SG.getIRI(), entity, entry.getSg());
-			addToAxioms(df, axioms, FieldType.PL.getIRI(), entity, entry.getPl());
+			addToAxioms(df, axioms, MorphType.CN_SG.getIRI(), entity, entry.getSg());
+			addToAxioms(df, axioms, MorphType.CN_PL.getIRI(), entity, entry.getPl());
 		}
 		else if (isVerblike(entity)) {
-			addToAxioms(df, axioms, FieldType.SG.getIRI(), entity, entry.getSg());
-			addToAxioms(df, axioms, FieldType.PL.getIRI(), entity, entry.getPl());
-			addToAxioms(df, axioms, FieldType.VBG.getIRI(), entity, entry.getVbg());
+			addToAxioms(df, axioms, MorphType.TV_SG.getIRI(), entity, entry.getSg());
+			addToAxioms(df, axioms, MorphType.TV_PL.getIRI(), entity, entry.getPl());
+			addToAxioms(df, axioms, MorphType.TV_VBG.getIRI(), entity, entry.getVbg());
 		}
-		else if (entity instanceof OWLIndividual) {
-			addToAxioms(df, axioms, FieldType.SG.getIRI(), entity, entry.getSg());
+		else if (entity instanceof OWLNamedIndividual) {
+			addToAxioms(df, axioms, MorphType.PN_SG.getIRI(), entity, entry.getSg());
 		}
 
 		return axioms;

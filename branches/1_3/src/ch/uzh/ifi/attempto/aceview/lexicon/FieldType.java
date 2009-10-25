@@ -16,55 +16,23 @@
 
 package ch.uzh.ifi.attempto.aceview.lexicon;
 
-import org.semanticweb.owlapi.model.IRI;
-
 /**
  * 
  * @author Kaarel Kaljurand
  *
  */
 public enum FieldType {
-	SG("Singular", "http://attempto.ifi.uzh.ch/ace_lexicon#sg"),
-	PL("Plural", "http://attempto.ifi.uzh.ch/ace_lexicon#pl"),
-	VBG("P. participle", "http://attempto.ifi.uzh.ch/ace_lexicon#vbg");
+	SG("Singular"),
+	PL("Plural"),
+	VBG("P. participle");
 
 	private final String name;
-	private final IRI iri;
 
-	private FieldType(String name, String iriAsString) {
+	private FieldType(String name) {
 		this.name = name;
-		this.iri = IRI.create(iriAsString);
 	}
 
 	public String getName() {
 		return name;
-	}
-
-	public IRI getIRI() {
-		return iri;
-	}
-
-	/**
-	 * <p>Returns the {@link FieldType} that corresponds to the given URI.</p>
-	 * 
-	 * @param iri IRI
-	 * @return {@link FieldType} of the given IRI
-	 */
-	public static FieldType getField(IRI iri) {
-		if (iri.equals(SG.getIRI())) {
-			return SG;
-		}
-		else if (iri.equals(PL.getIRI())) {
-			return PL;
-		}
-		else if (iri.equals(VBG.getIRI())) {
-			return VBG;
-		}
-		// BUG: throw an exception instead, e.g. UnsupportedURIException
-		return SG;
-	}
-
-	public static boolean isLexiconEntryIRI(IRI iri) {
-		return (iri.equals(SG.getIRI()) || iri.equals(PL.getIRI()) || iri.equals(VBG.getIRI()));
 	}
 }

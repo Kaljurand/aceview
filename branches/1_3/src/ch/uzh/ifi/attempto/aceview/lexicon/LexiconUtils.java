@@ -3,7 +3,7 @@ package ch.uzh.ifi.attempto.aceview.lexicon;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 public class LexiconUtils {
@@ -15,11 +15,10 @@ public class LexiconUtils {
 		else if (entity instanceof OWLObjectProperty || entity instanceof OWLDataProperty) {
 			return EntryType.TV;
 		}
-		else if (entity instanceof OWLIndividual) {
+		else if (entity instanceof OWLNamedIndividual) {
 			return EntryType.PN;
 		}
-		// BUG: throw an exception instead
-		return EntryType.CN;
+		return null;
 	}
 
 

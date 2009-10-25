@@ -54,7 +54,6 @@ import org.semanticweb.owlapi.model.RemoveAxiom;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
@@ -445,8 +444,8 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				OntologyUtils.changeOntology(ontologyManager,
 						ACETextManager.getRemoveChanges(ont, p1.getAnnotationAssertionAxioms(ont)));
 				Set<OWLAxiom> set = Sets.newHashSet();
-				set.add(getVbg(df, p1, p2));
-				set.add(getVbg(df, p2, p1));
+				set.add(getTV_vbg(df, p1, p2));
+				set.add(getTV_vbg(df, p2, p1));
 				ACETextManager.addAxiomsToOntology(ontologyManager, ont, set);
 			}
 		}
@@ -496,10 +495,11 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @param p2
 	 * @return A single <code>OWLEntityAnnotationAxiom</code>
 	 */
-	private static OWLAnnotationAssertionAxiom getVbg(OWLDataFactory df, OWLObjectProperty p1, OWLObjectProperty p2) {
-		String vbgForm = p2.toString();
+	private static OWLAnnotationAssertionAxiom getTV_vbg(OWLDataFactory df, OWLObjectProperty p1, OWLObjectProperty p2) {
+		String vbgForm = p2.getIRI().getFragment();
+		// TODO: use the rendering instead
 		//String vbgForm = getOWLModelManager().getRendering(p2);
-		return OntologyUtils.createEntityAnnotationAxiom(df, FieldType.VBG.getIRI(), p1, vbgForm);
+		return OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), p1, vbgForm);
 	}
 
 
@@ -519,15 +519,22 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	}
 
 
+	/**
+	 * <p>Removes all the morph. annotation axioms that apply to
+	 * the IRI of the given entity.</p>
+	 * 
+	 * @param ont
+	 * @param entity
+	 * @return
+	 */
 	private static List<OWLAxiomChange> removeMorfAnnotations(OWLOntology ont, OWLEntity entity) {
 		List<OWLAxiomChange> removeList = Lists.newArrayList();
-		Set<OWLAxiom> rAxioms = ont.getReferencingAxioms(entity);
-		for (OWLAxiom rAx : rAxioms) {
-			if (rAx instanceof OWLAnnotationAssertionAxiom &&
-					FieldType.isLexiconEntryIRI(((OWLAnnotationAssertionAxiom) rAx).getAnnotation().getProperty().getIRI())) {
-				removeList.add(new RemoveAxiom(ont, rAx));
+		for (OWLAnnotationAssertionAxiom ax: entity.getAnnotationAssertionAxioms(ont)) {
+			if (MorphType.isMorphTypeIRI(ax.getProperty().getIRI())) {
+				removeList.add(new RemoveAxiom(ont, ax));
 			}
 		}
+
 		return removeList;
 	}
 }
