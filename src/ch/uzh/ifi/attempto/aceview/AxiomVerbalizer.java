@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.coode.owlapi.owlxml.renderer.OWLXMLRenderer;
 import org.semanticweb.owlapi.io.OWLRendererException;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -40,6 +39,7 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
@@ -81,7 +81,7 @@ public class AxiomVerbalizer {
 		// so it really pays off performancewise to verbalize them directly in Java.
 		String verbalization = verbalizeSimpleSubClassOfAxiom(axiom);
 
-		IRI iri = ont.getOntologyID().getOntologyIRI();
+		OWLOntologyID iri = ont.getOntologyID();
 
 		if (verbalization != null) {
 			logger.info("Simple axiom verbalized: " + verbalization);

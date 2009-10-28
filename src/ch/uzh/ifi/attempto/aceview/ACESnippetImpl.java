@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
@@ -69,7 +70,7 @@ public class ACESnippetImpl implements ACESnippet {
 	private static final Logger logger = Logger.getLogger(ACESnippetImpl.class);
 
 	private final ImmutableList<ACESentence> sentences;
-	private final IRI ns;
+	private final OWLOntologyID ns;
 	// Alternative rendering which could be used if this snippet is empty.
 	private final String altRendering;
 	private final SnippetDate timestamp;
@@ -93,7 +94,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 * @param ns Default namespace of the snippet
 	 * @param sentences List of sentences that the snippet contains
 	 */
-	public ACESnippetImpl(IRI ns, List<ACESentence> sentences) {
+	public ACESnippetImpl(OWLOntologyID ns, List<ACESentence> sentences) {
 		if (sentences == null) {
 			throw new IllegalArgumentException("Sentences must not be null!");
 		}
@@ -117,7 +118,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 * @param ns Default namespace of the snippet
 	 * @param sentence Sentence that the snippet contains
 	 */
-	public ACESnippetImpl(IRI ns, ACESentence sentence) {
+	public ACESnippetImpl(OWLOntologyID ns, ACESentence sentence) {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		if (sentence.isQuestion()) {
@@ -139,7 +140,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 * @param str Textual content of the snippet
 	 * @param axiom OWL axiom that the snippet corresponds to
 	 */
-	public ACESnippetImpl(IRI ns, String str, OWLLogicalAxiom axiom) {
+	public ACESnippetImpl(OWLOntologyID ns, String str, OWLLogicalAxiom axiom) {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		this.axiomSet = ImmutableSet.of(axiom);
@@ -153,7 +154,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public ACESnippetImpl(IRI ns, String str, OWLLogicalAxiom axiom, String altRendering) {
+	public ACESnippetImpl(OWLOntologyID ns, String str, OWLLogicalAxiom axiom, String altRendering) {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		this.axiomSet = ImmutableSet.of(axiom);
@@ -349,7 +350,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public IRI getDefaultNamespace() {
+	public OWLOntologyID getDefaultNamespace() {
 		return ns;
 	}
 

@@ -273,7 +273,7 @@ public class LexiconTableModel extends AbstractTableModel {
 		// logger.info("Table cell: " + entityIRI + " -> " + entryType + " -> " + fieldType);
 		MorphType morphType = MorphType.getMorphType(entryType, fieldType);
 		if (morphType == null) {
-			return "null1";
+			return "";
 		}
 		String wordfrom = acelexicon.getWordform(entityIRI, morphType.getIRI());
 		if (wordfrom == null) {

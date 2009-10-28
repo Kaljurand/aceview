@@ -94,15 +94,15 @@ public class MorphAnnotation {
 		}
 
 		// Existing annotation IRIs for the entity.
-		Set<IRI> annotationURIs = OntologyUtils.getAnnotationIRIs(ontology, entity);
+		Set<IRI> annotationIRIs = OntologyUtils.getAnnotationIRIs(ontology, entity);
 
 		if (entity instanceof OWLClass) {
 
-			if (! annotationURIs.contains(MorphType.CN_SG.getIRI())) {
+			if (! annotationIRIs.contains(MorphType.CN_SG.getIRI())) {
 				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_SG.getIRI(), entity, lemma));
 			}
 
-			if (! annotationURIs.contains(MorphType.CN_PL.getIRI())) {
+			if (! annotationIRIs.contains(MorphType.CN_PL.getIRI())) {
 				Noun noun = new Noun(lemma);
 				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entity, noun.getPlural()));
 			}
@@ -110,20 +110,20 @@ public class MorphAnnotation {
 		else if (isVerblike(entity)) {
 			ACEVerb verb = new ACEVerb(lemma);
 
-			if (! annotationURIs.contains(MorphType.TV_SG.getIRI())) {
+			if (! annotationIRIs.contains(MorphType.TV_SG.getIRI())) {
 				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getIRI(), entity, verb.getPresent3SG()));
 			}
 
-			if (! annotationURIs.contains(MorphType.TV_PL.getIRI())) {
+			if (! annotationIRIs.contains(MorphType.TV_PL.getIRI())) {
 				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_PL.getIRI(), entity, lemma));
 			}
 
-			if (! annotationURIs.contains(MorphType.TV_VBG.getIRI())) {
+			if (! annotationIRIs.contains(MorphType.TV_VBG.getIRI())) {
 				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), entity, verb.getPastParticiple()));
 			}
 		}
 		else if (entity instanceof OWLNamedIndividual) {
-			if (! annotationURIs.contains(MorphType.PN_SG.getIRI())) {
+			if (! annotationIRIs.contains(MorphType.PN_SG.getIRI())) {
 				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.PN_SG.getIRI(), entity, lemma));
 			}
 		}
