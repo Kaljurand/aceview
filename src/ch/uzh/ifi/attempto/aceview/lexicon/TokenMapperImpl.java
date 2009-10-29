@@ -92,6 +92,9 @@ public class TokenMapperImpl implements TokenMapper {
 				ac.remove(wordform);
 				logger.info("Removed: " + wordform + " -> " + triple + " (no tokens remaining)");
 			}
+			else {
+				logger.info("Removed: " + wordform + " -> " + triple);
+			}
 			switch (MorphType.getWordClass(morphIRI)) {
 			case CN:
 				cnCount--; break;
@@ -102,7 +105,6 @@ public class TokenMapperImpl implements TokenMapper {
 			default:
 				throw new RuntimeException("Programmer expected CN/TV/PN");
 			}
-			logger.info("Removed: " + wordform + " -> " + triple);
 		}
 	}
 

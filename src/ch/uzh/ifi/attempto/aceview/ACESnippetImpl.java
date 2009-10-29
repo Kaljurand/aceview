@@ -539,7 +539,16 @@ public class ACESnippetImpl implements ACESnippet {
 
 		// Note: parser might by null in case the ParserHolder has not been initialized
 		ACEParser parser = ParserHolder.getACEParser();
-		parser.setURI(ns.toString());
+
+		IRI ontologyIRI = ns.getOntologyIRI();
+		String uri;
+		if (ontologyIRI == null) {
+			uri = ontologyIRI.toString();
+		}
+		else {
+			uri = "";
+		}
+		parser.setURI(uri);
 
 		ACEParserResult result = null;
 
