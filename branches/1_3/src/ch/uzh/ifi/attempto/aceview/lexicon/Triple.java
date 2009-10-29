@@ -7,18 +7,26 @@ import ch.uzh.ifi.attempto.ape.LexiconEntry;
 
 public class Triple {
 
-	private String object;
-	private IRI property;
-	private IRI subject;
+	private final String object;
+	private final IRI property;
+	private final IRI subject;
+	private final int hashCode;
 
 	public Triple(IRI subject, IRI property, String object) {
 		this.subject = subject;
 		this.property = property;
 		this.object = object;
+
+		// TODO: BUG: is this the right way to do it?
+		hashCode = 17 + 37 * subject.hashCode() + 37 * property.hashCode() + 37 * object.hashCode(); 
 	}
 
 	public IRI getSubjectIRI() {
 		return subject;
+	}
+
+	public IRI getPropertyIRI() {
+		return property;
 	}
 
 	public String getObject() {
@@ -60,8 +68,24 @@ public class Triple {
 		}
 	}
 
+
 	@Override
 	public String toString() {
-		return subject + " :: " + property + " :: " + object;
+		return subject.getFragment() + " :: " + property.getFragment() + " :: " + object;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if ((obj == null) || (obj.getClass() != this.getClass())) return false;
+		Triple t = (Triple) obj;
+		return subject.equals(t.getSubjectIRI()) && object.equals(t.getObject()) && property.equals(t.getPropertyIRI());
+	}
+
+
+	@Override
+	public int hashCode() {
+		return hashCode;
 	}
 }

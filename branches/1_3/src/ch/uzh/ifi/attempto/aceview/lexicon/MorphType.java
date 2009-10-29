@@ -15,8 +15,8 @@ public enum MorphType {
 	private final EntryType entryType;
 	private final FieldType fieldType;
 
-	private MorphType(String uriAsString, EntryType entryType, FieldType fieldType) {
-		this.iri = IRI.create(uriAsString);
+	private MorphType(String iriAsString, EntryType entryType, FieldType fieldType) {
+		this.iri = IRI.create(iriAsString);
 		this.entryType = entryType;
 		this.fieldType = fieldType;
 	}
@@ -38,10 +38,10 @@ public enum MorphType {
 	}
 
 	/**
-	 * <p>Returns the {@link FieldType} that corresponds to the given URI.</p>
+	 * <p>Returns the {@link MorphType} that corresponds to the given IRI.</p>
 	 * 
-	 * @param uri URI
-	 * @return {@link FieldType} of the given URI
+	 * @param iri IRI
+	 * @return {@link MorphType} of the given IRI
 	 */
 	public static MorphType getMorphType(IRI iri) {
 		if (iri.equals(CN_SG.getIRI())) {
@@ -113,6 +113,7 @@ public enum MorphType {
 
 		return null;
 	}
+
 
 	public static boolean isMorphTypeIRI(IRI annotationIRI) {
 		return getMorphType(annotationIRI) != null;
