@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLEntity;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -130,15 +129,6 @@ public class TokenMapperImpl implements TokenMapper {
 	}
 
 
-	public IRI getWordformEntity(String wordform) {
-		Collection<Triple> entities = map.get(wordform);
-		if (entities.isEmpty()) {
-			return null;
-		}
-		return entities.iterator().next().getSubjectIRI();
-	}
-
-
 	public Autocompleter getAutocompleter() {
 		return ac;
 	}
@@ -238,9 +228,12 @@ public class TokenMapperImpl implements TokenMapper {
 	}
 
 
-	public Set<OWLEntity> getWordformEntities(String string) {
-		// TODO Auto-generated method stub
-		return null;
+	public IRI getWordformIRI(String wordform) {
+		Collection<Triple> triples = map.get(wordform);
+		if (triples.isEmpty() || triples.size() > 1) {
+			return null;
+		}
+		return triples.iterator().next().getSubjectIRI();
 	}
 
 

@@ -337,8 +337,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 			OWLEntity word = entry.getKey();
 			Set<ACESnippet> snippets = entry.getValue();
 			html += "<p><strong><a name='" + word + "'>" + word + "</a></strong> (" + snippets.size() + ")</p>\n";
-			// TODO
-			//html += snippetsToHtml(snippets, lexicon);
+			html += snippetsToHtml(snippets, lexicon);
 		}
 		return html;
 	}
@@ -351,7 +350,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 		}
 		SortedSet<ACESnippet> snippetsSorted = new TreeSet<ACESnippet>(new SnippetComparator());
 		snippetsSorted.addAll(snippets);
-		return ""; // TODO: snippetsToHtml(snippetsSorted, lexicon);
+		return snippetsToHtml(snippetsSorted, lexicon);
 	}
 
 

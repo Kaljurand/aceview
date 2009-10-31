@@ -3,7 +3,6 @@ package ch.uzh.ifi.attempto.aceview.lexicon;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLEntity;
 
 import ch.uzh.ifi.attempto.ape.Lexicon;
 
@@ -154,24 +153,22 @@ public interface TokenMapper {
 	int getWordclassAmbiguousWordformCount();
 
 
-	/**
-	 * <p>Returns the IRI that corresponds to the wordform.
-	 * If none correspond then <code>null</code> is returned.
-	 * If more than one corresponds then an arbitrary one is returned.</p>
-	 * 
-	 * @param wordform ACE wordform
-	 * @return OWLEntity that corresponds to the given wordform
-	 */
-	IRI getWordformEntity(String wordform);
-
-
 	int size();
 
 
 	int getPartialEntryCount();
 
 
-	Set<OWLEntity> getWordformEntities(String string);
+	/**
+	 * <p>Returns the entity IRI that corresponds to the
+	 * given wordform in the lexicon. If there are no
+	 * corresponding IRIs, or there are more than one
+	 * then returns <code>null</code>.
+	 * 
+	 * @param wordform
+	 * @return
+	 */
+	IRI getWordformIRI(String wordform);
 
 	String getWordform(IRI entityIRI, IRI morphIRI);
 }

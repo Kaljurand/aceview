@@ -48,7 +48,6 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
-import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.util.SnippetDate;
 import ch.uzh.ifi.attempto.ape.ACEParser;
@@ -232,16 +231,17 @@ public class ACESnippetImpl implements ACESnippet {
 					span += "<span color='red'>" + token + "</span>";
 				}
 				else {
-					Set<OWLEntity> entitySet = aceLexicon.getWordformEntities(token.toString());
-					if (entitySet.isEmpty()) {
+					// TODO: BUG: in case a wordform maps to multiple different entities then
+					// we just take the first. This shouldn't occur often though.
+					IRI entityIRI = aceLexicon.getWordformIRI(token.toString());
+					if (entityIRI == null) {
 						span += "<span color='#777777'>" + token + "</span>";
 					}
 					else {
-						// TODO: BUG: in case a wordform maps to multiple different entities then
-						// we just take the first. This shouldn't occur often though.
-						OWLEntity firstEntity = entitySet.iterator().next();
-						EntryType type = LexiconUtils.getLexiconEntryType(firstEntity);
-						span += "<a href='#" + type + ":" + firstEntity.toString() + "'>" + token + "</a>";
+						// TODO: FIX THIS
+						// EntryType type = LexiconUtils.getLexiconEntryType(firstEntity);
+						EntryType type = EntryType.CN;
+						span += "<a href='#" + type + ":" + entityIRI.getFragment() + "'>" + token + "</a>";
 					}
 				}
 				span += " ";
@@ -541,14 +541,12 @@ public class ACESnippetImpl implements ACESnippet {
 		ACEParser parser = ParserHolder.getACEParser();
 
 		IRI ontologyIRI = ns.getOntologyIRI();
-		String uri;
 		if (ontologyIRI == null) {
-			uri = ontologyIRI.toString();
+			parser.setURI("");
 		}
 		else {
-			uri = "";
+			parser.setURI(ontologyIRI.toString());
 		}
-		parser.setURI(uri);
 
 		ACEParserResult result = null;
 
@@ -616,7 +614,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	// BUG: What is the purpose of this method?
+	// TODO Do this during construction time
 	private String toSimpleString() {
 		if (sentences.size() == 1) {
 			return sentences.iterator().next().toSimpleString();
