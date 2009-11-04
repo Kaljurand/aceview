@@ -22,7 +22,7 @@
 	<property name="protege_dist_bundles" location="${protege_dist}/bundles/"/>
 	<property name="protege_dist_plugins" location="${protege_dist_equinox}/plugins/"/>
 
-	<property name="jars" location="${protege_build}/org.protege.editor.owl.jar;${protege_build}/org.protege.editor.core.application.jar;${protege}/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar;${protege}/plugins/org.protege.common/lib/log4j.jar;${aceview_lib}/jdom.jar;${aceview_lib}/RadixTree-0.3.jar;${aceview_lib}/swingx-1.0.jar;${aceview_lib}/swing-worker-1.2.jar;${aceview_lib}/simplenlg-v37.jar;${aceview_lib}/attempto-ape.jar;${aceview_lib}/attempto-owl.jar;${aceview_lib}/google-collect-1.0-rc2.jar"/>
+	<property name="jars" location="${protege_build}/org.protege.editor.owl.jar;${protege_build}/org.protege.editor.core.application.jar;${protege}/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar;${protege}/plugins/org.protege.common/lib/log4j.jar;${aceview_lib}/jdom.jar;${aceview_lib}/RadixTree-0.3.jar;${aceview_lib}/swingx-1.0.jar;${aceview_lib}/swing-worker-1.2.jar;${aceview_lib}/simplenlg-v37.jar;${aceview_lib}/attempto-ape.jar;${aceview_lib}/attempto-owl.jar;${aceview_lib}/google-collect-1.0-rc3.jar"/>
 
 	<property name="aceview_test_src" location="test/"/>
 	<property name="aceview_test_report" location="test_report/"/>

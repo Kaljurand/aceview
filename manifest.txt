@@ -11,5 +11,5 @@ Bundle-ContactAddress: kaljurand@gmail.com
 Import-Package: org.osgi.framework,org.apache.log4j
 Bundle-Version: 1.3.0
 Bundle-Activator: org.protege.editor.core.plugin.DefaultPluginActivator
-Bundle-ClassPath: .,classes/,lib/commons-httpclient-3.1.jar,lib/simplenlg-v37.jar,lib/swingx-1.0.jar,lib/swing-worker-1.2.jar,lib/attempto-ape.jar,lib/jpl.jar,lib/jdom.jar,lib/commons-codec-1.3.jar,lib/attempto-owl.jar,lib/RadixTree-0.3.jar,lib/google-collect-1.0-rc2.jar
+Bundle-ClassPath: .,classes/,lib/commons-httpclient-3.1.jar,lib/simplenlg-v37.jar,lib/swingx-1.0.jar,lib/swing-worker-1.2.jar,lib/attempto-ape.jar,lib/jpl.jar,lib/jdom.jar,lib/commons-codec-1.3.jar,lib/attempto-owl.jar,lib/RadixTree-0.3.jar,lib/google-collect-1.0-rc3.jar
 Require-Bundle: org.eclipse.equinox.registry, org.eclipse.equinox.common, org.protege.common, org.protege.editor.core.application, org.protege.editor.owl, org.semanticweb.owl.owlapi
