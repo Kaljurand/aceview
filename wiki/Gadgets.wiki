@@ -1,0 +1,7 @@
+#summary Just testing some gadgets
+
+<wiki:gadget url="http://www.ohloh.net/p/aceview/widgets/project_basic_stats.xml" height="220" border="1" />
+
+<wiki:gadget url="http://www.ohloh.net/p/aceview/widgets/project_factoids.xml" width="340" height="170" border="0" />
+
+<wiki:gadget url="http://www.ohloh.net/p/aceview/widgets/project_users.xml" height="100" border="0" />
