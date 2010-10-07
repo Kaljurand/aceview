@@ -1,11 +1,11 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2009-06-22
+Version: 2010-10-07
 
 == License ==
 
-Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
 
 ACE View is free software licensed under the GNU Lesser General Public
 License (see LICENSE.txt and http://www.gnu.org/licenses/lgpl.html).
@@ -16,7 +16,7 @@ information about the used third-party libraries.
 
 == Introduction ==
 
-In the following, "Protege" means "Protege 4.0".
+In the following, "Protege" means "Protege 4.1".
 
 == Files ==
 
@@ -39,37 +39,31 @@ Note: the files do not include Protege and OWL API jars. You have to install
 Protege separately and set up the paths (as described below) to access the Protege jar-files.
 
 
-== Getting the source of Protege and building it ==
+== Getting the source code of Protege, building it and running the result ==
 
-=== Check-out the source code of Protege ===
+1. Read:
 
-svn co http://smi-protege.stanford.edu/repos/protege/protege4/protege-standalone/trunk trunk
+http://protegewiki.stanford.edu/wiki/Protege4DevDocs#Building_Protege4.1_from_scratch_using_ant
 
-You could also specify the revision of Protege to be checked out so that the Protege source matches
+2. Set $PROTEGE_HOME (e.g. "export PROTEGE_HOME=${HOME}/TEST/Protege/")
+
+3. Check out and install Protege
+(see the Bash-script utils/checkout_and_install_protege.bash)
+
+4. cd $PROTEGE_HOME
+
+5. sh run.sh
+
+[BUG: rewrite. You could also specify the revision of Protege to be checked out
+so that the Protege source matches
 the source that ACE View was tested against. (See the ACE View RELEASE_NOTES.txt for
-information on which Protege revision was used.)
+information on which Protege revision was used.)]
 
-
-=== Update the source code of Protege ===
-
-svn up (in the trunk-directory)
-
-Do it if you need to make sure that your local copy of Protege contains
+[BUG: rewrite. Do it if you need to make sure that your local copy of Protege contains
 the last revision of Protege. Note that updating to the latest revision might break
 some of the ACE View code, so it is useful to have two revisions checked out,
 one that seems stable and the other that is the latest. You can develop against the
-stable revision and occasionally test against that latest one.
-
-
-=== Clean it ===
-
-ant clean (in the trunk-directory)
-
-
-=== Build it ===
-
-ant (in the trunk-directory)
-
+stable revision and occasionally test against that latest one.]
 
 
 == Setting up the ACE View Eclipse project ==
