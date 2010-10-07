@@ -162,10 +162,11 @@ to ACE View integrated.
 Before every release,
 modify these files to update the ACE View version number:
 
-* manifest.txt
-* plugin.xml
+* build.xml
+* BUG: manifest.txt
+* BUG: plugin.xml
 * RELEASE_NOTES.html
-* update.properties
+* BUG: update.properties
 
 == SVN properties ==
 
