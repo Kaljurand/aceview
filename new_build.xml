@@ -24,6 +24,7 @@
 	<property name="src" location="./src"/>
 	<property name="lib" location="./lib"/>
 	<property name="build" location="./build"/>
+	<property name="javadoc" location="javadoc/"/>
 
 	<property name="classes" location="${build}/classes"/>
 	<property name="genlib" location="${build}/lib"/>
@@ -232,13 +233,13 @@
 -->
 
 
-	<property name="svn.root" value="http://aceview.googlecode.com/"/>
-	<property name="update.properties.file" value="${svn.root}/svn/trunk/update.properties"/>
-	<property name="readme.file" value="${svn.root}/svn/trunk/RELEASE_NOTES.html"/>
-	<property name="download" value="${svn.root}/files/${plugin}.jar"/>
+	<property name="root" value="http://aceview.googlecode.com/"/>
+	<property name="update.properties.file" value="${root}svn/trunk/update.properties"/>
+	<property name="readme.file" value="${root}svn/trunk/RELEASE_NOTES.html"/>
+	<property name="download" value="${root}files/${plugin}.jar"/>
 
 	<target name="dist" depends="jar">
-		<echo file="./etc/update.properties" append="false">
+		<echo file="update.properties" append="false">
 id=${plugin}
 version=${bundle.version}
 download=${download}
@@ -250,15 +251,30 @@ author=Kaarel Kaljurand
 		<echo message="The build file should ensure that"/>
 		<echo message="1. The bundle version and id is correct."/>
 		<echo message="Check the following things"/>
-		<echo message="1. The main repository uses "/>
+		<echo message="1. To find this update, The main repository uses "/>
 		<echo message="      ${update.properties.file}"/>
-		<echo message="   to find this update"/>
 		<echo message="2. The update.properties can be found at "/>
 		<echo message="      ${update.properties.file}"/>
-		<echo message="3. The readme file for this update can be found at"/>
+		<echo message="3. The README-file for this update can be found at"/>
 		<echo message="      ${readme.file}"/>
 		<echo message="4. The download for this update can be found at"/>
 		<echo message="      ${download}"/>
+	</target>
+
+
+	<target name="javadoc" depends="checkProtegeLibs" description="Create the ACE View Javadoc files.">
+		<javadoc
+			sourcepath="${src}"
+			packagenames="*"
+			destdir="${javadoc}"
+			extdirs="${lib}"
+			windowtitle="ACE View Packages"
+			doctitle="ACE View Packages">
+
+			<!-- <tag name="bug" scope="all" description="BUG:"/> -->
+			<classpath refid="project.classpath"/>
+			<bottom><![CDATA[<em>Copyright 2008-2010, Attempto Group, University of Zurich (see <a href="http://attempto.ifi.uzh.ch">http://attempto.ifi.uzh.ch</a>)</em>]]></bottom>
+		</javadoc>
 	</target>
 
 </project>

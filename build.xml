@@ -12,7 +12,6 @@
 	<property name="aceview_jar" value="ch.uzh.ifi.attempto.aceview.jar"/>
 	<property name="aceview.command" value="aceview.command"/>
 
-	<property name="javadoc" location="javadoc/"/>
 	<property name="aceview_lib" location="lib"/>
 	<property name="aceview_dist" location="dist/"/>
 
@@ -61,21 +60,6 @@
 		-->
 	</target>
 
-
-	<target name="javadoc" description="Create the ACE View Javadoc files.">
-		<javadoc
-			classpath="${jars}"
-			sourcepath="src/"
-			packagenames="*"
-			destdir="${javadoc}"
-			extdirs="${aceview_lib}"
-			windowtitle="ACE View Packages"
-			doctitle="ACE View Packages">
-
-			<!-- <tag name="bug" scope="all" description="BUG:"/> -->
-			<bottom><![CDATA[<em>Copyright 2008-2009, Attempto Group, University of Zurich (see <a href="http://attempto.ifi.uzh.ch">http://attempto.ifi.uzh.ch</a>)</em>]]></bottom>
-		</javadoc>
-	</target>
 
 	<target name="clean" description="Clean up.">
 		<delete dir="classes"/>
