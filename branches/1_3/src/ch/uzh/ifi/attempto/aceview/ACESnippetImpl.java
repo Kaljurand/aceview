@@ -577,13 +577,17 @@ public class ACESnippetImpl implements ACESnippet {
 					throw new OWLOntologyCreationException("get(OutputType.OWLXML) is null or empty");
 				}
 
-				logger.info("OWL: " + owlxml);
-
 				// TODO: BUG: creating a new ontology manager just to parse a snippet
 				// might be bad for performance
 				OWLOntologyManager manager = ACETextManager.createOWLOntologyManager();
+
+				// TODO: BUG: remove this temporary hack that convert the APE output into
+				// correct OWL 2 XML.
+				String owl2xml = OWLXMLTransformer.transform(owlxml);
+				//logger.info("OWL: " + owl2xml);
+
 				// BUG: we should copy the axioms and then throw away the created ontology
-				axiomSet = ImmutableSet.copyOf(manager.loadOntologyFromOntologyDocument(new StringDocumentSource(owlxml)).getLogicalAxioms());
+				axiomSet = ImmutableSet.copyOf(manager.loadOntologyFromOntologyDocument(new StringDocumentSource(owl2xml)).getLogicalAxioms());
 			}
 			else {
 				setPinpointers(errorMessages);

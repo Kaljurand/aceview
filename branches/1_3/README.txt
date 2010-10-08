@@ -24,23 +24,28 @@ http://protegewiki.stanford.edu/wiki/Protege4DevDocs
 
 == Files ==
 
+Note: the files do not include Protege and OWL API jars. You have to install
+Protege separately and set up the paths (as described below) to access the Protege jar-files.
+
 * .classpath: sample classpath configuration for ACE View (used by Eclipse)
 * .project: Eclipse project file
 * .settings/: Eclipse settings files
 * README.txt: this file
 * RELEASE_NOTES.html: release notes
 * build.xml: Ant build-file for ACE View
-* classes/: directory into which the Java class files will be generated (both by Eclipse and Ant)
 * lib/: external jar-files used by ACE View
 * licenses/: licenses of the external jar-files
-* manifest.txt: Manifest file for the ACE View jar-file
+* META-INF/MANIFEST.MF: Manifest file for the ACE View jar-file
 * plugin.xml: Protege plug-in file for ACE View
 * src/: ACE View source files (in Java)
 * test/: ACE View unit tests
 * viewconfig-aceviewtab.xml: Protege viewconfig-file for ACE View (specifies the layout of the ACE View views)
 
-Note: the files do not include Protege and OWL API jars. You have to install
-Protege separately and set up the paths (as described below) to access the Protege jar-files.
+=== Automatically generated files ==
+
+* classes/: directory into which the Java class files will be generated (by Eclips)
+* build/: directory into which the Java class files will be generated (by EAnt)
+* javadoc/: directory into which the Java class files will be generated (by EAnt)
 
 
 == Getting the source code of Protege, building it and running the result ==
@@ -167,10 +172,9 @@ Before every release,
 modify these files to update the ACE View version number:
 
 * build.xml
-* BUG: manifest.txt
-* BUG: plugin.xml
+* plugin.xml
 * RELEASE_NOTES.html
-* BUG: update.properties
+* update.properties (updated by "ant dist")
 
 == SVN properties ==
 
