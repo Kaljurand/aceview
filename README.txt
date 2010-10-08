@@ -1,7 +1,7 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2010-10-07
+Version: 2010-10-08
 
 == License ==
 
@@ -17,6 +17,10 @@ information about the used third-party libraries.
 == Introduction ==
 
 In the following, "Protege" means "Protege 4.1".
+
+== Read first ==
+
+http://protegewiki.stanford.edu/wiki/Protege4DevDocs
 
 == Files ==
 

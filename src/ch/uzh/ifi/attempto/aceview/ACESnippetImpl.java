@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
-import org.semanticweb.owlapi.io.StringInputSource;
+import org.semanticweb.owlapi.io.StringDocumentSource;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -399,7 +399,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public boolean containsEntityReference(OWLEntity entity) {
 		for (OWLLogicalAxiom axiom : axiomSet) {
-			if (axiom.getReferencedEntities().contains(entity)) {
+			if (axiom.getSignature().contains(entity)) {
 				return true;
 			}
 		}
@@ -410,7 +410,7 @@ public class ACESnippetImpl implements ACESnippet {
 	public Set<OWLEntity> getReferencedEntities() {
 		Set<OWLEntity> entities = Sets.newHashSet();
 		for (OWLLogicalAxiom axiom : axiomSet) {
-			entities.addAll(axiom.getReferencedEntities());
+			entities.addAll(axiom.getSignature());
 		}
 		return entities;
 	}
@@ -583,7 +583,7 @@ public class ACESnippetImpl implements ACESnippet {
 				// might be bad for performance
 				OWLOntologyManager manager = ACETextManager.createOWLOntologyManager();
 				// BUG: we should copy the axioms and then throw away the created ontology
-				axiomSet = ImmutableSet.copyOf(manager.loadOntology(new StringInputSource(owlxml)).getLogicalAxioms());
+				axiomSet = ImmutableSet.copyOf(manager.loadOntologyFromOntologyDocument(new StringDocumentSource(owlxml)).getLogicalAxioms());
 			}
 			else {
 				setPinpointers(errorMessages);

@@ -19,7 +19,7 @@ public class EntityLinkAction extends AbstractHyperlinkAction {
 		this.ws = ws;
 		this.entity = entity;
 		super.putValue(Action.NAME, ACETextManager.getOWLModelManager().getRendering(entity));
-		super.putValue(Action.SHORT_DESCRIPTION, "" + entity.getURI());
+		super.putValue(Action.SHORT_DESCRIPTION, "" + entity.getIRI());
 	}
 
 	public void actionPerformed(ActionEvent e) {

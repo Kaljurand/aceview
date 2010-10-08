@@ -133,7 +133,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 	 * @return HTML-rendering of all contentwords in the text
 	 */
 	private String getContentWordsInHtml(ACEText<OWLEntity, OWLLogicalAxiom> acetext) {
-		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getReferencedEntities();
+		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getSignature();
 		SortedSet<OWLEntity> entitiesSorted = new TreeSet<OWLEntity>(new EntityComparator());
 		entitiesSorted.addAll(entities);
 

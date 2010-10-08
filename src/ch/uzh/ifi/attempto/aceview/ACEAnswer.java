@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -20,13 +20,13 @@ import java.awt.HeadlessException;
 import java.util.Set;
 
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owlapi.inference.OWLReasoner;
-import org.semanticweb.owlapi.inference.OWLReasonerAdapter;
-import org.semanticweb.owlapi.inference.OWLReasonerException;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.reasoner.Node;
+import org.semanticweb.owlapi.reasoner.NodeSet;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import com.google.common.collect.Sets;
 
@@ -94,8 +94,6 @@ public class ACEAnswer {
 				}
 			} catch (HeadlessException e) {
 				e.printStackTrace();
-			} catch (OWLReasonerException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -160,15 +158,22 @@ public class ACEAnswer {
 		supClasses = null;
 	}
 
-	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) throws OWLReasonerException {
-		Set<OWLNamedIndividual> answerIndividuals = reasoner.getIndividuals(desc, false);
-
+	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) {
+		// TODO: BUG: what does false mean here?
+		Set<OWLNamedIndividual> answerIndividuals = reasoner.getInstances(desc, false).getFlattened();
 		setIndividualAnswerList(individuals, answerIndividuals);
-		setClassAnswerList(subClasses, OWLReasonerAdapter.flattenSetOfSets(reasoner.getDescendantClasses(desc)));
-		setClassAnswerList(supClasses, OWLReasonerAdapter.flattenSetOfSets(reasoner.getAncestorClasses(desc)));
+
+		// false = get all the descendant classes, not just the direct ones
+		NodeSet<OWLClass> subClses = reasoner.getSubClasses(desc, false);
+		setClassAnswerList(subClasses, subClses.getFlattened());
+
+		NodeSet<OWLClass> supClses = reasoner.getSuperClasses(desc, false);
+		setClassAnswerList(subClasses, supClses.getFlattened());
 
 		// We remove unsatisfiable classes as they might be confusing when presented as answers.
-		subClasses.removeAll(reasoner.getUnsatisfiableClasses());
+		Node<OWLClass> bottomNode = reasoner.getUnsatisfiableClasses();
+		Set<OWLClass> unsatisfiable = bottomNode.getEntitiesMinusBottom();
+		subClasses.removeAll(unsatisfiable);
 
 		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, individuals);
 		isSubClassesAnswersComplete = isCompleteSubClasses(mngr.getOWLDataFactory(), reasoner, desc, subClasses);
@@ -216,11 +221,6 @@ public class ACEAnswer {
 
 
 	private boolean isSatisfiable(OWLReasoner reasoner, OWLClassExpression desc) {
-		try {
-			return reasoner.isSatisfiable(desc);
-		} catch (OWLReasonerException e) {
-			e.printStackTrace();
-			return false;
-		}	
+		return reasoner.isSatisfiable(desc);
 	}
 }

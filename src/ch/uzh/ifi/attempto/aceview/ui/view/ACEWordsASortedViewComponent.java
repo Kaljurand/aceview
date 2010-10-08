@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -157,7 +157,7 @@ public class ACEWordsASortedViewComponent extends AbstractACEViewComponent {
 	 */
 	private StyledDocument getContentWordsAsStyledDocument(ACEText<OWLEntity, OWLLogicalAxiom> acetext, Font font) {
 		StyledDocument doc = new DefaultStyledDocument();
-		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getReferencedEntities();
+		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getSignature();
 		SortedSet<OWLEntity> entitiesSorted = new TreeSet<OWLEntity>(new EntityComparator());
 		entitiesSorted.addAll(entities);
 

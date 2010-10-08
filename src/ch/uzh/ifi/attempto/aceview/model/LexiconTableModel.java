@@ -80,7 +80,7 @@ public class LexiconTableModel extends AbstractTableModel {
 					event.isType(EventType.ACTIVE_ACETEXT_CHANGED)) {
 				acetext = ACETextManager.getActiveACEText();
 				acelexicon = acetext.getTokenMapper();
-				entityArray = ACETextManager.getOWLModelManager().getActiveOntology().getReferencedEntities().toArray();
+				entityArray = ACETextManager.getOWLModelManager().getActiveOntology().getSignature().toArray();
 				fireTableDataChanged();
 			}
 		}
@@ -128,7 +128,7 @@ public class LexiconTableModel extends AbstractTableModel {
 	public LexiconTableModel() {
 		acetext = ACETextManager.getActiveACEText();
 		acelexicon = acetext.getTokenMapper();
-		entityArray = ACETextManager.getOWLModelManager().getActiveOntology().getReferencedEntities().toArray();
+		entityArray = ACETextManager.getOWLModelManager().getActiveOntology().getSignature().toArray();
 		ACETextManager.addListener(aceTextManagerListener);
 	}
 

@@ -137,7 +137,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 				ruleCount++;
 			}
 			for (OWLLogicalAxiom axiom : snippetAxioms) {
-				for (OWLEntity entity : axiom.getReferencedEntities()) {
+				for (OWLEntity entity : axiom.getSignature()) {
 					if (Showing.isShow(entity)) {
 						Set<ACESnippet> snippets = entityToSnippets.get(entity);
 						if (snippets == null) {
@@ -219,7 +219,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 				ruleCount--;
 			}
 			for (OWLLogicalAxiom axiom : snippetAxioms) {
-				for (OWLEntity entity : axiom.getReferencedEntities()) {
+				for (OWLEntity entity : axiom.getSignature()) {
 					if (Showing.isShow(entity)) {
 						Set<ACESnippet> snippets = entityToSnippets.get(entity);
 						if (snippets == null) {

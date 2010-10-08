@@ -2,6 +2,7 @@ package ch.uzh.ifi.attempto.aceview.util;
 
 import java.net.URI;
 
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 
@@ -44,9 +45,9 @@ public final class Showing {
 
 		return (
 				entity.isOWLClass() ||
-				entity.isOWLObjectProperty() && !entity.getURI().equals(ENTITY_contain) && !entity.getURI().equals(ENTITY_know) ||
+				entity.isOWLObjectProperty() && !entity.getIRI().equals(ENTITY_contain) && !entity.getIRI().equals(ENTITY_know) ||
 				entity.isOWLDataProperty() ||
-				entity.isOWLNamedIndividual() && !entity.getURI().equals(ENTITY_Universe) && !entity.getURI().equals(ENTITY_Superman)
+				entity.isOWLNamedIndividual() && !entity.getIRI().equals(ENTITY_Universe) && !entity.getIRI().equals(ENTITY_Superman)
 		);
 	}
 
@@ -60,17 +61,17 @@ public final class Showing {
 	 * @return true if axiom should be "shown"
 	 */
 	public static boolean isShow(OWLAxiom axiom) {
-		for (OWLEntity entity : axiom.getReferencedEntities()) {
-			URI entityURI = entity.getURI();
-			if (entityURI.equals(ENTITY_contain) || entityURI.equals(ENTITY_Universe)) {
+		for (OWLEntity entity : axiom.getSignature()) {
+			IRI entityIRI = entity.getIRI();
+			if (entityIRI.equals(ENTITY_contain) || entityIRI.equals(ENTITY_Universe)) {
 				return false;
 			}
 
 			// BUG: deprecated
-			if (entityURI.equals(ENTITY_know)) {
+			if (entityIRI.equals(ENTITY_know)) {
 				return false;
 			}
-			if (entityURI.equals(ENTITY_Superman)) {
+			if (entityIRI.equals(ENTITY_Superman)) {
 				return false;
 			}
 		}

@@ -31,7 +31,7 @@ public class HyperlinkAction extends AbstractHyperlinkAction {
 		this.axiom = axiom;
 		this.entity = entity;
 		super.putValue(Action.NAME, ACETextManager.getOWLModelManager().getRendering(entity));
-		super.putValue(Action.SHORT_DESCRIPTION, "" + entity.getURI());
+		super.putValue(Action.SHORT_DESCRIPTION, "" + entity.getIRI());
 	}
 
 
