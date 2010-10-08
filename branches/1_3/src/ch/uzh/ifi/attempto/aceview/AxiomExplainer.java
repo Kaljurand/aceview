@@ -30,10 +30,10 @@ import uk.ac.manchester.cs.bhig.util.Tree;
 import uk.ac.manchester.cs.owl.explanation.ordering.DefaultExplanationOrderer;
 import uk.ac.manchester.cs.owl.explanation.ordering.ExplanationTree;
 
-import com.clarkparsia.explanation.BlackBoxExplanation;
-import com.clarkparsia.explanation.ExplanationGenerator;
-import com.clarkparsia.explanation.HSTExplanationGenerator;
-import com.clarkparsia.explanation.SatisfiabilityConverter;
+//import com.clarkparsia.explanation.BlackBoxExplanation;
+//import com.clarkparsia.explanation.ExplanationGenerator;
+//import com.clarkparsia.explanation.HSTExplanationGenerator;
+//import com.clarkparsia.explanation.SatisfiabilityConverter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -186,6 +186,7 @@ public class AxiomExplainer {
 	 * @return Set of sets of axioms
 	 */
 	private Set<Set<OWLAxiom>> getAxiomSets() {
+		/*
 		// Converts an axiom into an unsatisfiable class expression.
 		SatisfiabilityConverter satCon = new SatisfiabilityConverter(modelManager.getOWLDataFactory());
 		OWLClassExpression desc = satCon.convert(axiom);
@@ -200,5 +201,8 @@ public class AxiomExplainer {
 		ExplanationGenerator gen = new HSTExplanationGenerator(exp);
 
 		return gen.getExplanations(desc);
+		 */
+
+		return Sets.newHashSet();
 	}
 }

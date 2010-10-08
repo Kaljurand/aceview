@@ -197,7 +197,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 	private static void initACETextFromOntology(OWLOntologyManager ontologyManager, OWLDataFactory df, ACEViewPreferences prefs, OWLOntology ont) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		OWLOntologyID iri = ont.getOntologyID();
-		Set<OWLEntity> entities = ont.getReferencedEntities();
+		Set<OWLEntity> entities = ont.getSignature();
 
 		logger.info("Init: ontology " + iri + " contains " + entities.size() + " referenced entities");
 

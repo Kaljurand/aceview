@@ -3,9 +3,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/protege4_1/trunk/build/org.protege.editor.owl.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/protege4_1/trunk/build/org.protege.editor.core.application.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/protege4_1/trunk/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/TEST/Protege/plugins/org.protege.editor.owl.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/TEST/Protege/bundles/org.protege.editor.core.application.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/TEST/Protege/plugins/org.semanticweb.owl.owlapi.jar"/>
 	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/protege4_1/trunk/plugins/org.protege.common/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/attempto-ape.jar"/>
 	<classpathentry kind="lib" path="lib/attempto-owl.jar"/>
@@ -13,7 +13,7 @@
 	<classpathentry kind="lib" path="lib/RadixTree-0.3.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/swing-worker-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/google-collect-1.0-rc3.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/aceview/branches/1_3/lib/google-collect-1.0-rc3.jar"/>
 	<classpathentry kind="lib" path="lib/simplenlg-v37.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="classes"/>

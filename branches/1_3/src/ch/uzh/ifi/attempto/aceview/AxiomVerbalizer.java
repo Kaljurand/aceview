@@ -146,7 +146,7 @@ public class AxiomVerbalizer {
 	private String verbalizeWithWS(OWLOntology ont, OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		Set<OWLAxiom> allAxioms = Sets.newHashSet((OWLAxiom) axiom);
 
-		for (OWLEntity entity : axiom.getReferencedEntities()) {
+		for (OWLEntity entity : axiom.getSignature()) {
 			allAxioms.addAll(OntologyUtils.entityToAnnotations(entity, ont));
 		}
 
@@ -190,7 +190,7 @@ public class AxiomVerbalizer {
 				return null;
 			}
 
-			OWLNamedIndividual namedIndividual = ind.asNamedIndividual();
+			OWLNamedIndividual namedIndividual = ind.asOWLNamedIndividual();
 
 			if (desc.isOWLThing()) {
 				return getSg(namedIndividual) + " is something.";
@@ -209,7 +209,7 @@ public class AxiomVerbalizer {
 				return null;
 			}
 
-			return getSg(subject.asNamedIndividual()) + " " + getSg(opExpression.asOWLObjectProperty()) + " " + getSg(object.asNamedIndividual()) + ".";
+			return getSg(subject.asOWLNamedIndividual()) + " " + getSg(opExpression.asOWLObjectProperty()) + " " + getSg(object.asOWLNamedIndividual()) + ".";
 		}
 		else if (ax instanceof OWLDisjointClassesAxiom) {
 			OWLDisjointClassesAxiom disjointClassesAxiom = (OWLDisjointClassesAxiom) ax;

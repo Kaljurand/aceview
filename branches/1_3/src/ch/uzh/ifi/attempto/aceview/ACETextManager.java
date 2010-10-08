@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -16,7 +16,6 @@
 
 package ch.uzh.ifi.attempto.aceview;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -560,10 +559,10 @@ public final class ACETextManager {
 	 * @param uri URI of the annotation
 	 * @return List of remove-changes
 	 */
-	public static List<RemoveAxiomByACEView> findEntityAnnotationAxioms(OWLOntology ont, OWLEntity entity, URI uri) {
+	public static List<RemoveAxiomByACEView> findEntityAnnotationAxioms(OWLOntology ont, OWLEntity entity, IRI iri) {
 		List<RemoveAxiomByACEView> axioms = Lists.newArrayList();
 		for (OWLAnnotationAssertionAxiom axiom : entity.getAnnotationAssertionAxioms(ont)) {
-			if (axiom.getProperty().getURI().equals(uri)) {
+			if (axiom.getProperty().getIRI().equals(iri)) {
 				axioms.add(new RemoveAxiomByACEView(ont, axiom));
 			}
 		}
