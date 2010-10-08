@@ -6,7 +6,7 @@
 	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/TEST/Protege/plugins/org.protege.editor.owl.jar"/>
 	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/TEST/Protege/bundles/org.protege.editor.core.application.jar"/>
 	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/TEST/Protege/plugins/org.semanticweb.owl.owlapi.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/protege4_1/trunk/plugins/org.protege.common/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/aceview/branches/1_3/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/attempto-ape.jar"/>
 	<classpathentry kind="lib" path="lib/attempto-owl.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
