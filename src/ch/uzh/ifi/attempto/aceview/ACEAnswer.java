@@ -27,6 +27,8 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.impl.DefaultNodeSet;
+import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNodeSet;
 
 import com.google.common.collect.Sets;
 
@@ -62,15 +64,16 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  * TODO: We should return a structured set of individuals, where known sameAs individuals
  * are grouped together
  * 
- * TODO: We could also return a structured result where equivalent classes are grouped together.
+ * TODO: We should return a structured result where equivalent classes are grouped together.
  * Set<Set<OWLClass>> classes = reasoner.getDescendantClasses(desc);
  * 
  * @author Kaarel Kaljurand
  */
 public class ACEAnswer {
-	private Set<OWLNamedIndividual> individuals = Sets.newTreeSet(new EntityComparator());
+	//private Set<OWLNamedIndividual> individuals = Sets.newTreeSet(new EntityComparator());
 	private Set<OWLClass> subClasses = Sets.newTreeSet(new EntityComparator());
 	private Set<OWLClass> supClasses = Sets.newTreeSet(new EntityComparator());
+	private NodeSet<OWLNamedIndividual> individualNodes = new OWLNamedIndividualNodeSet();
 	private boolean isSatisfiable = true;
 
 	private boolean isIndividualAnswersComplete = false;
@@ -98,8 +101,8 @@ public class ACEAnswer {
 		}
 	}
 
-	public Set<OWLNamedIndividual> getIndividuals() {
-		return individuals;
+	public NodeSet<OWLNamedIndividual> getIndividualNodes() {
+		return individualNodes;
 	}
 
 	public Set<OWLClass> getSubClasses() {
@@ -111,10 +114,10 @@ public class ACEAnswer {
 	}
 
 	public int getIndividualsCount() {
-		if (individuals == null) {
+		if (individualNodes == null) {
 			return -1;
 		}
-		return individuals.size();
+		return individualNodes.getNodes().size();
 	}
 
 	public int getSubClassesCount() {
@@ -153,15 +156,15 @@ public class ACEAnswer {
 
 
 	private void setAnswersToNull() {
-		individuals = null;
+		individualNodes = null;
 		subClasses = null;
 		supClasses = null;
 	}
 
 	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) {
 		// TODO: BUG: what does false mean here?
-		Set<OWLNamedIndividual> answerIndividuals = reasoner.getInstances(desc, false).getFlattened();
-		setIndividualAnswerList(individuals, answerIndividuals);
+		NodeSet<OWLNamedIndividual> indNodes = reasoner.getInstances(desc, false);
+		individualNodes = indNodes;
 
 		// false = get all the descendant classes, not just the direct ones
 		NodeSet<OWLClass> subClses = reasoner.getSubClasses(desc, false);
@@ -175,7 +178,7 @@ public class ACEAnswer {
 		Set<OWLClass> unsatisfiable = bottomNode.getEntitiesMinusBottom();
 		subClasses.removeAll(unsatisfiable);
 
-		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, individuals);
+		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, indNodes.getFlattened());
 		isSubClassesAnswersComplete = isCompleteSubClasses(mngr.getOWLDataFactory(), reasoner, desc, subClasses);
 	}
 
@@ -189,6 +192,7 @@ public class ACEAnswer {
 	}
 
 
+	/*
 	private void setIndividualAnswerList(Set<OWLNamedIndividual> answerList, Set<OWLNamedIndividual> individuals) {
 		for (OWLNamedIndividual answer : individuals) {
 			if (Showing.isShow(answer)) {
@@ -196,6 +200,7 @@ public class ACEAnswer {
 			}
 		}
 	}
+	 */
 
 
 	private boolean isCompleteIndividuals(OWLDataFactory df, OWLReasoner reasoner, OWLClassExpression desc, Set<OWLNamedIndividual> answers) {
