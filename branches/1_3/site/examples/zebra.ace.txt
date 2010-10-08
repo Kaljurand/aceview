@@ -31,10 +31,8 @@ They drink water in the house next to the house where they smoke Blend.
 ==
 
 @author Kaarel Kaljurand
-@version 1.0
 @ace_version 6.5
-@date 2010-10-01
-@lexicon zebra.lex.pl
+@date 2010-10-09
 @entails "German has Zebra." under OWL
 @tags puzzle
 
@@ -133,10 +131,6 @@ Horse is a pet.
 Zebra is a pet.
 
 
-# The components are disjoint.
-#
-# Expansion of @ disjoint_classes: man, smoke, color, drink, pet
-#
 No man is a smoke.
 No man is a color.
 No man is a drink.
@@ -154,13 +148,15 @@ No drink is a pet.
 #
 
 Every man has exactly 1 color.
-Every man has exactly 1 pet.
-Every man has exactly 1 drink.
-Every man has exactly 1 smoke.
-
 Every color is had by exactly 1 man.
+
+Every man has exactly 1 pet.
 Every pet is had by exactly 1 man.
+
+Every man has exactly 1 drink.
 Every drink is had by exactly 1 man.
+
+Every man has exactly 1 smoke.
 Every smoke is had by exactly 1 man.
 
 #
@@ -171,7 +167,9 @@ Every smoke is had by exactly 1 man.
 # 1.2 Those that can only follow (last item)
 #
 Every ordered-item follows at most 1 ordered-item and is followed by at most 1 ordered-item.
+
 Every first-item is an ordered-item that follows no ordered-item and is followed by an ordered-item.
+
 Every last-item is an ordered-item that follows an ordered-item and is followed by no ordered-item.
 
 # Link 'man' to 'ordered-item'
@@ -179,11 +177,12 @@ Every man is an ordered-item.
 Every ordered-item is a man.
 
 Every first-man is a man that is a first-item.
+
 Every last-man is a man that is a last-item.
 
 Every middle-man is a man.
 Every middle-man follows a man that follows a first-man.
-# Not neeeded because logically redundant:
+# Not needed because logically redundant:
 #Every middle-man is followed by a man that is followed by a last-man.
 
 
@@ -208,6 +207,7 @@ This doesn't seem to increase the reasoner (Hermit) runtime though.
 */
 
 A middle-man has Milk.
+
 Norwegian is a first-man.
 
 There is a man X1 that has Blend.
@@ -236,15 +236,24 @@ X1 follows X2 or X2 follows X1.
 # The German smokes Prince.
 
 Englishman has Red.
+
 Swede has Dog.
+
 Dane has Tea.
+
 There is a man that has Coffee and that has Green.
+
 There is a man that has Pall_Mall and that has Bird.
+
 There is a man that has Dunhill and that has Yellow.
+
 There is a man that has Blue_Master and that has Beer.
+
 German has Prince.
 
 
-/* Inspection */
+/* Questions about the text */
 
-Who owns Zebra?
+Who has Zebra?
+
+Who does not have Horse?

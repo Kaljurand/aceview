@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -45,6 +45,8 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.reasoner.NodeSet;
+import org.semanticweb.owlapi.reasoner.Node;
 
 import com.google.common.collect.Maps;
 
@@ -149,11 +151,12 @@ public class ACEAnswersPane extends JTextPane {
 
 	private void showAnswers(final OWLClassExpression dlquery, final ACEAnswer answer) {
 
-		final Set<OWLNamedIndividual> individuals = answer.getIndividuals();
+		//final Set<OWLNamedIndividual> individuals = answer.getIndividuals();
+		final NodeSet<OWLNamedIndividual> individualNodes = answer.getIndividualNodes();
 		final Set<OWLClass> subclasses = answer.getSubClasses();
 		final Set<OWLClass> superclasses = answer.getSuperClasses();
 
-		int ic = individuals.size();
+		int ic = individualNodes.getNodes().size();
 		int dc = subclasses.size();
 		int ac = superclasses.size();
 
@@ -162,8 +165,18 @@ public class ACEAnswersPane extends JTextPane {
 		}
 		else {
 			addComponent(ComponentFactory.makeItalicLabel(ic + " named individuals:"));
-			for (OWLNamedIndividual ind : individuals) {
-				addComponent(getHyperlink(ind, df.getOWLClassAssertionAxiom(dlquery, ind)));
+			for (Node<OWLNamedIndividual> node : individualNodes) {
+				if (node.isSingleton()) {
+					OWLNamedIndividual ind = node.getRepresentativeElement();
+					addComponent(getHyperlink(ind, df.getOWLClassAssertionAxiom(dlquery, ind)));					
+				}
+				else {
+					addComponent(ComponentFactory.makeItalicLabel("{"));
+					for (OWLNamedIndividual ind : node.getEntities()) {
+						addComponent(getHyperlink(ind, df.getOWLClassAssertionAxiom(dlquery, ind)));
+					}
+					addComponent(ComponentFactory.makeItalicLabel("}"));
+				}
 			}
 
 			if (answer.isIndividualAnswersComplete()) {
@@ -171,14 +184,14 @@ public class ACEAnswersPane extends JTextPane {
 				addComponent(ComponentFactory.makeItalicLabel("[This individuals answer is complete.]"));
 				addLinebreak();
 			}
-			else if (! individuals.isEmpty()) {
+			else if (! individualNodes.isEmpty()) {
 				final JButton buttonCompleter = ComponentFactory.makeButton(LABEL_DECLARE_COMPLETE);
 				buttonCompleter.setToolTipText("Add a new snippet asserting that this answer is complete.");
 				buttonCompleter.setBackground(Colors.BG_COLOR);
 
 				buttonCompleter.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectOneOf(individuals));
+						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectOneOf(individualNodes.getFlattened()));
 						if (confirmAndAdd(buttonCompleter, axiom)) {
 							answer.setIndividualAnswersComplete(true);
 						}
