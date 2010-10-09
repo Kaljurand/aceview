@@ -13,7 +13,7 @@
 	<classpathentry kind="lib" path="lib/RadixTree-0.3.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/swing-worker-1.2.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/aceview/branches/1_3/lib/google-collect-1.0-rc3.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/aceview/branches/1_3/lib/guava-r07.jar"/>
 	<classpathentry kind="lib" path="lib/simplenlg-v37.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="classes"/>

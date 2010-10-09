@@ -85,22 +85,18 @@ Change the paths to the Protege trunk to the ones that point to your local copy 
 
 File -> New -> Project ...
 
-Project name: ACE View
+Project name: ACE View 1.3
 Create project from existing source
 Directory: /the root directory of the ACE View source/
 
 
 == Building ACE View and integrating it with Protege ==
 
-* Edit the property "protege" in ACE View's build.xml so that the
-location points to your local copy of Protege source.
+* Set $PROTEGE_HOME
 
-* Build the ACE View jar-file and copy it to the Protege plugins-directory
-(whenever you have made changes to the source):
+* ant install: builds ACE View and installs it into $PROTEGE_HOME plugins directory
 
-ant (in ACE View root directory)
-
-* Restart Protege
+* ant run: same as "ant install" but additionally starts Protege
 
 As a result, Protege is started with the latest changes that you have made
 to ACE View integrated.
