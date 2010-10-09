@@ -277,6 +277,8 @@ Russia is a G8-country.
 
 /* baltic-states */
 
+Estonia is Estland.
+
 Estonia is a baltic-state.
 
 Latvia is a baltic-state.
