@@ -76,7 +76,7 @@ public class ACEAnswer {
 	//private Set<OWLClass> subClasses = Sets.newTreeSet(new EntityComparator());
 
 	private Set<Node<OWLClass>> subClasses = Sets.newHashSet();
-	private Set<Node<OWLClass>> supClasses = Sets.newHashSet();
+	private Set<Node<OWLClass>> superClasses = Sets.newHashSet();
 	private Set<Node<OWLNamedIndividual>> individuals = Sets.newHashSet();
 	private boolean isSatisfiable = true;
 
@@ -115,7 +115,7 @@ public class ACEAnswer {
 	}
 
 	public Set<Node<OWLClass>> getSuperClasses() {
-		return supClasses;
+		return superClasses;
 	}
 
 	public int getIndividualsCount() {
@@ -133,10 +133,10 @@ public class ACEAnswer {
 	}
 
 	public int getSuperClassesCount() {
-		if (supClasses == null) {
+		if (superClasses == null) {
 			return -1;
 		}
-		return supClasses.size();
+		return superClasses.size();
 	}
 
 	public boolean isSatisfiable() {
@@ -181,7 +181,7 @@ public class ACEAnswer {
 	private void setAnswersToNull() {
 		individuals = null;
 		subClasses = null;
-		supClasses = null;
+		superClasses = null;
 	}
 
 	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) {
@@ -193,8 +193,8 @@ public class ACEAnswer {
 		NodeSet<OWLClass> subNodeSet = reasoner.getSubClasses(desc, false);
 		setClassAnswerList(subClasses, subNodeSet.getNodes());
 
-		NodeSet<OWLClass> supNodeSet = reasoner.getSuperClasses(desc, false);
-		setClassAnswerList(subClasses, supNodeSet.getNodes());
+		NodeSet<OWLClass> superNodeSet = reasoner.getSuperClasses(desc, false);
+		setClassAnswerList(superClasses, superNodeSet.getNodes());
 
 		// TODO: BUG: temporarily commented out
 		// We remove unsatisfiable classes as they might be confusing when presented as answers.
