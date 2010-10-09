@@ -1,3 +1,11 @@
+/**
+
+The following is an attempt to write a text that
+tests the the ACE View Q&A functionality as
+conclusively as possible while staying as simple as possible.
+
+*/
+
 Bill is William.
 
 Bill is a man.
@@ -8,8 +16,6 @@ Every man is an animal.
 
 Every animal is a animal2. Every animal2 is a animal.
 
-Nothing is a unicorn.
-
 Every fireman is a man.
 
 Every fireman is a fireman2. Every fireman2 is a fireman.
@@ -19,6 +25,6 @@ Every policeman is a man.
 
 Who is a man?
 
-Who is a unicorn?
+Who is Bill?
 
-Who is not a unicorn?
+Who is Bill and is not William?
