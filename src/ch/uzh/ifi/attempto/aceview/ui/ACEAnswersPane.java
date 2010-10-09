@@ -33,6 +33,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXHyperlink;
 import org.protege.editor.owl.model.OWLWorkspace;
 import org.protege.editor.owl.ui.UIHelper;
@@ -45,10 +46,10 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.Node;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.aceview.ACEAnswer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
@@ -58,6 +59,8 @@ import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 
 public class ACEAnswersPane extends JTextPane {
+
+	private static final Logger logger = Logger.getLogger(ACEAnswersPane.class);
 
 	private static final String LABEL_DECLARE_COMPLETE = "Declare complete!";
 
@@ -100,6 +103,7 @@ public class ACEAnswersPane extends JTextPane {
 			else {
 				final OWLClassExpression dlquery = question.getDLQuery();
 				if (answer.isSatisfiable()) {
+					logger.info("Showing answers");
 					showAnswers(dlquery, answer);
 				}
 				else {
@@ -151,12 +155,11 @@ public class ACEAnswersPane extends JTextPane {
 
 	private void showAnswers(final OWLClassExpression dlquery, final ACEAnswer answer) {
 
-		//final Set<OWLNamedIndividual> individuals = answer.getIndividuals();
-		final NodeSet<OWLNamedIndividual> individualNodes = answer.getIndividualNodes();
-		final Set<OWLClass> subclasses = answer.getSubClasses();
-		final Set<OWLClass> superclasses = answer.getSuperClasses();
+		final Set<Node<OWLNamedIndividual>> individuals = answer.getIndividuals();
+		final Set<Node<OWLClass>> subclasses = answer.getSubClasses();
+		final Set<Node<OWLClass>> superclasses = answer.getSuperClasses();
 
-		int ic = individualNodes.getNodes().size();
+		int ic = individuals.size();
 		int dc = subclasses.size();
 		int ac = superclasses.size();
 
@@ -165,33 +168,21 @@ public class ACEAnswersPane extends JTextPane {
 		}
 		else {
 			addComponent(ComponentFactory.makeItalicLabel(ic + " named individuals:"));
-			for (Node<OWLNamedIndividual> node : individualNodes) {
-				if (node.isSingleton()) {
-					OWLNamedIndividual ind = node.getRepresentativeElement();
-					addComponent(getHyperlink(ind, df.getOWLClassAssertionAxiom(dlquery, ind)));					
-				}
-				else {
-					addComponent(ComponentFactory.makeItalicLabel("{"));
-					for (OWLNamedIndividual ind : node.getEntities()) {
-						addComponent(getHyperlink(ind, df.getOWLClassAssertionAxiom(dlquery, ind)));
-					}
-					addComponent(ComponentFactory.makeItalicLabel("}"));
-				}
-			}
+			final Set<OWLNamedIndividual> completeIndividuals = renderIndividuals(individuals, dlquery);
 
 			if (answer.isIndividualAnswersComplete()) {
 				addLinebreak();
 				addComponent(ComponentFactory.makeItalicLabel("[This individuals answer is complete.]"));
 				addLinebreak();
 			}
-			else if (! individualNodes.isEmpty()) {
+			else if (! completeIndividuals.isEmpty()) {
 				final JButton buttonCompleter = ComponentFactory.makeButton(LABEL_DECLARE_COMPLETE);
 				buttonCompleter.setToolTipText("Add a new snippet asserting that this answer is complete.");
 				buttonCompleter.setBackground(Colors.BG_COLOR);
 
 				buttonCompleter.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectOneOf(individualNodes.getFlattened()));
+						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectOneOf(completeIndividuals));
 						if (confirmAndAdd(buttonCompleter, axiom)) {
 							answer.setIndividualAnswersComplete(true);
 						}
@@ -207,23 +198,21 @@ public class ACEAnswersPane extends JTextPane {
 			}
 
 			addComponent(ComponentFactory.makeItalicLabel(dc + " named classes:"));
-			for (OWLEntity entity : subclasses) {
-				addComponent(getHyperlink(entity, df.getOWLSubClassOfAxiom((OWLClass) entity, dlquery)));
-			}
+			final Set<OWLClass> completeSubClasses = renderSubClasses(subclasses, dlquery);
 
 			if (answer.isSubClassesAnswersComplete()) {
 				addLinebreak();
 				addComponent(ComponentFactory.makeItalicLabel("[This subclasses answer is complete.]"));
 				addLinebreak();
 			}
-			else if (! subclasses.isEmpty()) {
+			else if (! completeSubClasses.isEmpty()) {
 				final JButton buttonCompleter = ComponentFactory.makeButton(LABEL_DECLARE_COMPLETE);
 				buttonCompleter.setToolTipText("Add a new snippet asserting that this answer is complete.");
 				buttonCompleter.setBackground(Colors.BG_COLOR);
 
 				buttonCompleter.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectUnionOf(subclasses));
+						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectUnionOf(completeSubClasses));
 						if (confirmAndAdd(buttonCompleter, axiom)) {
 							answer.setSubClassesAnswersComplete(true);
 						}
@@ -239,9 +228,7 @@ public class ACEAnswersPane extends JTextPane {
 			}
 
 			addComponent(ComponentFactory.makeItalicLabel("Every answer is:"));
-			for (OWLEntity entity : superclasses) {
-				addComponent(getHyperlink(entity, df.getOWLSubClassOfAxiom(dlquery, (OWLClass) entity)));
-			}
+			final Set<OWLClass> completeSupClasses = renderSupClasses(superclasses, dlquery);
 			addComponent(ComponentFactory.makeItalicLabel("(" + ac + " named classes)"));
 		}
 	}
@@ -311,5 +298,66 @@ public class ACEAnswersPane extends JTextPane {
 			}
 		}
 		return false;
+	}
+
+
+	private Set<OWLNamedIndividual> renderIndividuals(Set<Node<OWLNamedIndividual>> entityNodes, OWLClassExpression dlquery) {
+		Set<OWLNamedIndividual> repEntities = Sets.newHashSet();
+		for (Node<OWLNamedIndividual> node : entityNodes) {
+			OWLNamedIndividual repEntity = node.getRepresentativeElement();
+			repEntities.add(repEntity);
+
+			if (node.isSingleton()) {
+				addComponent(getHyperlink(repEntity, df.getOWLClassAssertionAxiom(dlquery, repEntity)));					
+			}
+			else {
+				addComponent(ComponentFactory.makeItalicLabel("{"));
+				for (OWLNamedIndividual ind : node.getEntities()) {
+					addComponent(getHyperlink(ind, df.getOWLClassAssertionAxiom(dlquery, ind)));
+				}
+				addComponent(ComponentFactory.makeItalicLabel("}"));
+			}
+		}
+		return repEntities;
+	}
+
+	private Set<OWLClass> renderSubClasses(Set<Node<OWLClass>> entityNodes, OWLClassExpression dlquery) {
+		Set<OWLClass> repEntities = Sets.newHashSet();
+		for (Node<OWLClass> node : entityNodes) {
+			OWLClass repEntity = node.getRepresentativeElement();
+			repEntities.add(repEntity);
+
+			if (node.isSingleton()) {
+				addComponent(getHyperlink(repEntity, df.getOWLSubClassOfAxiom(repEntity, dlquery)));
+			}
+			else {
+				addComponent(ComponentFactory.makeItalicLabel("{"));
+				for (OWLClass entity : node.getEntities()) {
+					addComponent(getHyperlink(entity, df.getOWLSubClassOfAxiom(entity, dlquery)));
+				}
+				addComponent(ComponentFactory.makeItalicLabel("}"));
+			}
+		}
+		return repEntities;
+	}
+
+	private Set<OWLClass> renderSupClasses(Set<Node<OWLClass>> entityNodes, OWLClassExpression dlquery) {
+		Set<OWLClass> repEntities = Sets.newHashSet();
+		for (Node<OWLClass> node : entityNodes) {
+			OWLClass repEntity = node.getRepresentativeElement();
+			repEntities.add(repEntity);
+
+			if (node.isSingleton()) {
+				addComponent(getHyperlink(repEntity, df.getOWLSubClassOfAxiom(dlquery, repEntity)));
+			}
+			else {
+				addComponent(ComponentFactory.makeItalicLabel("{"));
+				for (OWLClass entity : node.getEntities()) {
+					addComponent(getHyperlink(entity, df.getOWLSubClassOfAxiom(dlquery, entity)));
+				}
+				addComponent(ComponentFactory.makeItalicLabel("}"));
+			}
+		}
+		return repEntities;
 	}
 }

@@ -19,6 +19,7 @@ package ch.uzh.ifi.attempto.aceview;
 import java.awt.HeadlessException;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -27,8 +28,6 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.reasoner.impl.DefaultNodeSet;
-import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNodeSet;
 
 import com.google.common.collect.Sets;
 
@@ -70,10 +69,15 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  * @author Kaarel Kaljurand
  */
 public class ACEAnswer {
-	//private Set<OWLNamedIndividual> individuals = Sets.newTreeSet(new EntityComparator());
-	private Set<OWLClass> subClasses = Sets.newTreeSet(new EntityComparator());
-	private Set<OWLClass> supClasses = Sets.newTreeSet(new EntityComparator());
-	private NodeSet<OWLNamedIndividual> individualNodes = new OWLNamedIndividualNodeSet();
+	private static final Logger logger = Logger.getLogger(ACEAnswer.class);
+
+	// TODO: BUG: add back the sorting of answers (which used to be entities
+	// but which are now nodes)
+	//private Set<OWLClass> subClasses = Sets.newTreeSet(new EntityComparator());
+
+	private Set<Node<OWLClass>> subClasses = Sets.newHashSet();
+	private Set<Node<OWLClass>> supClasses = Sets.newHashSet();
+	private Set<Node<OWLNamedIndividual>> individuals = Sets.newHashSet();
 	private boolean isSatisfiable = true;
 
 	private boolean isIndividualAnswersComplete = false;
@@ -95,29 +99,30 @@ public class ACEAnswer {
 					isSatisfiable = false;
 					setAnswersToNull();
 				}
+				logger.info("new ACEAnswer:\n" + toString());
 			} catch (HeadlessException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public NodeSet<OWLNamedIndividual> getIndividualNodes() {
-		return individualNodes;
+	public Set<Node<OWLNamedIndividual>> getIndividuals() {
+		return individuals;
 	}
 
-	public Set<OWLClass> getSubClasses() {
+	public Set<Node<OWLClass>> getSubClasses() {
 		return subClasses;
 	}
 
-	public Set<OWLClass> getSuperClasses() {
+	public Set<Node<OWLClass>> getSuperClasses() {
 		return supClasses;
 	}
 
 	public int getIndividualsCount() {
-		if (individualNodes == null) {
+		if (individuals == null) {
 			return -1;
 		}
-		return individualNodes.getNodes().size();
+		return individuals.size();
 	}
 
 	public int getSubClassesCount() {
@@ -154,53 +159,64 @@ public class ACEAnswer {
 		isSubClassesAnswersComplete = b;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("==== ANSWER ====\n");
+		sb.append("Satisfiable: " + isSatisfiable + "\n");
+
+		sb.append("Individuals complete: " + isIndividualAnswersComplete + "\n");
+		sb.append("Subclasses complete: " + isSubClassesAnswersComplete + "\n");
+		sb.append("Superclasses complete: " + "???\n");
+
+		sb.append("Individuals: " + getIndividualsCount() + " : " + getIndividuals() + "\n");
+		sb.append("Subclasses: " + getSubClassesCount() + " : " + getSubClasses() + "\n");
+		sb.append("Superclasses: " + getSuperClassesCount() + " : " + getSuperClasses() + "\n");
+		sb.append("================\n");
+
+		return sb.toString();
+	}
+
 
 	private void setAnswersToNull() {
-		individualNodes = null;
+		individuals = null;
 		subClasses = null;
 		supClasses = null;
 	}
 
 	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) {
-		// TODO: BUG: what does false mean here?
-		NodeSet<OWLNamedIndividual> indNodes = reasoner.getInstances(desc, false);
-		individualNodes = indNodes;
+		// TODO: BUG: what does true/false mean here?
+		NodeSet<OWLNamedIndividual> indNodeSet = reasoner.getInstances(desc, false);
+		individuals = indNodeSet.getNodes();
 
 		// false = get all the descendant classes, not just the direct ones
-		NodeSet<OWLClass> subClses = reasoner.getSubClasses(desc, false);
-		setClassAnswerList(subClasses, subClses.getFlattened());
+		NodeSet<OWLClass> subNodeSet = reasoner.getSubClasses(desc, false);
+		setClassAnswerList(subClasses, subNodeSet.getNodes());
 
-		NodeSet<OWLClass> supClses = reasoner.getSuperClasses(desc, false);
-		setClassAnswerList(subClasses, supClses.getFlattened());
+		NodeSet<OWLClass> supNodeSet = reasoner.getSuperClasses(desc, false);
+		setClassAnswerList(subClasses, supNodeSet.getNodes());
 
+		// TODO: BUG: temporarily commented out
 		// We remove unsatisfiable classes as they might be confusing when presented as answers.
+		/*
 		Node<OWLClass> bottomNode = reasoner.getUnsatisfiableClasses();
 		Set<OWLClass> unsatisfiable = bottomNode.getEntitiesMinusBottom();
 		subClasses.removeAll(unsatisfiable);
+		 */
 
-		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, indNodes.getFlattened());
-		isSubClassesAnswersComplete = isCompleteSubClasses(mngr.getOWLDataFactory(), reasoner, desc, subClasses);
+		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, indNodeSet.getFlattened());
+		isSubClassesAnswersComplete = isCompleteSubClasses(mngr.getOWLDataFactory(), reasoner, desc, subNodeSet.getFlattened());
 	}
 
 
-	private void setClassAnswerList(Set<OWLClass> answerList, Set<OWLClass> classes) {
-		for (OWLClass entity : classes) {
-			if (Showing.isShow(entity)) {
-				answerList.add(entity);
-			}
+	private void setClassAnswerList(Set<Node<OWLClass>> answerList, Set<Node<OWLClass>> classNodes) {
+		// BUG: TODO: filter out nodes that contain top or bottom
+		for (Node<OWLClass> node : classNodes) {
+			//if (Showing.isShow(node)) {
+			answerList.add(node);
+			//}
 		}
 	}
-
-
-	/*
-	private void setIndividualAnswerList(Set<OWLNamedIndividual> answerList, Set<OWLNamedIndividual> individuals) {
-		for (OWLNamedIndividual answer : individuals) {
-			if (Showing.isShow(answer)) {
-				answerList.add(answer);
-			}
-		}
-	}
-	 */
 
 
 	private boolean isCompleteIndividuals(OWLDataFactory df, OWLReasoner reasoner, OWLClassExpression desc, Set<OWLNamedIndividual> answers) {
