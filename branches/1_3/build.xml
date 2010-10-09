@@ -187,7 +187,7 @@
 	</target>
 
 
-	<target name="run" depends="init">
+	<target name="run" depends="install">
 		<java fork="true" dir="${protege.home}"
 			classname="org.protege.osgi.framework.Launcher">
 			<jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
