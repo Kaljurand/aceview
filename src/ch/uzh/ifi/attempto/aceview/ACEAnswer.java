@@ -55,25 +55,23 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  * 
  * <pre>
  * Question: What is a country? (i.e. class expression "country")
- * Individuals: Estonia, Latvia, Lithuania
+ * Individuals: Estonia = Estland, Latvia, Lithuania
  * Sub classes: baltic-state, EU-country, (owl:Nothing)
  * Sup classes: area, territory, (owl:Thing)
  * </pre>
  * 
- * TODO: We should return a structured set of individuals, where known sameAs individuals
- * are grouped together
- * 
- * TODO: We should return a structured result where equivalent classes are grouped together.
- * Set<Set<OWLClass>> classes = reasoner.getDescendantClasses(desc);
- * 
  * @author Kaarel Kaljurand
  */
 public class ACEAnswer {
+
 	private static final Logger logger = Logger.getLogger(ACEAnswer.class);
 
 	// TODO: BUG: add back the sorting of answers (which used to be entities
 	// but which are now nodes)
 	//private Set<OWLClass> subClasses = Sets.newTreeSet(new EntityComparator());
+
+	// TODO: make sure that individuals are returned so that sameAs-individuals
+	// are in the same node
 
 	private Set<Node<OWLClass>> subClasses = Sets.newHashSet();
 	private Set<Node<OWLClass>> superClasses = Sets.newHashSet();
@@ -191,30 +189,22 @@ public class ACEAnswer {
 
 		// false = get all the descendant classes, not just the direct ones
 		NodeSet<OWLClass> subNodeSet = reasoner.getSubClasses(desc, false);
-		setClassAnswerList(subClasses, subNodeSet.getNodes());
+		setClassAnswerList(subClasses, subNodeSet.getNodes(), true);
 
 		NodeSet<OWLClass> superNodeSet = reasoner.getSuperClasses(desc, false);
-		setClassAnswerList(superClasses, superNodeSet.getNodes());
-
-		// TODO: BUG: temporarily commented out
-		// We remove unsatisfiable classes as they might be confusing when presented as answers.
-		/*
-		Node<OWLClass> bottomNode = reasoner.getUnsatisfiableClasses();
-		Set<OWLClass> unsatisfiable = bottomNode.getEntitiesMinusBottom();
-		subClasses.removeAll(unsatisfiable);
-		 */
+		setClassAnswerList(superClasses, superNodeSet.getNodes(), false);
 
 		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, indNodeSet.getFlattened());
 		isSubClassesAnswersComplete = isCompleteSubClasses(mngr.getOWLDataFactory(), reasoner, desc, subNodeSet.getFlattened());
 	}
 
 
-	private void setClassAnswerList(Set<Node<OWLClass>> answerList, Set<Node<OWLClass>> classNodes) {
-		// BUG: TODO: filter out nodes that contain top or bottom
+	// TODO: exclude also based on Showing.isShow(node)
+	private void setClassAnswerList(Set<Node<OWLClass>> answerList, Set<Node<OWLClass>> classNodes, boolean sub) {
 		for (Node<OWLClass> node : classNodes) {
-			//if (Showing.isShow(node)) {
-			answerList.add(node);
-			//}
+			if (sub && ! node.isBottomNode() || ! sub && ! node.isTopNode()) {
+				answerList.add(node);
+			}
 		}
 	}
 

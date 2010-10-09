@@ -1,0 +1,24 @@
+Bill is William.
+
+Bill is a man.
+
+Every man is a man2. Every man2 is a man.
+
+Every man is an animal.
+
+Every animal is a animal2. Every animal2 is a animal.
+
+Nothing is a unicorn.
+
+Every fireman is a man.
+
+Every fireman is a fireman2. Every fireman2 is a fireman.
+
+Every policeman is a man.
+
+
+Who is a man?
+
+Who is a unicorn?
+
+Who is not a unicorn?
