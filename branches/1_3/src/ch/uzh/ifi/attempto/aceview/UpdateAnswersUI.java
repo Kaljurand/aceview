@@ -115,7 +115,6 @@ public class UpdateAnswersUI {
 				if (isCancelled()) {
 					break;
 				}
-				logger.info(question.getSentences());
 				acetext.setAnswer(question, new ACEAnswer(mngr, question));
 				progress++;
 				setProgress(progress);
