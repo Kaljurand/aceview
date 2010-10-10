@@ -20,6 +20,9 @@
 	<property name="micro.version" value="0"/>
 
 	<property name="plugin" value="ch.uzh.ifi.attempto.aceview.ui.view"/>
+	<!--
+	<property name="plugin" value="ch.uzh.ifi.attempto.aceview-1.3"/>
+	-->
 
 	<property name="src" location="./src"/>
 	<property name="lib" location="./lib"/>
@@ -48,6 +51,8 @@
 	<property name="owl.editor.jar"
 		location="${protege.plugins}/org.protege.editor.owl.jar"/>
 
+	<property name="aceview_test_src" location="test/"/>
+	<property name="aceview_test_report" location="test_report/"/>
 
 	<target name="init">
 		<tstamp>
@@ -216,6 +221,7 @@
 
 	<target name="clean">
 		<delete dir="${build}"/>
+		<delete dir="${javadoc}"/>
 	</target>
 
 
@@ -275,6 +281,44 @@ author=Kaarel Kaljurand
 			<classpath refid="project.classpath"/>
 			<bottom><![CDATA[<em>Copyright 2008-2010, Attempto Group, University of Zurich (see <a href="http://attempto.ifi.uzh.ch">http://attempto.ifi.uzh.ch</a>)</em>]]></bottom>
 		</javadoc>
+	</target>
+
+
+	<target name="zip_source" depends="init" description="Create a zip-archive of all the source files.">
+		<zip
+			destfile="${build}/aceview_src-${build.time}.zip"
+			basedir="."
+			includes="lib/**, src/**, test/**, licenses/**, *.xml, *.txt, .classpath, .settings/**"
+			excludes="classes, **/.DS_Store, **/old/**, **/*.zip, **/*.bash, **/*.lst"
+			/>
+	</target>
+
+
+	<target name="test" depends="compile" description="Unit test some ACE View classes.">
+		<javac
+			srcdir="${aceview_test_src}"
+			destdir="${classes}">
+			<classpath refid="project.classpath"/>
+		</javac>
+
+		<mkdir dir="${aceview_test_report}"/>
+
+		<junit printsummary="yes" haltonfailure="no">
+
+			<classpath>
+				<pathelement location="${classes}"/>
+			</classpath>
+
+			<classpath refid="project.classpath"/>
+
+			<formatter type="plain"/>
+
+			<batchtest fork="yes" todir="${aceview_test_report}">
+				<fileset dir="${aceview_test_src}">
+					<include name="**/*Test.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
 	</target>
 
 </project>
