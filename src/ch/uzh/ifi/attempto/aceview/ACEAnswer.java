@@ -31,7 +31,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import com.google.common.collect.Sets;
 
-import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
+import ch.uzh.ifi.attempto.aceview.util.NodeComparator;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 
@@ -66,16 +66,13 @@ public class ACEAnswer {
 
 	private static final Logger logger = Logger.getLogger(ACEAnswer.class);
 
-	// TODO: BUG: add back the sorting of answers (which used to be entities
-	// but which are now nodes)
-	//private Set<OWLClass> subClasses = Sets.newTreeSet(new EntityComparator());
-
 	// TODO: make sure that individuals are returned so that sameAs-individuals
 	// are in the same node
 
-	private Set<Node<OWLClass>> subClasses = Sets.newHashSet();
-	private Set<Node<OWLClass>> superClasses = Sets.newHashSet();
-	private Set<Node<OWLNamedIndividual>> individuals = Sets.newHashSet();
+	private Set<Node<OWLClass>> subClasses = Sets.newTreeSet(new NodeComparator());
+	private Set<Node<OWLClass>> superClasses = Sets.newTreeSet(new NodeComparator());
+	// TODO: BUG: sorting of individuals does not work?!
+	private Set<Node<OWLNamedIndividual>> individuals = Sets.newTreeSet(new NodeComparator());
 	private boolean isSatisfiable = true;
 
 	private boolean isIndividualAnswersComplete = false;
