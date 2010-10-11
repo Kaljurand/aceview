@@ -1,3 +1,19 @@
+/*
+ * This file is part of ACE View.
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ *
+ * ACE View is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * ACE View is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with ACE View.
+ * If not, see http://www.gnu.org/licenses/.
+ */
+
 package ch.uzh.ifi.attempto.aceview.util;
 
 import java.net.URI;
@@ -5,6 +21,7 @@ import java.net.URI;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.reasoner.Node;
 
 public final class Showing {
 
@@ -49,6 +66,17 @@ public final class Showing {
 				entity.isOWLDataProperty() ||
 				entity.isOWLNamedIndividual() && !entity.getIRI().equals(ENTITY_Universe) && !entity.getIRI().equals(ENTITY_Superman)
 		);
+	}
+
+
+	/**
+	 * <p>Specifies nodes (entity sets) which should be displayed to the ACE View user.</p>
+	 * 
+	 * @param entity OWL node
+	 * @return <code>true</code> if node should be shown
+	 */
+	public static boolean isShow(Node<? extends OWLEntity> node) {
+		return isShow(node.getRepresentativeElement());
 	}
 
 

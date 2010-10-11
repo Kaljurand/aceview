@@ -71,10 +71,9 @@ public class ACEAnswer {
 
 	private Set<Node<OWLClass>> subClasses = Sets.newTreeSet(new NodeComparator());
 	private Set<Node<OWLClass>> superClasses = Sets.newTreeSet(new NodeComparator());
-	// TODO: BUG: sorting of individuals does not work?!
 	private Set<Node<OWLNamedIndividual>> individuals = Sets.newTreeSet(new NodeComparator());
-	private boolean isSatisfiable = true;
 
+	private boolean isSatisfiable = true;
 	private boolean isIndividualAnswersComplete = false;
 	private boolean isSubClassesAnswersComplete = false;
 
@@ -86,7 +85,7 @@ public class ACEAnswer {
 		else {
 			try {
 				OWLReasoner reasoner = mngr.getReasoner();
-
+				
 				if (isSatisfiable(reasoner, dlquery)) {
 					setAnswerLists(mngr, reasoner, dlquery);
 				}
@@ -164,9 +163,9 @@ public class ACEAnswer {
 		sb.append("Subclasses complete: " + isSubClassesAnswersComplete + "\n");
 		sb.append("Superclasses complete: " + "???\n");
 
-		sb.append("Individuals: " + getIndividualsCount() + " : " + getIndividuals() + "\n");
-		sb.append("Subclasses: " + getSubClassesCount() + " : " + getSubClasses() + "\n");
-		sb.append("Superclasses: " + getSuperClassesCount() + " : " + getSuperClasses() + "\n");
+		sb.append("Individuals: " + getIndividualsCount() + ": " + getIndividuals() + "\n");
+		sb.append("Subclasses: " + getSubClassesCount() + ": " + getSubClasses() + "\n");
+		sb.append("Superclasses: " + getSuperClassesCount() + ": " + getSuperClasses() + "\n");
 		sb.append("================\n");
 
 		return sb.toString();
@@ -180,9 +179,11 @@ public class ACEAnswer {
 	}
 
 	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) {
+		logger.warn("IndividualNodeSetPolicy: " + reasoner.getIndividualNodeSetPolicy());
+
 		// TODO: BUG: what does true/false mean here?
 		NodeSet<OWLNamedIndividual> indNodeSet = reasoner.getInstances(desc, false);
-		individuals = indNodeSet.getNodes();
+		setIndividualsAnswerList(indNodeSet.getNodes());
 
 		// false = get all the descendant classes, not just the direct ones
 		NodeSet<OWLClass> subNodeSet = reasoner.getSubClasses(desc, false);
@@ -193,6 +194,15 @@ public class ACEAnswer {
 
 		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, indNodeSet.getFlattened());
 		isSubClassesAnswersComplete = isCompleteSubClasses(mngr.getOWLDataFactory(), reasoner, desc, subNodeSet.getFlattened());
+	}
+
+
+	private void setIndividualsAnswerList(Set<Node<OWLNamedIndividual>> indNodes) {
+		for (Node<OWLNamedIndividual> node : indNodes) {
+			if (Showing.isShow(node)) {
+				individuals.add(node);
+			}
+		}
 	}
 
 

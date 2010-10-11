@@ -8,7 +8,11 @@ conclusively as possible while staying as simple as possible.
 
 Bill is William.
 
+John is a man.
+
 Bill is a man.
+
+Bob is a man.
 
 Every man is a man2. Every man2 is a man.
 
