@@ -17,6 +17,7 @@
 * other cool stuff formalize/entail:
 * - http://en.wikipedia.org/wiki/List_of_countries_that_border_only_one_other_country
 * - http://en.wikipedia.org/wiki/List_of_sets_of_four_countries_that_border_one_another
+* - http://en.wikipedia.org/wiki/List_of_land_border_lengths
 *
 */
 
