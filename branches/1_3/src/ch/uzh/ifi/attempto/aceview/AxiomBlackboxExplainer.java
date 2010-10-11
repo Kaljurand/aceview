@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -21,37 +21,40 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
+import org.protege.editor.owl.ui.explanation.impl.BasicClassExpressionGenerator;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import uk.ac.manchester.cs.bhig.util.Tree;
 import uk.ac.manchester.cs.owl.explanation.ordering.DefaultExplanationOrderer;
 import uk.ac.manchester.cs.owl.explanation.ordering.ExplanationTree;
 
-//import com.clarkparsia.explanation.BlackBoxExplanation;
-//import com.clarkparsia.explanation.ExplanationGenerator;
-//import com.clarkparsia.explanation.HSTExplanationGenerator;
-//import com.clarkparsia.explanation.SatisfiabilityConverter;
+import com.clarkparsia.owlapi.explanation.BlackBoxExplanation;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
  * <p>Explains an OWL axiom by a set of sets of ACE snippets.</p>
  * 
+ * TODO: will need a lot of rewriting but wait until the explanation
+ * support in Protege is stable
+ * 
  * @author Kaarel Kaljurand
- * @deprecated
  */
-public class AxiomExplainer {
+public class AxiomBlackboxExplainer {
 
-	private static final Logger logger = Logger.getLogger(AxiomExplainer.class);
+	private static final Logger logger = Logger.getLogger(AxiomBlackboxExplainer.class);
 
 	private final OWLModelManager modelManager;
 	private final OWLAxiom axiom;
 
 
-	public AxiomExplainer(OWLModelManager modelManager, OWLAxiom axiom) {
+	public AxiomBlackboxExplainer(OWLModelManager modelManager, OWLAxiom axiom) {
 		this.modelManager = modelManager;
 		this.axiom = axiom;
 	}
@@ -172,38 +175,29 @@ public class AxiomExplainer {
 	}
 
 
-	/**
-	 * <p>Finds explanations for this axiom. Each explanation is a set of
-	 * axioms that entail this axiom. There can be many (equally good)
-	 * explanations, therefore a set of sets of axioms is returned.</p>
-	 * 
-	 * TODO: Study the formal properties of the result:
-	 * 1. Result is complete and correct?
-	 * 2. There cannot exist two explanations such that one is a subset of the other?
-	 * 3. Why is the explanation a set of axioms and not an ordered list?
-	 * 4. When deleting at least one axiom from each explanation,
-	 * the entailment will stop to exist.
-	 * 
-	 * @return Set of sets of axioms
-	 */
+	// TODO: BUG: the following two methods are modified versions of
+	// similar methods in:
+	// org.protege.editor.owl.ui.explanation.impl.BasicBlackboxExplanationService
+	// They will be rewritten once explanation support in Protege is stable.
 	private Set<Set<OWLAxiom>> getAxiomSets() {
+		OWLOntology activeOntology = modelManager.getActiveOntology();
+		OWLReasonerFactory rFactory = modelManager.getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory();
+		OWLReasoner reasoner = modelManager.getOWLReasonerManager().getCurrentReasoner();
+		BlackBoxExplanation explain  = new BlackBoxExplanation(activeOntology, rFactory, reasoner);
+		Set<OWLAxiom> axioms = explain.getExplanation(getClassExpression(axiom));
+		Set<Set<OWLAxiom>> setOfSets = Sets.newHashSet();
+		// BUG: we only return a single explanation for the time being
+		setOfSets.add(axioms);
+		return setOfSets;
+	}
+
+
+	private OWLClassExpression getClassExpression(OWLAxiom axiom) {
 		/*
-		// Converts an axiom into an unsatisfiable class expression.
-		SatisfiabilityConverter satCon = new SatisfiabilityConverter(modelManager.getOWLDataFactory());
-		OWLClassExpression desc = satCon.convert(axiom);
-
-		// Sets up the BlackBoxExplanation
-		BlackBoxExplanation exp = new BlackBoxExplanation(ACETextManager.createOWLOntologyManager());
-		exp.setOntology(modelManager.getActiveOntology());
-		exp.setReasoner(modelManager.getReasoner());
-		exp.setReasonerFactory(modelManager.getOWLReasonerManager().getCurrentReasonerFactory());
-
-		// Generates explanations on the the basis of the BlackBoxExplanation
-		ExplanationGenerator gen = new HSTExplanationGenerator(exp);
-
-		return gen.getExplanations(desc);
+		 * there is no clear method...
 		 */
-
-		return Sets.newHashSet();
+		BasicClassExpressionGenerator classExpressionVisitor = new BasicClassExpressionGenerator(modelManager.getOWLDataFactory());
+		axiom.accept(classExpressionVisitor);
+		return classExpressionVisitor.getDebuggerClassExpression();
 	}
 }
