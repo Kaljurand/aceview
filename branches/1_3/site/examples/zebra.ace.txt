@@ -256,4 +256,32 @@ German has Prince.
 
 Who has Zebra?
 
-Who does not have Horse?
+
+What does a man have?
+
+What does German have?
+
+What does Dane have?
+
+What does Englishman have?
+
+What does Norwegian have?
+
+What does Swede have?
+
+
+What does a man follow?
+
+What does German follow?
+
+What does Dane follow?
+
+What does Englishman follow?
+
+What does Swede follow?
+
+What does Norwegian follow?
+
+
+# This takes too long:
+#Who does not have Horse?

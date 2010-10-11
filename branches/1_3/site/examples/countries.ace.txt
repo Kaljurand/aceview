@@ -1,7 +1,7 @@
 /**
 * @title Countries and territories
 * @author Kaarel Kaljurand
-* @version 2009-05-03
+* @version 2010-10-11
 *
 * The goal of this text to describe some aspects of the European Union
 * completely (e.g. we list all the countries).
@@ -12,6 +12,12 @@
 * but "slow" constructs (e.g. "There are exactly 27 EU-countries.").
 *
 * TODO: use `itself' again, the "not(self(..))" bug seems to be fixed in Pellet 2
+*
+* TODO:
+* other cool stuff formalize/entail:
+* - http://en.wikipedia.org/wiki/List_of_countries_that_border_only_one_other_country
+* - http://en.wikipedia.org/wiki/List_of_sets_of_four_countries_that_border_one_another
+*
 */
 
 Every country is a territory.
