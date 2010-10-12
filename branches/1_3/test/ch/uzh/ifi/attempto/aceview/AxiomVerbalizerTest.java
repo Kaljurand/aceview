@@ -3,10 +3,13 @@ package ch.uzh.ifi.attempto.aceview;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -21,10 +24,13 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
+import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
 public class AxiomVerbalizerTest {
 
@@ -75,11 +81,15 @@ public class AxiomVerbalizerTest {
 	public final void test1() {
 
 		AxiomVerbalizer av = new AxiomVerbalizer(owlToAceWebserviceUrl);
-
 		OWLOntology ontology = createOntology();
 
-		// TODO: put the like -> likes mapping into the ontology
+		Set<OWLAnnotationAssertionAxiom> axioms = getAnnotations1();
 
+		List<AddAxiom> changes = Lists.newArrayList();
+		for (OWLAxiom ax : axioms) {
+			changes.add(new AddAxiom(ontology, ax));
+		}
+		OntologyUtils.changeOntology(ACETextManager.createOWLOntologyManager(), changes);
 
 		ACESnippet snippet = null;
 		try {
@@ -99,8 +109,7 @@ public class AxiomVerbalizerTest {
 	}
 
 
-
-	private OWLOntology createOntology() {
+	private static OWLOntology createOntology() {
 		OWLOntology ontology = null;
 
 		OWLOntologyManager ontologyManager = ACETextManager.createOWLOntologyManager();
@@ -113,7 +122,6 @@ public class AxiomVerbalizerTest {
 	}
 
 
-
 	private static OWLLogicalAxiom createAxiomJohnLikesMary() {
 		OWLIndividual john = df.getOWLNamedIndividual(IRI.create(PREFIX + "#John"));
 		OWLIndividual mary = df.getOWLNamedIndividual(IRI.create(PREFIX + "#Mary"));
@@ -123,10 +131,18 @@ public class AxiomVerbalizerTest {
 	}
 
 
+	private static Set<OWLAnnotationAssertionAxiom> getAnnotations1() {
+		Set<OWLAnnotationAssertionAxiom> axioms = Sets.newHashSet();
+		axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getIRI(), df.getOWLObjectProperty(IRI.create(PREFIX + "#like")), "likes"));
+		return axioms;
+	}
+
+
 	private static OWLLogicalAxiom createAxiomEveryManIsAHuman() {
 		OWLClass man = df.getOWLClass(IRI.create(PREFIX + "#man"));
 		OWLClass human = df.getOWLClass(IRI.create(PREFIX + "#human"));
 		OWLAxiom every_man_is_a_human = df.getOWLSubClassOfAxiom(man, human);
 		return (OWLLogicalAxiom) every_man_is_a_human;
 	}
+
 }
