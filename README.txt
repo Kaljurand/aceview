@@ -180,6 +180,10 @@ To check if it has the right svn property:
 $ svn propget svn:mime-type RELEASE_NOTES.html
 text/html
 
+if not then:
+
+$ svn propset svn:mime-type "text/html" RELEASE_NOTES.html
+
 == Protege and ACE View preferences ==
 
 Are stored in ~/Library/Preferences/ (on Mac OS X).
