@@ -13,6 +13,7 @@ import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -81,15 +82,13 @@ public class AxiomVerbalizerTest {
 	public final void test1() {
 
 		AxiomVerbalizer av = new AxiomVerbalizer(owlToAceWebserviceUrl);
-		OWLOntology ontology = createOntology();
 
-		Set<OWLAnnotationAssertionAxiom> axioms = getAnnotations1();
-
-		List<AddAxiom> changes = Lists.newArrayList();
-		for (OWLAxiom ax : axioms) {
-			changes.add(new AddAxiom(ontology, ax));
+		OWLOntology ontology = null;
+		try {
+			ontology = ACETextManager.createOWLOntologyManager().createOntology(getAnnotations1());
+		} catch (OWLOntologyCreationException e1) {
+			e1.printStackTrace();
 		}
-		OntologyUtils.changeOntology(ACETextManager.createOWLOntologyManager(), changes);
 
 		ACESnippet snippet = null;
 		try {
@@ -102,7 +101,7 @@ public class AxiomVerbalizerTest {
 			e.printStackTrace();
 		}
 
-		List<ACESentence> gold_sents = ACESplitter.getSentences("John likes Mary.");
+		List<ACESentence> gold_sents = ACESplitter.getSentences("John likes Mari.");
 		List<ACESentence> test_sents = snippet.getSentences();
 
 		assertEquals(gold_sents, test_sents);
@@ -131,9 +130,12 @@ public class AxiomVerbalizerTest {
 	}
 
 
-	private static Set<OWLAnnotationAssertionAxiom> getAnnotations1() {
-		Set<OWLAnnotationAssertionAxiom> axioms = Sets.newHashSet();
+	private static Set<OWLAxiom> getAnnotations1() {
+		Set<OWLAxiom> axioms = Sets.newHashSet();
+		axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), df.getOWLObjectProperty(IRI.create(PREFIX + "#like")), "liked"));
 		axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getIRI(), df.getOWLObjectProperty(IRI.create(PREFIX + "#like")), "likes"));
+		axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getIRI(), df.getOWLNamedIndividual(IRI.create(PREFIX + "#Mary")), "noise_annotation1"));
+		axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.PN_SG.getIRI(), df.getOWLNamedIndividual(IRI.create(PREFIX + "#Mary")), "Mari"));
 		return axioms;
 	}
 

@@ -26,6 +26,8 @@ import org.apache.log4j.Logger;
 import org.coode.owlapi.owlxml.renderer.OWLXMLRenderer;
 import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -33,6 +35,7 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -46,6 +49,9 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 import com.google.common.collect.Sets;
 
+import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
+import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
@@ -67,7 +73,7 @@ public class AxiomVerbalizer {
 	/**
 	 * <p>Verbalizes a single logical OWL axiom as an ACE snippet.</p>
 	 * 
-	 * @param ontologyID Namespace for the snippet to be created
+	 * @param ont Namespace for the snippet to be created
 	 * @param axiom OWL logical axiom to be verbalized
 	 * @return ACE snippet containing the verbalization of the given axiom
 	 * @throws OWLRendererException 
@@ -81,7 +87,7 @@ public class AxiomVerbalizer {
 		// the verbalizer webservice. It seems that about 50% of
 		// the axioms in real-world ontologies are simple SubClassOf-axioms,
 		// so it really pays off performancewise to verbalize them directly in Java.
-		String verbalization = verbalizeSimpleAxiom(axiom);
+		String verbalization = verbalizeSimpleAxiom(axiom, ont);
 
 		OWLOntologyID iri = ont.getOntologyID();
 
@@ -173,10 +179,12 @@ public class AxiomVerbalizer {
 	 * 
 	 * <p>Otherwise returns <code>null</code>.</p>
 	 * 
+	 * <p>The surface forms are decided by the annotation axioms in the ontology.</p>
+	 * 
 	 * @param ax an instance of <code>OWLLogicalAxiom</code> to be verbalized
 	 * @return sentence corresponding to the axiom or <code>null</code>
 	 */
-	private String verbalizeSimpleAxiom(OWLLogicalAxiom ax) {
+	private static String verbalizeSimpleAxiom(OWLLogicalAxiom ax, OWLOntology ont) {
 		if (ax instanceof OWLSubClassOfAxiom) {
 			OWLSubClassOfAxiom subClassAxiom = (OWLSubClassOfAxiom) ax;
 			OWLClassExpression subClass = subClassAxiom.getSubClass();
@@ -189,7 +197,7 @@ public class AxiomVerbalizer {
 				return null;
 			}
 
-			return getSimpleClassRelationVerbalization((OWLClass) subClass, (OWLClass) superClass, "Every");
+			return getSimpleClassRelationVerbalization((OWLClass) subClass, (OWLClass) superClass, "Every", ont);
 		}
 		else if (ax instanceof OWLClassAssertionAxiom) {
 			OWLClassAssertionAxiom classAssertionAxiom = (OWLClassAssertionAxiom) ax;
@@ -203,11 +211,11 @@ public class AxiomVerbalizer {
 			OWLNamedIndividual namedIndividual = ind.asOWLNamedIndividual();
 
 			if (desc.isOWLThing()) {
-				return getSg(namedIndividual) + " is something.";
+				return getSg(namedIndividual, ont) + " is something.";
 			}
 
-			String descAsString = getSg((OWLClass) desc);
-			return getSg(namedIndividual) + " is " + getIndefiniteArticle(descAsString) + " " + descAsString + ".";
+			String descAsString = getSg((OWLClass) desc, ont);
+			return getSg(namedIndividual, ont) + " is " + getIndefiniteArticle(descAsString) + " " + descAsString + ".";
 		}
 		else if (ax instanceof OWLObjectPropertyAssertionAxiom) {
 			OWLObjectPropertyAssertionAxiom opAssertionAxiom = (OWLObjectPropertyAssertionAxiom) ax;
@@ -219,7 +227,7 @@ public class AxiomVerbalizer {
 				return null;
 			}
 
-			return getSg(subject.asOWLNamedIndividual()) + " " + getSg(opExpression.asOWLObjectProperty()) + " " + getSg(object.asOWLNamedIndividual()) + ".";
+			return getSg(subject.asOWLNamedIndividual(), ont) + " " + getSg(opExpression.asOWLObjectProperty(), ont) + " " + getSg(object.asOWLNamedIndividual(), ont) + ".";
 		}
 		else if (ax instanceof OWLDisjointClassesAxiom) {
 			OWLDisjointClassesAxiom disjointClassesAxiom = (OWLDisjointClassesAxiom) ax;
@@ -241,7 +249,7 @@ public class AxiomVerbalizer {
 				return null;
 			}
 
-			return getSimpleClassRelationVerbalization((OWLClass) desc1, (OWLClass) desc2, "No");
+			return getSimpleClassRelationVerbalization((OWLClass) desc1, (OWLClass) desc2, "No", ont);
 
 		}
 		return null;
@@ -284,7 +292,7 @@ public class AxiomVerbalizer {
 		return (ind.isAnonymous());
 	}
 
-	private String getSimpleClassRelationVerbalization(OWLClass class1, OWLClass class2, String prefix) {
+	private static String getSimpleClassRelationVerbalization(OWLClass class1, OWLClass class2, String prefix, OWLOntology ont) {
 		String subClassAsString;
 		String superClassAsString;
 
@@ -292,14 +300,14 @@ public class AxiomVerbalizer {
 			subClassAsString = prefix + "thing";
 		}
 		else {
-			subClassAsString = prefix + " " + getSg(class1);
+			subClassAsString = prefix + " " + getSg(class1, ont);
 		}
 
 		if (class2.isOWLThing()) {
 			superClassAsString = "something";
 		}
 		else {
-			String superClassName = getSg(class2);
+			String superClassName = getSg(class2, ont);
 			superClassAsString = getIndefiniteArticle(superClassName) + " " + superClassName;
 		}
 
@@ -308,37 +316,33 @@ public class AxiomVerbalizer {
 
 
 	/**
-	 * <p>Returns the singular form of the given OWL entity
-	 * as it is defined in the ACE lexicon.
-	 * Returns the fragment of the entity's IRI is something fails.</p>
-	 * 
-	 * TODO: rewrite this
+	 * <p>Returns the surface form for the given entity.
+	 * Looks for it among the annotation axioms in the given
+	 * ontology. If this fails then just returns the IRI fragment.</p>
 	 * 
 	 * @param entity OWL entity
+	 * @param ont OWL ontology that contains surfaceform-annotations for the entity
 	 * @return Singular form of the entity
 	 */
-	private String getSg(OWLEntity entity) {
-		IRI entityIRI = entity.getIRI();
-		// TODO: BUG: replace TV_SG with something more general
-		IRI morphIRI = MorphType.TV_SG.getIRI();
-		String wordform = ACETextManager.getActiveACEText().getTokenMapper().getWordform(entityIRI, morphIRI);
-		if (wordform == null) {
-			return entityIRI.getFragment();
-		}
-		return wordform;
+	private static String getSg(OWLEntity entity, OWLOntology ont) {
+		// decide if the entity corresponds to CN, TV, or PN
+		EntryType entryType = LexiconUtils.getLexiconEntryType(entity);
+		// get the type CN_SG, TV_SG, or PN_SG
+		MorphType morphType = MorphType.getMorphType(entryType, FieldType.SG);
+		// get the IRI that corresponds to this type
+		IRI wordformTypeIRI = morphType.getIRI();
 
-		/*
-		ACELexiconEntry lexiconEntry = lexicon.getEntry(entity);
-		if (lexiconEntry == null) {
-			logger.warn("BUG: No ACELexiconEntry for OWLEntity: " + entity);
-			return entity.getIRI().getFragment();
+		// scan all the annotations that annotate this entity
+		for (OWLAnnotationAssertionAxiom annAx : ont.getAnnotationAssertionAxioms(entity.getIRI())) {
+			// ... and select the one that annotates it using the ?_SG IRI
+			if (annAx.getProperty().getIRI().equals(wordformTypeIRI)) {
+				OWLAnnotationValue value = annAx.getValue();
+				if (value instanceof OWLLiteral) {
+					return ((OWLLiteral) value).getLiteral();
+				}
+				break;
+			}
 		}
-		String sg = lexiconEntry.getSg();
-		if (sg == null) {
-			logger.warn("BUG: No 'sg' for entry: " + lexiconEntry);
-			return entity.getIRI().getFragment();
-		}
-		return sg;
-		 */
+		return entity.getIRI().getFragment();
 	}
 }
