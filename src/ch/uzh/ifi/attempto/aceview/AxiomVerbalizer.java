@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.coode.owlapi.owlxml.renderer.OWLXMLRenderer;
 import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -45,6 +46,7 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 import com.google.common.collect.Sets;
 
+import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 
@@ -79,7 +81,7 @@ public class AxiomVerbalizer {
 		// the verbalizer webservice. It seems that about 50% of
 		// the axioms in real-world ontologies are simple SubClassOf-axioms,
 		// so it really pays off performancewise to verbalize them directly in Java.
-		String verbalization = verbalizeSimpleSubClassOfAxiom(axiom);
+		String verbalization = verbalizeSimpleAxiom(axiom);
 
 		OWLOntologyID iri = ont.getOntologyID();
 
@@ -159,14 +161,22 @@ public class AxiomVerbalizer {
 
 
 	/**
-	 * <p>Verbalizes an <code>OWLAxiom</code> given that it is a simple
-	 * SubClassOf-axiom (with named classes), or a simple ClassAssertion-axiom
-	 * (with a named class) otherwise returns <code>null</code>.</p>
+	 * <p>Verbalizes an <code>OWLLogicalAxiom</code> given that it is
+	 * a structurally simple axiom,
+	 * specifically of one of the following axiom types</p>
+	 * <ul>
+	 * <li>SubClassOf with named classes</li>,
+	 * <li>ClassAssertion with a named class and named individual</li>,
+	 * <li>ObjectPropertyAssertion with named individuals and a named object property</li>
+	 * <li>OWLDisjointClasses with exactly two named classes</li>
+	 * </ul>
 	 * 
-	 * @param ax an instance of <code>OWLAxiom</code> to be verbalized
-	 * @return sentence corresponding to the <code>OWLAxiom</code> or <code>null</code>
+	 * <p>Otherwise returns <code>null</code>.</p>
+	 * 
+	 * @param ax an instance of <code>OWLLogicalAxiom</code> to be verbalized
+	 * @return sentence corresponding to the axiom or <code>null</code>
 	 */
-	private String verbalizeSimpleSubClassOfAxiom(OWLLogicalAxiom ax) {
+	private String verbalizeSimpleAxiom(OWLLogicalAxiom ax) {
 		if (ax instanceof OWLSubClassOfAxiom) {
 			OWLSubClassOfAxiom subClassAxiom = (OWLSubClassOfAxiom) ax;
 			OWLClassExpression subClass = subClassAxiom.getSubClass();
@@ -298,8 +308,9 @@ public class AxiomVerbalizer {
 
 
 	/**
-	 * <p>Convenience method that returns the singular form of the given OWL entity,
-	 * or the toString() of the entity if the singular form is not defined.</p>
+	 * <p>Returns the singular form of the given OWL entity
+	 * as it is defined in the ACE lexicon.
+	 * Returns the fragment of the entity's IRI is something fails.</p>
 	 * 
 	 * TODO: rewrite this
 	 * 
@@ -307,6 +318,15 @@ public class AxiomVerbalizer {
 	 * @return Singular form of the entity
 	 */
 	private String getSg(OWLEntity entity) {
+		IRI entityIRI = entity.getIRI();
+		// TODO: BUG: replace TV_SG with something more general
+		IRI morphIRI = MorphType.TV_SG.getIRI();
+		String wordform = ACETextManager.getActiveACEText().getTokenMapper().getWordform(entityIRI, morphIRI);
+		if (wordform == null) {
+			return entityIRI.getFragment();
+		}
+		return wordform;
+
 		/*
 		ACELexiconEntry lexiconEntry = lexicon.getEntry(entity);
 		if (lexiconEntry == null) {
@@ -320,6 +340,5 @@ public class AxiomVerbalizer {
 		}
 		return sg;
 		 */
-		return entity.getIRI().getFragment();
 	}
 }
