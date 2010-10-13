@@ -25,6 +25,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.reasoner.IndividualNodeSetPolicy;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -77,6 +78,8 @@ public class ACEAnswer {
 	private boolean isIndividualAnswersComplete = false;
 	private boolean isSubClassesAnswersComplete = false;
 
+	private IndividualNodeSetPolicy individualNodeSetPolicy = null;
+
 	public ACEAnswer(OWLModelManager mngr, ACESnippet snippet) {
 		OWLClassExpression dlquery = snippet.getDLQuery();
 		if (dlquery == null) {
@@ -85,7 +88,9 @@ public class ACEAnswer {
 		else {
 			try {
 				OWLReasoner reasoner = mngr.getReasoner();
-				
+
+				individualNodeSetPolicy = reasoner.getIndividualNodeSetPolicy();
+
 				if (isSatisfiable(reasoner, dlquery)) {
 					setAnswerLists(mngr, reasoner, dlquery);
 				}
@@ -153,6 +158,10 @@ public class ACEAnswer {
 		isSubClassesAnswersComplete = b;
 	}
 
+	public IndividualNodeSetPolicy getIndividualNodeSetPolicy() {
+		return individualNodeSetPolicy;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -179,9 +188,7 @@ public class ACEAnswer {
 	}
 
 	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) {
-		logger.warn("IndividualNodeSetPolicy: " + reasoner.getIndividualNodeSetPolicy());
-
-		// TODO: BUG: what does true/false mean here?
+		// false gives more answers (but might be slower)
 		NodeSet<OWLNamedIndividual> indNodeSet = reasoner.getInstances(desc, false);
 		setIndividualsAnswerList(indNodeSet.getNodes());
 
