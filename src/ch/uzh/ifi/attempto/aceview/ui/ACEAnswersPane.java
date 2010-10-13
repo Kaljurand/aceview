@@ -167,7 +167,7 @@ public class ACEAnswersPane extends JTextPane {
 			addComponent(ComponentFactory.makeItalicLabel("This question has no known answers."));
 		}
 		else {
-			addComponent(ComponentFactory.makeItalicLabel(ic + " named individuals:"));
+			addComponent(ComponentFactory.makeItalicLabel(ic + " named individuals (" + answer.getIndividualNodeSetPolicy() + "): "));
 			final Set<OWLNamedIndividual> completeIndividuals = renderIndividuals(individuals, dlquery);
 
 			if (answer.isIndividualAnswersComplete()) {
