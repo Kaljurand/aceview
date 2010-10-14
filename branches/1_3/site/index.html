@@ -222,6 +222,14 @@ are additionally paraphrased. The paraphrases belong to a fragment of ACE called
 This fragment reformulates <em>every</em>-sentences as <em>if-then</em>-sentences and
 replaces relative clauses with full sentences.</p>
 
+<p>If "Support Manchester OWL Syntax ..." is set then each input
+is first parsed with the Manchester OWL Syntax (MOS) parser, and only if this fails
+the ACE parser is used. This allows one to mix ACE and MOS in the ontology.
+Note that currently only class axioms
+(<em>SubClassOf</em>, <em>DisjointWith</em>, and <em>EquivalentTo</em>)
+are supported and every entity in their signature must be already declared in the
+ontology.</p>
+
 
 <h2>Views</h2>
 
@@ -1011,7 +1019,7 @@ to become a project member.</p>
 
 <address>
 Kaarel Kaljurand
-2010-10-09
+2010-10-14
 </address>
 
 </body>
