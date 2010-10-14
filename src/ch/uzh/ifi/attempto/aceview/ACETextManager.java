@@ -24,10 +24,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
 import org.protege.editor.owl.model.find.OWLEntityFinder;
+import org.protege.editor.owl.model.parser.ProtegeOWLEntityChecker;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -590,12 +591,12 @@ public final class ACETextManager {
 	}
 
 
-	public static OWLLogicalAxiom parseWithMos(ACESentence sentence) throws OWLExpressionParserException {
+	public static OWLLogicalAxiom parseWithMos(ACESentence sentence, String base) throws ParserException {
 		// Remove the last token (a dot or a question mark) of the given sentence.
 		String mosStr = sentence.toMOSString();
 		logger.info("Parsing with the MOS parser: " + mosStr);
-		OWLOntologyID oid = getOWLModelManager().getActiveOntology().getOntologyID();
-		return OntologyUtils.parseWithManchesterSyntaxParser(getOWLModelManager(), oid, mosStr);
+		OWLModelManager mngr = getOWLModelManager();
+		return OntologyUtils.parseWithMosParser(mngr.getOWLDataFactory(), new ProtegeOWLEntityChecker(mngr.getOWLEntityFinder()), base, mosStr);
 	}
 
 

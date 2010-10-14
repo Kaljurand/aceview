@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser;
-import org.protege.editor.owl.model.OWLModelManager;
-import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
-import org.protege.editor.owl.model.parser.ParserUtil;
-import org.protege.editor.owl.model.parser.ProtegeOWLEntityChecker;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -24,11 +21,16 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import com.google.common.collect.Sets;
 
+/**
+ * 
+ * This class should not import any Protege classes.
+ * 
+ * @author Kaarel Kaljurand
+ */
 public final class OntologyUtils {
 
 	private OntologyUtils() {}
@@ -99,24 +101,30 @@ public final class OntologyUtils {
 	 * <li>TODO: parseObjectPropertyAxiom()</li>
 	 * </ul>
 	 * 
+	 * <p>TODO: would be nice to call parseAxiom() to be able to
+	 * parse all types of axioms, but this doesn't seem to work.</p>
+	 * 
+	 * <p>Note: this method depends only on OWL-API classes.</p>
+	 * 
+	 * @param df
+	 * @param ec
+	 * @param base
 	 * @param str String that possibly represents an OWL axiom in Manchester OWL Syntax
 	 * @return OWL logical axiom that corresponds to the given string.
-	 * @throws OWLExpressionParserException 
+	 * @throws ParserException 
 	 */
-	public static OWLLogicalAxiom parseWithManchesterSyntaxParser(OWLModelManager mngr, OWLOntologyID oid, String str) throws OWLExpressionParserException {
-		ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(mngr.getOWLDataFactory(), str);
-		parser.setOWLEntityChecker(new ProtegeOWLEntityChecker(mngr.getOWLEntityFinder()));
-		parser.setBase(oid.toString());
-		try {
-			OWLAxiom axiom = parser.parseClassAxiom();
-			if (axiom instanceof OWLLogicalAxiom) {
-				return (OWLLogicalAxiom) axiom;
-			}
-			return null;
+	public static OWLLogicalAxiom parseWithMosParser(OWLDataFactory df, OWLEntityChecker ec, String base, String str) throws ParserException {
+		ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(df, str);
+		// TODO: what does this do?
+		parser.setOWLEntityChecker(ec);
+		// TODO: what does this do?
+		parser.setBase(base);
+		// TODO: BUG: parseAxiom() doesn't seem to work
+		OWLAxiom axiom = parser.parseClassAxiom();
+		if (axiom instanceof OWLLogicalAxiom) {
+			return (OWLLogicalAxiom) axiom;
 		}
-		catch (ParserException e) {
-			throw ParserUtil.convertException(e);
-		}
+		return null;
 	}
 
 

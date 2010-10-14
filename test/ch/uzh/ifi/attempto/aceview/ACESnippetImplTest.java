@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Test;
+import org.protege.editor.owl.model.OWLModelManager;
+import org.protege.editor.owl.model.OWLModelManagerImpl;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -30,12 +32,18 @@ public class ACESnippetImplTest {
 
 	private static final OWLAxiom john_likes_mary = createAxiomJohnLikesMary();
 	private static final OWLAxiom every_man_is_a_human = createAxiomEveryManIsAHuman();
+	private static final ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 
 	static {
-		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 		prefs.setParseWithUndefinedTokens(true);
 		prefs.setGuessingEnabled(true);
 		prefs.setClexEnabled(true);
+		prefs.setUseMos(false);
+		try {
+			ParserHolder.updateACEParser(prefs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -98,6 +106,23 @@ public class ACESnippetImplTest {
 		ACESnippet s = new ACESnippetImpl(ID_TEST, sents);
 
 		assertEquals(s.getLogicalAxioms(), Sets.newHashSet(john_likes_mary));
+	}
+
+	@Test
+	public final void test5() {
+
+		// TODO: BUG: experimental
+		OWLModelManager modelManager = new OWLModelManagerImpl();
+		ACETextManager.setOWLModelManager(modelManager);
+
+		prefs.setUseMos(true);
+		String str = "man SubClassOf human";
+		List<ACESentence> sents = ACESplitter.getSentences(str);
+
+		ACESnippet s = new ACESnippetImpl(ID_TEST, sents);
+
+		assertEquals(s.getAxiom(), every_man_is_a_human);
+		assertEquals(s.getLogicalAxioms(), Sets.newHashSet(every_man_is_a_human));
 	}
 
 

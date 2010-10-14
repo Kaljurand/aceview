@@ -22,7 +22,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
-import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
+import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.io.StringDocumentSource;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -479,10 +479,12 @@ public class ACESnippetImpl implements ACESnippet {
 		if (prefs.getUseMos() && sentences.size() == 1) {
 			OWLLogicalAxiom mosAxiom = null;
 			try {
-				mosAxiom = ACETextManager.parseWithMos(sentences.iterator().next());
-			} catch (OWLExpressionParserException e) {
-				// Note: we are silent about using ManchesterSyntaxParser, i.e.
-				// we do not return the syntax errors.
+				// TODO: BUG: it's not clear what this "base" is
+				// supposed to be, the OWL-API Javadoc doesn't say anything about it.
+				String base = getOntologyIRIAsString();
+				mosAxiom = ACETextManager.parseWithMos(sentences.iterator().next(), base);
+			} catch (ParserException e) {
+				e.printStackTrace();
 			}
 			if (mosAxiom != null) {
 				axiomSet = ImmutableSet.of(mosAxiom);
@@ -540,13 +542,7 @@ public class ACESnippetImpl implements ACESnippet {
 		// Note: parser might by null in case the ParserHolder has not been initialized
 		ACEParser parser = ParserHolder.getACEParser();
 
-		IRI ontologyIRI = ns.getOntologyIRI();
-		if (ontologyIRI == null) {
-			parser.setURI("");
-		}
-		else {
-			parser.setURI(ontologyIRI.toString());
-		}
+		parser.setURI(getOntologyIRIAsString());
 
 		ACEParserResult result = null;
 
@@ -645,5 +641,23 @@ public class ACESnippetImpl implements ACESnippet {
 	 */
 	private boolean hasErrors() {
 		return (errorMessagesCount > 0);
+	}
+
+
+	/**
+	 * <p>Extracts the IRI from the OntologyID
+	 * and converts it into a string. If the IRI is
+	 * missing the returns an empty string.</p>
+	 * 
+	 * <p>TODO: think about it</p>
+	 * 
+	 * @return Ontology IRI as string, or an empty string
+	 */
+	private String getOntologyIRIAsString() {
+		IRI ontologyIRI = ns.getOntologyIRI();
+		if (ontologyIRI == null) {
+			return "";
+		}
+		return ontologyIRI.toString();
 	}
 }
