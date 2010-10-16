@@ -553,11 +553,11 @@ public final class ACETextManager {
 	/**
 	 * <p>Returns a list of changes that would remove all the annotations
 	 * from the given ontology, that annotate the given entity and have
-	 * the given URI as the annotation URI.</p>
+	 * the given IRI as the annotation IRI.</p>
 	 * 
 	 * @param ont OWL ontology
 	 * @param entity OWL entity
-	 * @param uri URI of the annotation
+	 * @param iri IRI of the annotation
 	 * @return List of remove-changes
 	 */
 	public static List<RemoveAxiomByACEView> findEntityAnnotationAxioms(OWLOntology ont, OWLEntity entity, IRI iri) {

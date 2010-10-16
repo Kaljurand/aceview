@@ -20,8 +20,8 @@ public interface TokenMapper {
 	/**
 	 * <p>Adds token with its lemma and morphological category.</p>
 	 * @param token
-	 * @param subject
-	 * @param property
+	 * @param lemma
+	 * @param morph
 	 */
 	void addEntry(String token, IRI lemma, IRI morph);
 
@@ -29,8 +29,8 @@ public interface TokenMapper {
 	/**
 	 * <p>Removes token with its lemma and morphological category.</p>
 	 * @param token
-	 * @param subject
-	 * @param property
+	 * @param lemma
+	 * @param morph
 	 */
 	void removeEntry(String token, IRI lemma, IRI morph);
 
@@ -64,7 +64,7 @@ public interface TokenMapper {
 	 * 
 	 * @return Number of lexicon entries
 	 */
-	//int size();
+	int size();
 
 
 	/**
@@ -96,7 +96,7 @@ public interface TokenMapper {
 	 * 
 	 * @return Number of partial entries
 	 */
-	//int getPartialEntryCount();
+	int getPartialEntryCount();
 
 
 	/**
@@ -153,12 +153,6 @@ public interface TokenMapper {
 	int getWordclassAmbiguousWordformCount();
 
 
-	int size();
-
-
-	int getPartialEntryCount();
-
-
 	/**
 	 * <p>Returns the entity IRI that corresponds to the
 	 * given wordform in the lexicon. If there are no
@@ -166,9 +160,16 @@ public interface TokenMapper {
 	 * then returns <code>null</code>.
 	 * 
 	 * @param wordform
-	 * @return
+	 * @return IRI of the given entity
 	 */
 	IRI getWordformIRI(String wordform);
 
+
+	/**
+	 * 
+	 * @param entityIRI
+	 * @param morphIRI
+	 * @return Wordform of the given entity in the given morphological form
+	 */
 	String getWordform(IRI entityIRI, IRI morphIRI);
 }

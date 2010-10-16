@@ -45,7 +45,7 @@ public class Triple {
 	 * treated as a prefix (e.g. as a namespace for unknown words). Think
 	 * about it.
 	 * 
-	 * @return
+	 * @return ACE lexicon entry
 	 */
 	public LexiconEntry getLexiconEntry() {
 		//String lemma = subject.toString();

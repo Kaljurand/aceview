@@ -72,7 +72,7 @@ public final class Showing {
 	/**
 	 * <p>Specifies nodes (entity sets) which should be displayed to the ACE View user.</p>
 	 * 
-	 * @param entity OWL node
+	 * @param node OWL node
 	 * @return <code>true</code> if node should be shown
 	 */
 	public static boolean isShow(Node<? extends OWLEntity> node) {

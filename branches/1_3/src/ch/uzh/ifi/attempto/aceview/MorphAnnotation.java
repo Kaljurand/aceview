@@ -62,7 +62,7 @@ public class MorphAnnotation {
 	 * @param df
 	 * @param ont
 	 * @param entity
-	 * @return
+	 * @return Set of annotation axioms
 	 */
 	public static Set<OWLAnnotationAssertionAxiom> getMorphAnnotations(OWLDataFactory df, OWLOntology ont, OWLEntity entity) {
 		String lemma = entity.getIRI().getFragment();
