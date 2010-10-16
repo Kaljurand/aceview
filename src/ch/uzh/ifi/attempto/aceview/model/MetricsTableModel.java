@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -35,22 +35,28 @@ public class MetricsTableModel extends AbstractTableModel {
 	};
 
 	private enum Row {
-		SNIPPET_COUNT("Snippets"),
-		SENTENCE_COUNT("Sentences"),
-		QUESTION_COUNT("Questions"),
-		SWRL_SNIPPET_COUNT("SWRL snippets"),
-		NON_OWLSWRL_SNIPPET_COUNT("Non OWL/SWRL snippets"),
-		UNVERBALIZED_AXIOM_COUNT("Unverbalized axioms"),
-		NOTHING_BUT_COUNT("<html>Snippets that contain <i>nothing but</i></html>"),
-		CONTENT_WORD_COUNT("Content words (CN + TV + PN)"),
-		CN_COUNT("Common nouns (CN)"),
-		TV_COUNT("Transitive verbs (TV)"),
-		PN_COUNT("Proper names (PN)"),
-		UNUSED_CONTENT_WORD_COUNT("Unused content words"),
+		SNIPPET_COUNT("!Snippets"),
+		SENTENCE_COUNT("!Sentences"),
+		QUESTION_COUNT("!Questions"),
+		SWRL_SNIPPET_COUNT("!SWRL snippets"),
+		NON_OWLSWRL_SNIPPET_COUNT("!Non OWL/SWRL snippets"),
+		UNVERBALIZED_AXIOM_COUNT("!Unverbalized axioms"),
+		NOTHING_BUT_COUNT("<html>!Snippets that contain <i>nothing but</i></html>"),
+		CONTENT_WORD_COUNT("!Content words (CN + TV + PN)"),
+		CN_COUNT("!Common nouns (CN)"),
+		TV_COUNT("!Transitive verbs (TV)"),
+		PN_COUNT("!Proper names (PN)"),
+		UNUSED_CONTENT_WORD_COUNT("!Unused content words"),
 		WORDFORM_COUNT("Wordforms"),
+		WORDFORM_PN_SG_COUNT("<html><code>PN_sg</code></html>"),
+		WORDFORM_CN_SG_COUNT("<html><code>CN_sg</code></html>"),
+		WORDFORM_CN_PL_COUNT("<html><code>CN_pl</code></html>"),
+		WORDFORM_TV_SG_COUNT("<html><code>TV_sg</code></html>"),
+		WORDFORM_TV_PL_COUNT("<html><code>TV_pl</code></html>"),
+		WORDFORM_TV_VBG_COUNT("<html><code>TV_vbg</code></html>"),
 		AMBIGUOUS_WORDFORM_COUNT("Ambiguous wordforms"),
-		WORDCLASS_AMBIGUOUS_WORDFORM_COUNT("Ambiguous wordforms in the same wordclass"),
-		PARTIAL_ENTRY_COUNT("Incomplete lexicon entries");
+		WORDCLASS_AMBIGUOUS_WORDFORM_COUNT("!Ambiguous wordforms in the same wordclass"),
+		PARTIAL_ENTRY_COUNT("!Incomplete lexicon entries");
 
 		private final String name;
 
@@ -90,6 +96,18 @@ public class MetricsTableModel extends AbstractTableModel {
 				return (acetext.getTokenMapper().size() - acetext.getReferencedEntities().size());
 			case WORDFORM_COUNT:
 				return acetext.getTokenMapper().getWordformCount();
+			case WORDFORM_PN_SG_COUNT:
+				return acetext.getTokenMapper().getWordformPnSgCount();
+			case WORDFORM_CN_SG_COUNT:
+				return acetext.getTokenMapper().getWordformCnSgCount();
+			case WORDFORM_CN_PL_COUNT:
+				return acetext.getTokenMapper().getWordformCnPlCount();
+			case WORDFORM_TV_SG_COUNT:
+				return acetext.getTokenMapper().getWordformTvSgCount();
+			case WORDFORM_TV_PL_COUNT:
+				return acetext.getTokenMapper().getWordformTvPlCount();
+			case WORDFORM_TV_VBG_COUNT:
+				return acetext.getTokenMapper().getWordformTvVbgCount();
 			case AMBIGUOUS_WORDFORM_COUNT:
 				return acetext.getTokenMapper().getAmbiguousWordformCount();
 			case WORDCLASS_AMBIGUOUS_WORDFORM_COUNT:
