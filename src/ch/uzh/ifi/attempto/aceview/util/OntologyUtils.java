@@ -78,7 +78,7 @@ public final class OntologyUtils {
 	/**
 	 * @param ontology
 	 * @param entity
-	 * @return
+	 * @return Set of annotation IRIs for the given entity in the given ontology
 	 */
 	public static Set<IRI> getAnnotationIRIs(OWLOntology ontology, OWLEntity entity) {
 		Set<IRI> annotationIRIs = Sets.newHashSet();

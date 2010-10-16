@@ -135,7 +135,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 * The corresponding (single) OWL axiom is given as input,
 	 * therefore the snippet is not parsed.</p>
 	 * 
-	 * @param ontologyID Default namespace of the snippet
+	 * @param ns Default namespace of the snippet
 	 * @param str Textual content of the snippet
 	 * @param axiom OWL axiom that the snippet corresponds to
 	 */
@@ -577,10 +577,9 @@ public class ACESnippetImpl implements ACESnippet {
 				// might be bad for performance
 				OWLOntologyManager manager = ACETextManager.createOWLOntologyManager();
 
-				// TODO: BUG: remove this temporary hack that convert the APE output into
+				// TODO: BUG: remove this temporary hack that converts the APE output into
 				// correct OWL 2 XML.
 				String owl2xml = OWLXMLTransformer.transform(owlxml);
-				//logger.info("OWL: " + owl2xml);
 
 				// BUG: we should copy the axioms and then throw away the created ontology
 				axiomSet = ImmutableSet.copyOf(manager.loadOntologyFromOntologyDocument(new StringDocumentSource(owl2xml)).getLogicalAxioms());
