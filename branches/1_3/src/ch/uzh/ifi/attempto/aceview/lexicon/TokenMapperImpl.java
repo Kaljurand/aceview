@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -41,6 +41,14 @@ public class TokenMapperImpl implements TokenMapper {
 	private int cnCount = 0;
 	private int pnCount = 0;
 	private int tvCount = 0;
+
+	private int cnSgCount = 0;
+	private int cnPlCount = 0;
+	private int pnSgCount = 0;
+	private int tvSgCount = 0;
+	private int tvPlCount = 0;
+	private int tvVbgCount = 0;
+
 	private int partialCount = 0;
 
 
@@ -62,11 +70,36 @@ public class TokenMapperImpl implements TokenMapper {
 
 	public void addEntry(String wordform, IRI lemma, IRI morphIRI) {
 		if (MorphType.isMorphTypeIRI(morphIRI)) {
-			Triple triple = new Triple(lemma, morphIRI, wordform); 
+			Triple triple = new Triple(lemma, morphIRI, wordform);
+
 			map.put(wordform, triple);
 			map2.put(lemma, triple);
 			ac.add(wordform);
 
+			// If there are now exactly 2 triples for the
+			// same wordform then this wordform has become ambiguous.
+			if (map.get(wordform).size() == 2) {
+				ambiguousWordformCount++;
+			}
+
+			switch (MorphType.getMorphType(morphIRI)) {
+			case PN_SG:
+				pnSgCount++; break;
+			case CN_SG:
+				cnSgCount++; break;
+			case CN_PL:
+				cnPlCount++; break;
+			case TV_SG:
+				tvSgCount++; break;
+			case TV_PL:
+				tvPlCount++; break;
+			case TV_VBG:
+				tvVbgCount++; break;
+			default:
+				throw new RuntimeException("Programmer expected PN_SG/CN_SG/CN_PL/TV_SG/TV_PL/TV_VBG");
+			}
+
+			/*
 			switch (MorphType.getWordClass(morphIRI)) {
 			case CN:
 				cnCount++; break;
@@ -77,13 +110,22 @@ public class TokenMapperImpl implements TokenMapper {
 			default:
 				throw new RuntimeException("Programmer expected CN/TV/PN");
 			}
+			 */
 			logger.info("Added: " + wordform + " -> " + triple);
 		}
 	}
 
 
 	public void removeEntry(String wordform, IRI lemma, IRI morphIRI) {
+		// TODO: BUG: check that the triple is in the map
 		if (MorphType.isMorphTypeIRI(morphIRI)) {
+
+			// If there are currently exactly 2 triples for the
+			// same wordform then this wordform will become unambiguous.
+			if (map.get(wordform).size() == 2) {
+				ambiguousWordformCount--;
+			}
+
 			Triple triple = new Triple(lemma, morphIRI, wordform);
 			map.remove(wordform, triple);
 			map2.remove(lemma, triple);
@@ -94,6 +136,26 @@ public class TokenMapperImpl implements TokenMapper {
 			else {
 				logger.info("Removed: " + wordform + " -> " + triple);
 			}
+
+
+			switch (MorphType.getMorphType(morphIRI)) {
+			case PN_SG:
+				pnSgCount--; break;
+			case CN_SG:
+				cnSgCount--; break;
+			case CN_PL:
+				cnPlCount--; break;
+			case TV_SG:
+				tvSgCount--; break;
+			case TV_PL:
+				tvPlCount--; break;
+			case TV_VBG:
+				tvVbgCount--; break;
+			default:
+				throw new RuntimeException("Programmer expected PN_SG/CN_SG/CN_PL/TV_SG/TV_PL/TV_VBG");
+			}
+
+			/*
 			switch (MorphType.getWordClass(morphIRI)) {
 			case CN:
 				cnCount--; break;
@@ -104,6 +166,7 @@ public class TokenMapperImpl implements TokenMapper {
 			default:
 				throw new RuntimeException("Programmer expected CN/TV/PN");
 			}
+			 */
 		}
 	}
 
@@ -198,7 +261,14 @@ public class TokenMapperImpl implements TokenMapper {
 
 
 	public int getWordformCount() {
-		return map.size();
+		int allCount = pnSgCount + cnSgCount + cnPlCount + tvSgCount + tvPlCount + tvVbgCount;
+		int mapSize = map.size();
+		if (allCount == mapSize) {
+			return mapSize;
+		}
+
+		// This should never happen
+		return -1234;
 	}
 
 
@@ -244,5 +314,35 @@ public class TokenMapperImpl implements TokenMapper {
 			}
 		}
 		return null;
+	}
+
+
+	public int getWordformPnSgCount() {
+		return pnSgCount;
+	}
+
+
+	public int getWordformCnSgCount() {
+		return cnSgCount;
+	}
+
+
+	public int getWordformCnPlCount() {
+		return cnPlCount;
+	}
+
+
+	public int getWordformTvSgCount() {
+		return tvSgCount;
+	}
+
+
+	public int getWordformTvPlCount() {
+		return tvPlCount;
+	}
+
+
+	public int getWordformTvVbgCount() {
+		return tvVbgCount;
 	}
 }

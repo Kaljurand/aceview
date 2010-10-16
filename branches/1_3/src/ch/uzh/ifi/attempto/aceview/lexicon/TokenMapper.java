@@ -172,4 +172,12 @@ public interface TokenMapper {
 	 * @return Wordform of the given entity in the given morphological form
 	 */
 	String getWordform(IRI entityIRI, IRI morphIRI);
+
+
+	int getWordformPnSgCount();
+	int getWordformCnSgCount();
+	int getWordformCnPlCount();
+	int getWordformTvSgCount();
+	int getWordformTvPlCount();
+	int getWordformTvVbgCount();
 }
