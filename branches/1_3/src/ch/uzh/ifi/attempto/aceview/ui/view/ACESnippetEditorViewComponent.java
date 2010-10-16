@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -53,6 +53,7 @@ import com.google.common.collect.Multimap;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACESnippetImpl;
 import ch.uzh.ifi.attempto.aceview.ACEText;
@@ -64,7 +65,6 @@ import ch.uzh.ifi.attempto.aceview.ui.ACESnippetEditor;
 import ch.uzh.ifi.attempto.aceview.ui.AxiomAnnotationPanel;
 import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
-import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 
 
 /**
@@ -326,7 +326,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 
 		getView().setHeaderText(snippet.toString());
 
-		SnippetRenderer snippetRenderer = new SnippetRenderer(snippet);
+		ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(snippet.getSentences(), snippet.getErrorSpans());
 		snippetEditor.setText(snippetRenderer.getRendering());
 		snippetEditor.getHighlighter().removeAllHighlights();
 		// Snippet editor buttons

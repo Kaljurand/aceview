@@ -51,12 +51,12 @@ import org.semanticweb.owlapi.reasoner.Node;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.aceview.ACEAnswer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
-import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 
 public class ACEAnswersPane extends JTextPane {
 
@@ -287,7 +287,7 @@ public class ACEAnswersPane extends JTextPane {
 			e.printStackTrace();
 		}
 		if (snippet != null) {
-			SnippetRenderer snippetRenderer = new SnippetRenderer(snippet);
+			ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(snippet.getSentences());
 			JComponent comp = ComponentFactory.makeSnippetDialogPanel("Add this snippet to the active ACE text?", snippetRenderer.getRendering());
 			int ret = new UIHelper(ws.getOWLEditorKit()).showDialog(LABEL_DECLARE_COMPLETE, comp, JOptionPane.OK_CANCEL_OPTION);
 			if (ret == JOptionPane.OK_OPTION) {

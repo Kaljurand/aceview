@@ -39,6 +39,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.model.AnnotationsTableModel;
@@ -51,7 +52,6 @@ import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.FeedbackPane;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
-import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 import ch.uzh.ifi.attempto.ape.Message;
 
 
@@ -275,7 +275,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 			panelParaphrase.setTitle(PANEL_PARAPHRASES_TITLE + ": 1");
 			List<String> snippetRenderings = Lists.newArrayList();
 			for (List<ACESentence> paragraph : paraphrase) {
-				SnippetRenderer snippetRenderer = new SnippetRenderer(paragraph);
+				ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(paragraph);
 				snippetRenderings.add(snippetRenderer.getRendering());
 			}
 			textareaParaphrase.setText(paragraphJoiner.join(snippetRenderings));

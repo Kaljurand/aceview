@@ -6,9 +6,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 
 public class ACESnippetTable extends ACETable {
 
@@ -36,7 +36,7 @@ public class ACESnippetTable extends ACETable {
 			Object o = getValueAt(row, col);
 			if (o != null && o instanceof ACESnippet) {
 				ACESnippet snippet = (ACESnippet) o;
-				SnippetRenderer snippetRenderer = new SnippetRenderer(snippet);
+				ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(snippet.getSentences());
 				return "<html><body><pre style='font-family: sans-serif; padding: 2px 2px 2px 2px'>" + snippetRenderer.getRendering() + "</pre></body></html>";
 			}
 		}
