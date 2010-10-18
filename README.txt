@@ -1,7 +1,7 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2010-10-08
+Version: 2010-10-18
 
 == License ==
 
@@ -27,9 +27,6 @@ http://protegewiki.stanford.edu/wiki/Protege4DevDocs
 Note: the files do not include Protege and OWL API jars. You have to install
 Protege separately and set up the paths (as described below) to access the Protege jar-files.
 
-* .classpath: sample classpath configuration for ACE View (used by Eclipse)
-* .project: Eclipse project file
-* .settings/: Eclipse settings files
 * README.txt: this file
 * RELEASE_NOTES.html: release notes
 * build.xml: Ant build-file for ACE View
@@ -41,11 +38,20 @@ Protege separately and set up the paths (as described below) to access the Prote
 * test/: ACE View unit tests
 * viewconfig-aceviewtab.xml: Protege viewconfig-file for ACE View (specifies the layout of the ACE View views)
 
+=== Eclipse files ==
+
+Only needed if you use Eclipse
+
+* .classpath: Eclipse classpath configuration
+  (additionally set the Eclipse variable PROTEGE41 to point to $PROTEGE_HOME and PROTEGE41_SRC to the Protege source)
+* .project: Eclipse project file
+* .settings/: Eclipse settings files
+
 === Automatically generated files ==
 
-* classes/: directory into which the Java class files will be generated (by Eclips)
-* build/: directory into which the Java class files will be generated (by EAnt)
-* javadoc/: directory into which the Java class files will be generated (by EAnt)
+* classes/: directory into which the Java class files will be generated (by Eclipse)
+* build/: directory into which the Java class files will be generated (by Ant)
+* javadoc/: directory into which the Java class files will be generated (by Ant)
 
 
 == Getting the source code of Protege, building it and running the result ==
