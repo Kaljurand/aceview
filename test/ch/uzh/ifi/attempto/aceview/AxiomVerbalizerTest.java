@@ -30,8 +30,8 @@ import com.google.common.collect.Sets;
 public class AxiomVerbalizerTest {
 
 	private static final String PREFIX = "http://attempto.ifi.uzh.ch/aceview_test";
-//	private static final IRI IRI_TEST = IRI.create(PREFIX);
-//	private static final OWLOntologyID ID_TEST = new OWLOntologyID(IRI_TEST);
+	//	private static final IRI IRI_TEST = IRI.create(PREFIX);
+	//	private static final OWLOntologyID ID_TEST = new OWLOntologyID(IRI_TEST);
 
 	private static final OWLDataFactory df = new OWLDataFactoryImpl();
 
@@ -126,10 +126,10 @@ public class AxiomVerbalizerTest {
 
 	private static Set<OWLAxiom> getAnnotations1() {
 		Set<OWLAxiom> axioms = Sets.newHashSet();
-		axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), df.getOWLObjectProperty(IRI.create(PREFIX + "#like")), "liked"));
-		axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getIRI(), df.getOWLObjectProperty(IRI.create(PREFIX + "#like")), "likes"));
-		axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getIRI(), df.getOWLNamedIndividual(IRI.create(PREFIX + "#Mary")), "noise_annotation1"));
-		axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.PN_SG.getIRI(), df.getOWLNamedIndividual(IRI.create(PREFIX + "#Mary")), "Mari"));
+		axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), IRI.create(PREFIX + "#like"), "liked"));
+		axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_SG.getIRI(), IRI.create(PREFIX + "#like"), "likes"));
+		axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_SG.getIRI(), IRI.create(PREFIX + "#Mary"), "noise_annotation1"));
+		axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.PN_SG.getIRI(), IRI.create(PREFIX + "#Mary"), "Mari"));
 		return axioms;
 	}
 

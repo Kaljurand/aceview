@@ -128,21 +128,24 @@ public final class OntologyUtils {
 	}
 
 
-	public static OWLAnnotationAssertionAxiom createEntityAnnotationAxiom(OWLDataFactory df, IRI iri, OWLEntity entity, String lexem) {
+	/**
+	 * <p>Creates an annotation assertion axiom, e.g. http://www.net/man -morph#CN_pl-> "men".</p>
+	 * 
+	 * @param df OWLDataFactory
+	 * @param propertyIRI IRI of the annotation property (e.g. morph#CN_pl)
+	 * @param subject (e.g. IRI of the entity, e.g. http://www.net/man)
+	 * @param lexem Annotation value as string (e.g. men)
+	 * @return OWLAnnotationAssertionAxiom
+	 */
+	public static OWLAnnotationAssertionAxiom createIRIAnnotationAxiom(OWLDataFactory df, IRI propertyIRI, IRI subjectIRI, String valueAsString) {
 
-		// e.g. morph#TV_pl
-		OWLAnnotationProperty property = df.getOWLAnnotationProperty(iri);
-
-		// IRI of the entity, e.g. http://www/man
-		OWLAnnotationSubject subject = entity.getIRI();
+		// e.g. morph#CN_pl
+		OWLAnnotationProperty property = df.getOWLAnnotationProperty(propertyIRI);
 
 		// e.g. "men"
-		OWLAnnotationValue value = df.getOWLTypedLiteral(lexem);
+		OWLAnnotationValue value = df.getOWLLiteral(valueAsString, "en");
 
-		// e.g. morph#pl -> "men"
-		// OWLAnnotation ann = df.getOWLAnnotation(property, value);
-
-		return df.getOWLAnnotationAssertionAxiom(property, subject, value);
+		return df.getOWLAnnotationAssertionAxiom(property, subjectIRI, value);
 	}
 
 

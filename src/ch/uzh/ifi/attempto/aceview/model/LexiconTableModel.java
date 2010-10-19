@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -52,13 +52,14 @@ import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
  * <p>There are 7 columns:</p>
  * 
  * <ul>
- * <li>IRI</li>
- * <li>IRI rendering</li>
+ * <li>Entity IRI</li>
+ * <li>Entity IRI rendering</li>
  * <li>type (CN, TV, PN)</li>
  * <li>sg</li>
  * <li>pl (in case of CN and TV)</li>
  * <li>vbg (in case of TV)</li>
  * <li>frequency</li>
+ * <li>TODO: flag to show if something is wrong</li>
  * </ul>
  * 
  * <p>Only the surface form fields
@@ -80,7 +81,7 @@ public class LexiconTableModel extends AbstractTableModel {
 					event.isType(EventType.ACTIVE_ACETEXT_CHANGED)) {
 				acetext = ACETextManager.getActiveACEText();
 				acelexicon = acetext.getTokenMapper();
-				entityArray = ACETextManager.getOWLModelManager().getActiveOntology().getSignature().toArray();
+				entityArray = getEntityArray();
 				fireTableDataChanged();
 			}
 		}
@@ -98,8 +99,8 @@ public class LexiconTableModel extends AbstractTableModel {
 
 		private final String name;
 		private final String abbr;
-		private final Class<?> dataClass;
 		private final boolean isVisible;
+		private final Class<?> dataClass;
 
 		private Column(String name, String abbr, boolean isVisible, Class<?> dataClass) {
 			this.name = name;
@@ -116,19 +117,19 @@ public class LexiconTableModel extends AbstractTableModel {
 			return abbr;
 		}
 
-		public Class<?> getDataClass() {
-			return dataClass;
-		}
-
 		public boolean isVisible() {
 			return isVisible;
+		}
+
+		public Class<?> getDataClass() {
+			return dataClass;
 		}
 	}
 
 	public LexiconTableModel() {
 		acetext = ACETextManager.getActiveACEText();
 		acelexicon = acetext.getTokenMapper();
-		entityArray = ACETextManager.getOWLModelManager().getActiveOntology().getSignature().toArray();
+		entityArray = getEntityArray();
 		ACETextManager.addListener(aceTextManagerListener);
 	}
 
@@ -156,7 +157,6 @@ public class LexiconTableModel extends AbstractTableModel {
 	public Object getValueAt(int row, int column) {
 		if (row >= 0 && row < entityArray.length) {
 			OWLEntity entity = (OWLEntity) entityArray[row];
-			IRI entityIRI = entity.getIRI();
 			EntryType entryType = LexiconUtils.getLexiconEntryType(entity);
 
 			switch (Column.values()[column]) {
@@ -170,15 +170,15 @@ public class LexiconTableModel extends AbstractTableModel {
 				}
 				return entryType;
 			case SG:
-				return process(entityIRI, entryType, FieldType.SG);
+				return process(entity.getIRI(), entryType, FieldType.SG);
 			case PL:
-				return process(entityIRI, entryType, FieldType.PL);
+				return process(entity.getIRI(), entryType, FieldType.PL);
 			case VBG:
-				return process(entityIRI, entryType, FieldType.VBG);
+				return process(entity.getIRI(), entryType, FieldType.VBG);
 			case FREQUENCY:
 				return acetext.getSnippetCount(entity);
 			default:
-				throw new RuntimeException("Programmer error: missed a case for: " + column);
+				throw new RuntimeException("Programmer error: missed a case for: " + Column.values()[column]);
 			}
 		}
 		// TODO: throw exception instead
@@ -201,7 +201,7 @@ public class LexiconTableModel extends AbstractTableModel {
 		}
 		else {
 			logger.info("Changing: " + oldValueAsString + " -> " + newValueAsString);
-			OWLEntity entity = (OWLEntity) entityArray[row];
+			OWLEntity entity = getEntity(row);
 			if (entity != null) {
 				OWLModelManager mm = ACETextManager.getOWLModelManager();
 				OWLOntology ont = mm.getActiveOntology();
@@ -219,13 +219,13 @@ public class LexiconTableModel extends AbstractTableModel {
 					// Remove the respective annotation (if present)
 					// TODO: we construct a new axiom just to use it to match an axiom
 					// to be removed, is is smart? Maybe we should search for it in the ontology?
-					OWLAnnotationAssertionAxiom oldAnnot = OntologyUtils.createEntityAnnotationAxiom(df, morphType.getIRI(), entity, oldValueAsString);
+					OWLAnnotationAssertionAxiom oldAnnot = OntologyUtils.createIRIAnnotationAxiom(df, morphType.getIRI(), entity.getIRI(), oldValueAsString);
 					changes.add(new RemoveAxiomByACEView(ont, oldAnnot));
 
 					// We add a new annotation only if the modification of the table cell is
 					// a non-empty string.
 					if (newValueAsString.length() > 0) {
-						OWLAnnotationAssertionAxiom newAnnot = OntologyUtils.createEntityAnnotationAxiom(df, morphType.getIRI(), entity, newValueAsString);
+						OWLAnnotationAssertionAxiom newAnnot = OntologyUtils.createIRIAnnotationAxiom(df, morphType.getIRI(), entity.getIRI(), newValueAsString);
 						changes.add(new AddAxiomByACEView(ont, newAnnot));
 					}
 
@@ -259,7 +259,8 @@ public class LexiconTableModel extends AbstractTableModel {
 	}
 
 
-	public OWLEntity getEntity(int row) {
+	// TODO: BUG: This used to be public but nothing is calling it, why?
+	private OWLEntity getEntity(int row) {
 		return (OWLEntity) entityArray[row];
 	}
 
@@ -280,5 +281,13 @@ public class LexiconTableModel extends AbstractTableModel {
 			return "";
 		}
 		return wordfrom;
+	}
+
+
+	// TODO: BUG: This returns too much garbage, we only need classes,
+	// object/data properties and individuals,
+	// but this also returns annotation properties.
+	private static Object[] getEntityArray() {
+		return ACETextManager.getOWLModelManager().getActiveOntology().getSignature().toArray();	
 	}
 }
