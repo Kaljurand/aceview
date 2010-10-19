@@ -16,9 +16,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="var" path="PROTEGE41/bundles/org.protege.editor.core.application.jar" sourcepath="/PROTEGE41_SRC/org.protege.editor.core.application/src"/>
 	<classpathentry kind="var" path="PROTEGE41/plugins/org.protege.editor.owl.jar" sourcepath="/PROTEGE41_SRC/org.protege.editor.owl/src"/>
-	<classpathentry kind="var" path="PROTEGE41/plugins/org.semanticweb.owl.owlapi.jar"/>
+	<classpathentry kind="var" path="PROTEGE41/plugins/org.semanticweb.owl.owlapi.jar" sourcepath="/PROTEGE41_SRC/org.semanticweb.owl.owlapi/src"/>
 	<classpathentry kind="var" path="PROTEGE41/bin/felix.jar"/>
 	<classpathentry kind="var" path="PROTEGE41/bin/ProtegeLauncher.jar"/>
-	<classpathentry kind="var" path="PROTEGE41_SRC"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

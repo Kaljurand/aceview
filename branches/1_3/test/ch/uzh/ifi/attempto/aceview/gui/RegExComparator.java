@@ -11,6 +11,7 @@ import org.netbeans.jemmy.operators.Operator.StringComparator;
  */
 public class RegExComparator implements StringComparator {
 
+	@Override
 	public boolean equals(String caption, String match) {
         Pattern p = Pattern.compile( match, Pattern.DOTALL );
         Matcher m = p.matcher( caption );
