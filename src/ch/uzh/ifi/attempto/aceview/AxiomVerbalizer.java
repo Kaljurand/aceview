@@ -71,16 +71,17 @@ public class AxiomVerbalizer {
 
 
 	/**
-	 * <p>Verbalizes a single logical OWL axiom as an ACE snippet.</p>
+	 * <p>Verbalizes a single logical OWL axiom and constructs
+	 * a new ACE snippet containing the verbalization and the axiom.</p>
 	 * 
-	 * @param ont Namespace for the snippet to be created
 	 * @param axiom OWL logical axiom to be verbalized
+	 * @param ont Ontology that annotates the entities of the given axiom
 	 * @return ACE snippet containing the verbalization of the given axiom
 	 * @throws OWLRendererException 
 	 * @throws OWLOntologyChangeException 
 	 * @throws OWLOntologyCreationException 
 	 */
-	public ACESnippet verbalizeAxiom(OWLOntology ont, OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	public ACESnippet verbalizeAxiom(OWLLogicalAxiom axiom, OWLOntology ont) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 
 		// BUG: this is a bit of a hack for performance reasons.
 		// We verbalize simple axioms without having to use
@@ -96,9 +97,15 @@ public class AxiomVerbalizer {
 			return new ACESnippetImpl(iri, verbalization, axiom);
 		}
 
-		logger.info("Verbalizing the axiom using WS");
+		// If the axiom was not simple, then we verbalize it using the
+		// OWL verbalizer webservice. We first remove the axiom annotation
+		// from the axiom because the verbalizer does not need it
+		// (and currently fails to ignore it as well).
+		OWLLogicalAxiom annotationlessAxiom = (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations();
+		logger.info("Using OWL Verbalizer WS to verbalize: " + annotationlessAxiom);
+
 		try {
-			verbalization = verbalizeWithWS(ont, axiom);
+			verbalization = verbalizeWithWS(ont, annotationlessAxiom);
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "OWL verbalizer error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -108,13 +115,12 @@ public class AxiomVerbalizer {
 		if (verbalization == null) {
 			// Axioms not verbalized, using Manchester Syntax rendering.
 			logger.info("Axioms not verbalized, using Manchester Syntax rendering");
-			String manSynRendering = ACETextManager.getOWLModelManager().getRendering(axiom);
-			if (manSynRendering == null) {
-				snippet = new ACESnippetImpl(iri, "", axiom, axiom.toString());
+			String rendering = ACETextManager.getOWLModelManager().getRendering(annotationlessAxiom);
+			if (rendering == null) {
+				rendering = annotationlessAxiom.toString();
 			}
-			else {
-				snippet = new ACESnippetImpl(iri, "", axiom, manSynRendering);
-			}			
+
+			snippet = new ACESnippetImpl(iri, "", axiom, rendering);
 		}
 		else {
 			snippet = new ACESnippetImpl(iri, verbalization, axiom);

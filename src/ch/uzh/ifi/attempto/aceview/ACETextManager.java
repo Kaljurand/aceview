@@ -484,7 +484,7 @@ public final class ACETextManager {
 	 */
 	public static ACESnippet makeSnippetFromAxiom(OWLLogicalAxiom axiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		AxiomVerbalizer axiomVerbalizer = createAxiomVerbalizer();
-		return axiomVerbalizer.verbalizeAxiom(getOWLModelManager().getActiveOntology(), axiom);
+		return axiomVerbalizer.verbalizeAxiom(axiom, getOWLModelManager().getActiveOntology());
 	}
 
 
@@ -713,7 +713,7 @@ public final class ACETextManager {
 	private static void verbalizeAndAdd(ACEText<OWLEntity, OWLLogicalAxiom> acetext, OWLOntology ont, AxiomVerbalizer axiomVerbalizer, OWLLogicalAxiom axiom) {
 		ACESnippet snippet = null;
 		try {
-			snippet = axiomVerbalizer.verbalizeAxiom(ont, axiom);
+			snippet = axiomVerbalizer.verbalizeAxiom(axiom, ont);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

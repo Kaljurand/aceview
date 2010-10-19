@@ -259,7 +259,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 				logger.info("NOT showing: " + ax + ", contains tricks");
 			}
 			else {
-				ACESnippet snippet = axiomVerbalizer.verbalizeAxiom(activeOntology, ax);
+				ACESnippet snippet = axiomVerbalizer.verbalizeAxiom(ax, activeOntology);
 				if (ACETextManager.getActiveACEText().contains(snippet)) {
 					logger.info("NOT showing: " + ax.toString() + ", snippet matches asserted snippet: " + snippet);
 				}

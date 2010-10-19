@@ -63,7 +63,7 @@ public class AxiomVerbalizerTest {
 
 		ACESnippet snippet = null;
 		try {
-			snippet = av.verbalizeAxiom(ontology, every_man_is_a_human);
+			snippet = av.verbalizeAxiom(every_man_is_a_human, ontology);
 		} catch (OWLRendererException e) {
 			e.printStackTrace();
 		} catch (OWLOntologyChangeException e) {
@@ -92,7 +92,7 @@ public class AxiomVerbalizerTest {
 
 		ACESnippet snippet = null;
 		try {
-			snippet = av.verbalizeAxiom(ontology, john_likes_mary);
+			snippet = av.verbalizeAxiom(john_likes_mary, ontology);
 		} catch (OWLRendererException e) {
 			e.printStackTrace();
 		} catch (OWLOntologyChangeException e) {
