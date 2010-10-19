@@ -21,6 +21,7 @@ final class JComponentByNameChooser implements
 		setUsingRegularExpression(usingRegularExpression);
 	}
 	
+	@Override
 	public boolean checkComponent(Component c ) {
 		if (c instanceof JComponent ) {
 			JComponent b = (JComponent) c;
@@ -38,6 +39,7 @@ final class JComponentByNameChooser implements
 		return false;
 	}
 
+	@Override
 	public String getDescription() {
 		return "NAME Component Chooser \"" + name + "\"" +
 				"\n";

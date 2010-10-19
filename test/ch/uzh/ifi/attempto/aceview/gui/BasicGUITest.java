@@ -1,6 +1,5 @@
 package ch.uzh.ifi.attempto.aceview.gui;
 
-import java.awt.Component;
 import java.lang.reflect.InvocationTargetException;
 
 import org.junit.After;
@@ -15,7 +14,6 @@ import org.netbeans.jemmy.operators.JComponentOperator.JComponentByTipFinder;
 import org.netbeans.jemmy.operators.JDialogOperator;
 import org.netbeans.jemmy.operators.JTabbedPaneOperator;
 import org.netbeans.jemmy.operators.JTextComponentOperator;
-//import org.netbeans.jemmy.util.RegExComparator;
 
 /**
  * @author Jean-Marc Vanel jeanmarc.vanel@gmail.com
@@ -81,7 +79,8 @@ public class BasicGUITest {
 
 		// 	 * click on tab "ACE View"
 		JTabbedPaneOperator tabbedPane = new JTabbedPaneOperator( protegeFrame, "ACE View" );
-		Component component = tabbedPane.selectPage( "ACE View" );
+//		Component aceViewComponent = 
+		tabbedPane.selectPage( "ACE View" );
 
 		{
 			// paste in "Ace snippet editor" :

@@ -7,37 +7,31 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.semanticweb.owlapi.io.OWLRendererException;
-import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
+import com.google.common.collect.Sets;
+
 public class AxiomVerbalizerTest {
 
 	private static final String PREFIX = "http://attempto.ifi.uzh.ch/aceview_test";
-	private static final IRI IRI_TEST = IRI.create(PREFIX);
-	private static final OWLOntologyID ID_TEST = new OWLOntologyID(IRI_TEST);
+//	private static final IRI IRI_TEST = IRI.create(PREFIX);
+//	private static final OWLOntologyID ID_TEST = new OWLOntologyID(IRI_TEST);
 
 	private static final OWLDataFactory df = new OWLDataFactoryImpl();
 
