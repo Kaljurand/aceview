@@ -115,8 +115,7 @@ public final class ACETextManager {
 	}
 
 
-	// TODO: BUG: we should use the ontology ID, not the IRI
-	public static void setActiveACETextIRI(OWLOntologyID id) {
+	public static void setActiveACETextID(OWLOntologyID id) {
 		if (activeACETextID.compareTo(id) != 0) {
 			activeACETextID = id;
 			fireEvent(EventType.ACTIVE_ACETEXT_CHANGED);
@@ -143,12 +142,12 @@ public final class ACETextManager {
 
 	public static ACEText<OWLEntity, OWLLogicalAxiom> getACEText(OWLOntologyID id) {
 		if (id == null) {
-			logger.error("getACEText: URI == null; THIS SHOULD NOT HAPPEN");
+			logger.error("getACEText: ID == null; THIS SHOULD NOT HAPPEN");
 			return new ACETextImpl();
 		}
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = acetexts.get(id);
 		if (acetext == null) {
-			logger.error("getACEText: acetext == null, where IRI: " + id);
+			logger.error("getACEText: acetext == null, where ID: " + id);
 			createACEText(id);
 			return getACEText(id);
 		}
@@ -506,37 +505,14 @@ public final class ACETextManager {
 
 
 	/**
-	 * <p>Returns a list of annotations that are contained by the
-	 * axiom annotation axioms for the logical axioms of the given snippet.
+	 * <p>Returns a list of annotations that annotate the logical axioms of the given snippet.
 	 * Only the ACE text annotation is not returned because this is already
 	 * explicitly present in the snippet.</p>
 	 *  
-	 * TODO: We should return the annotations from the ontology that corresponds to the
-	 * text that contains this snippet (not from all the active ontologies). Or even better,
-	 * we should store the annotations together with the snippet, so that the annotations
-	 * would be independent from the ontology but only depend on the snippet.
-	 * 
 	 * TODO: Why do we return a list? Because it is simpler to update a table model in this way
 	 * 
 	 * @return List of annotations for the given snippet
 	 */
-	/*
-	// This is Protege 4.0 style
-	public static List<OWLAnnotation> getAnnotations(ACESnippet snippet) {
-		List<OWLAnnotation> annotations = Lists.newArrayList();
-		OWLOntology ont = ACETextManager.getOWLModelManager().getActiveOntology();
-		for (OWLLogicalAxiom ax : snippet.getLogicalAxioms()) {
-			for (OWLAxiomAnnotationAxiom axannax : ont.getAnnotations(ax)) {
-				OWLAnnotation annotation = axannax.getAnnotation();
-				if (! annotation.getAnnotationURI().equals(ACETextManager.acetextURI)) {
-					annotations.add(annotation);
-				}
-			}
-		}
-		return annotations;
-	}
-	 */
-
 	public static List<OWLAnnotation> getAnnotations(ACESnippet snippet) {
 		List<OWLAnnotation> annotations = Lists.newArrayList();
 		for (OWLLogicalAxiom ax : snippet.getLogicalAxioms()) {
