@@ -417,7 +417,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		}
 
 		if (newSnippet == null) {
-			newSnippet = axiomVerbalizer.verbalizeAxiom(ont, logicalAxiom);
+			newSnippet = axiomVerbalizer.verbalizeAxiom(logicalAxiom, ont);
 			if (newSnippet == null) {
 				logger.warn("AxiomVerbalizer produced a null-snippet for: " + logicalAxiom);
 			}
