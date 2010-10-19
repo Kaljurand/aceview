@@ -96,35 +96,37 @@ public class MorphAnnotation {
 		// Existing annotation IRIs for the entity.
 		Set<IRI> annotationIRIs = OntologyUtils.getAnnotationIRIs(ontology, entity);
 
+		IRI entityIRI = entity.getIRI();
+
 		if (entity instanceof OWLClass) {
 
 			if (! annotationIRIs.contains(MorphType.CN_SG.getIRI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_SG.getIRI(), entity, lemma));
+				axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.CN_SG.getIRI(), entityIRI, lemma));
 			}
 
 			if (! annotationIRIs.contains(MorphType.CN_PL.getIRI())) {
 				Noun noun = new Noun(lemma);
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entity, noun.getPlural()));
+				axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entityIRI, noun.getPlural()));
 			}
 		}
 		else if (isVerblike(entity)) {
 			ACEVerb verb = new ACEVerb(lemma);
 
 			if (! annotationIRIs.contains(MorphType.TV_SG.getIRI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getIRI(), entity, verb.getPresent3SG()));
+				axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_SG.getIRI(), entityIRI, verb.getPresent3SG()));
 			}
 
 			if (! annotationIRIs.contains(MorphType.TV_PL.getIRI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_PL.getIRI(), entity, lemma));
+				axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_PL.getIRI(), entityIRI, lemma));
 			}
 
 			if (! annotationIRIs.contains(MorphType.TV_VBG.getIRI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), entity, verb.getPastParticiple()));
+				axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), entityIRI, verb.getPastParticiple()));
 			}
 		}
 		else if (entity instanceof OWLNamedIndividual) {
 			if (! annotationIRIs.contains(MorphType.PN_SG.getIRI())) {
-				axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.PN_SG.getIRI(), entity, lemma));
+				axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.PN_SG.getIRI(), entityIRI, lemma));
 			}
 		}
 
@@ -148,19 +150,21 @@ public class MorphAnnotation {
 			return axioms;
 		}
 
+		IRI entityIRI = entity.getIRI();
+
 		if (entity instanceof OWLClass) {
 			Noun noun = new Noun(lemma);
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_SG.getIRI(), entity, lemma));
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entity, noun.getPlural()));
+			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.CN_SG.getIRI(), entityIRI, lemma));
+			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entityIRI, noun.getPlural()));
 		}
 		else if (isVerblike(entity)) {
 			ACEVerb verb = new ACEVerb(lemma);
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_SG.getIRI(), entity, verb.getPresent3SG()));
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_PL.getIRI(), entity, lemma));
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), entity, verb.getPastParticiple()));
+			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_SG.getIRI(), entityIRI, verb.getPresent3SG()));
+			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_PL.getIRI(), entityIRI, lemma));
+			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), entityIRI, verb.getPastParticiple()));
 		}
 		else if (entity instanceof OWLNamedIndividual) {
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, MorphType.PN_SG.getIRI(), entity, lemma));
+			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.PN_SG.getIRI(), entityIRI, lemma));
 		}
 
 		return axioms;
@@ -208,9 +212,9 @@ public class MorphAnnotation {
 	}
 
 
-	private static void addToAxioms(OWLDataFactory df, Set<OWLAnnotationAssertionAxiom> axioms, IRI uri, OWLEntity entity, String form) {
+	private static void addToAxioms(OWLDataFactory df, Set<OWLAnnotationAssertionAxiom> axioms, IRI iri, OWLEntity entity, String form) {
 		if (form != null) {
-			axioms.add(OntologyUtils.createEntityAnnotationAxiom(df, uri, entity, form));
+			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, iri, entity.getIRI(), form));
 		}
 	}
 

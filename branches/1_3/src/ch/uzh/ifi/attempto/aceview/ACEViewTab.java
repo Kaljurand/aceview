@@ -504,7 +504,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		String vbgForm = p2.getIRI().getFragment();
 		// TODO: use the rendering instead
 		//String vbgForm = getOWLModelManager().getRendering(p2);
-		return OntologyUtils.createEntityAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), p1, vbgForm);
+		return OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), p1.getIRI(), vbgForm);
 	}
 
 
