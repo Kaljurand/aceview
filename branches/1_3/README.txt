@@ -1,7 +1,7 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2010-10-18
+Version: 2010-10-19
 
 == License ==
 
@@ -43,7 +43,6 @@ Protege separately and set up the paths (as described below) to access the Prote
 Only needed if you use Eclipse
 
 * .classpath: Eclipse classpath configuration
-  (additionally set the Eclipse variable PROTEGE41 to point to $PROTEGE_HOME and PROTEGE41_SRC to the Protege source)
 * .project: Eclipse project file
 * .settings/: Eclipse settings files
 
@@ -83,10 +82,6 @@ stable revision and occasionally test against that latest one.]
 
 == Setting up the ACE View Eclipse project ==
 
-* Edit the file .classpath (in the root directory of the ACE View source)
-
-Change the paths to the Protege trunk to the ones that point to your local copy of Protege.
-
 * Launch Eclipse and create a new Java project
 
 File -> New -> Project ...
@@ -94,6 +89,11 @@ File -> New -> Project ...
 Project name: ACE View 1.3
 Create project from existing source
 Directory: /the root directory of the ACE View source/
+
+The paths to the external jars are configured automatically based on the .classpath file.
+But you have to additionally set the Eclipse variable PROTEGE41 to point to $PROTEGE_HOME
+so that the Protege and OWL-API jars can be accessed.
+(You can also set PROTEGE41_SRC to point to the the Protege sources.)
 
 
 == Building ACE View and integrating it with Protege ==
