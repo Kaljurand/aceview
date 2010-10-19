@@ -75,7 +75,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	private final OWLModelManagerListener modelManagerListener = new OWLModelManagerListener() {
 		public void handleChange(OWLModelManagerChangeEvent event) {
 			if (event.isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-				ACETextManager.setActiveACETextIRI(getOWLModelManager().getActiveOntology().getOntologyID());
+				ACETextManager.setActiveACETextID(getOWLModelManager().getActiveOntology().getOntologyID());
 			}
 			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_LOADED)) {
 				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
