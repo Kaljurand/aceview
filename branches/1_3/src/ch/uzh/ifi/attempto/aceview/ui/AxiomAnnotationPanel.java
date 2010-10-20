@@ -8,7 +8,6 @@ import javax.swing.JScrollPane;
 
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.util.OWLAxiomInstance;
-import org.protege.editor.owl.ui.axiom.AxiomAnnotationsList;
 
 /**
  * <p>Based on the Protege AxiomAnnotationPanel, but does not
