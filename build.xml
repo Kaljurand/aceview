@@ -297,16 +297,20 @@ author=Kaarel Kaljurand
 	<target name="test" depends="compile" description="Unit test some ACE View classes.">
 		<javac
 			srcdir="${aceview_test_src}"
-			destdir="${classes}">
+			destdir="${classes}"
+			>
+			<!-- source="1.6" ??? -->
 			<classpath refid="project.classpath"/>
 		</javac>
 
 		<mkdir dir="${aceview_test_report}"/>
 
-		<junit printsummary="yes" haltonfailure="no">
+		<junit printsummary="yes" haltonfailure="no"
+			dir="${protege.home}" fork="on" >
 
 			<classpath>
 				<pathelement location="${classes}"/>
+				<pathelement location="${protege.home}/bin/ProtegeLauncher.jar"/>
 			</classpath>
 
 			<classpath refid="project.classpath"/>
