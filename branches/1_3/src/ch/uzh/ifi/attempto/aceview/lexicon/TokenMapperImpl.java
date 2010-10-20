@@ -31,7 +31,7 @@ import ch.uzh.ifi.attempto.ape.LexiconEntry;
 
 public class TokenMapperImpl implements TokenMapper {
 
-	private static final Logger logger = Logger.getLogger(OwlApiACELexicon.class);
+	private static final Logger logger = Logger.getLogger(TokenMapperImpl.class);
 
 	private final Multimap<String, Triple> map = HashMultimap.create();
 	private final Multimap<IRI, Triple> map2 = HashMultimap.create();

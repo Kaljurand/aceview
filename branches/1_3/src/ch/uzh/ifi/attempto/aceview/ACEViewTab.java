@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -32,6 +32,7 @@ import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -231,9 +232,8 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce());
 
 		for (OWLLogicalAxiom logicalAxiom : ont.getLogicalAxioms()) {
-			Set<OWLAnnotation> existingAnnotations = logicalAxiom.getAnnotations();
-			logger.info("Init: Add axiom: " + logicalAxiom + " (" + existingAnnotations.size() + " annotations)");
-			processAxiom(ont, df, ontologyManager, acetext, axiomVerbalizer, iri, logicalAxiom, existingAnnotations);
+			logger.info("Init: Add axiom: " + logicalAxiom);
+			processAxiom(ont, df, ontologyManager, acetext, axiomVerbalizer, iri, logicalAxiom);
 		}
 	}
 
@@ -286,12 +286,11 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 				else if (change instanceof AddAxiom) {
 					textAxiomCounter++;
-					Set<OWLAnnotation> existingAnnotations = logicalAxiom.getAnnotations();
 					Set<OWLEntity> entities = ((OWLAxiomChange) change).getEntities();
-					logger.info("Add axiom: " + logicalAxiom + " (" + existingAnnotations.size() + " annotations)" + " (" + entities.size() + " entities)");
+					logger.info("Add axiom: " + logicalAxiom + " (" + entities.size() + " entities)");
 					try {
 						AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce());
-						processAxiom(changeOnt, df, ontologyManager, acetext, axiomVerbalizer, oid, logicalAxiom, existingAnnotations);
+						processAxiom(changeOnt, df, ontologyManager, acetext, axiomVerbalizer, oid, logicalAxiom);
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}
@@ -398,21 +397,22 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @throws OWLOntologyCreationException
 	 * @throws OWLOntologyChangeException
 	 */
-	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, AxiomVerbalizer axiomVerbalizer, OWLOntologyID ns, OWLLogicalAxiom logicalAxiom, Set<OWLAnnotation> existingAnnotations) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager mngr, ACEText acetext, AxiomVerbalizer axiomVerbalizer, OWLOntologyID ns, OWLLogicalAxiom logicalAxiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 
 		ACESnippet newSnippet = null;
 
-		for (OWLAnnotation annotation : existingAnnotations) {
-			if (annotation.getProperty().getIRI().equals(ACETextManager.acetextIRI)) {
-				String aceAnnotationValue = getAnnotationValueAsString(annotation.getValue());
-				if (aceAnnotationValue == null) {
-					logger.error("Malformed ACE annotation ignored: " + annotation);
-				}
-				else {
-					logger.info("ACE annotation: " + aceAnnotationValue);
-					newSnippet = new ACESnippetImpl(ns, aceAnnotationValue, logicalAxiom);
-					acetext.add(newSnippet);
-				}
+		OWLAnnotationProperty acetextAnnProp = df.getOWLAnnotationProperty(ACETextManager.acetextIRI);
+
+		for (OWLAnnotation annotation : logicalAxiom.getAnnotations(acetextAnnProp)) {
+			String aceAnnotationValue = getAnnotationValueAsString(annotation.getValue());
+			if (aceAnnotationValue == null) {
+				logger.error("Malformed ACE annotation ignored: " + annotation);
+			}
+			else {
+				logger.info("ACE annotation: " + aceAnnotationValue);
+				newSnippet = new ACESnippetImpl(ns, aceAnnotationValue, logicalAxiom);
+				acetext.add(newSnippet);
+				ACETextManager.setSelectedSnippet(newSnippet);
 			}
 		}
 
@@ -422,11 +422,25 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				logger.warn("AxiomVerbalizer produced a null-snippet for: " + logicalAxiom);
 			}
 			else {
-				addToText(newSnippet, ont, df, ontologyManager, acetext, logicalAxiom);
+				// Create a new annotation based on the snippet (i.e. the verbalization)
+				OWLAnnotation acetextAnn = df.getOWLAnnotation(acetextAnnProp, df.getOWLLiteral(newSnippet.toString()));
+
+				// Add the new ACE text annotation to the existing annotations
+				Set<OWLAnnotation> annotations = Sets.newHashSet(logicalAxiom.getAnnotations());
+				annotations.add(acetextAnn);
+
+				// Now change the ontology
+
+				// TODO: use instead?: List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>();
+				List<OWLAxiomChange> changes = Lists.newArrayList();
+				// Remove the axiom
+				changes.add(new RemoveAxiom(ont, logicalAxiom));
+				// Add back the axiom, but now with the additional annotation 
+				changes.add(new AddAxiom(ont, logicalAxiom.getAxiomWithoutAnnotations().getAnnotatedAxiom(annotations)));
+				// Apply the changes to the ontology
+				OntologyUtils.changeOntology(mngr, changes);
 			}
 		}
-
-		ACETextManager.setSelectedSnippet(newSnippet);
 
 
 		// If we have a OWLInverseObjectPropertiesAxiom where both properties
@@ -446,42 +460,14 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				OWLObjectProperty p2 = iopa.getSecondProperty().asOWLObjectProperty();
 
 				// BUG: removes all, not just the vbg-annotations
-				OntologyUtils.changeOntology(ontologyManager,
+				OntologyUtils.changeOntology(mngr,
 						ACETextManager.getRemoveChanges(ont, p1.getAnnotationAssertionAxioms(ont)));
 				Set<OWLAxiom> set = Sets.newHashSet();
 				set.add(getTV_vbg(df, p1, p2));
 				set.add(getTV_vbg(df, p2, p1));
-				ACETextManager.addAxiomsToOntology(ontologyManager, ont, set);
+				ACETextManager.addAxiomsToOntology(mngr, ont, set);
 			}
 		}
-	}
-
-	/**
-	 * 
-	 * @param addedSnippet
-	 * @param ont
-	 * @param df
-	 * @param ontologyManager
-	 * @param acetext
-	 * @param logicalAxiom
-	 */
-	/*
-	private static void addToText(ACESnippet snippet, OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, OWLLogicalAxiom logicalAxiom) {
-		acetext.add(snippet);
-		OWLAnnotation ann = df.getOWLConstantAnnotation(ACETextManager.acetextURI, df.getOWLUntypedConstant(snippet.toString()));
-		OWLAxiomAnnotationAxiom axannax = df.getOWLAxiomAnnotationAxiom(logicalAxiom, ann);
-		ACETextManager.addAxiomsToOntology(ontologyManager, ont, Sets.newHashSet(axannax));
-	}
-	 */
-
-	/**
-	 * TODO: ACE annotations are currently not added
-	 */
-	private static void addToText(ACESnippet snippet, OWLOntology ont, OWLDataFactory df, OWLOntologyManager ontologyManager, ACEText acetext, OWLLogicalAxiom logicalAxiom) {
-		acetext.add(snippet);
-		// Create and apply the changeset with the following changes:
-		// 1. Remove the logical axiom
-		// 2. Add the logical axiom with the ACE text as annotation
 	}
 
 
