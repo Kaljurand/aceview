@@ -294,6 +294,14 @@ author=Kaarel Kaljurand
 	</target>
 
 
+	<target name="zip_protege" depends="install" description="Create a zip-archive of $PROTEGE_HOME.">
+		<zip
+			destfile="${build}/aceview_with_protege-${build.time}.zip"
+			basedir="${protege.home}"
+			/>
+	</target>
+
+
 	<target name="test" depends="compile" description="Unit test some ACE View classes.">
 		<javac
 			srcdir="${aceview_test_src}"

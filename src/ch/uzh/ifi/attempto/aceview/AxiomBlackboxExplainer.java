@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.protege.editor.owl.ui.explanation.impl.BasicClassExpressionGenerator;
+import org.semanticweb.owlapi.debugging.DebuggerClassExpressionGenerator;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -41,8 +41,8 @@ import com.google.common.collect.Sets;
 /**
  * <p>Explains an OWL axiom by a set of sets of ACE snippets.</p>
  * 
- * TODO: will need a lot of rewriting but wait until the explanation
- * support in Protege is stable
+ * TODO: this shouldn't depend on Protege libraries, i.e.
+ * don't pass in OWLModelManager
  * 
  * @author Kaarel Kaljurand
  */
@@ -196,7 +196,7 @@ public class AxiomBlackboxExplainer {
 		/*
 		 * there is no clear method...
 		 */
-		BasicClassExpressionGenerator classExpressionVisitor = new BasicClassExpressionGenerator(modelManager.getOWLDataFactory());
+		DebuggerClassExpressionGenerator classExpressionVisitor = new DebuggerClassExpressionGenerator(modelManager.getOWLDataFactory());
 		axiom.accept(classExpressionVisitor);
 		return classExpressionVisitor.getDebuggerClassExpression();
 	}
