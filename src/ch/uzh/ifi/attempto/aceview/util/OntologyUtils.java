@@ -11,7 +11,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
@@ -143,21 +142,10 @@ public final class OntologyUtils {
 		OWLAnnotationProperty property = df.getOWLAnnotationProperty(propertyIRI);
 
 		// e.g. "men"
-		OWLAnnotationValue value = df.getOWLLiteral(valueAsString, "en");
+		// TODO: We could also set the lang-attribute to "en", but
+		// I'm not sure it's that useful.
+		OWLAnnotationValue value = df.getOWLLiteral(valueAsString, "");
 
 		return df.getOWLAnnotationAssertionAxiom(property, subjectIRI, value);
-	}
-
-
-	public static Set<OWLAnnotationAssertionAxiom> entityToAnnotations(OWLEntity entity, OWLOntology ont) {
-		Set<OWLAnnotationAssertionAxiom> set;
-
-		set = entity.getAnnotationAssertionAxioms(ont);
-
-		// We could also filter out only those annotations
-		// that go along the ace_lexicon-properties.
-		// entity.getAnnotations(ont, property);
-
-		return set;
 	}
 }
