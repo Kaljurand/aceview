@@ -40,10 +40,8 @@ import org.semanticweb.owlapi.model.OWLAxiomChange;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
@@ -69,6 +67,9 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  * @author Kaarel Kaljurand
  */
 public class ACEViewTab extends OWLWorkspaceViewsTab {
+
+	// Initialized in initialise()
+	private static OWLAnnotationProperty acetextAnnProp;
 
 	private static final Logger logger = Logger.getLogger(ACEViewTab.class);
 
@@ -146,8 +147,11 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			logger.error(e.getMessage());
 		}
 
-		ACETextManager.setOWLModelManager(getOWLModelManager());
-		ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
+		OWLModelManager mm = getOWLModelManager();
+		acetextAnnProp = mm.getOWLDataFactory().getOWLAnnotationProperty(ACETextManager.acetextIRI);
+
+		ACETextManager.setOWLModelManager(mm);
+		ACETextManager.createACEText(mm.getActiveOntology().getOntologyID());
 		// Note: We start to listen before filling the ACE text, because
 		// we want to add entity annotations to the lexicon.
 		getOWLModelManager().addOntologyChangeListener(ontologyChangeListener);
@@ -401,8 +405,6 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 		ACESnippet newSnippet = null;
 
-		OWLAnnotationProperty acetextAnnProp = df.getOWLAnnotationProperty(ACETextManager.acetextIRI);
-
 		for (OWLAnnotation annotation : logicalAxiom.getAnnotations(acetextAnnProp)) {
 			String aceAnnotationValue = getAnnotationValueAsString(annotation.getValue());
 			if (aceAnnotationValue == null) {
@@ -453,29 +455,39 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		// 1. the verbalizer adds "is/are ... by" around the form
 		// 2. the lexicon might not like 'is-larger-than' used both as sg and vbg (in different entries)
 		// TODO: This if-sentence is currently switched off.
-		if (false && logicalAxiom instanceof OWLInverseObjectPropertiesAxiom) {
-			OWLInverseObjectPropertiesAxiom iopa = (OWLInverseObjectPropertiesAxiom) logicalAxiom;
-			if (! iopa.getFirstProperty().isAnonymous() && ! iopa.getSecondProperty().isAnonymous()) {
-				OWLObjectProperty p1 = iopa.getFirstProperty().asOWLObjectProperty();
-				OWLObjectProperty p2 = iopa.getSecondProperty().asOWLObjectProperty();
-
-				// BUG: removes all, not just the vbg-annotations
-				OntologyUtils.changeOntology(mngr,
-						ACETextManager.getRemoveChanges(ont, p1.getAnnotationAssertionAxioms(ont)));
-				Set<OWLAxiom> set = Sets.newHashSet();
-				set.add(getTV_vbg(df, p1, p2));
-				set.add(getTV_vbg(df, p2, p1));
-				ACETextManager.addAxiomsToOntology(mngr, ont, set);
-			}
-		}
+		//		if (logicalAxiom instanceof OWLInverseObjectPropertiesAxiom) {
+		//			OWLInverseObjectPropertiesAxiom iopa = (OWLInverseObjectPropertiesAxiom) logicalAxiom;
+		//			if (! iopa.getFirstProperty().isAnonymous() && ! iopa.getSecondProperty().isAnonymous()) {
+		//				OWLObjectProperty p1 = iopa.getFirstProperty().asOWLObjectProperty();
+		//				OWLObjectProperty p2 = iopa.getSecondProperty().asOWLObjectProperty();
+		//
+		//				// BUG: removes all, not just the vbg-annotations
+		//				OntologyUtils.changeOntology(mngr,
+		//						ACETextManager.getRemoveChanges(ont, p1.getAnnotationAssertionAxioms(ont)));
+		//				Set<OWLAxiom> set = Sets.newHashSet();
+		//				set.add(getTV_vbg(df, p1, p2));
+		//				set.add(getTV_vbg(df, p2, p1));
+		//				ACETextManager.addAxiomsToOntology(mngr, ont, set);
+		//			}
+		//		}
 	}
 
 
+	/**
+	 * <p>The annotation value can be either a literal or an anonymous
+	 * individual. We are interested only in literals and only in their
+	 * lexical value, and not the lang-attribute nor the datatype.
+	 * If the annotation value is not a literal then <code>null</code>
+	 * is returned.</p>
+	 * 
+	 * @param value Annotation value
+	 * @return Lexical value of the literal or <code>null</code>
+	 */
 	private static String getAnnotationValueAsString(OWLAnnotationValue value) {
 		if (value instanceof OWLLiteral) {
 			return ((OWLLiteral) value).getLiteral();
 		}
-		return value.toString();
+		return null;
 	}
 
 
@@ -486,12 +498,12 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @param p2
 	 * @return A single <code>OWLEntityAnnotationAxiom</code>
 	 */
-	private static OWLAnnotationAssertionAxiom getTV_vbg(OWLDataFactory df, OWLObjectProperty p1, OWLObjectProperty p2) {
-		String vbgForm = p2.getIRI().getFragment();
-		// TODO: use the rendering instead
-		//String vbgForm = getOWLModelManager().getRendering(p2);
-		return OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), p1.getIRI(), vbgForm);
-	}
+	//	private static OWLAnnotationAssertionAxiom getTV_vbg(OWLDataFactory df, OWLObjectProperty p1, OWLObjectProperty p2) {
+	//		String vbgForm = p2.getIRI().getFragment();
+	//		// TODO: use the rendering instead
+	//		//String vbgForm = getOWLModelManager().getRendering(p2);
+	//		return OntologyUtils.createIRIAnnotationAxiom(df, MorphType.TV_VBG.getIRI(), p1.getIRI(), vbgForm);
+	//	}
 
 
 	private static List<OWLAxiomChange> addMorfAnnotations(OWLDataFactory df, OWLOntology ont, OWLEntity entity, String lemma) {

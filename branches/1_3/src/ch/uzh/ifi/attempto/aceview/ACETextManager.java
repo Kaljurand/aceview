@@ -33,9 +33,11 @@ import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -47,6 +49,7 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
@@ -78,10 +81,7 @@ public final class ACETextManager {
 	private static final Logger logger = Logger.getLogger(ACETextManager.class);
 
 	public static final IRI acetextIRI = IRI.create("http://attempto.ifi.uzh.ch/acetext#acetext");
-	//public static final URI acetextURI = URI.create("http://attempto.ifi.uzh.ch/acetext#acetext");
-
-	//private static final IRI timestampIRI = IRI.create("http://purl.org/dc/elements/1.1/date");
-	//private static final URI timestampURI = URI.create("http://purl.org/dc/elements/1.1/date");
+	private static final IRI timestampIRI = IRI.create("http://purl.org/dc/elements/1.1/date");
 
 	private static final Map<OWLOntologyID, ACEText<OWLEntity, OWLLogicalAxiom>> acetexts = Maps.newHashMap();
 	private static OWLModelManager owlModelManager;
@@ -511,9 +511,10 @@ public final class ACETextManager {
 	 *  
 	 * TODO: Why do we return a list? Because it is simpler to update a table model in this way
 	 * 
+	 * @param snippet ACE snippet
 	 * @return List of annotations for the given snippet
 	 */
-	public static List<OWLAnnotation> getAnnotations(ACESnippet snippet) {
+	public static List<OWLAnnotation> getAnnotationsExceptAcetext(ACESnippet snippet) {
 		List<OWLAnnotation> annotations = Lists.newArrayList();
 		for (OWLLogicalAxiom ax : snippet.getLogicalAxioms()) {
 			for (OWLAnnotation annotation : ax.getAnnotations()) {
@@ -567,6 +568,13 @@ public final class ACETextManager {
 	}
 
 
+	/**
+	 * 
+	 * @param sentence
+	 * @param base
+	 * @return
+	 * @throws ParserException
+	 */
 	public static OWLLogicalAxiom parseWithMos(ACESentence sentence, String base) throws ParserException {
 		// Remove the last token (a dot or a question mark) of the given sentence.
 		String mosStr = sentence.toMOSString();
@@ -655,21 +663,17 @@ public final class ACETextManager {
 		List<AddAxiomByACEView> changes = Lists.newArrayList();
 		Set<OWLLogicalAxiom> snippetAxioms = snippet.getLogicalAxioms();
 
-		for (OWLLogicalAxiom axiom : snippetAxioms) {
-			changes.add(new AddAxiomByACEView(ontology, axiom));
-		}
-
-		// In case the snippet has only one axiom, then we annotate it as well
+		// If the snippet corresponds to a single axiom, then we
+		// annotate this axiom with ACE View specific annotations.
 		if (snippetAxioms.size() == 1) {
-			// TODO: add the ACE annotation together with the axiom
-			/*
-			OWLDataFactory df = owlModelManager.getOWLDataFactory();
 			OWLLogicalAxiom axiom = snippetAxioms.iterator().next();
-			OWLAxiomAnnotationAxiom annAcetext = OntologyUtils.createAxiomAnnotation(df, axiom, acetextURI, snippet.toString());
-			OWLAxiomAnnotationAxiom annTimestamp = OntologyUtils.createAxiomAnnotation(df, axiom, timestampURI, snippet.getTimestamp().toString());
-			changes.add(new AddAxiomByACEView(ontology, annAcetext));
-			changes.add(new AddAxiomByACEView(ontology, annTimestamp));
-			 */
+			OWLLogicalAxiom annotatedAxiom = annotateAxiomWithSnippet(owlModelManager.getOWLDataFactory(), axiom, snippet);
+			changes.add(new AddAxiomByACEView(ontology, annotatedAxiom));
+		}
+		else {
+			for (OWLLogicalAxiom axiom : snippetAxioms) {
+				changes.add(new AddAxiomByACEView(ontology, axiom));
+			}
 		}
 
 		return changes;
@@ -740,6 +744,34 @@ public final class ACETextManager {
 		}
 	}
 	 */
+
+
+	/**
+	 * <p>Constructs a new axiom on the basis of the given axiom.
+	 * The new axiom will have some additional annotations based on
+	 * the given snippet, namely the textual content of the snippet
+	 * and the timestamp of the snippet.</p>
+	 * 
+	 * @param df OWLDataFactory
+	 * @param axiom Axiom to be annotated
+	 * @param snippet Snippet that provides the content of the annotations
+	 * @return New axiom (i.e. old axiom with new annotations)
+	 */
+	private static OWLLogicalAxiom annotateAxiomWithSnippet(OWLDataFactory df, OWLLogicalAxiom axiom, ACESnippet snippet) {
+		OWLAnnotationProperty acetextAnnProp = df.getOWLAnnotationProperty(acetextIRI);
+		OWLAnnotationProperty timestampAnnProp = df.getOWLAnnotationProperty(timestampIRI);
+
+		// Create a new annotation based on the snippet (i.e. the verbalization)
+		OWLAnnotation acetextAnn = df.getOWLAnnotation(acetextAnnProp, df.getOWLLiteral(snippet.toString()));
+		// and the snippet timestamp (TODO: use a more specific type, i.e. date type)
+		OWLAnnotation timestampAnn = df.getOWLAnnotation(timestampAnnProp, df.getOWLLiteral(snippet.getTimestamp().toString()));
+
+		// Add the new ACE text annotation to the existing annotations
+		Set<OWLAnnotation> annotations = Sets.newHashSet(axiom.getAnnotations());
+		annotations.add(acetextAnn);
+		annotations.add(timestampAnn);
+		return (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations().getAnnotatedAxiom(annotations);
+	}
 
 
 	private static void fireSnippetEvent(SnippetEventType type) {

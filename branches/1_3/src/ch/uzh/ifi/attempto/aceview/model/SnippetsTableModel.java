@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -119,7 +119,7 @@ public class SnippetsTableModel extends AbstractSnippetsTableModel {
 		case NAMESPACE:
 			return snippet.getDefaultNamespace();
 		case ANNOTATIONS:
-			return ACETextManager.getAnnotations(snippet).size();
+			return ACETextManager.getAnnotationsExceptAcetext(snippet).size();
 		default:
 			throw new RuntimeException("Programmer error.");
 		}
