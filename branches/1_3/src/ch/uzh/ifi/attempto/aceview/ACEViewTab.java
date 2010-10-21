@@ -117,21 +117,37 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	};
 
 
-	// Fired when entity rendering is changed (e.g. the label-annotation in modified)
+	// OWLEntityRendererListener is notified when an entity rendering is changed
+	// (e.g. the label-annotation is modified).
+	//
+	// TODO: BUG (Protege bug?): whenever there is a change in the rendering
+	// this is fired 4 times (for Class, OProp, DProp, NamedInd), which leads to complete
+	// garbage on the ACE View side.
+	// So we comment this out for the time being and look into this later.
+	//
+	// How to test?
+	// 1. Set entity rendering to be based on "label"
+	// 2. Create a class "man"
+	// 3. (ACE View annotations CN_sg and CN_pl are automatically created)
+	// 4. Create annotation "label"
+	// 5. (ACE View annotations are removed and added back 4 times for all possible
+	// entity types, only the last change (adding PN_sg) prevails.
 	private final OWLEntityRendererListener entityRendererListener = new OWLEntityRendererListener() {
 		public void renderingChanged(OWLEntity entity, OWLEntityRenderer renderer) {
 			String entityRendering = renderer.render(entity);
-			logger.info("Rendering for " + entity + " changed to " + entityRendering);
+			logger.info("Rendering for " + entity + " with type " + entity.getEntityType() + " changed to " + entityRendering);
 
+			/*
 			OWLModelManager mm = getOWLModelManager();
 			OWLOntology ont = mm.getActiveOntology();
-			OWLOntologyManager ontologyManager = mm.getOWLOntologyManager();
 
 			List<OWLAxiomChange> changeList1 = removeMorfAnnotations(ont, entity);
-			List<OWLAxiomChange> changeList2 = addMorfAnnotations(mm.getOWLDataFactory(), ont, entity, entityRendering);
+			List<OWLAxiomChange> changeList2 = addMorfAnnotations(mm.getOWLDataFactory(), ont, entity, entityRendering);	
 			changeList1.addAll(changeList2);
 
+			OWLOntologyManager ontologyManager = mm.getOWLOntologyManager();
 			OntologyUtils.changeOntology(ontologyManager, changeList1);
+			 */
 		}
 	};
 
@@ -309,15 +325,14 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				}
 			}
 			else if (axiom instanceof OWLAnnotationAssertionAxiom) {
-
-				logger.info("Processing: " + axiom);
+				logger.info("Processing annotation: " + axiom);
 				OWLAnnotationAssertionAxiom annAx = (OWLAnnotationAssertionAxiom) axiom;
-				OWLAnnotationSubject subject = annAx.getSubject();
-				if (subject instanceof IRI) {
-					IRI annotationIRI = annAx.getProperty().getIRI();
+				IRI annotationIRI = annAx.getProperty().getIRI();
 
-					if (MorphType.isMorphTypeIRI(annotationIRI)) {
+				if (MorphType.isMorphTypeIRI(annotationIRI)) {
+					OWLAnnotationSubject subject = annAx.getSubject();
 
+					if (subject instanceof IRI) {
 						String annValue = getAnnotationValueAsString(annAx.getValue());
 
 						if (annValue == null) {
@@ -498,15 +513,8 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 	private static List<OWLAxiomChange> addMorfAnnotations(OWLDataFactory df, OWLOntology ont, OWLEntity entity, String lemma) {
 		List<OWLAxiomChange> addList = Lists.newArrayList();
-		Set<OWLAnnotationAssertionAxiom> entityAnnotationAxioms = MorphAnnotation.createMorphAnnotations(df, entity, lemma);
-		if (entityAnnotationAxioms.isEmpty()) {
-			logger.info("Init: entity " + entity + " is already annotated");
-		}
-		else {
-			logger.info("Init: entity " + entity + " adding annotations: " + entityAnnotationAxioms);
-			for (OWLAnnotationAssertionAxiom ax : entityAnnotationAxioms) {
-				addList.add(new AddAxiom(ont, ax));
-			}
+		for (OWLAnnotationAssertionAxiom ax : MorphAnnotation.createMorphAnnotations(df, entity, lemma)) {
+			addList.add(new AddAxiom(ont, ax));
 		}
 		return addList;
 	}
@@ -518,7 +526,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * 
 	 * @param ont
 	 * @param entity
-	 * @return
+	 * @return List of RemoveAxiom-changes
 	 */
 	private static List<OWLAxiomChange> removeMorfAnnotations(OWLOntology ont, OWLEntity entity) {
 		List<OWLAxiomChange> removeList = Lists.newArrayList();

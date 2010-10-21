@@ -115,6 +115,7 @@ public enum MorphType {
 	}
 
 
+	// TODO: BUG: This is slow, we should match against a set.
 	public static boolean isMorphTypeIRI(IRI annotationIRI) {
 		return getMorphType(annotationIRI) != null;
 	}
