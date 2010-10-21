@@ -35,13 +35,13 @@ public class MetricsTableModel extends AbstractTableModel {
 	};
 
 	private enum Row {
-		SNIPPET_COUNT("!Snippets"),
-		SENTENCE_COUNT("!Sentences"),
-		QUESTION_COUNT("!Questions"),
-		SWRL_SNIPPET_COUNT("!SWRL snippets"),
-		NON_OWLSWRL_SNIPPET_COUNT("!Non OWL/SWRL snippets"),
-		UNVERBALIZED_AXIOM_COUNT("!Unverbalized axioms"),
-		NOTHING_BUT_COUNT("<html>!Snippets that contain <i>nothing but</i></html>"),
+		SNIPPET_COUNT("Snippets"),
+		SENTENCE_COUNT("Sentences"),
+		QUESTION_COUNT("Questions"),
+		SWRL_SNIPPET_COUNT("SWRL snippets"),
+		NON_OWLSWRL_SNIPPET_COUNT("Non OWL/SWRL snippets"),
+		UNVERBALIZED_AXIOM_COUNT("Unverbalized axioms"),
+		NOTHING_BUT_COUNT("<html>Snippets that contain <i>nothing but</i></html>"),
 		CONTENT_WORD_COUNT("!Content words (CN + TV + PN)"),
 		CN_COUNT("!Common nouns (CN)"),
 		TV_COUNT("!Transitive verbs (TV)"),

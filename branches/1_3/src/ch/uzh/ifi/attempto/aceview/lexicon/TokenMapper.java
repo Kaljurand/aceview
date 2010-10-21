@@ -133,6 +133,14 @@ public interface TokenMapper {
 	int getWordformCount();
 
 
+	/** <p>Returns the wordforms that are ambiguous (i.e. can denote
+	 * several different entities) according to this lexicon.</p>
+	 * 
+	 * @return Set of ambiguous wordforms
+	 */
+	Set<String> getAmbiguousWordforms();
+
+
 	/** <p>Returns the number of wordforms that are ambiguous (i.e. can denote
 	 * several different entities) according to this lexicon.</p>
 	 * 

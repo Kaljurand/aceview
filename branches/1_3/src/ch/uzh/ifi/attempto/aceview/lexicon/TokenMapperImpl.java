@@ -36,8 +36,10 @@ public class TokenMapperImpl implements TokenMapper {
 	private final Multimap<String, Triple> map = HashMultimap.create();
 	private final Multimap<IRI, Triple> map2 = HashMultimap.create();
 
+	// Set of ambiguous wordforms
+	private final Set<String> ambiguousWordforms = Sets.newHashSet();
+
 	private final Autocompleter ac;
-	private int ambiguousWordformCount = 0;
 	private int cnCount = 0;
 	private int pnCount = 0;
 	private int tvCount = 0;
@@ -79,7 +81,7 @@ public class TokenMapperImpl implements TokenMapper {
 			// If there are now exactly 2 triples for the
 			// same wordform then this wordform has become ambiguous.
 			if (map.get(wordform).size() == 2) {
-				ambiguousWordformCount++;
+				ambiguousWordforms.add(wordform);
 			}
 
 			switch (MorphType.getMorphType(morphIRI)) {
@@ -123,7 +125,7 @@ public class TokenMapperImpl implements TokenMapper {
 			// If there are currently exactly 2 triples for the
 			// same wordform then this wordform will become unambiguous.
 			if (map.get(wordform).size() == 2) {
-				ambiguousWordformCount--;
+				ambiguousWordforms.remove(wordform);
 			}
 
 			Triple triple = new Triple(lemma, morphIRI, wordform);
@@ -221,8 +223,13 @@ public class TokenMapperImpl implements TokenMapper {
 	}
 
 
+	public Set<String> getAmbiguousWordforms() {
+		return ambiguousWordforms;
+	}
+
+
 	public int getAmbiguousWordformCount() {
-		return ambiguousWordformCount;
+		return ambiguousWordforms.size();
 	}
 
 

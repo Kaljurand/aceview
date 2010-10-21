@@ -53,7 +53,6 @@ import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
-import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 
 public class AxiomVerbalizer {
@@ -161,7 +160,7 @@ public class AxiomVerbalizer {
 		Set<OWLAxiom> allAxioms = Sets.newHashSet((OWLAxiom) axiom);
 
 		for (OWLEntity entity : axiom.getSignature()) {
-			allAxioms.addAll(OntologyUtils.entityToAnnotations(entity, ont));
+			allAxioms.addAll(entity.getAnnotationAssertionAxioms(ont));
 		}
 
 		OWLOntologyManager ontologyManager = ACETextManager.createOWLOntologyManager();

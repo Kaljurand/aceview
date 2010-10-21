@@ -21,8 +21,11 @@ import java.awt.BorderLayout;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 
+import org.protege.editor.owl.ui.renderer.OWLEntityRenderer;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.WordsHyperlinkListener;
@@ -70,17 +73,19 @@ public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 	@Override
 	protected OWLObject updateView() {
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
-		if (isShowing() && entity != null && Showing.isShow(entity)) {
-			String indexEntry = ACETextManager.getActiveACEText().getIndexEntry(entity);
-			if (indexEntry == null) {
-				editorpaneIndex.setText(ACETextManager.wrapInHtml("<em>No entries</em>"));
+
+		if (isShowing()) {
+			if (entity != null && Showing.isShow(entity)) {
+				String entityAnnotations = formatEntityAnnotations(entity, getOWLModelManager().getActiveOntology());
+				String indexEntry = ACETextManager.getActiveACEText().getIndexEntry(entity);
+				if (indexEntry == null) {
+					indexEntry = "<em>No entries</em>";
+				}
+				editorpaneIndex.setText(ACETextManager.wrapInHtml(entityAnnotations + indexEntry));
 			}
 			else {
-				editorpaneIndex.setText(ACETextManager.wrapInHtml(indexEntry));
+				editorpaneIndex.setText(ACETextManager.wrapInHtml(""));
 			}
-		}
-		else if (isShowing()) {
-			editorpaneIndex.setText(ACETextManager.wrapInHtml(""));
 		}
 		return entity;
 	}
@@ -91,5 +96,34 @@ public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 		if (editorpaneIndex != null) {
 			editorpaneIndex.setFont(owlRendererPreferences.getFont());
 		}
+	}
+
+
+	private String formatEntityAnnotations(OWLEntity entity, OWLOntology ont) {
+		StringBuilder str = new StringBuilder();
+		if (entity != null && ont != null) {
+			str.append("<table>");
+			OWLEntityRenderer entityRenderer = getOWLModelManager().getOWLEntityRenderer();
+
+			str.append("<tr><td>IRI</td><td>");
+			str.append(entity.getIRI());
+			str.append("</td></tr>");
+			str.append("<tr><td>Short form</td><td>");
+			str.append(entityRenderer.getShortForm(entity));
+			str.append("</td></tr>");
+			str.append("<tr><td>Rendering</td><td>");
+			str.append(entityRenderer.render(entity));
+			str.append("</td></tr>");
+
+			for (OWLAnnotation ann : entity.getAnnotations(ont)) {
+				str.append("<tr><td>");
+				str.append(ann.getProperty().getIRI().getFragment());
+				str.append("</td><td>");
+				str.append(ann.getValue());
+				str.append("</td></tr>");
+			}
+			str.append("</table>");
+		}
+		return str.toString();
 	}
 }
