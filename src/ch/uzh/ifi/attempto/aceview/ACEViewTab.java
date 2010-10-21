@@ -52,7 +52,6 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.RemoveAxiom;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
@@ -424,21 +423,12 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				logger.warn("AxiomVerbalizer produced a null-snippet for: " + logicalAxiom);
 			}
 			else {
-				// Create a new annotation based on the snippet (i.e. the verbalization)
-				OWLAnnotation acetextAnn = df.getOWLAnnotation(acetextAnnProp, df.getOWLLiteral(newSnippet.toString()));
-
-				// Add the new ACE text annotation to the existing annotations
-				Set<OWLAnnotation> annotations = Sets.newHashSet(logicalAxiom.getAnnotations());
-				annotations.add(acetextAnn);
-
-				// Now change the ontology
-
 				// TODO: use instead?: List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>();
 				List<OWLAxiomChange> changes = Lists.newArrayList();
-				// Remove the axiom
+				// Remove the axiom from the ontology
 				changes.add(new RemoveAxiom(ont, logicalAxiom));
 				// Add back the axiom, but now with the additional annotation 
-				changes.add(new AddAxiom(ont, logicalAxiom.getAxiomWithoutAnnotations().getAnnotatedAxiom(annotations)));
+				changes.add(new AddAxiom(ont, ACETextManager.annotateAxiomWithSnippet(df, logicalAxiom, newSnippet)));
 				// Apply the changes to the ontology
 				OntologyUtils.changeOntology(mngr, changes);
 			}

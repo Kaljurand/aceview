@@ -594,6 +594,8 @@ public final class ACETextManager {
 	 */
 	private static void addSnippet(ACEText<OWLEntity, OWLLogicalAxiom> acetext, ACESnippet snippet) {
 		acetext.add(snippet);
+		// TODO: BUG: we should pick the ontology that corresponds to the
+		// ACE text. This is not always the active ontology.
 		changeOntology(getAddChanges(owlModelManager.getActiveOntology(), snippet));
 		fireEvent(EventType.ACETEXT_CHANGED);
 	}
@@ -757,7 +759,7 @@ public final class ACETextManager {
 	 * @param snippet Snippet that provides the content of the annotations
 	 * @return New axiom (i.e. old axiom with new annotations)
 	 */
-	private static OWLLogicalAxiom annotateAxiomWithSnippet(OWLDataFactory df, OWLLogicalAxiom axiom, ACESnippet snippet) {
+	public static OWLLogicalAxiom annotateAxiomWithSnippet(OWLDataFactory df, OWLLogicalAxiom axiom, ACESnippet snippet) {
 		OWLAnnotationProperty acetextAnnProp = df.getOWLAnnotationProperty(acetextIRI);
 		OWLAnnotationProperty timestampAnnProp = df.getOWLAnnotationProperty(timestampIRI);
 
