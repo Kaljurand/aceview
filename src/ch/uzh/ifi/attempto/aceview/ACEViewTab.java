@@ -28,7 +28,6 @@ import org.protege.editor.owl.ui.renderer.OWLEntityRenderer;
 import org.protege.editor.owl.ui.renderer.OWLEntityRendererListener;
 import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.AddAxiom;
-import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -216,45 +215,48 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	}
 
 
-	private static void initACETextFromOntology(OWLOntologyManager ontologyManager, OWLDataFactory df, ACEViewPreferences prefs, OWLOntology ont) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+	private static void initACETextFromOntology(OWLOntologyManager mngr, OWLDataFactory df, ACEViewPreferences prefs, OWLOntology ont) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		OWLOntologyID iri = ont.getOntologyID();
 		Set<OWLEntity> entities = ont.getSignature();
 
 		logger.info("Init: ontology " + iri + " contains " + entities.size() + " referenced entities");
 
-		// For each entity:
-		// add morphological annotations (CN_sg, CN_pl, TV_sg, TV_pl, TV_vbg, PN_sg) to the ontology.
-		List<AddAxiomByACEView> changes = Lists.newArrayList();
-		for (OWLEntity entity : entities) {
-			if (Showing.isShow(entity)) {
-				Set<OWLAnnotationAssertionAxiom> annSet = MorphAnnotation.getMorphAnnotations(df, ont, entity);
-				logger.info("Init: entity " + entity + " adding annotations: " + annSet);
-				for (OWLAnnotationAssertionAxiom ax : annSet) {
-					changes.add(new AddAxiomByACEView(ont, ax));
-				}
-			}
-		}
-		OntologyUtils.changeOntology(ontologyManager, changes);
-
-
-		// For each OWLAnnotationAssertionAxiom,
-		// add a corresponding entry to the lexicon.
-		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(iri);
-		Set<OWLAnnotationAssertionAxiom> annotationAxioms = ont.getAxioms(AxiomType.ANNOTATION_ASSERTION);
-
-		for (OWLAnnotationAssertionAxiom annotationAxiom : annotationAxioms) {
-			addToLexicon(annotationAxiom, acetext.getTokenMapper());
-		}
-
+		// TODO: BUG: Make it possible to disable it by setting a preference.
+		addMorfAnnotations(mngr, df, ont, entities);
 
 		// Translate every OWL logical axiom into ACE snippet and add it to the ACE text.
 		// If the logical axiom is already annotated with an ACE snippet then add the snippet instead.
 		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce());
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(iri);
 
 		for (OWLLogicalAxiom logicalAxiom : ont.getLogicalAxioms()) {
 			logger.info("Init: Add axiom: " + logicalAxiom);
-			processAxiom(ont, df, ontologyManager, acetext, axiomVerbalizer, iri, logicalAxiom);
+			processAxiom(ont, df, mngr, acetext, axiomVerbalizer, iri, logicalAxiom);
 		}
+	}
+
+
+	/**
+	 * <p>For each entity:
+	 * add morphological annotations (CN_sg, CN_pl, TV_sg, TV_pl, TV_vbg, PN_sg) to the ontology.</p>
+	 * 
+	 * @param ontologyManager
+	 * @param df
+	 * @param ont
+	 * @param entities
+	 */
+	private static void addMorfAnnotations(OWLOntologyManager ontologyManager, OWLDataFactory df, OWLOntology ont, Set<OWLEntity> entities) {
+		List<AddAxiom> changes = Lists.newArrayList();
+		for (OWLEntity entity : entities) {
+			if (Showing.isShow(entity)) {
+				Set<OWLAnnotationAssertionAxiom> annSet = MorphAnnotation.getMorphAnnotations(df, ont, entity);
+				//logger.info("Init: entity " + entity + " adding annotations: " + annSet);
+				for (OWLAnnotationAssertionAxiom ax : annSet) {
+					changes.add(new AddAxiom(ont, ax));
+				}
+			}
+		}
+		OntologyUtils.changeOntology(ontologyManager, changes);
 	}
 
 
@@ -326,7 +328,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				}
 			}
 			else if (axiom instanceof OWLAnnotationAssertionAxiom) {
-				logger.info("Processing annotation: " + axiom);
+				//logger.info("Processing annotation: " + axiom);
 				OWLAnnotationAssertionAxiom annAx = (OWLAnnotationAssertionAxiom) axiom;
 				IRI annotationIRI = annAx.getProperty().getIRI();
 
@@ -547,28 +549,4 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		return removeList;
 	}
 
-
-	/**
-	 * <p>Adds an entry to the lexicon (token mapper), on the basis
-	 * of the given annotation axiom.</p>
-	 * 
-	 * @param annAx
-	 * @param tokenMapper
-	 */
-	private static void addToLexicon(OWLAnnotationAssertionAxiom annAx, TokenMapper tokenMapper) {
-		logger.info("Processing: " + annAx);
-		OWLAnnotationSubject subject = annAx.getSubject();
-		if (subject instanceof IRI) {
-			IRI annotationIRI = annAx.getProperty().getIRI();
-			if (MorphType.isMorphTypeIRI(annotationIRI)) {
-				String annValue = getAnnotationValueAsString(annAx.getValue());
-				if (annValue == null) {
-					logger.error("Malformed ACE lexicon annotation ignored: " + annAx);
-				}
-				else {
-					tokenMapper.addEntry(annValue, (IRI) subject, annotationIRI);
-				}
-			}
-		}
-	}
 }
