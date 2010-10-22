@@ -752,12 +752,15 @@ of questions.</td>
 </tbody>
 </table>
 
+
 <h2>Examples</h2>
 
 <p>Here are some example ACE texts and OWL/SWRL ontologies for you to play with.
 The ACE texts should be copied into the "Text view", after which "Update" should be pressed.
 The OWL ontologies can be opened in the usual way, via <span class="menu">File&rarr;Open...</span>.</p>
-<p>Reasoning with the examples was tested with Pellet 2.</p>
+<p>Reasoning with the examples was tested with the
+<a href="http://hermit-reasoner.com/">HermiT 1.3 reasoner</a> plugin.</p>
+
 
 <h3>People and Pets</h3>
 
@@ -767,6 +770,12 @@ and later manually modified a bit to make it more readable. Note that it
 uses the word `pet' as both a regular noun and
 a relational noun (<em>of</em>-construct). As a result you get an entity `pet'
 which is used via punning both as a class name and object property name.</p>
+
+<p>You can also verbalize the
+<a href="http://owl.cs.manchester.ac.uk/repository/download?ontology=file:/Users/seanb/Desktop/Cercedilla2005/hands-on/people.owl&amp;format=OWL/XML">original OWL version from the TONES Ontology Repository</a>.</p>
+
+<p>This text/ontology entails that <span class="acetext">Nothing is a mad-cow.</span>.</p>
+
 
 <h3>Countries</h3>
 
@@ -812,6 +821,23 @@ Whose child is a patricide whose child is somebody who is not a patricide?
 <p class="warning">The entailment explanation is unfortunately done by listing
 all the sentences in the text. A "branching explanation" would be better.</p>
 -->
+
+<h3>Zebra</h3>
+
+<p><a href="examples/zebra.ace.txt">zebra.ace.txt</a> (~45 snippets)
+constitutes one possible way to encode the Zebra puzzle in ACE. Our starting point
+was the formulation of the puzzle at
+<a href="http://stackoverflow.com/questions/318888">Stackoverflow: Solving “Who owns the Zebra” programmatically?</a>.
+(There exist many
+other slightly different formulations, where the only difference seems to
+be the choice of words, see more at
+<a href="http://en.wikipedia.org/wiki/Zebra_Puzzle">Wikipedia: Zebra Puzzle</a>).</p>
+
+<p>This text entails that <span class="acetext">German has Zebra.</span> but
+note that reasoners (at least HermiT and Pellet) take a long time to figure
+this out (especially considering the tiny size of this text).
+The explanation service will take even longer.</p>
+
 
 <h3>Five houses</h3>
 
