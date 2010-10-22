@@ -1,7 +1,7 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2010-10-19
+Version: 2010-10-22
 
 == License ==
 
@@ -40,7 +40,7 @@ Protege separately and set up the paths (as described below) to access the Prote
 
 === Eclipse files ==
 
-Only needed if you use Eclipse
+Only needed if you intend to use Eclipse to make changes to ACE View.
 
 * .classpath: Eclipse classpath configuration
 * .project: Eclipse project file
@@ -54,6 +54,15 @@ Only needed if you use Eclipse
 
 
 == Getting the source code of Protege, building it and running the result ==
+
+In order to build ACE View from the sources you don't need the sources
+of Protege or OWL-API, just download and install the latest released version
+of Protege and set the environment variable $PROTEGE_HOME to the root
+folder of this new installation. Note however that we develop (at least at the moment)
+against the latest svn version of Protege which means that ACE View is less likely
+to compile against the latest released version (depending on the time difference
+the latest Protege release has compared to its latest svn version).
+So it's a better idea to fetch the Protege sources from the svn, as described next.
 
 1. Read:
 
@@ -82,30 +91,40 @@ stable revision and occasionally test against that latest one.]
 
 == Setting up the ACE View Eclipse project ==
 
+We have tested the following with
+* Eclipse 3.5.2 on OS X 10.4 using Java 1.5
+* Eclipse 3.6.1 on Ubuntu 10.04 using Java 1.6.
+
 * Launch Eclipse and create a new Java project
 
-File -> New -> Project ...
-
-Project name: ACE View 1.3
-Create project from existing source
-Directory: /the root directory of the ACE View source/
+1. Choose: File -> New -> Project ...
+2. Set project name: ACE View 1.3
+3. Create project from existing source (in Eclipse 3.6 it is called a "nondefault location").
+4. Choose the folder: the root directory of the ACE View source (must contain the .classpath file)
+5. Configure the Eclipse variable PROTEGE41 (see the instructions below)
+6. The project is now going to be rebuilt resulting in no errors and some warnings.
+(There will be more warnings if you use Java 1.6, but don't worry about them.)
 
 The paths to the external jars are configured automatically based on the .classpath file.
 But you have to additionally set the Eclipse variable PROTEGE41 to point to $PROTEGE_HOME
 so that the Protege and OWL-API jars can be accessed.
 (You can also set PROTEGE41_SRC to point to the the Protege sources.)
+To do that follow this path of menus (in Eclipse 3.6.1):
+Project -> Properties -> Java Build Path -> Libraries -> Edit... -> Variable... -> New...
+Now type in the new variable PROTEGE41 and set the folder to whereever you have
+installed Protege.
 
 
 == Building ACE View and integrating it with Protege ==
 
-* Set $PROTEGE_HOME
+* Set $PROTEGE_HOME (put this into .bashrc or a similar startup script)
+
+* Go into the ACE View directory (must contain build.xml)
 
 * ant install: builds ACE View and installs it into $PROTEGE_HOME plugins directory
 
 * ant run: same as "ant install" but additionally starts Protege
 
-As a result, Protege is started with the latest changes that you have made
-to ACE View integrated.
 
 
 = Code =
@@ -121,7 +140,7 @@ to ACE View integrated.
 ./ch/uzh/ifi/attempto/aceview:
 	Most notable classes are:
 	ACESnippet: representation of a snippet
-	ACEText: representation of an ACE text (= set of snippets)
+	ACEText: representation of an ACE text (= ordered set of snippets)
 	ACETextManager: lots of important static methods, many generate events
 	in case a change in the ACE text occurs.
 	ACEPreferences: model for the ACE View preferences
@@ -176,7 +195,7 @@ modify these files to update the ACE View version number:
 * build.xml
 * plugin.xml
 * RELEASE_NOTES.html
-* update.properties (updated by "ant dist")
+* update.properties (updated automatically by "ant dist")
 
 == SVN properties ==
 
