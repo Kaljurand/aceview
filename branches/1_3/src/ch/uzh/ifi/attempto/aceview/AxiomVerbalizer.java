@@ -46,6 +46,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.SWRLRule;
 
 import com.google.common.collect.Sets;
 
@@ -82,14 +83,22 @@ public class AxiomVerbalizer {
 	 */
 	public ACESnippet verbalizeAxiom(OWLLogicalAxiom axiom, OWLOntology ont) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 
+		OWLOntologyID iri = ont.getOntologyID();
+
+		// TODO: Currently the verbalization of SWRL rules is not supported.
+		// We just return the Protege rendering.
+		if (axiom instanceof SWRLRule) {
+			OWLLogicalAxiom annotationlessAxiom = (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations();
+			return new ACESnippetImpl(iri, "", axiom, getAlternativeRendering(annotationlessAxiom));
+		}
+
+
 		// BUG: this is a bit of a hack for performance reasons.
 		// We verbalize simple axioms without having to use
 		// the verbalizer webservice. It seems that about 50% of
 		// the axioms in real-world ontologies are simple SubClassOf-axioms,
 		// so it really pays off performancewise to verbalize them directly in Java.
 		String verbalization = verbalizeSimpleAxiom(axiom, ont);
-
-		OWLOntologyID iri = ont.getOntologyID();
 
 		if (verbalization != null) {
 			logger.info("Simple axiom verbalized: " + verbalization);
@@ -110,22 +119,21 @@ public class AxiomVerbalizer {
 			JOptionPane.showMessageDialog(null, "OWL verbalizer error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
-		ACESnippet snippet = null;
 		if (verbalization == null) {
-			// Axioms not verbalized, using Manchester Syntax rendering.
-			logger.info("Axioms not verbalized, using Manchester Syntax rendering");
-			String rendering = ACETextManager.getOWLModelManager().getRendering(annotationlessAxiom);
-			if (rendering == null) {
-				rendering = annotationlessAxiom.toString();
-			}
-
-			snippet = new ACESnippetImpl(iri, "", axiom, rendering);
-		}
-		else {
-			snippet = new ACESnippetImpl(iri, verbalization, axiom);
+			return new ACESnippetImpl(iri, "", axiom, getAlternativeRendering(annotationlessAxiom));
 		}
 
-		return snippet;
+		return new ACESnippetImpl(iri, verbalization, axiom);
+	}
+
+
+	private String getAlternativeRendering(OWLLogicalAxiom axiom) {
+		logger.info("Axiom is not verbalized, using Protege rendering.");
+		String rendering = ACETextManager.getOWLModelManager().getRendering(axiom);
+		if (rendering == null) {
+			rendering = axiom.toString();
+		}
+		return rendering;
 	}
 
 

@@ -50,6 +50,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.RemoveAxiom;
+import org.semanticweb.owlapi.model.SWRLRule;
 
 import com.google.common.collect.Lists;
 
@@ -394,9 +395,9 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 *   <li>If not then
 	 *   <ol>
 	 *    <li>verbalize the axiom</li>
-	 *    <li>add the verbalization to the ACE text</li>
 	 *    <li>add the verbalization as an annotation to the axiom</li>
-	 *    <li>put the new annotation axiom into the ontology</li>
+	 *    <li>renew the axiom in the ontology (i.e. remove it and add it back with the annotation),
+	 *    triggering a new AddAxiom-event which will be picked up by case 1.</li>
 	 *   </ol>
 	 *   </li>
 	 *  </ol>
@@ -416,6 +417,13 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @throws OWLOntologyChangeException
 	 */
 	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager mngr, ACEText acetext, AxiomVerbalizer axiomVerbalizer, OWLOntologyID ns, OWLLogicalAxiom logicalAxiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+
+		// TODO: BUG: This is here only to avoid an infinite loop
+		// which occurs because annotation of SWRL-rules does not work
+		// yet in Protege 4.1.
+		if (logicalAxiom instanceof SWRLRule) {
+			return;
+		}
 
 		ACESnippet newSnippet = null;
 
@@ -442,7 +450,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				List<OWLAxiomChange> changes = Lists.newArrayList();
 				// Remove the axiom from the ontology
 				changes.add(new RemoveAxiom(ont, logicalAxiom));
-				// Add back the axiom, but now with the additional annotation 
+				// Add back the axiom, but now with the additional annotation.
 				changes.add(new AddAxiom(ont, ACETextManager.annotateAxiomWithSnippet(df, logicalAxiom, newSnippet)));
 				// Apply the changes to the ontology
 				OntologyUtils.changeOntology(mngr, changes);
