@@ -54,6 +54,7 @@ import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
+import ch.uzh.ifi.attempto.ape.ACEUtils;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 
 public class AxiomVerbalizer {
@@ -271,26 +272,13 @@ public class AxiomVerbalizer {
 
 	/**
 	 * <p>Decides which indefinite article (`a' vs `an') to use, given
-	 * a noun (that would follow the article in the text).
-	 * The patters have been written by Tobias Kuhn, in core/TextContainer.java
-	 * in the AceWiki distribution.</p>
+	 * a noun (that would follow the article in the text).</p>
 	 * 
 	 * @param word is an English noun
 	 * @return either 'a' or 'an' depending on the given noun
 	 */
 	private static String getIndefiniteArticle(String word) {
-		String tn = word.toLowerCase();
-		boolean an = false;
-		if (tn.matches("[aeiou].*")) an = true;
-		if (tn.matches("[fhlmnrsx]")) an = true;
-		if (tn.matches("[fhlmnrsx]-.*")) an = true;
-		if (tn.equals("u")) an = false;
-		if (tn.matches("u-.*")) an = false;
-		if (tn.matches("u[rtn]i.*")) an = false;
-		if (tn.matches("use.*")) an = false;
-		if (tn.matches("uk.*")) an = false;
-
-		if (an) {
+		if (ACEUtils.useIndefiniteArticleAn(word)) {
 			return "an";
 		}
 		return "a";
