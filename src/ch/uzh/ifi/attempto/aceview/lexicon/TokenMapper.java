@@ -23,7 +23,7 @@ public interface TokenMapper {
 	 * @param lemma
 	 * @param morph
 	 */
-	void addEntry(String token, IRI lemma, IRI morph);
+	void addEntry(String token, IRI lemma, MorphType morph);
 
 
 	/**
@@ -32,7 +32,7 @@ public interface TokenMapper {
 	 * @param lemma
 	 * @param morph
 	 */
-	void removeEntry(String token, IRI lemma, IRI morph);
+	void removeEntry(String token, IRI lemma, MorphType morph);
 
 
 	/**
@@ -176,10 +176,10 @@ public interface TokenMapper {
 	/**
 	 * 
 	 * @param entityIRI
-	 * @param morphIRI
+	 * @param morphType
 	 * @return Wordform of the given entity in the given morphological form
 	 */
-	String getWordform(IRI entityIRI, IRI morphIRI);
+	String getWordform(IRI entityIRI, MorphType morphType);
 
 
 	int getWordformPnSgCount();

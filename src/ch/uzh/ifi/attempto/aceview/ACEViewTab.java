@@ -53,6 +53,8 @@ import org.semanticweb.owlapi.model.SWRLRule;
 
 import com.google.common.collect.Lists;
 
+import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.EventType;
@@ -333,7 +335,9 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				OWLAnnotationAssertionAxiom annAx = (OWLAnnotationAssertionAxiom) axiom;
 				IRI annotationIRI = annAx.getProperty().getIRI();
 
-				if (MorphType.isMorphTypeIRI(annotationIRI)) {
+				MorphType morphType = MorphType.getMorphType(annotationIRI);
+
+				if (morphType != null) {
 					OWLAnnotationSubject subject = annAx.getSubject();
 
 					if (subject instanceof IRI) {
@@ -346,18 +350,18 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 						else {
 							lexiconAxiomCounter++;
 							if (change instanceof AddAxiom) {
-								acelexicon.addEntry(annValue, (IRI) subject, annotationIRI);
+								acelexicon.addEntry(annValue, (IRI) subject, morphType);
 							}
 							else if (change instanceof RemoveAxiom) {
-								acelexicon.removeEntry(annValue, (IRI) subject, annotationIRI);
+								acelexicon.removeEntry(annValue, (IRI) subject, morphType);
 							}
 						}
 					}
 				}
 			}
 			else if (axiom instanceof OWLDeclarationAxiom) {
+				OWLDeclarationAxiom declarationAxiom = (OWLDeclarationAxiom) axiom;
 				if (prefs.isUseLexicon()) {
-					OWLDeclarationAxiom declarationAxiom = (OWLDeclarationAxiom) axiom;
 
 					if (change instanceof AddAxiom) {
 						OWLEntity entity = declarationAxiom.getEntity();
@@ -373,6 +377,9 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 						// happens when an entity is undeclared).
 						logger.info("Del declaration axiom (not handling): " + declarationAxiom);
 					}
+				}
+				else {
+					updateLexicon(declarationAxiom.getEntity(), acelexicon, change);
 				}
 			}
 			else {
@@ -554,4 +561,29 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		return removeList;
 	}
 
+
+	/**
+	 * <p>Updates the lexicon on the basis of the entity but applies very simple
+	 * morphological synthesis (= every wordform is identical to the Protege rendering
+	 * of the entity, e.g. singular and plural forms are identical). Also, the morph.
+	 * annotation axioms are not generated.</p>
+	 * 
+	 * @param entity
+	 * @param tokenMapper
+	 * @param change
+	 */
+	private static void updateLexicon(OWLEntity entity, TokenMapper tokenMapper, OWLOntologyChange change) {
+		IRI subject = entity.getIRI();
+		String lemma = subject.getFragment(); // TODO: or toRendering()
+
+		EntryType entryType = LexiconUtils.getLexiconEntryType(entity);
+		for (MorphType morphType : MorphType.getMorphTypeSet(entryType)) {
+			if (change instanceof AddAxiom) {
+				tokenMapper.addEntry(lemma, subject, morphType);
+			}
+			else if (change instanceof RemoveAxiom) {
+				tokenMapper.removeEntry(lemma, subject, morphType);
+			}
+		}
+	}
 }

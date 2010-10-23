@@ -70,38 +70,37 @@ public class TokenMapperImpl implements TokenMapper {
 	}
 
 
-	public void addEntry(String wordform, IRI lemma, IRI morphIRI) {
-		if (MorphType.isMorphTypeIRI(morphIRI)) {
-			Triple triple = new Triple(lemma, morphIRI, wordform);
+	public void addEntry(String wordform, IRI lemma, MorphType morphType) {
+		Triple triple = new Triple(lemma, morphType, wordform);
 
-			map.put(wordform, triple);
-			map2.put(lemma, triple);
-			ac.add(wordform);
+		map.put(wordform, triple);
+		map2.put(lemma, triple);
+		ac.add(wordform);
 
-			// If there are now exactly 2 triples for the
-			// same wordform then this wordform has become ambiguous.
-			if (map.get(wordform).size() == 2) {
-				ambiguousWordforms.add(wordform);
-			}
+		// If there are now exactly 2 triples for the
+		// same wordform then this wordform has become ambiguous.
+		if (map.get(wordform).size() == 2) {
+			ambiguousWordforms.add(wordform);
+		}
 
-			switch (MorphType.getMorphType(morphIRI)) {
-			case PN_SG:
-				pnSgCount++; break;
-			case CN_SG:
-				cnSgCount++; break;
-			case CN_PL:
-				cnPlCount++; break;
-			case TV_SG:
-				tvSgCount++; break;
-			case TV_PL:
-				tvPlCount++; break;
-			case TV_VBG:
-				tvVbgCount++; break;
-			default:
-				throw new RuntimeException("Programmer expected PN_SG/CN_SG/CN_PL/TV_SG/TV_PL/TV_VBG");
-			}
+		switch (morphType) {
+		case PN_SG:
+			pnSgCount++; break;
+		case CN_SG:
+			cnSgCount++; break;
+		case CN_PL:
+			cnPlCount++; break;
+		case TV_SG:
+			tvSgCount++; break;
+		case TV_PL:
+			tvPlCount++; break;
+		case TV_VBG:
+			tvVbgCount++; break;
+		default:
+			throw new RuntimeException("Programmer expected PN_SG/CN_SG/CN_PL/TV_SG/TV_PL/TV_VBG");
+		}
 
-			/*
+		/*
 			switch (MorphType.getWordClass(morphIRI)) {
 			case CN:
 				cnCount++; break;
@@ -112,52 +111,50 @@ public class TokenMapperImpl implements TokenMapper {
 			default:
 				throw new RuntimeException("Programmer expected CN/TV/PN");
 			}
-			 */
-			logger.info("Added: " + wordform + " -> " + triple);
-		}
+		 */
+		logger.info("Added: " + wordform + " -> " + triple);
 	}
 
 
-	public void removeEntry(String wordform, IRI lemma, IRI morphIRI) {
+	public void removeEntry(String wordform, IRI lemma, MorphType morphType) {
 		// TODO: BUG: check that the triple is in the map
-		if (MorphType.isMorphTypeIRI(morphIRI)) {
 
-			// If there are currently exactly 2 triples for the
-			// same wordform then this wordform will become unambiguous.
-			if (map.get(wordform).size() == 2) {
-				ambiguousWordforms.remove(wordform);
-			}
+		// If there are currently exactly 2 triples for the
+		// same wordform then this wordform will become unambiguous.
+		if (map.get(wordform).size() == 2) {
+			ambiguousWordforms.remove(wordform);
+		}
 
-			Triple triple = new Triple(lemma, morphIRI, wordform);
-			map.remove(wordform, triple);
-			map2.remove(lemma, triple);
-			if (! map.containsKey(wordform)) {
-				ac.remove(wordform);
-				logger.info("Removed: " + wordform + " -> " + triple + " (no tokens remaining)");
-			}
-			else {
-				logger.info("Removed: " + wordform + " -> " + triple);
-			}
+		Triple triple = new Triple(lemma, morphType, wordform);
+		map.remove(wordform, triple);
+		map2.remove(lemma, triple);
+		if (! map.containsKey(wordform)) {
+			ac.remove(wordform);
+			logger.info("Removed: " + wordform + " -> " + triple + " (no tokens remaining)");
+		}
+		else {
+			logger.info("Removed: " + wordform + " -> " + triple);
+		}
 
 
-			switch (MorphType.getMorphType(morphIRI)) {
-			case PN_SG:
-				pnSgCount--; break;
-			case CN_SG:
-				cnSgCount--; break;
-			case CN_PL:
-				cnPlCount--; break;
-			case TV_SG:
-				tvSgCount--; break;
-			case TV_PL:
-				tvPlCount--; break;
-			case TV_VBG:
-				tvVbgCount--; break;
-			default:
-				throw new RuntimeException("Programmer expected PN_SG/CN_SG/CN_PL/TV_SG/TV_PL/TV_VBG");
-			}
+		switch (morphType) {
+		case PN_SG:
+			pnSgCount--; break;
+		case CN_SG:
+			cnSgCount--; break;
+		case CN_PL:
+			cnPlCount--; break;
+		case TV_SG:
+			tvSgCount--; break;
+		case TV_PL:
+			tvPlCount--; break;
+		case TV_VBG:
+			tvVbgCount--; break;
+		default:
+			throw new RuntimeException("Programmer expected PN_SG/CN_SG/CN_PL/TV_SG/TV_PL/TV_VBG");
+		}
 
-			/*
+		/*
 			switch (MorphType.getWordClass(morphIRI)) {
 			case CN:
 				cnCount--; break;
@@ -168,8 +165,7 @@ public class TokenMapperImpl implements TokenMapper {
 			default:
 				throw new RuntimeException("Programmer expected CN/TV/PN");
 			}
-			 */
-		}
+		 */
 	}
 
 
@@ -314,9 +310,9 @@ public class TokenMapperImpl implements TokenMapper {
 	}
 
 
-	public String getWordform(IRI entityIRI, IRI morphIRI) {
+	public String getWordform(IRI entityIRI, MorphType morphType) {
 		for (Triple t : map2.get(entityIRI)) {
-			if (t.hasProperty(morphIRI)) {
+			if (t.hasProperty(morphType)) {
 				return t.getObject();
 			}
 		}
