@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -54,6 +54,7 @@ public final class ACEViewPreferences {
 	private static final String PARSEWITHUNDEF_KEY = "PARSEWITHUNDEF";
 	private static final String USE_MOS_KEY = "USE_MOS";
 	private static final String UPDATE_ANSWERS_ON_CLASSIFY_KEY = "UPDATE_ANSWERS_ON_CLASSIFY";
+	private static final String USE_LEXICON_KEY = "USE_LEXICON";
 
 
 	public static synchronized ACEViewPreferences getInstance() {
@@ -275,4 +276,19 @@ public final class ACEViewPreferences {
 		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, UPDATE_ANSWERS_ON_CLASSIFY_KEY);
 		return prefs.getString(UPDATE_ANSWERS_ON_CLASSIFY_KEY, Boolean.toString(false)).equals(Boolean.toString(true));
 	}
+
+	// Is the lexicon used
+	public void setUseLexicon(boolean b) {
+		PreferencesManager prefMan = PreferencesManager.getInstance();
+		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, USE_LEXICON_KEY);
+		prefs.putString(USE_LEXICON_KEY, Boolean.toString(b));
+	}
+
+	// Default: true
+	public boolean isUseLexicon() {
+		PreferencesManager prefMan = PreferencesManager.getInstance();
+		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, USE_LEXICON_KEY);
+		return prefs.getString(USE_LEXICON_KEY, Boolean.toString(true)).equals(Boolean.toString(true));
+	}
+
 }

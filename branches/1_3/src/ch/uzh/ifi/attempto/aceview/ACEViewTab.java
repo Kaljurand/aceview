@@ -137,6 +137,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			String entityRendering = renderer.render(entity);
 			logger.info("Rendering for " + entity + " with type " + entity.getEntityType() + " changed to " + entityRendering);
 
+			// TODO: BUG: only add morph annotations if prefs.isUseLexicon == true
 			/*
 			OWLModelManager mm = getOWLModelManager();
 			OWLOntology ont = mm.getActiveOntology();
@@ -200,35 +201,35 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 */
 	private static void initACEText() throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 		OWLModelManager mm = ACETextManager.getOWLModelManager();
-		OWLOntologyManager ontologyManager = mm.getOWLOntologyManager();
+		OWLOntologyManager mngr = mm.getOWLOntologyManager();
 		OWLDataFactory df = mm.getOWLDataFactory();
 		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 		Set<OWLOntology> ontologies = mm.getOntologies();
 
-		logger.info("Init: ontologies: " + ontologies);
+		logger.info("Init: ontology count: " + ontologies.size());
 
 		ACETextManager.setInitCompleted(false);
 		for (OWLOntology ont : ontologies) {
-			initACETextFromOntology(ontologyManager, df, prefs, ont);
+			logger.info("Init: ontology: " + ont);
+			initACETextFromOntology(mngr, df, prefs, ont);
 		}
 		ACETextManager.setInitCompleted(true);
 	}
 
 
 	private static void initACETextFromOntology(OWLOntologyManager mngr, OWLDataFactory df, ACEViewPreferences prefs, OWLOntology ont) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
-		OWLOntologyID iri = ont.getOntologyID();
-		Set<OWLEntity> entities = ont.getSignature();
 
-		logger.info("Init: ontology " + iri + " contains " + entities.size() + " referenced entities");
-
-		// TODO: BUG: Make it possible to disable it by setting a preference.
-		addMorfAnnotations(mngr, df, ont, entities);
+		if (prefs.isUseLexicon()) {
+			Set<OWLEntity> entities = ont.getSignature();
+			addMorfAnnotations(mngr, df, ont, entities);
+		}
 
 		// Translate every OWL logical axiom into ACE snippet and add it to the ACE text.
 		// If the logical axiom is already annotated with an ACE snippet then add the snippet instead.
-		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce());
+		OWLOntologyID iri = ont.getOntologyID();
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(iri);
 
+		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce());
 		for (OWLLogicalAxiom logicalAxiom : ont.getLogicalAxioms()) {
 			logger.info("Init: Add axiom: " + logicalAxiom);
 			processAxiom(ont, df, mngr, acetext, axiomVerbalizer, iri, logicalAxiom);
@@ -355,19 +356,23 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				}
 			}
 			else if (axiom instanceof OWLDeclarationAxiom) {
-				OWLDeclarationAxiom declarationAxiom = (OWLDeclarationAxiom) axiom;
+				if (prefs.isUseLexicon()) {
+					OWLDeclarationAxiom declarationAxiom = (OWLDeclarationAxiom) axiom;
 
-				if (change instanceof AddAxiom) {
-					OWLEntity entity = declarationAxiom.getEntity();
-					logger.info("Add declaration axiom: " + entity);
-					Set<OWLAnnotationAssertionAxiom> morphAnnotations = MorphAnnotation.getMorphAnnotations(df, changeOnt, entity);
-					logger.info("Triggered: add: " + morphAnnotations);
-					ACETextManager.addAxiomsToOntology(ontologyManager, changeOnt, morphAnnotations);
-				}
-				else if (change instanceof RemoveAxiom) {
-					logger.info("Del declaration axiom: " + declarationAxiom);
-					logger.warn("NOT IMPLEMENTED");
-					// TODO: BUG: not implemented
+					if (change instanceof AddAxiom) {
+						OWLEntity entity = declarationAxiom.getEntity();
+						logger.info("Add declaration axiom: " + entity);
+						Set<OWLAnnotationAssertionAxiom> morphAnnotations = MorphAnnotation.getMorphAnnotations(df, changeOnt, entity);
+						logger.info("Triggered: add: " + morphAnnotations);
+						ACETextManager.addAxiomsToOntology(ontologyManager, changeOnt, morphAnnotations);
+					}
+					else if (change instanceof RemoveAxiom) {
+						// TODO: BUG: We probably do not need to do anything here
+						// as nothing changes for the ACE text and the lexicon is
+						// changed if respective morph. annotations are removed (which
+						// happens when an entity is undeclared).
+						logger.info("Del declaration axiom (not handling): " + declarationAxiom);
+					}
 				}
 			}
 			else {

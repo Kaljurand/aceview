@@ -61,6 +61,7 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 	private final JCheckBox checkboxParseWithUndefinedTokens = new JCheckBox();
 	private final JCheckBox checkboxUseMos = new JCheckBox();
 	private final JCheckBox checkboxUpdateAnswersOnClassify = new JCheckBox();
+	private final JCheckBox checkboxUseLexicon = new JCheckBox();
 
 	private JTextField textfieldApe;
 
@@ -104,6 +105,7 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		prefs.setParseWithUndefinedTokens(checkboxParseWithUndefinedTokens.isSelected());
 		prefs.setUseMos(checkboxUseMos.isSelected());
 		prefs.setUpdateAnswersOnClassify(checkboxUpdateAnswersOnClassify.isSelected());
+		prefs.setUseLexicon(checkboxUseLexicon.isSelected());
 
 		// Because the parser settings might have changed, we update the parser holder.
 		try {
@@ -148,6 +150,9 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 
 		checkboxUpdateAnswersOnClassify.setSelected(prefs.isUpdateAnswersOnClassify());
 		checkboxUpdateAnswersOnClassify.setToolTipText("Update answers automatically after each classification.");
+
+		checkboxUseLexicon.setSelected(prefs.isUseLexicon());
+		checkboxUseLexicon.setToolTipText("For each entity generate morphological annotations (e.g. plural forms) and use them when displaying the entity in ACE sentences.");
 
 		textfieldApe = new JTextField(prefs.getApePath());
 
@@ -259,13 +264,17 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		boxUpdateAnswersOnClassify.add(checkboxUpdateAnswersOnClassify);
 		boxUpdateAnswersOnClassify.add(new JLabel("Automatically update answers after classifying"));
 
+		Box boxUseLexicon = new Box(BoxLayout.X_AXIS);
+		boxUseLexicon.add(checkboxUseLexicon);
+		boxUseLexicon.add(new JLabel("Use the lexicon of morphological annotations"));
 
-		JPanel panelOptions = new JPanel(new GridLayout(4, 1));
+		JPanel panelOptions = new JPanel(new GridLayout(5, 1));
 		panelOptions.setBorder(ComponentFactory.createTitledBorder("Options"));
 		panelOptions.add(boxParaphrase);
 		panelOptions.add(boxParseWithUndefinedTokens);
 		panelOptions.add(boxUseMos);
 		panelOptions.add(boxUpdateAnswersOnClassify);
+		panelOptions.add(boxUseLexicon);
 
 
 		Box holderBox = new Box(BoxLayout.Y_AXIS);
