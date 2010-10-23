@@ -484,7 +484,7 @@ public class ACESnippetImpl implements ACESnippet {
 				String base = getOntologyIRIAsString();
 				mosAxiom = ACETextManager.parseWithMos(sentences.iterator().next(), base);
 			} catch (ParserException e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 			if (mosAxiom != null) {
 				axiomSet = ImmutableSet.of(mosAxiom);

@@ -528,6 +528,10 @@ public final class ACETextManager {
 
 
 	/**
+	 * @deprecated
+	 * 
+	 * TODO: Remove: nothing is calling it.
+	 * 
 	 * <p>Returns a list of changes that would remove all the annotations
 	 * from the given ontology, that annotate the given entity and have
 	 * the given IRI as the annotation IRI.</p>
@@ -537,7 +541,7 @@ public final class ACETextManager {
 	 * @param iri IRI of the annotation
 	 * @return List of remove-changes
 	 */
-	public static List<RemoveAxiomByACEView> findEntityAnnotationAxioms(OWLOntology ont, OWLEntity entity, IRI iri) {
+	private static List<RemoveAxiomByACEView> findEntityAnnotationAxioms(OWLOntology ont, OWLEntity entity, IRI iri) {
 		List<RemoveAxiomByACEView> axioms = Lists.newArrayList();
 		for (OWLAnnotationAssertionAxiom axiom : entity.getAnnotationAssertionAxioms(ont)) {
 			if (axiom.getProperty().getIRI().equals(iri)) {

@@ -1,6 +1,10 @@
 package ch.uzh.ifi.attempto.aceview.lexicon;
 
+import java.util.Set;
+
 import org.semanticweb.owlapi.model.IRI;
+
+import com.google.common.collect.Sets;
 
 public enum MorphType {
 
@@ -14,6 +18,7 @@ public enum MorphType {
 	private final IRI iri;
 	private final EntryType entryType;
 	private final FieldType fieldType;
+
 
 	private MorphType(String iriAsString, EntryType entryType, FieldType fieldType) {
 		this.iri = IRI.create(iriAsString);
@@ -36,6 +41,7 @@ public enum MorphType {
 	public boolean hasIRI(IRI iri) {
 		return this.iri.equals(iri);
 	}
+
 
 	/**
 	 * <p>Returns the {@link MorphType} that corresponds to the given IRI.</p>
@@ -115,7 +121,30 @@ public enum MorphType {
 	}
 
 
-	// TODO: BUG: This is slow, we should match against a set.
+	/**
+	 * TODO: BUG: initialize these sets at construction time
+	 * @param entryType
+	 * @return
+	 */
+	public static Set<MorphType> getMorphTypeSet(EntryType entryType) {
+		switch (entryType) {
+		case CN:
+			return Sets.immutableEnumSet(CN_SG, CN_PL);
+		case TV:
+			return Sets.immutableEnumSet(TV_SG, TV_PL, TV_VBG);
+		case PN:
+			return Sets.immutableEnumSet(PN_SG);
+		default:
+			throw new RuntimeException("Programmer expected CN, TV, or PN");
+		}
+	}
+
+
+	/**
+	 * @deprecated
+	 * 
+	 * TODO: BUG: This is slow, we should match against a set.
+	 */
 	public static boolean isMorphTypeIRI(IRI annotationIRI) {
 		return getMorphType(annotationIRI) != null;
 	}

@@ -8,11 +8,11 @@ import ch.uzh.ifi.attempto.ape.LexiconEntry;
 public class Triple {
 
 	private final String object;
-	private final IRI property;
+	private final MorphType property;
 	private final IRI subject;
 	private final int hashCode;
 
-	public Triple(IRI subject, IRI property, String object) {
+	public Triple(IRI subject, MorphType property, String object) {
 		this.subject = subject;
 		this.property = property;
 		this.object = object;
@@ -25,7 +25,7 @@ public class Triple {
 		return subject;
 	}
 
-	public IRI getPropertyIRI() {
+	public MorphType getProperty() {
 		return property;
 	}
 
@@ -33,8 +33,8 @@ public class Triple {
 		return object;
 	}
 
-	public boolean hasProperty(IRI iri) {
-		return iri.equals(property);
+	public boolean hasProperty(MorphType morphType) {
+		return morphType.equals(property);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class Triple {
 	public LexiconEntry getLexiconEntry() {
 		//String lemma = subject.toString();
 		String lemma = subject.getFragment();
-		switch (MorphType.getMorphType(property)) {
+		switch (property) {
 		case PN_SG:
 			return LexiconEntry.createPropernameSgEntry(object, lemma, Gender.NEUTRAL);
 		case CN_SG:
@@ -64,14 +64,14 @@ public class Triple {
 		case TV_VBG:
 			return LexiconEntry.createTrVerbPPEntry(object, lemma);
 		default:
-			throw new RuntimeException("Programmer error: missed a case for: " + MorphType.getMorphType(property));
+			throw new RuntimeException("Programmer error: missed a case for: " + property);
 		}
 	}
 
 
 	@Override
 	public String toString() {
-		return subject.getFragment() + " :: " + property.getFragment() + " :: " + object;
+		return subject.getFragment() + " :: " + property + " :: " + object;
 	}
 
 
@@ -80,7 +80,7 @@ public class Triple {
 		if (this == obj) return true;
 		if ((obj == null) || (obj.getClass() != this.getClass())) return false;
 		Triple t = (Triple) obj;
-		return subject.equals(t.getSubjectIRI()) && object.equals(t.getObject()) && property.equals(t.getPropertyIRI());
+		return subject.equals(t.getSubjectIRI()) && object.equals(t.getObject()) && property.equals(t.getProperty());
 	}
 
 
