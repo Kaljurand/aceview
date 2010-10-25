@@ -39,6 +39,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
+import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapperImpl;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
@@ -332,14 +333,21 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 
 	public String getIndexBody() {
-		String html = "";
+		StringBuilder html = new StringBuilder();
 		for (Map.Entry<OWLEntity, Set<ACESnippet>> entry : entityToSnippets.entrySet()) {
-			OWLEntity word = entry.getKey();
+			OWLEntity entity = entry.getKey();
+			String entityRendering = ACETextManager.getRendering(entity);
 			Set<ACESnippet> snippets = entry.getValue();
-			html += "<p><strong><a name='" + word + "'>" + word + "</a></strong> (" + snippets.size() + ")</p>\n";
-			html += snippetsToHtml(snippets, lexicon);
+			html.append("<p><strong><a name='");
+			html.append(LexiconUtils.getHrefId(entity));
+			html.append("'>");
+			html.append(entityRendering);
+			html.append("</a></strong> (");
+			html.append(snippets.size());
+			html.append(")</p>\n");
+			html.append(snippetsToHtml(snippets, lexicon));
 		}
-		return html;
+		return html.toString();
 	}
 
 
