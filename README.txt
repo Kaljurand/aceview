@@ -1,7 +1,7 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2010-10-22
+Version: 2010-10-25
 
 == License ==
 
@@ -113,6 +113,10 @@ To do that follow this path of menus (in Eclipse 3.6.1):
 Project -> Properties -> Java Build Path -> Libraries -> Edit... -> Variable... -> New...
 Now type in the new variable PROTEGE41 and set the folder to whereever you have
 installed Protege.
+
+=== More notes ===
+
+* For spellchecking use the dictionary (i.e. list of exceptional words) utils/eclipse_dictionary.txt
 
 
 == Building ACE View and integrating it with Protege ==

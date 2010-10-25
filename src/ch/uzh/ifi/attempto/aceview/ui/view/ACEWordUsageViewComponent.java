@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -27,12 +27,19 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.WordsHyperlinkListener;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
+/**
+ * <p>Shows the selected entity, its rendering and annotations, and a list
+ * of ACE snippets that reference this entity.</p>
+ * 
+ * @author Kaarel Kaljurand
+ */
 public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 
 	private JEditorPane editorpaneIndex;
@@ -76,12 +83,16 @@ public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 
 		if (isShowing()) {
 			if (entity != null && Showing.isShow(entity)) {
-				String entityAnnotations = formatEntityAnnotations(entity, getOWLModelManager().getActiveOntology());
-				String indexEntry = ACETextManager.getActiveACEText().getIndexEntry(entity);
+				OWLOntology activeOntology = getOWLModelManager().getActiveOntology();
+				String entityAnnotations = formatEntityAnnotations(entity, activeOntology);
+				ACEText<OWLEntity, ?> acetext = ACETextManager.getACEText(activeOntology.getOntologyID());
+				String indexEntry = acetext.getIndexEntry(entity);
 				if (indexEntry == null) {
-					indexEntry = "<em>No entries</em>";
+					indexEntry = "";
 				}
-				editorpaneIndex.setText(ACETextManager.wrapInHtml(entityAnnotations + indexEntry));
+				int snippetCount = acetext.getSnippetCount(entity);
+				String thereAreXSnippets = "<p>There are " + snippetCount + " referencing snippets.</p>";
+				editorpaneIndex.setText(ACETextManager.wrapInHtml(entityAnnotations + thereAreXSnippets + indexEntry));
 			}
 			else {
 				editorpaneIndex.setText(ACETextManager.wrapInHtml(""));

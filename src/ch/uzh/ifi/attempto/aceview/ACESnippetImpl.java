@@ -214,40 +214,54 @@ public class ACESnippetImpl implements ACESnippet {
 			return "<span color='red'>" + altRendering + "</span>";
 		}
 
-		String span = "";
+		StringBuilder sb = new StringBuilder();
 
 		for (ACESentence sentence : sentences) {
 			for (ACEToken token : sentence.getTokens()) {
 				if (token.isOrdinationWord()) {
-					span += "<span color='green'>" + token + "</span>";				
+					sb.append("<span color='green'>");
+					sb.append(token);
+					sb.append("</span>");				
 				}
 				else if (token.isQuotedString() || token.isNumber()) {
-					span += "<i>" + token + "</i>";
+					sb.append("<i>");
+					sb.append(token);
+					sb.append("</i>");
 				}
 				else if (token.isFunctionWord()) {
-					span += token;
+					sb.append(token);
 				}
 				else if (token.isBadToken()) {
-					span += "<span color='red'>" + token + "</span>";
+					sb.append("<span color='red'>");
+					sb.append(token);
+					sb.append("</span>");
 				}
 				else {
 					// TODO: BUG: in case a wordform maps to multiple different entities then
 					// we just take the first. This shouldn't occur often though.
 					IRI entityIRI = aceLexicon.getWordformIRI(token.toString());
 					if (entityIRI == null) {
-						span += "<span color='#777777'>" + token + "</span>";
+						sb.append("<span color='#777777'>");
+						sb.append(token);
+						sb.append("</span>");
 					}
 					else {
 						// TODO: FIX THIS
 						// EntryType type = LexiconUtils.getLexiconEntryType(firstEntity);
 						EntryType type = EntryType.CN;
-						span += "<a href='#" + type + ":" + entityIRI.getFragment() + "'>" + token + "</a>";
+						sb.append("<a href='#");
+						sb.append(type);
+						sb.append(':');
+						sb.append(entityIRI.getFragment());
+						sb.append("'>");
+						sb.append(token);
+						sb.append("</a>");
 					}
 				}
-				span += " ";
+				sb.append(' ');
 			}
 		}
-		return span;
+		return sb.toString();
 	}
 
 
