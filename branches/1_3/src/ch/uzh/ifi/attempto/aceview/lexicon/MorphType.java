@@ -97,6 +97,26 @@ public enum MorphType {
 	}
 
 
+	public static EntryType getWordClass(MorphType morphType) {
+		switch (morphType) {
+		case CN_SG:
+			return EntryType.CN;
+		case CN_PL:
+			return EntryType.CN;
+		case TV_SG:
+			return EntryType.TV;
+		case TV_PL:
+			return EntryType.TV;
+		case TV_VBG:
+			return EntryType.TV;
+		case PN_SG:
+			return EntryType.PN;
+		default:
+			throw new RuntimeException("Programmer expected something else...");
+		}
+	}
+
+
 	public static MorphType getMorphType(EntryType entryType, FieldType fieldType) {
 		if (entryType == EntryType.CN && fieldType == FieldType.SG) {
 			return CN_SG;
