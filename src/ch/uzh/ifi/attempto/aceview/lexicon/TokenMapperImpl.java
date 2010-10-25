@@ -301,12 +301,29 @@ public class TokenMapperImpl implements TokenMapper {
 	}
 
 
+	public Collection<Triple> getWordformEntries(String wordform) {
+		return map.get(wordform);
+	}
+
+
+	public Set<IRI> getWordformIRIs(String wordform) {
+		Set<IRI> iris = Sets.newHashSet();
+		for (Triple triple : map.get(wordform)) {
+			iris.add(triple.getSubjectIRI());
+		}
+		return iris;
+	}
+
+
+	/**
+	 * @deprecated
+	 */
 	public IRI getWordformIRI(String wordform) {
-		Collection<Triple> triples = map.get(wordform);
-		if (triples.isEmpty() || triples.size() > 1) {
+		Set<IRI> iris = getWordformIRIs(wordform);
+		if (iris.isEmpty() || iris.size() > 1) {
 			return null;
 		}
-		return triples.iterator().next().getSubjectIRI();
+		return iris.iterator().next();
 	}
 
 

@@ -1,5 +1,6 @@
 package ch.uzh.ifi.attempto.aceview.lexicon;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.IRI;
@@ -162,13 +163,32 @@ public interface TokenMapper {
 
 
 	/**
+	 * TODO: document
+	 * 
+	 * @param wordform
+	 * @return
+	 */
+	public Collection<Triple> getWordformEntries(String wordform);
+
+
+	/**
+	 * <p>Returns the set of entity IRIs that correspond to the
+	 * given wordform in the lexicon.
+	 * 
+	 * @param wordform ACE wordform
+	 * @return Set of IRIs of the given wordform
+	 */
+	Set<IRI> getWordformIRIs(String wordform);
+
+
+	/**
 	 * <p>Returns the entity IRI that corresponds to the
 	 * given wordform in the lexicon. If there are no
 	 * corresponding IRIs, or there are more than one
 	 * then returns <code>null</code>.
 	 * 
 	 * @param wordform
-	 * @return IRI of the given entity
+	 * @return IRI of the given wordform
 	 */
 	IRI getWordformIRI(String wordform);
 

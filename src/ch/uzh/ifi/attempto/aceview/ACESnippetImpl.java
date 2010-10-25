@@ -16,6 +16,7 @@
 
 package ch.uzh.ifi.attempto.aceview;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -48,7 +49,9 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
+import ch.uzh.ifi.attempto.aceview.lexicon.Triple;
 import ch.uzh.ifi.attempto.aceview.util.SnippetDate;
 import ch.uzh.ifi.attempto.ape.ACEParser;
 import ch.uzh.ifi.attempto.ape.Lexicon;
@@ -237,25 +240,38 @@ public class ACESnippetImpl implements ACESnippet {
 					sb.append("</span>");
 				}
 				else {
-					// TODO: BUG: in case a wordform maps to multiple different entities then
-					// we just take the first. This shouldn't occur often though.
-					IRI entityIRI = aceLexicon.getWordformIRI(token.toString());
-					if (entityIRI == null) {
+					Set<IRI> iris = aceLexicon.getWordformIRIs(token.toString());
+					Collection<Triple> triples = aceLexicon.getWordformEntries(token.toString());
+					int iriCount = iris.size();
+					if (iriCount == 0) {
 						sb.append("<span color='#777777'>");
 						sb.append(token);
 						sb.append("</span>");
 					}
-					else {
-						// TODO: FIX THIS
-						// EntryType type = LexiconUtils.getLexiconEntryType(firstEntity);
-						EntryType type = EntryType.CN;
+					else if (iriCount == 1) {
+						Triple triple = triples.iterator().next();
+						EntryType type = MorphType.getWordClass(triple.getProperty());
 						sb.append("<a href='#");
 						sb.append(type);
 						sb.append(':');
-						sb.append(entityIRI.getFragment());
+						// TODO: BUG: we should use the full IRI here and encode it
+						// so that it can be used in a HTML link
+						sb.append(triple.getSubjectIRI().getFragment());
 						sb.append("'>");
 						sb.append(token);
 						sb.append("</a>");
+					}
+					else if (iriCount > 1) {
+						logger.info("Ambiguous: " + token + " " + triples);
+						sb.append("<span color='#777777'>");
+						sb.append(token);
+						sb.append("<sup>");
+						sb.append(iriCount);
+						sb.append("<sup>");
+						sb.append("</span>");
+					}
+					else {
+						// TODO: throw something
 					}
 				}
 				sb.append(' ');
