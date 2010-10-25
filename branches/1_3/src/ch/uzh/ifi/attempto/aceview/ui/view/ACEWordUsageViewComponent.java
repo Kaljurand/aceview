@@ -116,6 +116,9 @@ public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 			str.append("<table>");
 			OWLEntityRenderer entityRenderer = getOWLModelManager().getOWLEntityRenderer();
 
+			str.append("<tr><td>Type</td><td>");
+			str.append(entity.getClass());
+			str.append("</td></tr>");
 			str.append("<tr><td>IRI</td><td>");
 			str.append(entity.getIRI());
 			str.append("</td></tr>");

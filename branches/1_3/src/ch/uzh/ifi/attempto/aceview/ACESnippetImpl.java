@@ -16,6 +16,7 @@
 
 package ch.uzh.ifi.attempto.aceview;
 
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,7 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.lexicon.Triple;
@@ -252,11 +254,7 @@ public class ACESnippetImpl implements ACESnippet {
 						Triple triple = triples.iterator().next();
 						EntryType type = MorphType.getWordClass(triple.getProperty());
 						sb.append("<a href='#");
-						sb.append(type);
-						sb.append(':');
-						// TODO: BUG: we should use the full IRI here and encode it
-						// so that it can be used in a HTML link
-						sb.append(triple.getSubjectIRI().getFragment());
+						sb.append(LexiconUtils.getHrefId(type, triple.getSubjectIRI()));
 						sb.append("'>");
 						sb.append(token);
 						sb.append("</a>");

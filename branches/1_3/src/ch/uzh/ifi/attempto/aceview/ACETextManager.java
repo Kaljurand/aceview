@@ -53,6 +53,7 @@ import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetEvent;
@@ -341,8 +342,12 @@ public final class ACETextManager {
 
 
 	/**
+	 * @deprecated
+	 * 
 	 * <p>Finds (a single) OWL entity based on the <code>EntryType</code> and a lemma of
 	 * an ACE word.</p>
+	 * 
+	 * TODO: "lemma of an ACE word" should really be "IRI of an OWL entity"!
 	 * 
 	 * FIXED: now using "false" in the getMatching*() calls.
 	 * We are interested in an exact match and not a prefix or regexp match.
@@ -383,7 +388,7 @@ public final class ACETextManager {
 
 			if (entities != null) {
 				for (OWLEntity entity : entities) {
-					if (entity.toString().equals(lemma)) {
+					if (getRendering(entity).equals(lemma)) {
 						return entity;
 					}
 				}
@@ -392,11 +397,26 @@ public final class ACETextManager {
 		return null;
 	}
 
-	// TODO: there must be a better way to do this
-	public static OWLEntity mapAnnotationSubjectToEntity(OWLAnnotationSubject subject, IRI uri) {
-		if (subject instanceof IRI) {
-			IRI iri = (IRI) subject;
-			return findEntity(MorphType.getMorphType(uri).getEntryType(), iri.getFragment());
+
+	/**
+	 * <p>Returns the entity that matches the IRI and the ACE word class
+	 * (CN, TV, PN).</p>
+	 * 
+	 * TODO: Think about object and data properties. If TV corresponds to both
+	 * then this method has to deal with the ambiguity.
+	 * 
+	 * @param type
+	 * @param iri
+	 * @return
+	 */
+	public static OWLEntity findEntity(EntryType type, IRI iri) {
+		OWLEntityFinder entityFinder = getOWLModelManager().getOWLEntityFinder();
+		Set<? extends OWLEntity> entities = entityFinder.getEntities(iri);
+
+		for (OWLEntity entity : entities) {
+			if (LexiconUtils.getLexiconEntryType(entity).equals(type)) {
+				return entity;
+			}
 		}
 		return null;
 	}
