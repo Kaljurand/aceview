@@ -66,6 +66,7 @@
 	<category value="ACE"/>
 </extension>
 
+<!--
 <extension id="AceWikiFormatViewComponent"
 	point="org.protege.editor.core.application.ViewComponent">
 	<name value="AceWiki format"/>
@@ -74,6 +75,7 @@
 	<headerColor value="@org.protege.ontologycolor"/>
 	<category value="ACE"/>
 </extension>
+-->
 
 <extension id="ACEWordsAlphaSortedViewComponent"
 	point="org.protege.editor.core.application.ViewComponent">
@@ -170,7 +172,8 @@
 
 <!-- ACE menu -->
 <!-- Tasks related specifically to the ACE text -->
-    
+
+<!--
 <extension id="ch.uzh.ifi.attempto.aceview.ui.menu.CreateAceWikiAction"
 	point="org.protege.editor.core.application.EditorKitMenuAction">
 	<name value="ACE View: Export as AceWiki ..."/>
@@ -179,6 +182,7 @@
 	<path value="org.protege.editor.owl.menu.tools/SlotP-B"/>
 	<editorKitId value="OWLEditorKit"/>
 </extension>
+-->
 
 <extension id="ch.uzh.ifi.attempto.aceview.ui.menu.ACEReparse"
 	point="org.protege.editor.core.application.EditorKitMenuAction">
