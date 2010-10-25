@@ -1,5 +1,10 @@
 package ch.uzh.ifi.attempto.aceview.lexicon;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -30,13 +35,36 @@ public class LexiconUtils {
 	 * where entities are used as links.</p>
 	 * 
 	 * TODO: instead of lexicon entry type, use the entity type (class, object property, ...)
-	 * TODO: instead of toString() use getURI() to get a true identifier
 	 * 
 	 * @param entity OWL entity
 	 * @return Identifier constructed from the entity type and entity name
 	 */
 	public static String getHrefId(OWLEntity entity) {
 		EntryType type = LexiconUtils.getLexiconEntryType(entity);
-		return type + ":" + entity.toString();
+		return getHrefId(type, entity.getIRI());
+	}
+
+
+	/**
+	 * 
+	 * @param type
+	 * @param iri
+	 * @return
+	 */
+	public static String getHrefId(EntryType type, IRI iri) {
+		try {
+			return URLEncoder.encode(type + ":" + iri, "UTF-8");
+		} catch (UnsupportedEncodingException e) {}
+		// This can never happen
+		return null;
+	}
+
+
+	public static String decodeHrefLink(String link) {
+		try {
+			return URLDecoder.decode(link, "UTF-8");
+		} catch (UnsupportedEncodingException exception) {}
+		// This can never happen
+		return null;
 	}
 }
