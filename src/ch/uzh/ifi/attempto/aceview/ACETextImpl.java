@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -56,6 +56,8 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 	// Maps every OWL entity to a set of ACE snippets that contain a word that corresponds to the entity. 
 	private final SortedMap<OWLEntity, Set<ACESnippet>> entityToSnippets = new TreeMap<OWLEntity, Set<ACESnippet>>(new EntityComparator());
+	// May it's better to do the sorting in the caller, i.e. define here:
+	// private final Map<OWLEntity, Set<ACESnippet>> entityToSnippets = new HashMap<OWLEntity, Set<ACESnippet>>();
 
 	// Maps every OWL axiom to a set of ACE snippets that correspond to the axiom.
 	private final Multimap<OWLLogicalAxiom, ACESnippet> axiomToSnippets = HashMultimap.create();
@@ -312,6 +314,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	}
 
 
+	// TODO: nothing calls it
 	public Set<Entry<OWLEntity, Set<ACESnippet>>> getEntitySnippetSetPairs() {
 		return entityToSnippets.entrySet();
 	}
