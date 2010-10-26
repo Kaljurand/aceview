@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -51,7 +51,7 @@ public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent 
 	private static final int ENTITY_COLUMN = LexiconTableModel.Column.ENTITY.ordinal();
 
 	private ACETable tableLexicon;
-	private final LexiconTableModel stm = new LexiconTableModel();
+	private final LexiconTableModel lexiconTM = new LexiconTableModel();
 
 	private final TableModelListener tableModelListener = new TableModelListener() {
 		public void tableChanged(TableModelEvent event) {
@@ -61,9 +61,13 @@ public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent 
 
 	@Override
 	public void disposeView() {
-		stm.removeTableModelListener(tableModelListener);
+		if (lexiconTM != null) {
+			lexiconTM.removeTableModelListener(tableModelListener);
+		}
 		removeHierarchyListener(hierarchyListener);
-		stm.dispose();
+		if (lexiconTM != null) {
+			lexiconTM.dispose();
+		}
 	}
 
 	@Override
@@ -73,7 +77,7 @@ public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent 
 		buttonHighlight.setToolTipText("Highlight the entries that contain the selected entity.");
 		buttonFilter.setToolTipText("Show only the entries that contain the selected entity.");
 
-		tableLexicon = new ACETable(stm);
+		tableLexicon = new ACETable(lexiconTM);
 		tableLexicon.setToolTipText("List of lexicon entries");
 		TableColumnHelper.configureColumns(tableLexicon, LexiconTableModel.Column.values());
 
@@ -105,7 +109,7 @@ public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent 
 			}
 		});
 
-		stm.addTableModelListener(tableModelListener);
+		lexiconTM.addTableModelListener(tableModelListener);
 		addHierarchyListener(hierarchyListener);
 		refreshComponent();
 		setHeaderText();
@@ -113,7 +117,7 @@ public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent 
 
 
 	private void setHeaderText() {
-		int numberOfEntries = stm.getRowCount();
+		int numberOfEntries = lexiconTM.getRowCount();
 		String numberOfEntriesShown = "all";
 		if (tableLexicon.getFilters() != null) {
 			int numberOfEntriesShownInt = tableLexicon.getFilters().getOutputSize();

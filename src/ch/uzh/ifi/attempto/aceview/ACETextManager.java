@@ -34,7 +34,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -54,7 +53,6 @@ import com.google.common.collect.Sets;
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
-import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetListener;
@@ -125,11 +123,11 @@ public final class ACETextManager {
 
 
 	/**
-	 * <p>Returns the URI of the active ACE text.
+	 * <p>Returns the id (OWLOntologyID) of the active ACE text.
 	 * In case no ACE text has been set as active
 	 * then returns <code>null</code>.</p>
 	 * 
-	 * @return URI of the active ACE text.
+	 * @return ID of the active ACE text.
 	 */
 	public static OWLOntologyID getActiveACETextID() {
 		return activeACETextID;
@@ -137,14 +135,19 @@ public final class ACETextManager {
 
 
 	public static ACEText<OWLEntity, OWLLogicalAxiom> getActiveACEText() {
-		return getACEText(getActiveACETextID());
+		OWLOntologyID id = getActiveACETextID();
+		if (id == null) {
+			return null;
+		}
+		return getACEText(id);
 	}
 
 
 	public static ACEText<OWLEntity, OWLLogicalAxiom> getACEText(OWLOntologyID id) {
 		if (id == null) {
+			// TODO: throw exception here
 			logger.error("getACEText: ID == null; THIS SHOULD NOT HAPPEN");
-			return new ACETextImpl();
+			return null;
 		}
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = acetexts.get(id);
 		if (acetext == null) {

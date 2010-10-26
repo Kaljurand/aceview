@@ -16,10 +16,11 @@
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      ontologyIRI="http://www.semanticweb.org/ontologies/2010/9/26/Ontology1288085703134.owl">
-    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
-    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
     <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
     <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
     <Annotation>
         <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <Literal datatypeIRI="&xsd;string">Rendering ambiguity
@@ -53,7 +54,13 @@ but IRIs are otherwise different.
         <Class IRI="http://www.semanticweb.org/ontologies/2010/9/26/two.owl#man"/>
     </Declaration>
     <Declaration>
+        <ObjectProperty IRI="#have"/>
+    </Declaration>
+    <Declaration>
         <ObjectProperty IRI="#like"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Man"/>
     </Declaration>
     <SubClassOf>
         <Annotation>
@@ -118,6 +125,35 @@ but IRIs are otherwise different.
             <Class IRI="#aardvark"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
+    <ClassAssertion>
+        <Annotation>
+            <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/acetext#acetext"/>
+            <Literal datatypeIRI="&xsd;string">Man have something that is not a zebra.</Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/date"/>
+            <Literal datatypeIRI="&xsd;string">2010-10-26 13:59:08</Literal>
+        </Annotation>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#have"/>
+            <ObjectComplementOf>
+                <Class IRI="#zebra"/>
+            </ObjectComplementOf>
+        </ObjectSomeValuesFrom>
+        <NamedIndividual IRI="#Man"/>
+    </ClassAssertion>
+    <SubObjectPropertyOf>
+        <Annotation>
+            <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/acetext#acetext"/>
+            <Literal datatypeIRI="&xsd;string">If X have Y then X like Y.</Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/date"/>
+            <Literal datatypeIRI="&xsd;string">2010-10-26 13:56:38</Literal>
+        </Annotation>
+        <ObjectProperty IRI="#have"/>
+        <ObjectProperty IRI="#like"/>
+    </SubObjectPropertyOf>
 </Ontology>
 
 
