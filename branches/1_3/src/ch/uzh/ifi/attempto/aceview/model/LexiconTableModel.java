@@ -128,7 +128,9 @@ public class LexiconTableModel extends AbstractTableModel {
 
 	public LexiconTableModel() {
 		acetext = ACETextManager.getActiveACEText();
-		acelexicon = acetext.getTokenMapper();
+		if (acetext != null) {
+			acelexicon = acetext.getTokenMapper();
+		}
 		entityArray = getEntityArray();
 		ACETextManager.addListener(aceTextManagerListener);
 	}
@@ -203,18 +205,17 @@ public class LexiconTableModel extends AbstractTableModel {
 			logger.info("Changing: " + oldValueAsString + " -> " + newValueAsString);
 			OWLEntity entity = getEntity(row);
 			if (entity != null) {
-				OWLModelManager mm = ACETextManager.getOWLModelManager();
-				OWLOntology ont = mm.getActiveOntology();
 				// TODO: BUG: This way of finding the URI is waiting to be broken.
 				FieldType fieldType = FieldType.values()[column - 3];
 				List<OWLAxiomChange> changes = Lists.newArrayList();
-
-				OWLDataFactory df = mm.getOWLDataFactory();
 
 				EntryType entryType = LexiconUtils.getLexiconEntryType(entity);
 				MorphType morphType = MorphType.getMorphType(entryType, fieldType);
 
 				if (entryType != null && morphType != null) {
+					OWLModelManager mm = ACETextManager.getOWLModelManager();
+					OWLDataFactory df = mm.getOWLDataFactory();
+					OWLOntology ont = mm.getActiveOntology();
 
 					// Remove the respective annotation (if present)
 					// TODO: we construct a new axiom just to use it to match an axiom

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <VSNode splits="0.2492423758702656 0.22942418307531254 0.264468064713362 0.25686537634105994">
+        <HSNode splits="0.09713386958274188 0.20143306520862905 0.20143306520862905">
+            <VSNode splits="0.125">
+                <HSNode splits="0.0625">
+                    <CNode>
+                        <Component label="ACE Snippet Editor">
+                            <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACESnippetEditorViewComponent"/>
+                        </Component>
+                    </CNode>
+                </HSNode>
+            </VSNode>
+            <CNode>
+                <Component label="ACE Feedback">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEFeedbackViewComponent"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="ACE Metrics">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEMetricsViewComponent"/>
+                </Component>
+            </CNode>
+        </HSNode>
+        <HSNode splits="0.06884057971014493 0.05615942028985507 0.0625">
+            <CNode>
+                <Component label="ACE Snippets">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACESnippetsViewComponent"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="ACE Index">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEIndexViewComponent"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="ACE Text">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACETextViewComponent"/>
+                </Component>
+            </CNode>
+        </HSNode>
+        <HSNode splits="0.03125 0.024559290408822546 0.03328645427202852 0.03590425531914894">
+            <CNode>
+                <Component label="ACE Lexicon">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACELexiconViewComponent"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="ACE Words">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEWordsAlphaSortedViewComponent"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="ACE Word Usage">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEWordUsageViewComponent"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="ACE Lexicon format">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACELexiconFormatViewComponent"/>
+                </Component>
+            </CNode>
+        </HSNode>
+        <HSNode splits="0.0625 0.03125 0.03125">
+            <CNode>
+                <Component label="ACE Q&amp;A">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEQandAViewComponent"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="ACE Entailments">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEEntailmentsViewComponent"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="ACE Explanation">
+                    <Property id="pluginId" value="ch.uzh.ifi.attempto.aceview.ui.view.ACEExplanationViewComponent"/>
+                </Component>
+            </CNode>
+        </HSNode>
+    </VSNode>
+</layout>
