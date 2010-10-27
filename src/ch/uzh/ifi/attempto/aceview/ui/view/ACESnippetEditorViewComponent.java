@@ -58,9 +58,9 @@ import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACESnippetImpl;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.ui.ACESnippetEditor;
 import ch.uzh.ifi.attempto.aceview.ui.AxiomAnnotationPanel;
 import ch.uzh.ifi.attempto.aceview.ui.Colors;
@@ -117,15 +117,14 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 	private AxiomAnnotationPanel axiomAnnotationPanel;
 
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
 			// We update the auto-completer if the lexicon changed,
-			// or an ACE text was created, or the active ACE text changed.
+			// or the active ACE text changed.
 			// TODO: maybe we should make sure that the lexicon change is
 			// the change of the active ACE text's lexicon.
-			if (event.isType(EventType.ACTIVE_ACETEXT_CHANGED) ||
-					event.isType(EventType.ACETEXT_CREATED) ||
-					event.isType(EventType.ACELEXICON_CHANGED)) {
+			if (event.isType(TextEventType.ACTIVE_ACETEXT_CHANGED) ||
+					event.isType(TextEventType.ACELEXICON_CHANGED)) {
 				snippetEditor.setAutocompleter(ACETextManager.getActiveACELexicon().getAutocompleter());
 			}
 		}

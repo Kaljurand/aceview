@@ -26,7 +26,9 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 
 /**
  * <p>Table of active ACE text snippets (e.g. declarative, or interrogative).
@@ -39,7 +41,7 @@ import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
 public abstract class AbstractSnippetsTableModel extends AbstractTableModel {
 
 	protected List<ACESnippet> snippets;
-	protected ACETextManagerListener aceTextManagerListener;
+	protected ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener;
 
 	private static final Logger logger = Logger.getLogger(AbstractSnippetsTableModel.class);
 

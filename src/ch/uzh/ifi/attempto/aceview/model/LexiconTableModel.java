@@ -41,9 +41,9 @@ import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
 
@@ -75,10 +75,10 @@ public class LexiconTableModel extends AbstractTableModel {
 	private Object[] entityArray;
 	private static final Logger logger = Logger.getLogger(LexiconTableModel.class);
 
-	private ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {			
-			if (event.isType(EventType.ACELEXICON_CHANGED) ||
-					event.isType(EventType.ACTIVE_ACETEXT_CHANGED)) {
+	private ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {			
+			if (event.isType(TextEventType.ACELEXICON_CHANGED) ||
+					event.isType(TextEventType.ACTIVE_ACETEXT_CHANGED)) {
 				acetext = ACETextManager.getActiveACEText();
 				acelexicon = acetext.getTokenMapper();
 				entityArray = getEntityArray();

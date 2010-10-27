@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.jdesktop.swingworker.SwingWorker;
 import org.protege.editor.owl.model.OWLModelManager;
 
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 
 
 public class UpdateAnswersUI {
@@ -124,7 +124,8 @@ public class UpdateAnswersUI {
 
 		@Override
 		public void done() {
-			ACETextManager.fireEvent(EventType.ACETEXT_ANSWERS_CHANGED);
+			// TODO: BUG: nothing is monitoring this event
+			//ACETextManager.fireEvent(EventType.ACETEXT_ANSWERS_CHANGED);
 			progressMonitor.setProgress(0);
 		}
 	}

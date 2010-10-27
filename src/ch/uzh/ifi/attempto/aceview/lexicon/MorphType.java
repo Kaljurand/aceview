@@ -147,6 +147,10 @@ public enum MorphType {
 	 * @return
 	 */
 	public static Set<MorphType> getMorphTypeSet(EntryType entryType) {
+		if (entryType == null) {
+			throw new Error("entryType Cant be null");
+		}
+
 		switch (entryType) {
 		case CN:
 			return Sets.immutableEnumSet(CN_SG, CN_PL);

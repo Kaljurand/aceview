@@ -20,8 +20,9 @@ import java.util.Date;
 
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 
 /**
  * @author Kaarel Kaljurand
@@ -70,8 +71,8 @@ public class SnippetsTableModel extends AbstractSnippetsTableModel {
 
 	public SnippetsTableModel() {
 		snippets = ACETextManager.getActiveACEText().getSnippets();
-		aceTextManagerListener = new ACETextManagerListener() {
-			public void handleChange(ACETextChangeEvent event) {
+		aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+			public void handleChange(ACEViewEvent<TextEventType> event) {
 				snippets = ACETextManager.getActiveACEText().getSnippets();
 				// BUG: return something more precise here
 				fireTableDataChanged();

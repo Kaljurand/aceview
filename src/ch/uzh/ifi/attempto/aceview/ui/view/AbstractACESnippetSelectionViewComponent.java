@@ -29,8 +29,8 @@ import org.semanticweb.owlapi.model.OWLObject;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
 import ch.uzh.ifi.attempto.aceview.model.event.SnippetEventType;
 
 /**
@@ -54,8 +54,8 @@ import ch.uzh.ifi.attempto.aceview.model.event.SnippetEventType;
  */
 public abstract class AbstractACESnippetSelectionViewComponent extends AbstractOWLViewComponent {
 
-	private final ACESnippetListener snippetListener = new ACESnippetListener() {
-		public void handleChange(ACESnippetEvent event) {
+	private final ACEViewListener<ACEViewEvent<SnippetEventType>> snippetListener = new ACEViewListener<ACEViewEvent<SnippetEventType>>() {
+		public void handleChange(ACEViewEvent<SnippetEventType> event) {
 			if (event.isType(SnippetEventType.SELECTED_SNIPPET_CHANGED)) {
 				ACESnippet selectedSnippet = ACETextManager.getSelectedSnippet();
 				displaySnippet(selectedSnippet);
@@ -92,7 +92,7 @@ public abstract class AbstractACESnippetSelectionViewComponent extends AbstractO
 	protected abstract void displaySnippet(ACESnippet snippet);
 
 
-	protected ACESnippetListener getACESnippetListener() {
+	protected ACEViewListener<ACEViewEvent<SnippetEventType>> getACESnippetListener() {
 		return snippetListener;
 	}
 

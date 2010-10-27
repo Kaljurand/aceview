@@ -24,8 +24,9 @@ import javax.swing.JTextArea;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 import ch.uzh.ifi.attempto.aceview.util.AceWikiRenderer;
 
@@ -39,8 +40,8 @@ public class AceWikiFormatViewComponent extends AbstractOWLViewComponent {
 
 	private final JTextArea textarea = ComponentFactory.makeTextArea();
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
 			refresh();
 		}
 	};

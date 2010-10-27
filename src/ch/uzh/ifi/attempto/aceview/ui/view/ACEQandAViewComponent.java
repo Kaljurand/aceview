@@ -26,8 +26,8 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.model.QuestionsTableModel;
-import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
 import ch.uzh.ifi.attempto.aceview.model.event.SnippetEventType;
 import ch.uzh.ifi.attempto.aceview.predicate.AnswerIsCompletePredicate;
 import ch.uzh.ifi.attempto.aceview.ui.ACEAnswersPane;
@@ -47,8 +47,8 @@ public class ACEQandAViewComponent extends AbstractACESnippetsViewComponent {
 	private final ColorHighlighter isCompleteHighlighter = new ColorHighlighter(new AnswerIsCompletePredicate(tableModel.getACEText()));
 
 
-	private final ACESnippetListener snippetListener = new ACESnippetListener() {
-		public void handleChange(ACESnippetEvent event) {
+	private final ACEViewListener<ACEViewEvent<SnippetEventType>> snippetListener = new ACEViewListener<ACEViewEvent<SnippetEventType>>() {
+		public void handleChange(ACEViewEvent<SnippetEventType> event) {
 			if (isSynchronizing() && event.isType(SnippetEventType.SELECTED_SNIPPET_CHANGED)) {
 				ACESnippet selectedSnippet = ACETextManager.getSelectedSnippet();
 				if (selectedSnippet != null && selectedSnippet.isQuestion()) {

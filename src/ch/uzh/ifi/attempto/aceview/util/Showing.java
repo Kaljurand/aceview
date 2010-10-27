@@ -60,6 +60,10 @@ public final class Showing {
 			return false;
 		}
 
+		if (entity.isOWLAnnotationProperty()) {
+			return false;
+		}
+
 		return (
 				entity.isOWLClass() ||
 				entity.isOWLObjectProperty() && !entity.getIRI().equals(ENTITY_contain) && !entity.getIRI().equals(ENTITY_know) ||
