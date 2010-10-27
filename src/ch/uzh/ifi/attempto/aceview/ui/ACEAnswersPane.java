@@ -140,6 +140,8 @@ public class ACEAnswersPane extends JTextPane {
 				}
 			});
 			addLinebreak();
+			// TODO: BUG: The next line creates some HTML with words linked to entities,
+			// but these links will not be clickable because there is no listener.
 			addComponent(new JLabel("<html>" + nothingSnippet.toHtmlString(ACETextManager.getActiveACELexicon()) + "</html>"));
 			addLinebreak();
 			addComponent(buttonWhy);
@@ -261,7 +263,7 @@ public class ACEAnswersPane extends JTextPane {
 
 
 	private JXHyperlink getHyperlink(OWLEntity entity, OWLLogicalAxiom axiom) {
-		return new JXHyperlink(new HyperlinkAction(ws, entity, axiom));
+		return new JXHyperlink(new AxiomLinkAction(ws, entity, axiom));
 	}
 
 

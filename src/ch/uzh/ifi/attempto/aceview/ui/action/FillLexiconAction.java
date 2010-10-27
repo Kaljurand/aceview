@@ -75,7 +75,7 @@ public class FillLexiconAction extends ProtegeOWLAction {
 			for (OWLEntity entity : ont.getSignature()) {
 				entityCounter++;
 				String entityRendering = getOWLModelManager().getRendering(entity);
-				Set<OWLAnnotationAssertionAxiom> entityAnnotationAxioms = MorphAnnotation.getMorphAnnotations(df, ont, entity, entityRendering);
+				Set<OWLAnnotationAssertionAxiom> entityAnnotationAxioms = MorphAnnotation.getAdditionalMorphAnnotations(df, ont, entity, entityRendering);
 				int size = entityAnnotationAxioms.size();
 				if (size > 0) {
 					for (OWLAnnotationAssertionAxiom ax : entityAnnotationAxioms) {
