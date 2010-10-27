@@ -1,259 +1,205 @@
 <?xml version="1.0"?>
 
 <!DOCTYPE Ontology [
-    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
-    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
-    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
-    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
-    <!ENTITY ace_lexicon "http://attempto.ifi.uzh.ch/ace_lexicon#" >
     <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-    <!ENTITY countries_base "http://www.semanticweb.org/ontologies/2008/10/countries_base.owl#" >
+    <!ENTITY ace_lexicon "http://attempto.ifi.uzh.ch/ace_lexicon#" >
 ]>
 
 
-<Ontology xmlns="http://www.w3.org/2006/12/owl2-xml#"
-     xml:base="http://www.w3.org/2006/12/owl2-xml#"
-     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
-     xmlns:ace_lexicon="http://attempto.ifi.uzh.ch/ace_lexicon#"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:countries_base="http://www.semanticweb.org/ontologies/2008/10/countries_base.owl#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
-     URI="http://www.semanticweb.org/ontologies/2008/10/countries_base.owl">
-
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.semanticweb.org/ontologies/2010/9/27/countries_base.owl"
+     ontologyIRI="http://www.semanticweb.org/ontologies/2010/9/27/countries_base.owl">
     <Declaration>
-        <Class URI="&countries_base;European-country"/>
+        <Class IRI="#EU-country"/>
     </Declaration>
-    <EntityAnnotation>
-        <Class URI="&countries_base;European-country"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>European-countries</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <Class URI="&countries_base;European-country"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>European-country</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <Class URI="&countries_base;G8-country"/>
+        <Class IRI="#European-country"/>
     </Declaration>
-    <EntityAnnotation>
-        <Class URI="&countries_base;G8-country"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>G8-countries</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <Class URI="&countries_base;G8-country"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>G8-country</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <Class URI="&countries_base;EU-country"/>
+        <Class IRI="#G8-country"/>
     </Declaration>
-    <EntityAnnotation>
-        <Class URI="&countries_base;EU-country"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>EU-countries</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <Class URI="&countries_base;EU-country"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>EU-country</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <Class URI="&countries_base;NATO-country"/>
+        <Class IRI="#NATO-country"/>
     </Declaration>
-    <EntityAnnotation>
-        <Class URI="&countries_base;NATO-country"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>NATO-countries</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <Class URI="&countries_base;NATO-country"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>NATO-country</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <Class URI="&countries_base;body-of-water"/>
+        <Class IRI="#baltic-state"/>
     </Declaration>
-    <EntityAnnotation>
-        <Class URI="&countries_base;body-of-water"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>bodies-of-water</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <Class URI="&countries_base;body-of-water"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>body-of-water</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <Class URI="&countries_base;neutral-country"/>
+        <Class IRI="#body-of-water"/>
     </Declaration>
-    <EntityAnnotation>
-        <Class URI="&countries_base;neutral-country"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>neutral-countries</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <Class URI="&countries_base;neutral-country"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>neutral-country</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <Class URI="&countries_base;island-country"/>
+        <Class IRI="#island-country"/>
     </Declaration>
-    <EntityAnnotation>
-        <Class URI="&countries_base;island-country"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>island-countries</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <Class URI="&countries_base;island-country"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>island-country</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <Class URI="&countries_base;landlocked-territory"/>
+        <Class IRI="#landlocked-territory"/>
     </Declaration>
-    <EntityAnnotation>
-        <Class URI="&countries_base;landlocked-territory"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>landlocked-territories</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <Class URI="&countries_base;landlocked-territory"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>landlocked-territory</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-		<Class URI="&countries_base;baltic-state"/>
+        <Class IRI="#neutral-country"/>
     </Declaration>
-    <EntityAnnotation>
-        <Class URI="&countries_base;baltic-state"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>baltic-states</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <Class URI="&countries_base;baltic-state"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>baltic-state</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <ObjectProperty URI="&countries_base;border"/>
+        <ObjectProperty IRI="#border"/>
     </Declaration>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;border"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>border</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;border"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>borders</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;border"/>
-        <Annotation annotationURI="&ace_lexicon;vbg">
-            <Constant>bordered</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <ObjectProperty URI="&countries_base;contain"/>
+        <ObjectProperty IRI="#contain"/>
     </Declaration>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;contain"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>contain</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;contain"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>contains</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-		<ObjectProperty URI="&countries_base;contain"/>
-        <Annotation annotationURI="&ace_lexicon;vbg">
-            <Constant>contained</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <ObjectProperty URI="&countries_base;dislike"/>
+        <ObjectProperty IRI="#dislike"/>
     </Declaration>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;dislike"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>dislike</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;dislike"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>dislikes</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;dislike"/>
-        <Annotation annotationURI="&ace_lexicon;vbg">
-            <Constant>disliked</Constant>
-        </Annotation>
-    </EntityAnnotation>
-
     <Declaration>
-        <ObjectProperty URI="&countries_base;like"/>
+        <ObjectProperty IRI="#like"/>
     </Declaration>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;like"/>
-        <Annotation annotationURI="&ace_lexicon;pl">
-            <Constant>like</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;like"/>
-        <Annotation annotationURI="&ace_lexicon;sg">
-            <Constant>likes</Constant>
-        </Annotation>
-    </EntityAnnotation>
-    <EntityAnnotation>
-        <ObjectProperty URI="&countries_base;like"/>
-        <Annotation annotationURI="&ace_lexicon;vbg">
-            <Constant>liked</Constant>
-        </Annotation>
-    </EntityAnnotation>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <IRI>#EU-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">EU-countries</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <IRI>#EU-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">EU-country</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <IRI>#European-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">European-countries</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <IRI>#European-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">European-country</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <IRI>#G8-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">G8-countries</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <IRI>#G8-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">G8-country</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <IRI>#NATO-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">NATO-countries</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <IRI>#NATO-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">NATO-country</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <IRI>#baltic-state</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">baltic-states</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <IRI>#baltic-state</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">baltic-state</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <IRI>#body-of-water</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">body-of-waters</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <IRI>#body-of-water</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">body-of-water</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_pl"/>
+        <IRI>#border</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">border</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_sg"/>
+        <IRI>#border</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">borders</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_vbg"/>
+        <IRI>#border</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">bordered</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_pl"/>
+        <IRI>#contain</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">contain</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_sg"/>
+        <IRI>#contain</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">contains</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_vbg"/>
+        <IRI>#contain</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">contained</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_pl"/>
+        <IRI>#dislike</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">dislike</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_sg"/>
+        <IRI>#dislike</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">dislikes</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_vbg"/>
+        <IRI>#dislike</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">disliked</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <IRI>#island-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">island-countries</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <IRI>#island-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">island-country</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <IRI>#landlocked-territory</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">landlocked-territories</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <IRI>#landlocked-territory</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">landlocked-territory</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_pl"/>
+        <IRI>#like</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">like</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_sg"/>
+        <IRI>#like</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">likes</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;TV_vbg"/>
+        <IRI>#like</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">liked</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <IRI>#neutral-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">neutral-countries</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <IRI>#neutral-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">neutral-country</Literal>
+    </AnnotationAssertion>
 </Ontology>
 
-<!-- Generated by the OWL API (version 2.2.1.941) http://owlapi.sourceforge.net -->
-<!-- Later manually modified by Kaarel Kaljurand -->
+
+<!-- Generated by the OWL API (version 3.1.0.20069) http://owlapi.sourceforge.net -->
+<!-- Unused XML entities and prefixes and OWL/XML prefixes removed by Kaarel Kaljurand -->
