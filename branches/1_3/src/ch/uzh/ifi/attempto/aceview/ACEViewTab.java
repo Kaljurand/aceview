@@ -236,13 +236,12 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 		OWLOntologyID iri = ont.getOntologyID();
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(iri);
-
+		TokenMapper tokenMapper = acetext.getTokenMapper();
 		if (prefs.isUseLexicon()) {
 			Set<OWLEntity> entities = ont.getSignature();
-			addMorfAnnotations(mngr, df, ont, entities);
+			addMorfAnnotations(mngr, df, ont, entities, tokenMapper);
 		}
 		else {
-			TokenMapper tokenMapper = acetext.getTokenMapper();
 			for (OWLEntity entity : ont.getSignature()) {
 				if (Showing.isShow(entity)) {
 					IRI subject = entity.getIRI();
@@ -278,11 +277,11 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @param ont
 	 * @param entities
 	 */
-	private static void addMorfAnnotations(OWLOntologyManager ontologyManager, OWLDataFactory df, OWLOntology ont, Set<OWLEntity> entities) {
+	private static void addMorfAnnotations(OWLOntologyManager ontologyManager, OWLDataFactory df, OWLOntology ont, Set<OWLEntity> entities, TokenMapper tokenMapper) {
 		List<AddAxiom> changes = Lists.newArrayList();
 		for (OWLEntity entity : entities) {
 			if (Showing.isShow(entity)) {
-				// TODO: BUG: Get the existing annotations and add them to the lexicon.
+				updateLexiconFromExistingAnnotations(entity, ont, tokenMapper);
 				// TODO: BUG: Use rendering instead of the fragment
 				Set<OWLAnnotationAssertionAxiom> annSet = MorphAnnotation.getAdditionalMorphAnnotations(df, ont, entity, entity.getIRI().getFragment());
 				logger.info("Init: entity " + entity + " adding additional annotations: " + annSet);
@@ -615,6 +614,24 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			}
 			else if (change instanceof RemoveAxiom) {
 				tokenMapper.removeEntry(lemma, subject, morphType);
+			}
+		}
+	}
+
+
+	// TODO: check if we have implemented this somewhere else already
+	private static void updateLexiconFromExistingAnnotations(OWLEntity entity, OWLOntology ont, TokenMapper tokenMapper) {
+		for (OWLAnnotation ann : entity.getAnnotations(ont)) {
+			IRI annotationIRI = ann.getProperty().getIRI();
+			MorphType morphType = MorphType.getMorphType(annotationIRI);
+			if (morphType != null) {
+				String annValue = getAnnotationValueAsString(ann.getValue());
+				if (annValue == null) {
+					logger.error("Malformed ACE lexicon annotation ignored: " + ann);
+				}
+				else {
+					tokenMapper.addEntry(annValue, entity.getIRI(), morphType);
+				}
 			}
 		}
 	}
