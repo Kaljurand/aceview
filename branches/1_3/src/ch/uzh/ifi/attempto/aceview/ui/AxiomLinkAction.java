@@ -15,18 +15,17 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 
 /**
- * TODO: rename to AxiomLinkAction
  * 
  * @author Kaarel Kaljurand
  *
  */
-public class HyperlinkAction extends AbstractHyperlinkAction {
+public class AxiomLinkAction extends AbstractHyperlinkAction {
 
 	private final OWLWorkspace ws;
 	private final OWLLogicalAxiom axiom;
 	private final OWLEntity entity;
 
-	public HyperlinkAction(OWLWorkspace ws, OWLEntity entity, OWLLogicalAxiom axiom) {
+	public AxiomLinkAction(OWLWorkspace ws, OWLEntity entity, OWLLogicalAxiom axiom) {
 		this.ws = ws;
 		this.axiom = axiom;
 		this.entity = entity;

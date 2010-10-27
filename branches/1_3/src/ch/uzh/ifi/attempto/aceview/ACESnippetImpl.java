@@ -226,7 +226,7 @@ public class ACESnippetImpl implements ACESnippet {
 				if (token.isOrdinationWord()) {
 					sb.append("<span color='green'>");
 					sb.append(token);
-					sb.append("</span>");				
+					sb.append("</span>");
 				}
 				else if (token.isQuotedString() || token.isNumber()) {
 					sb.append("<i>");

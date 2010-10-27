@@ -64,10 +64,12 @@ public class MorphAnnotation {
 	 * @param entity
 	 * @return Set of annotation axioms
 	 */
+	/*
 	public static Set<OWLAnnotationAssertionAxiom> getMorphAnnotations(OWLDataFactory df, OWLOntology ont, OWLEntity entity) {
 		String lemma = entity.getIRI().getFragment();
 		return getMorphAnnotations(df, ont, entity, lemma);
 	}
+	 */
 
 
 	/**
@@ -75,7 +77,7 @@ public class MorphAnnotation {
 	 * a function word (<code>owl:Thing</code>, <code>owl:Nothing</code>, ...) which is not to be annotated
 	 * with surface forms.</p>
 	 * 
-	 * <p>Otherwise returns a set of entity annotation axioms [BUG: update] for the given entity.
+	 * <p>Otherwise returns a set of entity annotation axioms for the given entity.
 	 * An annotation is not generated in case the entity has already been annotated
 	 * with the annotation. This means that surface form is a functional property of the entity.</p>
 	 * 
@@ -85,7 +87,7 @@ public class MorphAnnotation {
 	 * @param lemma Lemma form of the entity which should be taken as the basis when generating surface forms
 	 * @return Set of OWL entity annotation axioms
 	 */
-	public static Set<OWLAnnotationAssertionAxiom> getMorphAnnotations(OWLDataFactory df, OWLOntology ontology, OWLEntity entity, String lemma) {
+	public static Set<OWLAnnotationAssertionAxiom> getAdditionalMorphAnnotations(OWLDataFactory df, OWLOntology ontology, OWLEntity entity, String lemma) {
 
 		Set<OWLAnnotationAssertionAxiom> axioms = Sets.newHashSet();
 
