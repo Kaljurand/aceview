@@ -13,6 +13,14 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 public class LexiconUtils {
 
+	/**
+	 * <p>Maps the given OWL entity to the ACE lexicon type.
+	 * If the given entity if an annotation property or datatype,
+	 * then returns <code>null</code>.</p>
+	 * 
+	 * @param entity
+	 * @return
+	 */
 	public static EntryType getLexiconEntryType(OWLEntity entity) {
 		if (entity instanceof OWLClass) {
 			return EntryType.CN;

@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -158,7 +158,7 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 
 		buttonBrowseApePath.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				File f = chooseFile("Specify the location of APE");
+				File f = chooseApeExecutable();
 				if (f != null) {
 					textfieldApe.setText(f.getAbsolutePath());
 				}
@@ -296,6 +296,29 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 	}
 
 
+	/**
+	 * <p>One could also use
+	 * <code>getOWLEditorKit().getOWLWorkspace()</code>
+	 * in the first argument to <code>UIUtil.openFile</code> but gets
+	 * a differently behaving (and less useful) file chooser then, at least on Mac OS tiger.</p>
+	 * 
+	 * @return File path to the APE executable chosen my the user
+	 */
+	private File chooseApeExecutable() {
+		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, getParent());
+		return UIUtil.openFile(frame, "Specify the location of APE", "APE executable", Sets.newHashSet("exe"));
+	}
+
+
+	/**
+	 * @deprecatd
+	 * 
+	 * This is the old way of opening files, which uses a Protege method
+	 * that is now deprecated.
+	 * 
+	 * @param title
+	 * @return
+	 */
 	private File chooseFile(String title) {
 		Set<String> extensions = Sets.newHashSet();
 		//extensions.add("exe");

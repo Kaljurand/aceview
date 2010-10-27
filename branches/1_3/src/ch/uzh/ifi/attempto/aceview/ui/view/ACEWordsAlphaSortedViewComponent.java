@@ -18,8 +18,9 @@ import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.WordsHyperlinkListener;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
@@ -48,8 +49,8 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 		}
 	};
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
 			showWords();
 		}
 	};

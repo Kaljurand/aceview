@@ -20,8 +20,9 @@ import ch.uzh.ifi.attempto.aceview.ACEAnswer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 
 /**
  * @author Kaarel Kaljurand
@@ -75,8 +76,8 @@ public class QuestionsTableModel extends AbstractSnippetsTableModel {
 	public QuestionsTableModel() {
 		acetext = ACETextManager.getActiveACEText();
 		snippets = acetext.getQuestions();
-		aceTextManagerListener = new ACETextManagerListener() {
-			public void handleChange(ACETextChangeEvent event) {
+		aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+			public void handleChange(ACEViewEvent<TextEventType> event) {
 				acetext = ACETextManager.getActiveACEText();
 				snippets = acetext.getQuestions();
 				fireTableDataChanged();

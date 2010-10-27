@@ -47,7 +47,7 @@ public class ACESnippetImplTest {
 
 		// Create an ACE text that provides a lexicon for
 		// the snippets that we are going to parse.
-		ACETextManager.createACEText(new OWLOntologyID());
+		ACETextManager.getACEText(new OWLOntologyID());
 	}
 
 

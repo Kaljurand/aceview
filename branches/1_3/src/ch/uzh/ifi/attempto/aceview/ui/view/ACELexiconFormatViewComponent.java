@@ -24,11 +24,10 @@ import javax.swing.JTextArea;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 
 /**
@@ -42,12 +41,12 @@ public class ACELexiconFormatViewComponent extends AbstractOWLViewComponent {
 
 	private JTextArea textareaLexicon;
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
-			if (event.isType(EventType.ACELEXICON_CHANGED)) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
+			if (event.isType(TextEventType.ACELEXICON_CHANGED)) {
 				showLexicon();
 			}
-			else if (event.isType(EventType.ACTIVE_ACETEXT_CHANGED)) {
+			else if (event.isType(TextEventType.ACTIVE_ACETEXT_CHANGED)) {
 				showLexicon();
 			}
 		}

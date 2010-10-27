@@ -35,7 +35,7 @@ import com.google.common.collect.Lists;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.MorphAnnotation;
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
 /**
@@ -89,7 +89,7 @@ public class FillLexiconAction extends ProtegeOWLAction {
 
 		OntologyUtils.changeOntology(ontologyManager, additions);
 
-		ACETextManager.fireEvent(EventType.ACELEXICON_CHANGED);
+		ACETextManager.fireEvent(TextEventType.ACELEXICON_CHANGED);
 		String message = "Checked " + entityCounter + " entities in " + ontologyCounter + " active ontologies.";
 		message += "\nAnnotated " + annotatedEntityCounter + " entities with " + annotationCounter + " annotations.";
 		JOptionPane.showMessageDialog(null, message, "Fill Lexicon Action", JOptionPane.INFORMATION_MESSAGE);

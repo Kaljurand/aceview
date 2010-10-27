@@ -57,7 +57,7 @@ import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
@@ -77,35 +77,34 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	// Fired when ontologies are loaded/created and reasoner is run
 	private final OWLModelManagerListener modelManagerListener = new OWLModelManagerListener() {
 		public void handleChange(OWLModelManagerChangeEvent event) {
+			logger.info("OWLModelManagerChangeEvent: " + event.getType());
 			if (event.isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
 				ACETextManager.setActiveACETextID(getOWLModelManager().getActiveOntology().getOntologyID());
 			}
 			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_LOADED)) {
-				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
+				// TODO: remove: ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
 				try {
 					initACEText();
-					ACETextManager.fireEvent(EventType.ACETEXT_LOADED);
+					// TODO: BUG: nothing is monitoring this event
+					//ACETextManager.fireEvent(EventType.ACETEXT_LOADED);
 				} catch (Exception e) {
 					logger.error(e.getMessage());
 				}
 			}
-			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_VISIBILITY_CHANGED)) {
-				logger.info("ONTOLOGY_VISIBILITY_CHANGED");
-			}
 			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_CLASSIFIED)) {
-				logger.info("ONTOLOGY_CLASSIFIED");
 				if (ACEViewPreferences.getInstance().isUpdateAnswersOnClassify()) {
 					new UpdateAnswersUI(null, ACETextManager.getActiveACEText(), getOWLModelManager()).updateAnswers();
 				}
 			}
 			else if (event.isType(org.protege.editor.owl.model.event.EventType.ONTOLOGY_CREATED)) {
+				// TODO: maybe the ACETEXT_CREATED even is not needed anymore (delete it from everywhere)
 				// If an ontology is created then this ontology is set as active, therefore
 				// we can get the URI of this ontology by asking for the URI of the active ontology.
-				ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
-				ACETextManager.fireEvent(EventType.ACETEXT_CREATED);
+				//ACETextManager.createACEText(getOWLModelManager().getActiveOntology().getOntologyID());
+				//ACETextManager.fireEvent(EventType.ACETEXT_CREATED);
 			}
 			else {
-				logger.info("OWLModelManagerChangeEvent: " + event.getType());
+				logger.info("Not handling this event...");
 			}
 		}
 	};
@@ -169,7 +168,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		acetextAnnProp = mm.getOWLDataFactory().getOWLAnnotationProperty(ACETextManager.acetextIRI);
 
 		ACETextManager.setOWLModelManager(mm);
-		ACETextManager.createACEText(mm.getActiveOntology().getOntologyID());
+		//TODO: remove: ACETextManager.createACEText(mm.getActiveOntology().getOntologyID());
 		// Note: We start to listen before filling the ACE text, because
 		// we want to add entity annotations to the lexicon.
 		getOWLModelManager().addOntologyChangeListener(ontologyChangeListener);
@@ -212,7 +211,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 		ACETextManager.setInitCompleted(false);
 		for (OWLOntology ont : ontologies) {
-			logger.info("Init: ontology: " + ont);
+			logger.info("Init: ontology:\n" + getOntologyInfo(ont));
 			initACETextFromOntology(mngr, df, prefs, ont);
 		}
 		ACETextManager.setInitCompleted(true);
@@ -243,8 +242,15 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			addMorfAnnotations(mngr, df, ont, entities);
 		}
 		else {
+			TokenMapper tokenMapper = acetext.getTokenMapper();
 			for (OWLEntity entity : ont.getSignature()) {
-				addToLexicon(entity, acetext.getTokenMapper());
+				if (Showing.isShow(entity)) {
+					IRI subject = entity.getIRI();
+					String lemma = subject.getFragment(); // TODO: or toRendering()
+					for (MorphType morphType : MorphType.getMorphTypeSet(LexiconUtils.getLexiconEntryType(entity))) {
+						tokenMapper.addEntry(lemma, subject, morphType);
+					}
+				}
 			}
 		}
 
@@ -276,7 +282,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		List<AddAxiom> changes = Lists.newArrayList();
 		for (OWLEntity entity : entities) {
 			if (Showing.isShow(entity)) {
-				// Get the existing annotations and add them to the lexicon
+				// TODO: BUG: Get the existing annotations and add them to the lexicon.
 				// TODO: BUG: Use rendering instead of the fragment
 				Set<OWLAnnotationAssertionAxiom> annSet = MorphAnnotation.getAdditionalMorphAnnotations(df, ont, entity, entity.getIRI().getFragment());
 				logger.info("Init: entity " + entity + " adding additional annotations: " + annSet);
@@ -414,10 +420,10 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		}
 
 		if (textAxiomCounter > 0) {
-			ACETextManager.fireEvent(EventType.ACETEXT_CHANGED);
+			ACETextManager.fireEvent(TextEventType.ACETEXT_CHANGED);
 		}
 		if (lexiconAxiomCounter > 0) {
-			ACETextManager.fireEvent(EventType.ACELEXICON_CHANGED);
+			ACETextManager.fireEvent(TextEventType.ACELEXICON_CHANGED);
 		}
 	}
 
@@ -613,13 +619,20 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		}
 	}
 
-	private static void addToLexicon(OWLEntity entity, TokenMapper tokenMapper) {
-		IRI subject = entity.getIRI();
-		String lemma = subject.getFragment(); // TODO: or toRendering()
 
-		EntryType entryType = LexiconUtils.getLexiconEntryType(entity);
-		for (MorphType morphType : MorphType.getMorphTypeSet(entryType)) {
-			tokenMapper.addEntry(lemma, subject, morphType);
-		}
+	/**
+	 * <p>Prints some data about the ontology. Useful for debugging.</p>
+	 * 
+	 * @param ont
+	 * @return
+	 */
+	private static String getOntologyInfo(OWLOntology ont) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ID: " + ont.getOntologyID() + "\n");
+		sb.append("Axioms: " + ont.getAxiomCount() + "\n");
+		sb.append("Logical axioms: " + ont.getLogicalAxiomCount() + "\n");
+		sb.append("Entities (here): " + ont.getSignature(false).size() + "\n");
+		sb.append("Entities (here + imported): " + ont.getSignature(true).size() + "\n");
+		return sb.toString();
 	}
 }

@@ -40,8 +40,9 @@ import org.semanticweb.owlapi.model.OWLObject;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.EntityLinkAction;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
@@ -71,8 +72,8 @@ public class ACEWordsASortedViewComponent extends AbstractACEViewComponent {
 		}
 	};
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
 			showWords();
 		}
 	};

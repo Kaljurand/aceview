@@ -54,11 +54,9 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
-import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetListener;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.model.event.SnippetEventType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
@@ -98,27 +96,53 @@ public final class ACETextManager {
 	private static ACESnippet whySnippet;
 
 
-	private static final List<ACETextManagerListener> aceTextManagerChangeListeners = Lists.newArrayList();
-	private static final List<ACESnippetListener> snippetListeners = Lists.newArrayList();
+	private static final List<ACEViewListener<ACEViewEvent<TextEventType>>> aceTextManagerChangeListeners = Lists.newArrayList();
+	private static final List<ACEViewListener<ACEViewEvent<SnippetEventType>>> snippetListeners = Lists.newArrayList();
 
 	private static boolean isInitCompleted = false;
 
 	// No instances allowed
 	private ACETextManager() {}
 
+
+	/*
 	public static void createACEText(OWLOntologyID id) {
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = new ACETextImpl();
 		acetexts.put(id, acetext);
 		// BUG: would be better if we didn't have to set the active URI here
 		activeACETextID = id;
 	}
+	 */
+	public static void jura() {
+
+	}
 
 
+	/**
+	 * <p>If <code>acetiveACETextID == null</code> then it means that
+	 * no ACE text has been created yet as one ACE text must
+	 * always be active. In this case we create a new ACE text
+	 * and set it active. Otherwise we change the active ACE text
+	 * according to the given ID.</p>
+	 * 
+	 * @param id
+	 */
 	public static void setActiveACETextID(OWLOntologyID id) {
-		if (activeACETextID.compareTo(id) != 0) {
+		logger.info("Current active ID: " + activeACETextID);
+		logger.info("New active ID: " + id);
+		if (activeACETextID == null) {
+			// Create a new ACE text and set it active.
+			getACEText(id);
 			activeACETextID = id;
-			fireEvent(EventType.ACTIVE_ACETEXT_CHANGED);
+			fireEvent(TextEventType.ACTIVE_ACETEXT_CHANGED);
 		}
+		else {
+			if (activeACETextID.compareTo(id) != 0) {
+				activeACETextID = id;
+				fireEvent(TextEventType.ACTIVE_ACETEXT_CHANGED);
+			}
+		}
+		logger.info("Now current active ID: " + activeACETextID);
 	}
 
 
@@ -151,9 +175,11 @@ public final class ACETextManager {
 		}
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = acetexts.get(id);
 		if (acetext == null) {
-			logger.error("getACEText: acetext == null, where ID: " + id);
-			createACEText(id);
-			return getACEText(id);
+			logger.error("Creating a new ACE text and setting it active: " + id);
+			acetext = new ACETextImpl();
+			acetexts.put(id, acetext);
+			// BUG: maybe it would be better if we didn't have to set the ID active
+			activeACETextID = id;
 		}
 		return acetext;
 	}
@@ -196,7 +222,7 @@ public final class ACETextManager {
 	public static void removeSnippet(ACESnippet snippet) {
 		Set<OWLLogicalAxiom> removedAxioms = getActiveACEText().remove(snippet);
 		changeOntology(getRemoveChanges(owlModelManager.getActiveOntology(), removedAxioms));
-		fireEvent(EventType.ACETEXT_CHANGED);
+		fireEvent(TextEventType.ACETEXT_CHANGED);
 	}
 
 
@@ -224,7 +250,7 @@ public final class ACETextManager {
 		changes.addAll(getAddChanges(ontology, newSnippet));
 		changeOntology(changes);
 		setSelectedSnippet(newSnippet);
-		fireEvent(EventType.ACETEXT_CHANGED);
+		fireEvent(TextEventType.ACETEXT_CHANGED);
 	}
 
 
@@ -251,7 +277,7 @@ public final class ACETextManager {
 
 		if (! (addedSentences.isEmpty() && removedSentences.isEmpty())) {
 			changeOntology(changes);
-			fireEvent(EventType.ACETEXT_CHANGED);
+			fireEvent(TextEventType.ACETEXT_CHANGED);
 		}
 	}
 
@@ -272,35 +298,35 @@ public final class ACETextManager {
 
 		if (! (addedSentences.isEmpty() && removedSnippets.isEmpty())) {
 			changeOntology(changes);
-			fireEvent(EventType.ACETEXT_CHANGED);
+			fireEvent(TextEventType.ACETEXT_CHANGED);
 		}
 	}
 
 
-	public static void addListener(ACETextManagerListener listener) {
+	public static void addListener(ACEViewListener<ACEViewEvent<TextEventType>> listener) {
 		aceTextManagerChangeListeners.add(listener);
 	}
 
-	public static void removeListener(ACETextManagerListener listener) {
+	public static void removeListener(ACEViewListener<ACEViewEvent<TextEventType>> listener) {
 		aceTextManagerChangeListeners.remove(listener);
 	}
 
 
-	public static void addSnippetListener(ACESnippetListener listener) {
+	public static void addSnippetListener(ACEViewListener<ACEViewEvent<SnippetEventType>> listener) {
 		snippetListeners.add(listener);
 	}
 
-	public static void removeSnippetListener(ACESnippetListener listener) {
+	public static void removeSnippetListener(ACEViewListener<ACEViewEvent<SnippetEventType>> listener) {
 		snippetListeners.remove(listener);
 	}
 
 
 	// TODO: should be private
-	public static void fireEvent(EventType type) {
+	public static void fireEvent(TextEventType type) {
 		if (isInitCompleted) {
-			ACETextChangeEvent event = new ACETextChangeEvent(type);
+			ACEViewEvent<TextEventType> event = new ACEViewEvent<TextEventType>(type);
 			logger.info("Event: " + event.getType());
-			for (ACETextManagerListener listener : aceTextManagerChangeListeners) {
+			for (ACEViewListener<ACEViewEvent<TextEventType>> listener : aceTextManagerChangeListeners) {
 				try {
 					listener.handleChange(event);
 				}
@@ -624,7 +650,7 @@ public final class ACETextManager {
 		// TODO: BUG: we should pick the ontology that corresponds to the
 		// ACE text. This is not always the active ontology.
 		changeOntology(getAddChanges(owlModelManager.getActiveOntology(), snippet));
-		fireEvent(EventType.ACETEXT_CHANGED);
+		fireEvent(TextEventType.ACETEXT_CHANGED);
 	}
 
 
@@ -804,9 +830,9 @@ public final class ACETextManager {
 
 
 	private static void fireSnippetEvent(SnippetEventType type) {
-		ACESnippetEvent event = new ACESnippetEvent(type);
+		ACEViewEvent<SnippetEventType> event = new ACEViewEvent<SnippetEventType>(type);
 		logger.info("Event: " + event.getType());
-		for (ACESnippetListener listener : snippetListeners) {
+		for (ACEViewListener<ACEViewEvent<SnippetEventType>> listener : snippetListeners) {
 			try {
 				listener.handleChange(event);
 			}
