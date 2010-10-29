@@ -491,6 +491,13 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				logger.warn("AxiomVerbalizer produced a null-snippet for: " + logicalAxiom);
 			}
 			else {
+				// Note: new behavior: we don't use axiom annotations anymore to
+				// transfer ACE Snippets into the ACE text.
+				acetext.add(newSnippet);
+				ACETextManager.setSelectedSnippet(newSnippet);
+
+				// TODO: delete this
+				/*
 				// TODO: use instead?: List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>();
 				List<OWLAxiomChange> changes = Lists.newArrayList();
 				// Remove the axiom from the ontology
@@ -499,6 +506,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 				changes.add(new AddAxiom(ont, ACETextManager.annotateAxiomWithSnippet(df, logicalAxiom, newSnippet)));
 				// Apply the changes to the ontology
 				OntologyUtils.changeOntology(mngr, changes);
+				 */
 			}
 		}
 

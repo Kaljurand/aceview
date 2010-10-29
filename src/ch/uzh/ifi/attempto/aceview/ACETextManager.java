@@ -734,8 +734,9 @@ public final class ACETextManager {
 		// annotate this axiom with ACE View specific annotations.
 		if (snippetAxioms.size() == 1) {
 			OWLLogicalAxiom axiom = snippetAxioms.iterator().next();
-			OWLLogicalAxiom annotatedAxiom = annotateAxiomWithSnippet(owlModelManager.getOWLDataFactory(), axiom, snippet);
-			changes.add(new AddAxiomByACEView(ontology, annotatedAxiom));
+			//OWLLogicalAxiom annotatedAxiom = annotateAxiomWithSnippet(owlModelManager.getOWLDataFactory(), axiom, snippet);
+			//changes.add(new AddAxiomByACEView(ontology, annotatedAxiom));
+			changes.add(new AddAxiomByACEView(ontology, axiom));
 		}
 		else {
 			for (OWLLogicalAxiom axiom : snippetAxioms) {
@@ -814,6 +815,8 @@ public final class ACETextManager {
 
 
 	/**
+	 * @deprecated
+	 * 
 	 * <p>Constructs a new axiom on the basis of the given axiom.
 	 * The new axiom will have some additional annotations based on
 	 * the given snippet, namely the textual content of the snippet
