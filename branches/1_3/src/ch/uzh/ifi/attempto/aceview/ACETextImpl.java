@@ -60,6 +60,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	// private final Map<OWLEntity, Set<ACESnippet>> entityToSnippets = new HashMap<OWLEntity, Set<ACESnippet>>();
 
 	// Maps every OWL axiom to a set of ACE snippets that correspond to the axiom.
+	// TODO: clarify the meaning of this
 	private final Multimap<OWLLogicalAxiom, ACESnippet> axiomToSnippets = HashMultimap.create();
 
 	// Maps every ACE sentence to a set of snippets that contain the sentence.
