@@ -503,15 +503,27 @@ public final class ACETextManager {
 	}
 
 
-	public static List<? extends OWLAxiomChange> getRemoveChanges(OWLOntology ontology, Set<? extends OWLAxiom> axioms) {
+	/**
+	 * <p>Remove the set of given logical axioms from the ontology, i.e. generate the respective
+	 * list of changes. Note that the removed axioms do not have to match structurally against
+	 * the given axioms.
+	 * It is only important that the logical part matches, i.e. annotations are ignored.</p>
+	 * 
+	 * @param ontology OWL ontology to be modified
+	 * @param axioms Set of logical axioms to be removed
+	 * @return List of axiom removal changes
+	 */
+	public static List<? extends OWLAxiomChange> getRemoveChanges(OWLOntology ont, Set<OWLLogicalAxiom> axioms) {
 		List<RemoveAxiomByACEView> changes = Lists.newArrayList();
 		for (OWLAxiom ax : axioms) {
-			// Remove only if contains.
-			if (ontology.containsAxiom(ax)) {
-				changes.add(new RemoveAxiomByACEView(ontology, ax));
+			Set<OWLAxiom> axiomsToBeRemoved = ont.getAxiomsIgnoreAnnotations(ax);
+			if (axiomsToBeRemoved.isEmpty()) {
+				logger.error("Cannot remove, ontology does not contain: " + ax.getAxiomWithoutAnnotations());
 			}
 			else {
-				logger.error("Cannot remove, ontology does not contain: " + ax);
+				for (OWLAxiom axToBeRemoved : axiomsToBeRemoved) {
+					changes.add(new RemoveAxiomByACEView(ont, axToBeRemoved));
+				}
 			}
 		}
 		return changes;

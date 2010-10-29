@@ -211,6 +211,15 @@
 	<editorKitId value="OWLEditorKit"/>
 </extension>
 
+<extension id="ch.uzh.ifi.attempto.aceview.ui.menu.AnnotateAxiomsWithACETextAction"
+	point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Annotate every axiom with ACE text"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.action.AnnotateAxiomsWithACETextAction"/>
+	<toolTip value="Add an ACE text annotation to every logical axiom."/>
+	<path value="org.protege.editor.owl.menu.tools/SlotP-F"/>
+	<editorKitId value="OWLEditorKit"/>
+</extension>
+
 
 <!-- ACE View related links -->
 
