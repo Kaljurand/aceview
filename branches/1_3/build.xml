@@ -240,11 +240,11 @@
 
 
 	<property name="root" value="http://aceview.googlecode.com/"/>
-	<property name="update.properties.file" value="${root}svn/trunk/update.properties"/>
+	<property name="update.properties.file" value="${root}svn/branches/1_3/update.properties"/>
 	<property name="readme.file" value="${root}svn/trunk/RELEASE_NOTES.html"/>
 	<property name="download" value="${root}files/${plugin}.jar"/>
 
-	<target name="dist" depends="jar">
+	<target name="dist" depends="jar" description="Create the update.properties file.">
 		<echo file="update.properties" append="false">
 id=${plugin}
 version=${bundle.version}
