@@ -1,0 +1,48 @@
+/**
+
+This a list of ACE sentences that translate into SWRL rules.
+Note that the SWRL rule support in APE is experimental and
+incomplete.
+
+@author Kaarel Kaljurand
+@ace_version 6.6
+@date 2010-11-01
+
+*/
+
+# The following two rules turn the text inconsistent
+# provided that "John likes Mary.".
+
+If John likes Mary then Bill is William.
+
+If John likes Mary then Bill is not William.
+
+
+# Rule with no builtins nor data properties.
+# Creates an extra variable into the head and is
+# thus not accepted by HermiT.
+
+Every territory
+	that is surrounded by a country X
+	and
+	that is a part of a country Y
+		that is not X
+	is an enclave.
+
+
+# Simple rule with builtins but no classes/properties/individuals/variables.
+
+If 1 + 2 = 3 then 1 = 3 - 2.
+
+
+# Simple rule with a variable.
+# Currently translated incorrectly.
+
+If 1 + 2 = X then X = 3.
+
+
+# Complex rule about the relationship between every circle's radius and area.
+# Note however that currently "radius" and "area" are incorrectly
+# treated as object properties.
+
+If there is a circle C and C\'s radius is R and C\'s area is S then S = Pi * (R * R) / 1 + 2 - 2.
