@@ -2,13 +2,28 @@
 
 This a list of ACE sentences that translate into SWRL rules.
 Note that the SWRL rule support in APE is experimental and
-incomplete.
+incomplete. The main problem is that sometimes rules are
+created which syntactically violate the DLSafe rules but
+which could be turned into legal rules with a few changes
+that do not affect the semantics.
 
 @author Kaarel Kaljurand
 @ace_version 6.6
-@date 2010-11-01
+@date 2010-11-03
 
 */
+
+If a dog is taller than a cat that is taller than a mouse then the dog is taller than the mouse.
+
+If a man sees a woman then a dog sees a cat. /* Not allowed in DLSafe */
+
+Every man that owns a car and that is not a manager cleans the car.
+
+If John likes Mary then John is a man and Mary is a woman.
+
+If John likes Mary then Ann likes Bill.
+
+If X loves Y and Y loves X then X is a man.
 
 # The following two rules turn the text inconsistent
 # provided that "John likes Mary.".
@@ -45,4 +60,4 @@ If 1 + 2 = X then X = 3.
 # Note however that currently "radius" and "area" are incorrectly
 # treated as object properties.
 
-If there is a circle C and C\'s radius is R and C\'s area is S then S = Pi * (R * R) / 1 + 2 - 2.
+If there is a circle C and C's radius is R and C's area is S then S = Pi * (R * R) / 1 + 2 - 2.
