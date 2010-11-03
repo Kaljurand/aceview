@@ -1,0 +1,36 @@
+/**
+
+ACE versions of the example rules in the SWRL specification
+<http://www.w3.org/Submission/SWRL/>.
+
+TODO: cover all the examples of the spec
+
+@author Kaarel Kaljurand
+@ace_version 6.6
+@date 2010-11-03
+
+*/
+
+# The first 3 example rules in the SWRL specification are not all
+# that interesting: two of them represent the same variable-sharing
+# pattern "XY & YZ => XZ" and two of them are even expressible in OWL.
+
+# hasParent(?x1,?x2) & hasBrother(?x2,?x3) => hasUncle(?x1,?x3)
+
+If X1 has-parent X2 and X2 has-brother X3 then X1 has-unclde X3.
+
+
+# A very common use for rules is to move property values from one individual
+# to a related individual, as in the following example that expresses
+# the fact that the style of an art object is the same as the style of
+# the creator.
+#
+# Artist(?x) & artistStyle(?x,?y) & Style(?y) & creator(?z,?x) =>
+# style/period(?z,?y)
+
+If an artist whose style is Y is a creator of Z then a period of Z is Y.
+
+
+# Artist(?x) & (<=1 artistStyle)(?x) & creator(?z,?x) => (<=1 style/period)(?z)
+
+Everything whose creator has at most one style has at most one period.
