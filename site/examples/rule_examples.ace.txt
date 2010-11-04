@@ -9,7 +9,7 @@ that do not affect the semantics.
 
 @author Kaarel Kaljurand
 @ace_version 6.6
-@date 2010-11-03
+@date 2010-11-04
 
 */
 
@@ -31,6 +31,28 @@ If X loves Y and Y loves X then X is a man.
 If John likes Mary then Bill is William.
 
 If John likes Mary then Bill is not William.
+
+
+If 1 + 2 < 4 then John does not like Mary.
+
+# Pellet says:
+# WARNING: IGNORING RULE Rule([equal([?xg6, ?xg7]), multiply([?xg6, ?x1, ?x2]), multiply([?xg7, ?x2, ?x1])] => [know(Brian,Brian)]): Could not generate safe ordering for body constraints.
+
+If X * Y = Y * X then Brian knows itself.
+
+
+
+# Pellet says:
+# WARNING: Ignoring rule Rule([add([?xg3, "1"^^integer, "2"^^integer]), equal([?x1, ?xg3])] => [equal([?x1, "4"^^integer])]): Builtin atoms in rule heads are not currently supported
+
+If X = 1 + 2 then X = 4.
+
+
+For everything John likes Mary.
+
+If there is X and there is Y then X knows Y.
+
+If "12" & "34"= "1234" then John owns at most 5 cars.
 
 
 # Rule with no builtins nor data properties.
