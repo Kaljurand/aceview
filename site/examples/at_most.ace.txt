@@ -1,0 +1,41 @@
+/**
+
+Reasoning about "at most" and relative clauses.
+
+@author Kaarel Kaljurand
+@ace_version 6.6
+@date 2010-11-04
+
+*/
+
+John1 has at most 3 apples.
+
+John2 has at most 3 apples that are a red.
+
+John3 has at most 3 apples that he likes.
+
+
+# John1
+Who has at most 3 apples?
+
+# John2, John1
+Who has at most 3 apples that are a red?
+
+# Not possible in OWL/DL-Query because the
+# reference 'he' tries to access something beyond apples. ;(
+# should be: John3, John1
+Who has at most 3 apples that he likes?
+
+
+# Since the general question does not work, we have to ask
+# for every individual separately. We do this by classification
+# and then ask for the members of this class.
+
+If John1 has at most 3 apples that he likes then John1 is an answer.
+
+If John2 has at most 3 apples that he likes then John2 is an answer.
+
+If John3 has at most 3 apples that he likes then John3 is an answer.
+
+# John3, John1
+Who is an answer?
