@@ -356,7 +356,7 @@ the <span class="menu">View&nbsp;&rarr;&nbsp;ACE&nbsp;views</span> menu.
 Unless the view is more technical, it is also
 included in the default configuration of the ACE View tab.</p>
 
-<h3>Snippet editor</h3>
+<h3>Snippet editor and feedback</h3>
 
 <p>The Snippet Editor is for working with very short texts
 (one or two sentences),
@@ -509,7 +509,7 @@ select, copy, and paste.</p>
 -->
 
 
-<h3>Words views</h3>
+<h3>Words and word usage views</h3>
 
 <p>"ACE Words" provides a view to all the content words (nouns, verbs, proper names)
 of the ACE text. For each word its frequency is show in parentheses.
@@ -525,7 +525,11 @@ information about the word, e.g. its usage will be displayed in the "ACE Word Us
 are displayed in grey color.</p>
 
 
-<h3>Snippet views</h3>
+<h3>Snippets view</h3>
+
+<p>The "ACE Snippets" view is similar to the "ACE Text" as it displays the
+complete ACE text. The "ACE Snippets" view, however, is much more structured as
+the snippets are listed in a table making the individual snippets easier to access.</p>
 
 <p>Clicking on "ACE Snippets" opens a view that lists all the snippets
 in the ACE text together with some of their properties (content word count,
@@ -909,9 +913,10 @@ large ontologies (e.g. more than 500 sentences/axioms).</li>
 <li>Some operations provided by standard Prot&eacute;g&eacute; menus do not yet work correctly with ACE View: Rename, Change ontology URI, Show all loaded ontologies, etc.</li>
 <li>OWL data properties are not fully supported.</li>
 <li>Anonymous individuals could be handled in a smarter way.</li>
-<li>The lexicon does not have a dedicated type for relational nouns (e.g. `part of').
-As a result, roundtripping of sentences that contain <em>of</em>-constructions does not
-work correctly.</li>
+<li>The lexicon does not have a dedicated type for relational nouns (e.g. `part of')
+and adjectives (e.g. `red').
+As a result, roundtripping of sentences that contain <em>of</em>-constructions or
+adjectives does not work correctly.</li>
 <li>Some types of axioms are not verbalized:
 <ul>
 <li>SWRL rules,</li>
