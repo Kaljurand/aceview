@@ -78,7 +78,7 @@ function toc(firstNumber, makeToc) {
 			// We use "\r\n" to make IE happy.
 			if (makeToc) {
 				var tocEntry = somebody.childNodes[i].innerHTML;
-				tocContent += number + "  " + "<a href='#" + number + "'>" + tocEntry + "</a>\r\n";
+				tocContent += number + "  " + "<a href='#" + number + "'>" + tocEntry + "</a><br/>";
 			}
 
 			var title = somebody.childNodes[i].innerHTML;

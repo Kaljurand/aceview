@@ -55,6 +55,28 @@ If there is X and there is Y then X knows Y.
 If "12" & "34"= "1234" then John owns at most 5 cars.
 
 
+# Reasoning with stringConcat.
+# Currently doesn't work because Pellet says:
+# WARNING: IGNORING RULE Rule([name(?x2,?xg1), name(?x6,?xg3), stringConcat([?xg1, ?xg2, ?x4]), stringConcat([?xg2, ?x3, " "^^string]), stringConcat([?xg3, ?xg4, ?x7]), stringConcat([?xg4, ?x3, " "^^string])] => [namesake(?x2,?x6)]): Could not generate safe ordering for body constraints.
+If X's name is F & " " & A1 and Y's name is F & " " & A2 then X is a namesake of Y.
+
+John1's name is "John Smith".
+
+John2's name is "John Jones".
+
+Whose namesake is John1?
+
+Whose namesake is John2?
+
+
+# Doing calculations in SWRL.
+# Doesn't work because "value" is translated as an object property.
+
+If X = 1 + 2 then Number's value is X.
+
+What is Number's value?
+
+
 # Rule with no builtins nor data properties.
 # Creates an extra variable into the head and is
 # thus not accepted by HermiT.
