@@ -32,6 +32,9 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -54,6 +57,7 @@ import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.ape.ACEUtils;
 import ch.uzh.ifi.attempto.owl.VerbalizerWebservice;
 
@@ -86,9 +90,10 @@ public class AxiomVerbalizer {
 
 		OWLOntologyID iri = ont.getOntologyID();
 
-		// TODO: Currently the verbalization of SWRL rules is not supported.
+		// TODO: Currently the verbalization of certain axioms is not supported.
 		// We just return the Protege rendering.
-		if (axiom instanceof SWRLRule) {
+		// Checking for unsupported axioms here increases processing speed.
+		if (OntologyUtils.verbalizationNotSupported(axiom)) {
 			OWLLogicalAxiom annotationlessAxiom = (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations();
 			return new ACESnippetImpl(iri, "", axiom, getAlternativeRendering(annotationlessAxiom));
 		}
@@ -242,6 +247,31 @@ public class AxiomVerbalizer {
 			}
 
 			return getSg(subject.asOWLNamedIndividual(), ont) + " " + getSg(opExpression.asOWLObjectProperty(), ont) + " " + getSg(object.asOWLNamedIndividual(), ont) + ".";
+		}
+		else if (ax instanceof OWLDataPropertyAssertionAxiom) {
+			OWLDataPropertyAssertionAxiom dpAssertionAxiom = (OWLDataPropertyAssertionAxiom) ax;
+
+			OWLDataPropertyExpression dpExpression = dpAssertionAxiom.getProperty();
+			if (dpExpression.isAnonymous()) return null;
+
+			OWLIndividual subject = dpAssertionAxiom.getSubject();
+			if (isAnonymous(subject)) return null;
+
+			OWLLiteral literal = dpAssertionAxiom.getObject();
+			OWLDatatype datatype = literal.getDatatype();
+			String datavalue = "";
+			if (datatype.isString()) {
+				datavalue = "\"" + literal.getLiteral() + "\"";
+			}
+			else {
+				// BUG: we accept all types of data here (although ACE only supports numbers and strings)
+				datavalue = literal.getLiteral();
+			}
+
+			// TODO: BUG: get the current rendering instead
+			String dpAsString = dpExpression.asOWLDataProperty().getIRI().getFragment();
+			// John's temperature is 36.
+			return getSg(subject.asOWLNamedIndividual(), ont) + "'s " + dpAsString + " is " + datavalue + ".";
 		}
 		else if (ax instanceof OWLDisjointClassesAxiom) {
 			OWLDisjointClassesAxiom disjointClassesAxiom = (OWLDisjointClassesAxiom) ax;
