@@ -128,12 +128,13 @@ public final class OntologyUtils {
 
 
 	/**
-	 * <p>Creates an annotation assertion axiom, e.g. http://www.net/man -morph#CN_pl-> "men".</p>
+	 * <p>Creates an annotation assertion axiom, e.g.
+	 * (http://morph#CN_pl, http://www.net/man, "men").</p>
 	 * 
 	 * @param df OWLDataFactory
 	 * @param propertyIRI IRI of the annotation property (e.g. morph#CN_pl)
-	 * @param subject (e.g. IRI of the entity, e.g. http://www.net/man)
-	 * @param lexem Annotation value as string (e.g. men)
+	 * @param subjectIRI (e.g. IRI of the entity, e.g. http://www.net/man)
+	 * @param valueAsString Annotation value as string (e.g. men)
 	 * @return OWLAnnotationAssertionAxiom
 	 */
 	public static OWLAnnotationAssertionAxiom createIRIAnnotationAxiom(OWLDataFactory df, IRI propertyIRI, IRI subjectIRI, String valueAsString) {

@@ -434,9 +434,9 @@ public final class ACETextManager {
 	 * TODO: Think about object and data properties. If TV corresponds to both
 	 * then this method has to deal with the ambiguity.
 	 * 
-	 * @param type
-	 * @param iri
-	 * @return
+	 * @param type ACE word class (CN, TV, PN)
+	 * @param iri OWL entity IRI
+	 * @return OWL entity that matches the ACE word class and the IRI
 	 */
 	public static OWLEntity findEntity(EntryType type, IRI iri) {
 		OWLEntityFinder entityFinder = getOWLModelManager().getOWLEntityFinder();
@@ -509,7 +509,7 @@ public final class ACETextManager {
 	 * the given axioms.
 	 * It is only important that the logical part matches, i.e. annotations are ignored.</p>
 	 * 
-	 * @param ontology OWL ontology to be modified
+	 * @param ont OWL ontology to be modified
 	 * @param axioms Set of logical axioms to be removed
 	 * @return List of axiom removal changes
 	 */
@@ -634,10 +634,12 @@ public final class ACETextManager {
 
 
 	/**
+	 * <p>Interprets the given ACE sentence as an expression in
+	 * Manchester OWL Syntax and parses it to an OWL logical axiom.</p>
 	 * 
 	 * @param sentence
 	 * @param base
-	 * @return
+	 * @return OWL logical axiom
 	 * @throws ParserException
 	 */
 	public static OWLLogicalAxiom parseWithMos(ACESentence sentence, String base) throws ParserException {
