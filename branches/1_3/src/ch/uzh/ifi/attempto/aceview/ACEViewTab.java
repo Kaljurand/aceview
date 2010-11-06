@@ -233,9 +233,9 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 */
 	private static void initACETextFromOntology(OWLOntologyManager mngr, OWLDataFactory df, ACEViewPreferences prefs, OWLOntology ont) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
 
-		OWLOntologyID iri = ont.getOntologyID();
-		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(iri);
-		TokenMapper tokenMapper = acetext.getTokenMapper();
+		OWLOntologyID id = ont.getOntologyID();
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(id);
+		TokenMapper tokenMapper = ACETextManager.getACELexicon(id);
 		if (prefs.isUseLexicon()) {
 			Set<OWLEntity> entities = ont.getSignature();
 			addMorfAnnotations(mngr, df, ont, entities, tokenMapper);
@@ -259,7 +259,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		for (OWLLogicalAxiom logicalAxiom : ont.getLogicalAxioms()) {
 			counter++;
 			logger.info("Init: Add axiom " + counter + "/" + axiomCount + " : " + logicalAxiom);
-			processAxiomOnLoad(ont, acetext, axiomVerbalizer, iri, logicalAxiom);
+			processAxiomOnLoad(ont, acetext, axiomVerbalizer, id, logicalAxiom);
 		}
 	}
 
@@ -324,7 +324,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			OWLOntologyID oid = changeOnt.getOntologyID();
 			OWLAxiom axiom = change.getAxiom();
 			ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(oid);
-			TokenMapper acelexicon = acetext.getTokenMapper();
+			TokenMapper acelexicon = ACETextManager.getACELexicon(oid);
 
 			if (axiom instanceof OWLLogicalAxiom) {
 

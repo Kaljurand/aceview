@@ -33,6 +33,7 @@ import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.util.AceWikiRenderer;
 
 /**
@@ -49,6 +50,7 @@ public class CreateAceWikiAction extends ProtegeOWLAction {
 
 	public void actionPerformed(ActionEvent actionEvent) {
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
+		TokenMapper tokenMapper = ACETextManager.getActiveACELexicon();
 		File f = saveZipFile(ACTION_TITLE);
 
 		if (f != null) {
@@ -62,7 +64,7 @@ public class CreateAceWikiAction extends ProtegeOWLAction {
 				absolutePath = absolutePath + ".zip";
 				directoryName = fileName;
 			}
-			AceWikiRenderer renderer = new AceWikiRenderer(acetext);
+			AceWikiRenderer renderer = new AceWikiRenderer(acetext, tokenMapper);
 			try {
 				renderer.createZipFile(absolutePath, directoryName);
 				showMessage(JOptionPane.INFORMATION_MESSAGE, "AceWiki saved into " + absolutePath + ".");

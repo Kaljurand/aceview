@@ -54,6 +54,7 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapperImpl;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
 import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
@@ -81,6 +82,7 @@ public final class ACETextManager {
 	private static final IRI timestampIRI = IRI.create("http://purl.org/dc/elements/1.1/date");
 
 	private static final Map<OWLOntologyID, ACEText<OWLEntity, OWLLogicalAxiom>> acetexts = Maps.newHashMap();
+	private static final Map<OWLOntologyID, TokenMapper> acelexicons = Maps.newHashMap();
 	private static OWLModelManager owlModelManager;
 	private static OWLOntologyID activeACETextID;
 
@@ -186,7 +188,35 @@ public final class ACETextManager {
 
 
 	public static TokenMapper getActiveACELexicon() {
-		return getACEText(activeACETextID).getTokenMapper();
+		OWLOntologyID id = getActiveACETextID();
+		if (id == null) {
+			return null;
+		}
+		return getACELexicon(id);
+	}
+
+	/**
+	 * <p>Returns the ACE lexicon (TokenMapper)
+	 * that decides the surface forms of the snippets in this text.</p>
+	 * 
+	 * @param id
+	 * @return Lexicon
+	 */
+	public static TokenMapper getACELexicon(OWLOntologyID id) {
+		if (id == null) {
+			// TODO: throw exception here
+			logger.error("getACELexicon: ID == null; THIS SHOULD NOT HAPPEN");
+			return null;
+		}
+		TokenMapper tokenMapper = acelexicons.get(id);
+		if (tokenMapper == null) {
+			logger.error("Creating a new ACE lexicon and setting it active: " + id);
+			tokenMapper = new TokenMapperImpl();
+			acelexicons.put(id, tokenMapper);
+			// BUG: maybe it would be better if we didn't have to set the ID active
+			activeACETextID = id;
+		}
+		return tokenMapper;
 	}
 
 

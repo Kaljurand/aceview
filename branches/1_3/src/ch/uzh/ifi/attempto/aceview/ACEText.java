@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 
 /**
  * <p>Every ACE text is a sequence of ACE snippets.
@@ -179,25 +178,6 @@ public interface ACEText<E, A> {
 	 */
 	int getNothingbutCount();
 
-	/**
-	 * <p>Returns the index-style HTML-rendering of this text.</p>
-	 * 
-	 * TODO: move this into a "renderer class". Why?
-	 * 
-	 * @return HTML-rendering as string
-	 */
-	String getIndexBody();
-
-	/**
-	 * <p>Returns the HTML rendering of the snippets that
-	 * reference the given entity.</p>
-	 * 
-	 * TODO: move this into a "renderer class". Why?
-	 * 
-	 * @param entity OWL entity
-	 * @return HTML-rendering as string
-	 */
-	String getIndexEntry(E entity);
 
 	/**
 	 * <p>Returns <code>true</code> if this text contains a snippet
@@ -291,21 +271,17 @@ public interface ACEText<E, A> {
 	List<ACESnippet> getQuestions();
 
 	/**
-	 * <p>Returns the lexicon using which the snippets of this
-	 * text have been parsed.</p>
+	 * <p>Returns the set of snippets whose axioms reference
+	 * the given entity.</p>
 	 * 
-	 * TODO: Maybe the lexicon should not be part of the text, because
-	 * the parsing must be done outside anyway.
-	 * 
-	 * @return ACE lexicon
+	 * @param entity OWL entity
+	 * @return Set of snippets that reference the given entity
 	 */
-	TokenMapper getTokenMapper();
+	Set<ACESnippet> getSnippets(E entity);
 
 	/**
 	 * <p>Returns the number of snippets whose axioms reference
 	 * the given entity.</p>
-	 * 
-	 * TODO: we could return the set of the actual snippets instead
 	 * 
 	 * @param entity OWL entity
 	 * @return Number of snippets that reference the given entity

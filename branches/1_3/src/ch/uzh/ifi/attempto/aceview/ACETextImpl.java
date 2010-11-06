@@ -17,14 +17,11 @@
 package ch.uzh.ifi.attempto.aceview;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -39,9 +36,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
-import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
-import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapperImpl;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
@@ -72,9 +66,6 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	// List of questions in this ACE text.
 	private final List<ACESnippet> questions = Lists.newArrayList();
 
-	// The ACE lexicon that decides the surface forms of the snippets in this text.
-	private TokenMapper lexicon = null;
-
 	// Number of ACE snippets that reference one or more SWRL rules
 	private int ruleCount = 0;
 
@@ -88,7 +79,6 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 
 	public ACETextImpl() {
-		lexicon = new TokenMapperImpl();
 	}
 
 
@@ -336,58 +326,6 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	}
 
 
-	public String getIndexBody() {
-		StringBuilder html = new StringBuilder();
-		for (Map.Entry<OWLEntity, Set<ACESnippet>> entry : entityToSnippets.entrySet()) {
-			OWLEntity entity = entry.getKey();
-			String entityRendering = ACETextManager.getRendering(entity);
-			Set<ACESnippet> snippets = entry.getValue();
-			html.append("<p><strong><a name='");
-			html.append(LexiconUtils.getHrefId(entity));
-			html.append("'>");
-			html.append(entityRendering);
-			html.append("</a></strong> (");
-			html.append(snippets.size());
-			html.append(")</p>\n");
-			html.append(snippetsToHtml(snippets, lexicon));
-		}
-		return html.toString();
-	}
-
-
-	public String getIndexEntry(OWLEntity entity) {
-		Set<ACESnippet> snippets = entityToSnippets.get(entity);
-		if (snippets == null) {
-			return null;
-		}
-		SortedSet<ACESnippet> snippetsSorted = new TreeSet<ACESnippet>(new SnippetComparator());
-		snippetsSorted.addAll(snippets);
-		return snippetsToHtml(snippetsSorted, lexicon);
-	}
-
-
-	/**
-	 * <p>Generates an HTML list on the basis of a set of snippets.</p>
-	 * 
-	 * @param snippets Set of ACE snippets
-	 * @return <code>String</code> representing an HTML list
-	 */
-	private static String snippetsToHtml(Set<ACESnippet> snippets, TokenMapper lexicon) {
-		if (snippets.isEmpty()) {
-			return "<em>No snippets.</em>";
-		}
-		StringBuilder sb = new StringBuilder();
-		for (ACESnippet snippet : snippets) {
-			sb.append("<p>");
-			sb.append(snippet.toHtmlString(lexicon));
-			sb.append(' ');
-			sb.append(snippet.getTags());
-			sb.append("</p>");
-		}
-		return sb.toString();
-	}
-
-
 	public boolean containsSentence(ACESentence sentence) {
 		return sentenceToSnippets.containsKey(sentence);
 	}
@@ -468,16 +406,14 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	}
 
 
-	public TokenMapper getTokenMapper() {
-		return lexicon;
-	}
-
-
-	class SnippetComparator implements Comparator<ACESnippet> {
-		public int compare(ACESnippet s1, ACESnippet s2) {
-			return s1.toString().compareToIgnoreCase(s2.toString());
+	public Set<ACESnippet> getSnippets(OWLEntity entity) {
+		Set<ACESnippet> snippets = entityToSnippets.get(entity);
+		if (snippets == null) {
+			return Sets.newHashSet();
 		}
+		return snippets;
 	}
+
 
 	public int getSnippetCount(OWLEntity entity) {
 		Set<ACESnippet> snippets = entityToSnippets.get(entity);
