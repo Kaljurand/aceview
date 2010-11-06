@@ -138,30 +138,18 @@ public class ACESnippetImpl implements ACESnippet {
 	/**
 	 * <p>Constructs an ACE snippet from a string.
 	 * The corresponding (single) OWL axiom is given as input,
-	 * therefore the snippet is not parsed.</p>
+	 * therefore the snippet is not parsed.
+	 * Note that any annotations (if present) are stripped from the axiom.</p>
 	 * 
 	 * @param ns Default namespace of the snippet
 	 * @param str Textual content of the snippet
 	 * @param axiom OWL axiom that the snippet corresponds to
+	 * @param altRendering alternative rendering (MOS syntax) for the snippet
 	 */
-	public ACESnippetImpl(OWLOntologyID ns, String str, OWLLogicalAxiom axiom) {
-		this.timestamp = new SnippetDate();
-		this.ns = ns;
-		this.axiomSet = ImmutableSet.of(axiom);
-		this.sentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
-		if (! sentences.isEmpty()) {
-			if (sentences.get(sentences.size() - 1).isQuestion()) {
-				isQuestion = true;
-			}
-		}
-		this.altRendering = null;
-	}
-
-
 	public ACESnippetImpl(OWLOntologyID ns, String str, OWLLogicalAxiom axiom, String altRendering) {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
-		this.axiomSet = ImmutableSet.of(axiom);
+		this.axiomSet = ImmutableSet.of((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations());
 		this.sentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
 		if (! sentences.isEmpty()) {
 			if (sentences.get(sentences.size() - 1).isQuestion()) {
@@ -169,6 +157,11 @@ public class ACESnippetImpl implements ACESnippet {
 			}
 		}
 		this.altRendering = altRendering;
+	}
+
+
+	public ACESnippetImpl(OWLOntologyID ns, String str, OWLLogicalAxiom axiom) {
+		this(ns, str, axiom, null);
 	}
 
 
@@ -567,7 +560,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 		boolean paraphrase1Enabled = prefs.isParaphrase1Enabled();
 
-		// Note: parser might by null in case the ParserHolder has not been initialized
+		// Note: parser might be null in case the ParserHolder has not been initialized
 		ACEParser parser = ParserHolder.getACEParser();
 
 		parser.setURI(getOntologyIRIAsString());
