@@ -15,12 +15,14 @@ import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.SWRLRule;
 
 import com.google.common.collect.Sets;
 
@@ -148,5 +150,29 @@ public final class OntologyUtils {
 		OWLAnnotationValue value = df.getOWLLiteral(valueAsString, "");
 
 		return df.getOWLAnnotationAssertionAxiom(property, subjectIRI, value);
+	}
+
+
+	/**
+	 * <p>List of axiom types that the OWL verbalizer currently
+	 * cannot handle, namely:</p>
+	 * 
+	 * <ul>
+	 * <li><code>OWLDataPropertyAxiom</code>: all types of data property
+	 * axioms, not including <code>OWLDataPropertyAssertionAxiom</code></li>
+	 * <li><code>SWRLRule</code>: SWRL rules</li>
+	 * </ul>
+	 * 
+	 * @param axiom OWL logical axiom
+	 * @return True is axiom cannot be verbalized
+	 */
+	public static boolean verbalizationNotSupported(OWLLogicalAxiom axiom) {
+		if (axiom instanceof SWRLRule) {
+			return true;
+		}
+		else if (axiom instanceof OWLDataPropertyAxiom) {
+			return true;
+		}
+		return false;
 	}
 }

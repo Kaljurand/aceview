@@ -255,9 +255,12 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 
 		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce());
+		int axiomCount = ont.getLogicalAxiomCount();
+		int counter = 0;
 		for (OWLLogicalAxiom logicalAxiom : ont.getLogicalAxioms()) {
-			logger.info("Init: Add axiom: " + logicalAxiom);
-			processAxiom(ont, df, mngr, acetext, axiomVerbalizer, iri, logicalAxiom);
+			counter++;
+			logger.info("Init: Add axiom " + counter + "/" + axiomCount + " : " + logicalAxiom);
+			processAxiomOnLoad(ont, acetext, axiomVerbalizer, iri, logicalAxiom);
 		}
 	}
 
@@ -427,6 +430,66 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	}
 
 
+
+	/**
+	 * <p>Processes a logical axiom that has been added by Protege when loading an ontology.
+	 * The input axiom undergoes the following processing.</p>
+	 * 
+	 * <ol>
+	 *  <li>Does it contain any ACE annotations (i.e. has this axiom been already ACEified)?
+	 *  <ol>
+	 *   <li>If yes then convert the annotations (there can be more than one)
+	 *   into ACE snippets and add the snippets to the ACE text</li>
+	 *   <li>If not then
+	 *   <ol>
+	 *    <li>verbalize the axiom</li>
+	 *    <li>create a snippet based on the verbalization</li>
+	 *   </ol>
+	 *   </li>
+	 *  </ol>
+	 * </li>
+	 * </ul>
+	 * 
+	 * @param ont
+	 * @param df
+	 * @param ontologyManager
+	 * @param acetext
+	 * @param axiomVerbalizer
+	 * @param ns
+	 * @param logicalAxiom
+	 * @param existingAnnotations
+	 * @throws OWLRendererException
+	 * @throws OWLOntologyCreationException
+	 * @throws OWLOntologyChangeException
+	 */
+	private static void processAxiomOnLoad(OWLOntology ont, ACEText acetext, AxiomVerbalizer axiomVerbalizer, OWLOntologyID ns, OWLLogicalAxiom logicalAxiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
+
+		ACESnippet newSnippet = null;
+
+		for (OWLAnnotation annotation : logicalAxiom.getAnnotations(acetextAnnProp)) {
+			String aceAnnotationValue = getAnnotationValueAsString(annotation.getValue());
+			if (aceAnnotationValue == null) {
+				logger.error("Malformed ACE annotation ignored: " + annotation);
+			}
+			else {
+				logger.info("ACE annotation: " + aceAnnotationValue);
+				newSnippet = new ACESnippetImpl(ns, aceAnnotationValue, logicalAxiom);
+				acetext.add(newSnippet);
+			}
+		}
+
+		if (newSnippet == null) {
+			newSnippet = axiomVerbalizer.verbalizeAxiom(logicalAxiom, ont);
+			if (newSnippet == null) {
+				logger.warn("AxiomVerbalizer produced a null-snippet for: " + logicalAxiom);
+			}
+			else {
+				acetext.add(newSnippet);
+			}
+		}
+	}
+
+
 	/**
 	 * <p>Processes a logical axiom that has been added by Protege, either
 	 * via the GUI or when loading an ontology.
@@ -462,13 +525,6 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 * @throws OWLOntologyChangeException
 	 */
 	private static void processAxiom(OWLOntology ont, OWLDataFactory df, OWLOntologyManager mngr, ACEText acetext, AxiomVerbalizer axiomVerbalizer, OWLOntologyID ns, OWLLogicalAxiom logicalAxiom) throws OWLRendererException, OWLOntologyCreationException, OWLOntologyChangeException {
-
-		// TODO: BUG: This is here only to avoid an infinite loop
-		// which occurs because annotation of SWRL-rules does not work
-		// yet in Protege 4.1.
-		if (logicalAxiom instanceof SWRLRule) {
-			return;
-		}
 
 		ACESnippet newSnippet = null;
 
