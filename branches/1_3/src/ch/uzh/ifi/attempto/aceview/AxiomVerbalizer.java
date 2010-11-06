@@ -49,7 +49,6 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.model.SWRLRule;
 
 import com.google.common.collect.Sets;
 
@@ -90,12 +89,13 @@ public class AxiomVerbalizer {
 
 		OWLOntologyID iri = ont.getOntologyID();
 
+		OWLLogicalAxiom axiomWithoutAnnotations = (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations();
+
 		// TODO: Currently the verbalization of certain axioms is not supported.
 		// We just return the Protege rendering.
 		// Checking for unsupported axioms here increases processing speed.
-		if (OntologyUtils.verbalizationNotSupported(axiom)) {
-			OWLLogicalAxiom annotationlessAxiom = (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations();
-			return new ACESnippetImpl(iri, "", axiom, getAlternativeRendering(annotationlessAxiom));
+		if (OntologyUtils.verbalizationNotSupported(axiomWithoutAnnotations)) {
+			return new ACESnippetImpl(iri, "", axiomWithoutAnnotations, getAlternativeRendering(axiomWithoutAnnotations));
 		}
 
 
@@ -104,32 +104,31 @@ public class AxiomVerbalizer {
 		// the verbalizer webservice. It seems that about 50% of
 		// the axioms in real-world ontologies are simple SubClassOf-axioms,
 		// so it really pays off performancewise to verbalize them directly in Java.
-		String verbalization = verbalizeSimpleAxiom(axiom, ont);
+		String verbalization = verbalizeSimpleAxiom(axiomWithoutAnnotations, ont);
 
 		if (verbalization != null) {
 			logger.info("Simple axiom verbalized: " + verbalization);
-			return new ACESnippetImpl(iri, verbalization, axiom);
+			return new ACESnippetImpl(iri, verbalization, axiomWithoutAnnotations);
 		}
 
 		// If the axiom was not simple, then we verbalize it using the
 		// OWL verbalizer webservice. We first remove the axiom annotation
 		// from the axiom because the verbalizer does not need it
 		// (and currently fails to ignore it as well).
-		OWLLogicalAxiom annotationlessAxiom = (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations();
-		logger.info("Using OWL Verbalizer WS to verbalize: " + annotationlessAxiom);
+		logger.info("Using OWL Verbalizer WS to verbalize: " + axiomWithoutAnnotations);
 
 		try {
-			verbalization = verbalizeWithWS(ont, annotationlessAxiom);
+			verbalization = verbalizeWithWS(ont, axiomWithoutAnnotations);
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "OWL verbalizer error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
 		if (verbalization == null) {
-			return new ACESnippetImpl(iri, "", axiom, getAlternativeRendering(annotationlessAxiom));
+			return new ACESnippetImpl(iri, "", axiomWithoutAnnotations, getAlternativeRendering(axiomWithoutAnnotations));
 		}
 
-		return new ACESnippetImpl(iri, verbalization, axiom);
+		return new ACESnippetImpl(iri, verbalization, axiomWithoutAnnotations);
 	}
 
 

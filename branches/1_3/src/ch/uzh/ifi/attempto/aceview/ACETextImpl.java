@@ -294,12 +294,12 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 
 	public boolean containsAxiom(OWLLogicalAxiom ax) {
-		return axiomToSnippets.containsKey(ax);
+		return axiomToSnippets.containsKey(ax.getAxiomWithoutAnnotations());
 	}
 
 
 	public Set<ACESnippet> getAxiomSnippets(OWLLogicalAxiom axiom) {
-		return (Set<ACESnippet>) axiomToSnippets.get(axiom);
+		return (Set<ACESnippet>) axiomToSnippets.get((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations());
 	}
 
 
@@ -451,13 +451,14 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 
 	public Set<OWLLogicalAxiom> removeAxiom(OWLLogicalAxiom axiom) {
-		Set<ACESnippet> snippets = getAxiomSnippets(axiom);
+		OWLLogicalAxiom ax = (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations();
+		Set<ACESnippet> snippets = getAxiomSnippets(ax);
 		if (snippets.isEmpty()) {
 			return Collections.<OWLLogicalAxiom>emptySet();
 		}
 		logger.info("We remove snippets: " + snippets);
 		Set<OWLLogicalAxiom> tanglingAxioms = removeAll(snippets);
-		tanglingAxioms.remove(axiom);
+		tanglingAxioms.remove(ax);
 		return tanglingAxioms;
 	}
 

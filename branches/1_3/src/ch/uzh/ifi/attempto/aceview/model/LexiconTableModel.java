@@ -289,6 +289,10 @@ public class LexiconTableModel extends AbstractTableModel {
 	// object/data properties and individuals,
 	// but this also returns annotation properties.
 	private static Object[] getEntityArray() {
-		return ACETextManager.getOWLModelManager().getActiveOntology().getSignature().toArray();	
+		OWLOntology ont = ACETextManager.getOWLModelManager().getActiveOntology();
+		if (ont == null) {
+			return new Object[0];
+		}
+		return ont.getSignature().toArray();	
 	}
 }
