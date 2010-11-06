@@ -46,16 +46,15 @@ public class BasicGUITest {
 	 * again
 	 * click on button "Finish"
 	 * click on tab "ACE View"
-	 * paste in "Ace snippet editor" :
-	 * 	If there is a woman then she does not like a snake.
+	 * paste in "ACE Snippet Editor" :
+	 * 	Every dog is an animal.
 	 * push on button "Add as new"
 	 * this sentence should appear in panel "Paraphrases"
-	 * If there is a woman X1
-			then it is false
-	    	that the woman X1 likes a snake .
+	 * If there is a dog X1
+               then the dog X1 is an animal .
 	 * the panel's title should be "Paraphrases: 1"
 	 * this should appear in panel "Corresponding logical axioms"
-	 * woman SubClassOf not (like some snake)
+	 * dog SubClassOf animal
 	 * the panel's title should be "Corresponding logical axioms: OWL: 1 SWRL: 0"
 	 */
 	@Test
@@ -63,17 +62,16 @@ public class BasicGUITest {
 	ClassNotFoundException {
 		
 		JTabbedPaneOperator aceViewtabbedPane = launchACEView();
-		enterACEASnippet( aceViewtabbedPane, "If there is a woman then she does not like a snake." );
+		enterACEASnippet( aceViewtabbedPane, "Every dog is an animal." );
 		
 		{
 			/* 
 			 * this sentence should appear in panel "Paraphrases"
-			 * If there is a woman X1
-			then it is false
-	    	that the woman X1 likes a snake . */
+			 * If there is a dog X1
+               then the dog X1 is an animal . */
 			ComponentChooser finder
 			= new JTextComponentOperator.JTextComponentByTextFinder(
-					"If there is a woman X1.*", new RegExComparator() );
+					"If there is a dog X1.*", new RegExComparator() );
 			new JTextComponentOperator( aceViewtabbedPane, finder );
 			/* this works too: new JTextComponentOperator( protegeFrame, finder ); */
 		}
@@ -87,7 +85,7 @@ public class BasicGUITest {
 		/* this should appear in panel "Corresponding logical axioms" */
 		ComponentChooser finder
 		= new JTextComponentOperator.JTextComponentByTextFinder(
-		"woman SubClassOf not (like some snake)" );
+		"dog SubClassOf animal" );
 		new JTextComponentOperator( aceViewtabbedPane, finder );
 	}
 

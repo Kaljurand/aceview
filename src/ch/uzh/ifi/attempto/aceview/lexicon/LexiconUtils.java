@@ -18,8 +18,11 @@ public class LexiconUtils {
 	 * If the given entity if an annotation property or datatype,
 	 * then returns <code>null</code>.</p>
 	 * 
-	 * @param entity
-	 * @return
+	 * TODO: object properties and data properties are mapped to the
+	 * same type. This is bad for bidirectionality.
+	 * 
+	 * @param entity OWL entity
+	 * @return ACE word class (CN, TV, PN)
 	 */
 	public static EntryType getLexiconEntryType(OWLEntity entity) {
 		if (entity instanceof OWLClass) {
@@ -54,10 +57,13 @@ public class LexiconUtils {
 
 
 	/**
+	 * <p>Creates a string based on the ACE word class and an IRI
+	 * such that the string can be used in HTML links, i.e.
+	 * it is URL-encoded.</p>
 	 * 
-	 * @param type
-	 * @param iri
-	 * @return
+	 * @param type ACE word class
+	 * @param iri IRI
+	 * @return Encoded string
 	 */
 	public static String getHrefId(EntryType type, IRI iri) {
 		try {
@@ -68,6 +74,12 @@ public class LexiconUtils {
 	}
 
 
+	/**
+	 * <p>Decodes a string assuming that it has been URL-encoded.</p>
+	 * 
+	 * @param link Encoded string
+	 * @return Decoded string
+	 */
 	public static String decodeHrefLink(String link) {
 		try {
 			return URLDecoder.decode(link, "UTF-8");

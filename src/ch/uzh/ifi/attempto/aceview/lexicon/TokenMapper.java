@@ -163,10 +163,11 @@ public interface TokenMapper {
 
 
 	/**
-	 * TODO: document
+	 * <p>Return the wordform-IRI-morphtype triples that
+	 * correspond to this wordform. There can be 0 or more.</p>
 	 * 
 	 * @param wordform
-	 * @return
+	 * @return Collection of triples
 	 */
 	public Collection<Triple> getWordformEntries(String wordform);
 

@@ -142,9 +142,14 @@ public enum MorphType {
 
 
 	/**
+	 * <p>Returns the set of morphological types that correspond
+	 * to the given word class. The set is immutable, there is
+	 * no reason why anybody would want to change the set.</p>
+	 * 
 	 * TODO: BUG: initialize these sets at construction time
-	 * @param entryType
-	 * @return
+	 * 
+	 * @param entryType ACE word class (e.g. CN)
+	 * @return Set of morphological types (e.g. CN_SG, CN_PL)
 	 */
 	public static Set<MorphType> getMorphTypeSet(EntryType entryType) {
 		if (entryType == null) {
