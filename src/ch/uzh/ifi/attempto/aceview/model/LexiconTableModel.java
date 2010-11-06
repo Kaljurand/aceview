@@ -80,7 +80,7 @@ public class LexiconTableModel extends AbstractTableModel {
 			if (event.isType(TextEventType.ACELEXICON_CHANGED) ||
 					event.isType(TextEventType.ACTIVE_ACETEXT_CHANGED)) {
 				acetext = ACETextManager.getActiveACEText();
-				acelexicon = acetext.getTokenMapper();
+				acelexicon = ACETextManager.getActiveACELexicon();
 				entityArray = getEntityArray();
 				fireTableDataChanged();
 			}
@@ -128,9 +128,7 @@ public class LexiconTableModel extends AbstractTableModel {
 
 	public LexiconTableModel() {
 		acetext = ACETextManager.getActiveACEText();
-		if (acetext != null) {
-			acelexicon = acetext.getTokenMapper();
-		}
+		acelexicon = ACETextManager.getActiveACELexicon();
 		entityArray = getEntityArray();
 		ACETextManager.addListener(aceTextManagerListener);
 	}

@@ -195,12 +195,7 @@ public class ACESnippetImpl implements ACESnippet {
 	@Override
 	public String toString() {		
 		if (isEmpty()) {
-			if (altRendering == null) {
-				return "/*" + getLogicalAxioms().toString() + "*/";
-			}
-			// The Manchester Syntax rendering contains layout symbols,
-			// which we convert into a single space.
-			return "/* MOS: " + altRendering.replaceAll("[ \t\n\f\b\r]+", " ") + " */";
+			return getAltRendering();
 		}
 		return joiner.join(sentences);
 	}
@@ -208,8 +203,8 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public String toHtmlString(TokenMapper aceLexicon) {
 
-		if (isEmpty() && altRendering != null) {
-			return "<span color='red'>" + altRendering + "</span>";
+		if (isEmpty()) {
+			return "<span color='red'>" + getAltRendering() + "</span>";
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -679,5 +674,15 @@ public class ACESnippetImpl implements ACESnippet {
 			return "";
 		}
 		return ontologyIRI.toString();
+	}
+
+
+	private String getAltRendering() {
+		if (altRendering == null) {
+			return "/*" + getLogicalAxioms().toString() + "*/";
+		}
+		// The Manchester Syntax rendering contains layout symbols,
+		// which we convert into a single space.
+		return "/* MOS: " + altRendering.replaceAll("[ \t\n\f\b\r]+", " ") + " */";
 	}
 }

@@ -1,23 +1,24 @@
 /**
 * @title Countries and territories
 * @author Kaarel Kaljurand
-* @version 2010-10-11
+* @version 2010-11-07
 *
 * The goal of this text to describe some aspects of the European Union
-* completely (e.g. we list all the countries).
-* We also cover NATO and G8 membership.
+* completely (e.g. we list all the countries). We also cover NATO and G8 membership.
+* The main focus is on bordering information.
 *
 * Since the idea is to demonstrate reasoning with this text, we have to
 * be careful so that reasoning is reasonably fast. Thus we avoid certain useful
 * but "slow" constructs (e.g. "There are exactly 27 EU-countries.").
-*
-* TODO: use `itself' again, the "not(self(..))" bug seems to be fixed in Pellet 2
 *
 * TODO:
 * other cool stuff formalize/entail:
 * - http://en.wikipedia.org/wiki/List_of_countries_that_border_only_one_other_country
 * - http://en.wikipedia.org/wiki/List_of_sets_of_four_countries_that_border_one_another
 * - http://en.wikipedia.org/wiki/List_of_land_border_lengths
+*
+* BUG: For some reason this is not entailed:
+* #@entails "Liechtenstein is a doubly-landlocked-territory." under OWL
 *
 */
 
@@ -40,9 +41,13 @@ Every member of NATO is a NATO-country.
 
 No NATO-country is a neutral-country.
 
+Every territory borders a territory or borders a sea.
+
 If X borders Y then Y borders X.
 
 If X surrounds Y then X borders Y.
+
+No territory borders itself.
 
 /* Everything that is surrounded by a country is surrounded by exactly 1 country. */
 /* Everything is surrounded by at most 1 thing. */
@@ -95,16 +100,21 @@ United_Kingdom is an island-country.
 If there is a NATO-country that is a neutral-country then it is a neutral-NATO-country.
 Every neutral-NATO-country is a NATO-country that is a neutral-country.
 
-Every territory that is not bordered by a body-of-water is a landlocked-territory.
+Every territory that is surrounded by something that is not a sea is not bordered by a sea.
 
-Every landlocked-territory is a territory that is not bordered by a body-of-water.
+No sea is a territory.
 
-Every territory that is surrounded by something that is not a body-of-water is not bordered by a body-of-water.
+/* Definition: landlocked-territory */
+Every territory that is not bordered by a sea is a landlocked-territory.
 
-No body-of-water is a territory.
+Every landlocked-territory is a territory that is not bordered by a sea.
 
-/* There are two in the world: Liechtenstein, Uzbekistan */
-Every territory that is bordered by nothing but landlocked-territories is a doubly-landlocked-territory.
+/* Definition: doubly-landlocked-territory.
+   There are two in the world: Liechtenstein, Uzbekistan */
+Every territory that borders nothing but landlocked-territories is a doubly-landlocked-territory.
+
+Every doubly-landlocked-territory is a territory that borders nothing but landlocked-territories.
+
 
 /* European countries not in EU */
 
@@ -346,9 +356,17 @@ Germany borders Switzerland.
 
 Germany borders Luxembourg.
 
+##Switzerland borders exactly 5 countries.
+
+Switzerland does not border a sea.
+
+Switzerland is not an EU-country.
+
 Switzerland borders Austria.
 
 Switzerland borders Italy.
+
+Switzerland borders Liechtenstein.
 
 Italy borders Austria.
 
@@ -374,6 +392,10 @@ Czech_Republic borders Slovakia.
 
 Czech_Republic borders Austria.
 
+##Austria borders exactly 8 countries.
+
+Austria does not border a sea.
+
 Austria borders Liechtenstein.
 
 Austria borders Slovakia.
@@ -385,6 +407,10 @@ Austria borders Slovenia.
 Sweden borders Norway.
 
 Sweden borders Finland.
+
+Liechtenstein borders exactly 2 territories.
+
+Liechtenstein does not border a sea.
 
 Lithuania borders Russia.
 
@@ -470,7 +496,7 @@ United_Kingdom borders Ireland.
 
 /* Number of things bordered. BUG: incomplete */
 
-Czech_Republic borders exactly 4 countries.
+#Czech_Republic borders exactly 4 countries.
 
 /* BUG: the next two sentences slow down Pellet (or maybe make it loop). */
 
@@ -486,6 +512,8 @@ Iceland borders no countries.
 
 
 /* Questions */
+What is a country?
+
 What is an EU-country?
 
 What is a NATO-country?
@@ -504,16 +532,15 @@ What is a baltic-state?
 
 Which EU-country borders a NATO-country?
 
-/* Worked in Pellet 2rc5, but gets stuck in Pellet 2rc6. */
-/* What does Austria border? */
+What does Austria border?
+
 What does Belgium border?
 
 What does Bulgaria border?
 
 What does Cyprus border?
 
-/* Worked in Pellet 1.5, but not in Pellet 2? */
-/* What does Czech_Republic border? */
+What does Czech_Republic border?
 
 What does Denmark border?
 
@@ -523,8 +550,11 @@ What does Finland border?
 
 What does France border?
 
-/* Worked in Pellet 2rc5, but gets stuck in Pellet 2rc6. */
-/* What does Germany border? */
+What does Liechtenstein border?
+
+Which landlocked-territories does Liechtenstein border?
+
+What does Germany border?
 
 /*
 What does Greece border?
@@ -567,6 +597,14 @@ Which country is not a NATO-country and borders a NATO-country?
 Which country is a doubly-landlocked-territory?
 
 Which enclave is bordered by at least 2 countries?
+
+Which country borders nothing but countries that are not an EU-country?
+
+Which territories does Liechtenstein border?
+
+Which landlocked-territories does Liechtenstein border?
+
+Which country is not Switzerland?
 
 /* Experimental stuff */
 /*

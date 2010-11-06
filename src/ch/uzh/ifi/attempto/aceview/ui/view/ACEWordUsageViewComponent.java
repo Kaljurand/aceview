@@ -26,13 +26,16 @@ import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.WordsHyperlinkListener;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
 import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
+import ch.uzh.ifi.attempto.aceview.util.ACETextRenderer;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 /**
@@ -85,9 +88,11 @@ public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 		if (isShowing()) {
 			if (entity != null && Showing.isShow(entity)) {
 				OWLOntology activeOntology = getOWLModelManager().getActiveOntology();
+				OWLOntologyID oid = activeOntology.getOntologyID();
 				String entityAnnotations = formatEntityAnnotations(entity, activeOntology);
-				ACEText<OWLEntity, ?> acetext = ACETextManager.getACEText(activeOntology.getOntologyID());
-				String indexEntry = acetext.getIndexEntry(entity);
+				ACEText<OWLEntity, ?> acetext = ACETextManager.getACEText(oid);
+				TokenMapper tokenMapper = ACETextManager.getACELexicon(oid);
+				String indexEntry = ACETextRenderer.getIndexEntry(acetext, entity, tokenMapper);
 				if (indexEntry == null) {
 					indexEntry = "";
 				}

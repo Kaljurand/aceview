@@ -58,7 +58,7 @@ public class AceWikiFormatViewComponent extends AbstractOWLViewComponent {
 
 
 	private void refresh() {
-		AceWikiRenderer renderer = new AceWikiRenderer(ACETextManager.getActiveACEText());
+		AceWikiRenderer renderer = new AceWikiRenderer(ACETextManager.getActiveACEText(), ACETextManager.getActiveACELexicon());
 		textarea.setText(renderer.render());
 	}
 

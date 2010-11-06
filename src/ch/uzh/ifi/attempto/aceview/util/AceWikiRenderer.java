@@ -77,9 +77,9 @@ public class AceWikiRenderer {
 	private final Map<OWLEntity, Integer> seen = Maps.newHashMap();
 	private int counter = 0; // the "first" entity has index 1
 
-	public AceWikiRenderer(ACEText<OWLEntity, OWLLogicalAxiom> acetext) {
+	public AceWikiRenderer(ACEText<OWLEntity, OWLLogicalAxiom> acetext, TokenMapper lexicon) {
 		this.acetext = acetext;
-		this.lexicon = acetext.getTokenMapper();
+		this.lexicon = lexicon;
 	}
 
 
