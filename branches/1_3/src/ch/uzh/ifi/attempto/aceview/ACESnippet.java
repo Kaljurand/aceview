@@ -86,6 +86,13 @@ public interface ACESnippet {
 	String toString();
 
 	/**
+	 * <p>TODO: document</p>
+	 * 
+	 * @return This snippet as string
+	 */
+	String toStringID();
+
+	/**
 	 * <p>Returns an HTML-formatted representation of
 	 * this snippet, but does not add the &lt;html&gt;-tags
 	 * around the string.</p>

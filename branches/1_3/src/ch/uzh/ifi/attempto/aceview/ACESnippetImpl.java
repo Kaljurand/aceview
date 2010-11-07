@@ -75,6 +75,9 @@ public class ACESnippetImpl implements ACESnippet {
 
 	private final ImmutableList<ACESentence> sentences;
 	private final OWLOntologyID ns;
+
+	private final String stringID;
+
 	// Alternative rendering which could be used if this snippet is empty.
 	private final String altRendering;
 	private final SnippetDate timestamp;
@@ -113,6 +116,7 @@ public class ACESnippetImpl implements ACESnippet {
 			countMessages();
 		}
 		this.altRendering = null;
+		this.stringID = makeStringID();
 	}
 
 
@@ -132,6 +136,7 @@ public class ACESnippetImpl implements ACESnippet {
 		init();
 		countMessages();
 		this.altRendering = null;
+		this.stringID = makeStringID();
 	}
 
 
@@ -157,11 +162,17 @@ public class ACESnippetImpl implements ACESnippet {
 			}
 		}
 		this.altRendering = altRendering;
+		this.stringID = makeStringID();
 	}
 
 
 	public ACESnippetImpl(OWLOntologyID ns, String str, OWLLogicalAxiom axiom) {
 		this(ns, str, axiom, null);
+	}
+
+
+	public String toStringID() {
+		return stringID;
 	}
 
 
@@ -442,13 +453,13 @@ public class ACESnippetImpl implements ACESnippet {
 		if (this == obj) return true;
 		if ((obj == null) || (obj.getClass() != this.getClass())) return false;
 		ACESnippet s = (ACESnippet) obj;
-		return sentences.equals(s.getSentences());
+		return stringID.equals(s.toStringID());
 	}
 
 
 	@Override
 	public int hashCode() {
-		return sentences.hashCode();
+		return stringID.hashCode();
 	}
 
 
@@ -684,5 +695,26 @@ public class ACESnippetImpl implements ACESnippet {
 		// The Manchester Syntax rendering contains layout symbols,
 		// which we convert into a single space.
 		return "/* MOS: " + altRendering.replaceAll("[ \t\n\f\b\r]+", " ") + " */";
+	}
+
+
+	/**
+	 * <p>Note: This rendering is the basis of equals and hashCode.</p>
+	 * 
+	 * @return ID-rendering of the snippet
+	 */
+	private String makeStringID() {
+		if (sentences.size() == 0) {
+			return getLogicalAxioms().toString();
+		}
+		else if (sentences.size() == 1) {
+			return sentences.iterator().next().toSimpleString();
+		}
+
+		String str = "";
+		for (ACESentence s : sentences) {
+			str += s.toSimpleString() + " ";
+		}
+		return str;
 	}
 }
