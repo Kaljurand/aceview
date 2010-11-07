@@ -25,7 +25,7 @@
         <Class IRI="#baltic-state"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#body-of-water"/>
+        <Class IRI="#sea"/>
     </Declaration>
     <Declaration>
         <Class IRI="#island-country"/>
@@ -100,13 +100,13 @@
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
-        <IRI>#body-of-water</IRI>
-        <Literal datatypeIRI="&rdf;PlainLiteral">body-of-waters</Literal>
+        <IRI>#sea</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">seas</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
-        <IRI>#body-of-water</IRI>
-        <Literal datatypeIRI="&rdf;PlainLiteral">body-of-water</Literal>
+        <IRI>#sea</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">sea</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty IRI="&ace_lexicon;TV_pl"/>
