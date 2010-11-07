@@ -84,7 +84,6 @@ public final class ACETextManager {
 	private static final Map<OWLOntologyID, ACEText<OWLEntity, OWLLogicalAxiom>> acetexts = Maps.newHashMap();
 	private static final Map<OWLOntologyID, TokenMapper> acelexicons = Maps.newHashMap();
 	private static OWLModelManager owlModelManager;
-	private static OWLOntologyID activeACETextID;
 
 	// BUG: maybe we should get a new instance whenever we need to query the renderer preferences?
 	private static final OWLRendererPreferences owlRendererPreferences = OWLRendererPreferences.getInstance();
@@ -107,19 +106,6 @@ public final class ACETextManager {
 	private ACETextManager() {}
 
 
-	/*
-	public static void createACEText(OWLOntologyID id) {
-		ACEText<OWLEntity, OWLLogicalAxiom> acetext = new ACETextImpl();
-		acetexts.put(id, acetext);
-		// BUG: would be better if we didn't have to set the active URI here
-		activeACETextID = id;
-	}
-	 */
-	public static void jura() {
-
-	}
-
-
 	/**
 	 * <p>If <code>acetiveACETextID == null</code> then it means that
 	 * no ACE text has been created yet as one ACE text must
@@ -130,38 +116,13 @@ public final class ACETextManager {
 	 * @param id
 	 */
 	public static void setActiveACETextID(OWLOntologyID id) {
-		logger.info("Current active ID: " + activeACETextID);
-		logger.info("New active ID: " + id);
-		if (activeACETextID == null) {
-			// Create a new ACE text and set it active.
-			getACEText(id);
-			activeACETextID = id;
-			fireEvent(TextEventType.ACTIVE_ACETEXT_CHANGED);
-		}
-		else {
-			if (activeACETextID.compareTo(id) != 0) {
-				activeACETextID = id;
-				fireEvent(TextEventType.ACTIVE_ACETEXT_CHANGED);
-			}
-		}
-		logger.info("Now current active ID: " + activeACETextID);
-	}
-
-
-	/**
-	 * <p>Returns the id (OWLOntologyID) of the active ACE text.
-	 * In case no ACE text has been set as active
-	 * then returns <code>null</code>.</p>
-	 * 
-	 * @return ID of the active ACE text.
-	 */
-	public static OWLOntologyID getActiveACETextID() {
-		return activeACETextID;
+		logger.info("Active ontology ID changed to: " + id);
+		fireEvent(TextEventType.ACTIVE_ACETEXT_CHANGED);
 	}
 
 
 	public static ACEText<OWLEntity, OWLLogicalAxiom> getActiveACEText() {
-		OWLOntologyID id = getActiveACETextID();
+		OWLOntologyID id = getActiveID();
 		if (id == null) {
 			return null;
 		}
@@ -180,15 +141,13 @@ public final class ACETextManager {
 			logger.error("Creating a new ACE text and setting it active: " + id);
 			acetext = new ACETextImpl();
 			acetexts.put(id, acetext);
-			// BUG: maybe it would be better if we didn't have to set the ID active
-			activeACETextID = id;
 		}
 		return acetext;
 	}
 
 
 	public static TokenMapper getActiveACELexicon() {
-		OWLOntologyID id = getActiveACETextID();
+		OWLOntologyID id = getActiveID();
 		if (id == null) {
 			return null;
 		}
@@ -213,8 +172,6 @@ public final class ACETextManager {
 			logger.error("Creating a new ACE lexicon and setting it active: " + id);
 			tokenMapper = new TokenMapperImpl();
 			acelexicons.put(id, tokenMapper);
-			// BUG: maybe it would be better if we didn't have to set the ID active
-			activeACETextID = id;
 		}
 		return tokenMapper;
 	}
@@ -294,11 +251,12 @@ public final class ACETextManager {
 	public static void addAndRemoveSentences(Collection<ACESentence> addedSentences, Collection<ACESentence> removedSentences) {
 		ACEText<OWLEntity, OWLLogicalAxiom> activeAceText = getActiveACEText();
 		List<OWLAxiomChange> changes = Lists.newArrayList();
+		OWLOntology ont = owlModelManager.getActiveOntology();
 
 		for (ACESentence sentence : addedSentences) {
-			ACESnippet snippet = new ACESnippetImpl(activeACETextID, sentence);
+			ACESnippet snippet = new ACESnippetImpl(ont.getOntologyID(), sentence);
 			activeAceText.add(snippet);
-			changes.addAll(getAddChanges(owlModelManager.getActiveOntology(), snippet));
+			changes.addAll(getAddChanges(ont, snippet));
 		}
 
 		for (ACESentence sentence : removedSentences) {
@@ -314,16 +272,17 @@ public final class ACETextManager {
 	public static void addAndRemoveItems(Collection<List<ACESentence>> addedSentences, Collection<ACESnippet> removedSnippets) {
 		ACEText<OWLEntity, OWLLogicalAxiom> activeAceText = getActiveACEText();
 		List<OWLAxiomChange> changes = Lists.newArrayList();
+		OWLOntology ont = owlModelManager.getActiveOntology();
 
 		for (List<ACESentence> sentenceList : addedSentences) {
-			ACESnippet snippet = new ACESnippetImpl(activeACETextID, sentenceList);
+			ACESnippet snippet = new ACESnippetImpl(ont.getOntologyID(), sentenceList);
 			activeAceText.add(snippet);
-			changes.addAll(getAddChanges(owlModelManager.getActiveOntology(), snippet));
+			changes.addAll(getAddChanges(ont, snippet));
 		}
 
 		for (ACESnippet oldSnippet : removedSnippets) {
 			Set<OWLLogicalAxiom> removedAxioms = activeAceText.remove(oldSnippet);
-			changes.addAll(getRemoveChanges(owlModelManager.getActiveOntology(), removedAxioms));
+			changes.addAll(getRemoveChanges(ont, removedAxioms));
 		}
 
 		if (! (addedSentences.isEmpty() && removedSnippets.isEmpty())) {
@@ -717,7 +676,7 @@ public final class ACETextManager {
 			if (oldSnippet.getSentences().size() > 1) {
 				logger.info("Found super snippet: " + oldSnippet.toString());
 				List<ACESentence> sentences = oldSnippet.getRest(sentence);
-				ACESnippet snippet = new ACESnippetImpl(activeACETextID, sentences);
+				ACESnippet snippet = new ACESnippetImpl(ontology.getOntologyID(), sentences);
 				acetext.add(snippet);
 				changes.addAll(getAddChanges(ontology, snippet));
 			}
@@ -889,5 +848,17 @@ public final class ACETextManager {
 				removeSnippetListener(listener);
 			}
 		}
+	}
+
+
+	/**
+	 * <p>Returns the id (OWLOntologyID) of the active ACE text.
+	 * In case no ACE text has been set as active
+	 * then returns <code>null</code>.</p>
+	 * 
+	 * @return ID of the active ACE text.
+	 */
+	private static OWLOntologyID getActiveID() {
+		return owlModelManager.getActiveOntology().getOntologyID();
 	}
 }
