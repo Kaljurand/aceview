@@ -47,7 +47,7 @@ If X borders Y then Y borders X.
 
 If X surrounds Y then X borders Y.
 
-No territory borders itself.
+Nothing borders itself.
 
 /* Everything that is surrounded by a country is surrounded by exactly 1 country. */
 /* Everything is surrounded by at most 1 thing. */

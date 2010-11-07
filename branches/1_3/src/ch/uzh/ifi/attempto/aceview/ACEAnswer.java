@@ -24,6 +24,7 @@ import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.reasoner.IndividualNodeSetPolicy;
 import org.semanticweb.owlapi.reasoner.Node;
@@ -70,6 +71,8 @@ public class ACEAnswer {
 	// TODO: make sure that individuals are returned so that sameAs-individuals
 	// are in the same node
 
+	// Set of all the entities that occur as answers
+	private Set<OWLEntity> entities = Sets.newHashSet();
 	private Set<Node<OWLClass>> subClasses = Sets.newTreeSet(new NodeComparator());
 	private Set<Node<OWLClass>> superClasses = Sets.newTreeSet(new NodeComparator());
 	private Set<Node<OWLNamedIndividual>> individuals = Sets.newTreeSet(new NodeComparator());
@@ -103,6 +106,10 @@ public class ACEAnswer {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public boolean containsEntity(OWLEntity entity) {
+		return entities.contains(entity);
 	}
 
 	public Set<Node<OWLNamedIndividual>> getIndividuals() {
@@ -185,6 +192,7 @@ public class ACEAnswer {
 		individuals = null;
 		subClasses = null;
 		superClasses = null;
+		entities.clear();
 	}
 
 	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) {
@@ -208,6 +216,7 @@ public class ACEAnswer {
 		for (Node<OWLNamedIndividual> node : indNodes) {
 			if (Showing.isShow(node)) {
 				individuals.add(node);
+				entities.addAll(node.getEntities());
 			}
 		}
 	}
@@ -218,6 +227,7 @@ public class ACEAnswer {
 		for (Node<OWLClass> node : classNodes) {
 			if (sub && ! node.isBottomNode() || ! sub && ! node.isTopNode()) {
 				answerList.add(node);
+				entities.addAll(node.getEntities());
 			}
 		}
 	}

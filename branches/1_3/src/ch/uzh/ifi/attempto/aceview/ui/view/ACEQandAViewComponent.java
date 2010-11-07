@@ -17,11 +17,17 @@
 package ch.uzh.ifi.attempto.aceview.ui.view;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import org.jdesktop.swingx.decorator.ColorHighlighter;
+import org.semanticweb.owlapi.model.OWLEntity;
+
+import com.google.common.base.Predicate;
 
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
@@ -30,6 +36,7 @@ import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
 import ch.uzh.ifi.attempto.aceview.model.event.SnippetEventType;
 import ch.uzh.ifi.attempto.aceview.predicate.AnswerIsCompletePredicate;
+import ch.uzh.ifi.attempto.aceview.predicate.AnswerReferencesEntity;
 import ch.uzh.ifi.attempto.aceview.ui.ACEAnswersPane;
 import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
@@ -42,6 +49,7 @@ import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
  * @author Kaarel Kaljurand
  */
 public class ACEQandAViewComponent extends AbstractACESnippetsViewComponent {
+	private final JCheckBox filterByAnswers = new JCheckBox("Search answers");
 	private ACEAnswersPane componentAnswers;
 	private final QuestionsTableModel tableModel = new QuestionsTableModel();
 	private final ColorHighlighter isCompleteHighlighter = new ColorHighlighter(new AnswerIsCompletePredicate(tableModel.getACEText()));
@@ -69,6 +77,15 @@ public class ACEQandAViewComponent extends AbstractACESnippetsViewComponent {
 	public void initialiseView() throws Exception {
 
 		super.initialiseView();
+
+		filterByAnswers.setSelected(false);
+		filterByAnswers.setToolTipText("Show/highlight questions whose answer contains the selected entity.");
+		filterByAnswers.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateView();
+			}
+		});
+		panelButtons.add(filterByAnswers);
 
 		isCompleteHighlighter.setBackground(Colors.ANSWERS_COMPLETE_COLOR);
 
@@ -106,5 +123,14 @@ public class ACEQandAViewComponent extends AbstractACESnippetsViewComponent {
 		if (tableSnippets != null) {
 			tableSnippets.setFont(owlRendererPreferences.getFont());
 		}
+	}
+
+
+	@Override
+	public Predicate<ACESnippet> getSnippetPredicate(OWLEntity entity) {
+		if (filterByAnswers.isSelected()) {
+			return new AnswerReferencesEntity(entity);
+		}
+		return super.getSnippetPredicate(entity);
 	}
 }
