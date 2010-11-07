@@ -157,11 +157,11 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 					displayWarningMessage("Not added. There are no sentences.");
 				}
 				else {
-					ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
+					OWLOntologyID oid = ACETextManager.getOWLModelManager().getActiveOntology().getOntologyID();
+					ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(oid);
 					ACESnippet oldSnippet = acetext.find(sentences);
 					if (oldSnippet == null) {
-						OWLOntologyID name = ACETextManager.getActiveACETextID();
-						ACESnippetImpl newSnippet = new ACESnippetImpl(name, sentences);
+						ACESnippetImpl newSnippet = new ACESnippetImpl(oid, sentences);
 						ACETextManager.addSnippet(newSnippet);
 						ACETextManager.setSelectedSnippet(newSnippet);
 					}
