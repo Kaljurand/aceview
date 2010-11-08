@@ -154,6 +154,7 @@ public final class ACETextManager {
 		return getACELexicon(id);
 	}
 
+
 	/**
 	 * <p>Returns the ACE lexicon (TokenMapper)
 	 * that decides the surface forms of the snippets in this text.</p>
