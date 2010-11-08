@@ -616,14 +616,21 @@ Portugal borders nothing but EU-countries.
 <span class="acetext">Every baltic-state is a <b>territory</b>.</span></li>
 </ol>
 
-<p>For example the following picture shows a list of questions
+<p>For example the following screenshot shows a list of questions
 about a text about European countries, and shows the answers to the question
 <span class="acetext">Which EU-country is a NATO-country?</span>.</p>
 
 <div class="image">
-<img src="images/aceview_qanda.png" alt="ACE Q&amp;A view"/>
+<img src="images/aceview_qanda_win7.png" alt="ACE Q&amp;A view"/>
 </div>
 
+<p>The list of questions can be highlighted and filtered by selecting an entity,
+just like with the list of regular snippets, i.e. only questions that contain
+the selected entity are highlighted/shown. The Q&amp;A view offers also
+another option &mdash; by checking "Search answers" only the questions
+are highlighted/shown <em>whose answer</em> contains the selected entity.
+For example, the above screenshot shows only the questions whose answer
+contains the selected entity <b>Latvia</b>.</p>
 
 <p>The answer counts are presented in a tabular and sortable form, so that
 you can easily get answers to questions that involve counting and comparison
@@ -640,7 +647,12 @@ nor in ACE (at least currently). Such questions are for example:</p>
 was able to derive on the basis of the knowledge base. If the reasoner has not yet been
 applied to the question then a question mark (<b>?</b>) is shown in the count cells. In case
 the question corresponds to an unsatisfiable expression (e.g. <span class="acetext">Which
-EU-country is not an EU-country?</span>) then nothing is displayed in the cell.</p>
+EU-country is not an EU-country?</span>) then nothing is displayed in the cell.
+If the answer is known to be complete (i.e. no new individual/class can become
+part of the answer) then the cell background is
+<span style="background-color: #0f0">green</span>. Incomplete answers can be
+declared complete: this means that a new snippet that asserts completeness
+will be added to the text.</p>
 
 <p>Every answer can be expressed as an ACE sentence (i.e. as full answer)
 but for a better overview just lists of words are presented.
