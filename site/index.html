@@ -146,7 +146,7 @@ for the plugins. Enter either one of the following URLs in
 
 <p>If everything else fails, then
 just manually download and copy the ACE View jar-file
-<a href="http://aceview.googlecode.com/files/ch.uzh.ifi.attempto.aceview.ui.view.jar?v=1.3.0">ch.uzh.ifi.attempto.aceview.ui.view.jar</a> (5 MB)
+<a href="http://aceview.googlecode.com/files/ch.uzh.ifi.attempto.aceview.ui.view.jar?v=1.3.0">ch.uzh.ifi.attempto.aceview.ui.view.jar</a> (4 MB)
 into the Prot&eacute;g&eacute; plugins-directory.</p>
 </div>
 
@@ -941,19 +941,20 @@ Some known issues:</p>
 -->
 
 <ul>
+<!--
 <li>Because ACE View currently uses webservices to translate between ACE and OWL/SWRL,
 it is relatively slow. Do not try to parse large ACE texts or verbalize
 large ontologies (e.g. more than 500 sentences/axioms).</li>
+-->
 <li>Some operations provided by standard Prot&eacute;g&eacute; menus do not yet work correctly with ACE View: Rename, Change ontology URI, Show all loaded ontologies, etc.</li>
-<li>OWL data properties are not fully supported.</li>
+<li>OWL data properties and SWRL rules are not fully supported.</li>
 <li>Anonymous individuals could be handled in a smarter way.</li>
 <li>The lexicon does not have a dedicated type for relational nouns (e.g. `part of')
 and adjectives (e.g. `red').
 As a result, roundtripping of sentences that contain <em>of</em>-constructions or
 adjectives does not work correctly.</li>
-<li>Some types of axioms are not verbalized:
+<li>Some types of OWL axioms are not verbalized:
 <ul>
-<li>SWRL rules,</li>
 <li>Axioms that contain very complex class expressions,</li>
 <li><em>DisjointClasses</em> and other such "lists".</li>
 </ul>
