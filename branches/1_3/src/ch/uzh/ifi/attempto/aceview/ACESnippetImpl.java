@@ -529,7 +529,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 
 	private void parse(ACEViewPreferences prefs) throws OWLOntologyCreationException {
-		TokenMapper aceLexicon = ACETextManager.getActiveACELexicon();
+		TokenMapper aceLexicon = ACETextManager.getACELexicon(ns);
 		Set<String> contentWordForms = getContentWordsAsStrings();
 
 		if (! prefs.getParseWithUndefinedTokens()) {

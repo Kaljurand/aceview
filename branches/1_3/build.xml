@@ -155,7 +155,7 @@
 			</fileset>
 		</copy>
 		<copy todir="${classes}/lib">
-			<fileset dir="${lib}" excludes="junit*.jar"/>
+			<fileset dir="${lib}" excludes="junit*.jar,jemmy*.jar"/>
 		</copy>
 		<copy todir="${classes}">
 			<fileset dir="." includes="*.xml">
@@ -328,6 +328,7 @@ author=Kaarel Kaljurand
 			<batchtest fork="yes" todir="${aceview_test_report}">
 				<fileset dir="${aceview_test_src}">
 					<include name="**/*Test.java"/>
+					<!-- <exclude name="**/gui/*Test.java"/> -->
 				</fileset>
 			</batchtest>
 		</junit>
