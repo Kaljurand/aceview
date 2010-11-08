@@ -26,6 +26,25 @@ public class Utils {
 
 	public static final OWLOntologyID ID_TEST = new OWLOntologyID(IRI_TEST);
 
+	private static final ACEViewPreferences prefs = ACEViewPreferences.getInstance();
+
+	public static void setupACEParser() {
+		prefs.setParseWithUndefinedTokens(true);
+		prefs.setGuessingEnabled(true);
+		prefs.setClexEnabled(true);
+		prefs.setUseMos(false);
+		try {
+			ParserHolder.updateACEParser(prefs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public static ACEViewPreferences getPreferences() {
+		return prefs;
+	}
+
 
 	public static OWLLogicalAxiom createAxiomJohnLikesMary() {
 		OWLIndividual john = df.getOWLNamedIndividual(IRI.create(PREFIX + "#John"));
@@ -51,5 +70,12 @@ public class Utils {
 		OWLClass human = df.getOWLClass(IRI.create(PREFIX + "#human"));
 		OWLAxiom every_man_is_a_human = df.getOWLSubClassOfAxiom(man, human);
 		return (OWLLogicalAxiom) every_man_is_a_human;
+	}
+
+
+	public static OWLLogicalAxiom createAxiomEveryDogIsAnAnimal() {
+		OWLClass dog = df.getOWLClass(IRI.create(PREFIX + "#dog"));
+		OWLClass animal = df.getOWLClass(IRI.create(PREFIX + "#animal"));
+		return df.getOWLSubClassOfAxiom(dog, animal);
 	}
 }

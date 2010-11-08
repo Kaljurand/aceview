@@ -18,18 +18,9 @@ public class ACESnippetImplTest {
 
 	private static final OWLLogicalAxiom john_likes_mary = Utils.createAxiomJohnLikesMary();
 	private static final OWLLogicalAxiom every_man_is_a_human = Utils.createAxiomEveryManIsAHuman();
-	private static final ACEViewPreferences prefs = ACEViewPreferences.getInstance();
 
 	static {
-		prefs.setParseWithUndefinedTokens(true);
-		prefs.setGuessingEnabled(true);
-		prefs.setClexEnabled(true);
-		prefs.setUseMos(false);
-		try {
-			ParserHolder.updateACEParser(prefs);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Utils.setupACEParser();
 	}
 
 
@@ -101,7 +92,8 @@ public class ACESnippetImplTest {
 		OWLModelManager modelManager = new OWLModelManagerImpl();
 		ACETextManager.setOWLModelManager(modelManager);
 
-		prefs.setUseMos(true);
+		Utils.getPreferences().setUseMos(true);
+
 		String str = "man SubClassOf human";
 		List<ACESentence> sents = ACESplitter.getSentences(str);
 
