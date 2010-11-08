@@ -1,6 +1,5 @@
 package ch.uzh.ifi.attempto.aceview.util;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -18,16 +17,16 @@ public class ACETextRenderer {
 	/**
 	 * <p>Returns the index-style HTML-rendering of this text.</p>
 	 * 
+	 * @param entitiesSorted Sorted set of entities
 	 * @param acetext
 	 * @param lexicon
 	 * @return HTML-rendering as string
 	 */
-	public static String getIndexBody(ACEText<OWLEntity, ?> acetext, TokenMapper lexicon) {
+	public static String getIndexBody(SortedSet<OWLEntity> entitiesSorted, ACEText<OWLEntity, ?> acetext, TokenMapper lexicon) {
 		StringBuilder html = new StringBuilder();
-		for (Map.Entry<OWLEntity, Set<ACESnippet>> entry : acetext.getEntitySnippetSetPairs()) {
-			OWLEntity entity = entry.getKey();
+		for (OWLEntity entity : entitiesSorted) {
 			String entityRendering = ACETextManager.getRendering(entity);
-			Set<ACESnippet> snippets = entry.getValue();
+			Set<ACESnippet> snippets = acetext.getSnippets(entity);
 			html.append("<p><strong><a name='");
 			html.append(LexiconUtils.getHrefId(entity));
 			html.append("'>");

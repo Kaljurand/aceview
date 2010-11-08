@@ -18,6 +18,8 @@ package ch.uzh.ifi.attempto.aceview.ui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -25,6 +27,7 @@ import javax.swing.JScrollPane;
 
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
@@ -35,6 +38,7 @@ import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
 import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.util.ACETextRenderer;
+import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
 
 /**
  * <p>This view component provides the index-view to the ACE text.</p>
@@ -54,11 +58,15 @@ public class ACEIndexViewComponent extends AbstractACEViewComponent {
 
 
 	private void showIndex() {
-		OWLOntologyID oid = this.getOWLModelManager().getActiveOntology().getOntologyID();
-		ACEText acetext = ACETextManager.getACEText(oid);
+		OWLOntology ont = this.getOWLModelManager().getActiveOntology();
+		OWLOntologyID oid = ont.getOntologyID();
+		ACEText<OWLEntity, ?> acetext = ACETextManager.getACEText(oid);
 		TokenMapper tokenMapper = ACETextManager.getACELexicon(oid);
 		getView().setHeaderText(acetext.getReferencedEntities().size() + " content word(s) in " + acetext.getSentences().size() + " sentence(s)");
-		editorpaneIndex.setText(ACETextManager.wrapInHtml(ACETextRenderer.getIndexBody(acetext, tokenMapper)));
+
+		SortedSet<OWLEntity> entitiesSorted = new TreeSet<OWLEntity>(new EntityComparator());
+		entitiesSorted.addAll(ont.getSignature());
+		editorpaneIndex.setText(ACETextManager.wrapInHtml(ACETextRenderer.getIndexBody(entitiesSorted, acetext, tokenMapper)));
 	}
 
 	@Override

@@ -19,7 +19,6 @@ package ch.uzh.ifi.attempto.aceview;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 
@@ -130,18 +129,9 @@ public interface ACEText<E, A> {
 	 * properties, individuals) that are referenced by the axioms
 	 * that are referenced by the snippets of this text.</p>
 	 * 
-	 * TODO: We actually return a SortedSet
-	 * 
 	 * @return Set of OWL entities
 	 */
 	Set<E> getReferencedEntities();
-
-	/**
-	 * <p>Returns the set of pairs (Entity, Snippet set).</p>
-	 * 
-	 * @return Set of entity - snippet set map entries
-	 */
-	Set<Entry<E, Set<ACESnippet>>> getEntitySnippetSetPairs();
 
 	/**
 	 * <p>Returns the number of snippets that reference
@@ -184,7 +174,7 @@ public interface ACEText<E, A> {
 	 * that contains the given sentence.
 	 * There can be several of such snippets.</p>
 	 * 
-	 * TODO: we could return a set of just snippets, not just the count
+	 * TODO: we could return a set of such snippets, not just the count
 	 * 
 	 * @param sentence ACE sentence
 	 * @return <code>true</code> iff this text contains the sentence

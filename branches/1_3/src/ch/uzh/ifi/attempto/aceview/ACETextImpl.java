@@ -17,11 +17,10 @@
 package ch.uzh.ifi.attempto.aceview;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -36,7 +35,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
@@ -48,10 +46,13 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	// but the important thing is that we want to access the snippets by index.
 	private final List<ACESnippet> snippetList = Lists.newArrayList();
 
+	// We used to keep the referenced entities sorted, but this doesn't make sense, e.g.
+	// it creates a dependency on the entity rendering which can change anytime.
 	// Maps every OWL entity to a set of ACE snippets that contain a word that corresponds to the entity. 
-	private final SortedMap<OWLEntity, Set<ACESnippet>> entityToSnippets = new TreeMap<OWLEntity, Set<ACESnippet>>(new EntityComparator());
+	//private final SortedMap<OWLEntity, Set<ACESnippet>> entityToSnippets = new TreeMap<OWLEntity, Set<ACESnippet>>(new EntityComparator());
+	//private final SortedMap<OWLEntity, Set<ACESnippet>> entityToSnippets = new TreeMap<OWLEntity, Set<ACESnippet>>();
 	// May it's better to do the sorting in the caller, i.e. define here:
-	// private final Map<OWLEntity, Set<ACESnippet>> entityToSnippets = new HashMap<OWLEntity, Set<ACESnippet>>();
+	private final Map<OWLEntity, Set<ACESnippet>> entityToSnippets = new HashMap<OWLEntity, Set<ACESnippet>>();
 
 	// Maps every OWL axiom to a set of ACE snippets that correspond to the axiom.
 	// TODO: clarify the meaning of this
@@ -302,12 +303,6 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 	public Set<OWLEntity> getReferencedEntities() {
 		return entityToSnippets.keySet();
-	}
-
-
-	// TODO: nothing calls it
-	public Set<Entry<OWLEntity, Set<ACESnippet>>> getEntitySnippetSetPairs() {
-		return entityToSnippets.entrySet();
 	}
 
 
