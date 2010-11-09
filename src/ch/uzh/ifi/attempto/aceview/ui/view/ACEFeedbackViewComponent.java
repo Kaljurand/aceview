@@ -289,7 +289,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 	 * @param snippet ACE snippet
 	 */
 	private void updateAnnotations(ACESnippet snippet) {
-		List<OWLAnnotation> annotations = ACETextManager.getAnnotationsExceptAcetext(snippet);
+		List<OWLAnnotation> annotations = ACETextManager.getAnnotations(snippet);
 		if (annotations.isEmpty()) {
 			panelAnnotations.setTitle(PANEL_ANNOTATIONS_TITLE + ": " + NONE);
 		}

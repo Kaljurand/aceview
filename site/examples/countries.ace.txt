@@ -1,7 +1,7 @@
 /**
 * @title Countries and territories
 * @author Kaarel Kaljurand
-* @version 2010-11-07
+* @version 2010-11-09
 *
 * The goal of this text to describe some aspects of the European Union
 * completely (e.g. we list all the countries). We also cover NATO and G8 membership.
@@ -120,6 +120,10 @@ Every doubly-landlocked-territory is a territory that borders nothing but landlo
 
 Albania is a European-country.
 
+Albania is a NATO-country.
+
+Albania is not a EU-country.
+
 Andorra is a European-country.
 
 Armenia is a European-country.
@@ -131,6 +135,10 @@ Belarus is a European-country.
 Bosnia_and_Herzegovina is a European-country.
 
 Croatia is a European-country.
+
+Croatia is a NATO-country.
+
+Croatia is not a EU-country.
 
 Georgia is a European-country.
 
@@ -146,6 +154,10 @@ Monte_Negro is a European-country.
 
 Norway is a European-country.
 
+Norway is a NATO-country.
+
+Norway is not a EU-country.
+
 Republic_of_Macedonia is a European-country.
 
 San_Marino is a European-country.
@@ -156,6 +168,10 @@ Switzerland is a European-country.
 
 Turkey is a European-country.
 
+Turkey is a NATO-country.
+
+Turkey is not a EU-country.
+
 Ukraine is a European-country.
 
 Vatican_City is a European-country.
@@ -165,17 +181,23 @@ Vatican_City is a European-country.
 
 Austria is an EU-country.
 
+Austria is not a NATO-country.
+
 Belgium is an EU-country.
 
 Bulgaria is an EU-country.
 
 Cyprus is an EU-country.
 
+Cyprus is not a NATO-country.
+
 Czech_Republic is an EU-country.
 
 Denmark is an EU-country.
 
 Finland is an EU-country.
+
+Finland is not a NATO-country.
 
 France is an EU-country.
 
@@ -186,6 +208,8 @@ Greece is an EU-country.
 Hungary is an EU-country.
 
 Ireland is an EU-country.
+
+Ireland is not a NATO-country.
 
 Italy is an EU-country.
 
@@ -209,6 +233,8 @@ Spain is an EU-country.
 
 Sweden is an EU-country.
 
+Sweden is not a NATO-country.
+
 United_Kingdom is an EU-country.
 
 Every baltic-state is an EU-country.
@@ -216,13 +242,11 @@ Every baltic-state is an EU-country.
 
 /* NATO-countries */
 
-Albania is a NATO-country.
 
 Belgium is a NATO-country.
 
 Canada is a NATO-country.
 
-Croatia is a NATO-country.
 
 Denmark is a NATO-country.
 
@@ -230,13 +254,14 @@ France is a NATO-country.
 
 Iceland is a NATO-country.
 
+Iceland is not a EU-country.
+
 Italy is a NATO-country.
 
 Luxembourg is a NATO-country.
 
 Netherlands is a NATO-country.
 
-Norway is a NATO-country.
 
 Portugal is a NATO-country.
 
@@ -246,7 +271,6 @@ United_States is a NATO-country.
 
 Greece is a NATO-country.
 
-Turkey is a NATO-country.
 
 Germany is a NATO-country.
 
@@ -268,7 +292,6 @@ Slovenia is a NATO-country.
 
 Every baltic-state is a NATO-country.
 
-Finland is not a NATO-country.
 
 Finland likes NATO.
 

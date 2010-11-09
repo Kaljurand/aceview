@@ -133,7 +133,15 @@ public class ACETextImplTest {
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = new ACETextImpl();
 		acetext.add(new ACESnippetImpl(Utils.ID_TEST, "If there is a dog then the dog is an animal.", every_dog_is_an_animal));
 		acetext.add(s2);
+
+		// We now remove an axiom that both snippets share.
 		Set<OWLLogicalAxiom> removedAxioms = acetext.removeAxiom(every_dog_is_an_animal);
+
+		// The result should be that both snippets are removed and the text
+		// becomes empty, but the
+		// axiom every_man_is_a_human is returned, so that it can be added back.
+
+		assertEquals(acetext.size(), 0);
 		assertEquals(removedAxioms, Sets.newHashSet(every_man_is_a_human));
 	}
 }
