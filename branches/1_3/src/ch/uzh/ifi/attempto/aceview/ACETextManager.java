@@ -555,6 +555,30 @@ public final class ACETextManager {
 
 
 	/**
+	 * <p>Returns a list of annotations that annotate the logical axioms of the given snippet.</p>
+	 *  
+	 * TODO: Why do we return a list? Because it is simpler to update a table model in this way
+	 * 
+	 * @param snippet ACE snippet
+	 * @return List of annotations for the axiom of the given snippet
+	 */
+	public static List<OWLAnnotation> getAnnotations(ACESnippet snippet) {
+		List<OWLAnnotation> annotations = Lists.newArrayList();
+		// Get the logical axioms of the snippet
+		for (OWLLogicalAxiom ax : snippet.getLogicalAxioms()) {
+			// Get the structurally equivalent axioms from the active ontology,
+			// ignoring annotations
+			for (OWLAxiom ax1 : getOWLModelManager().getActiveOntology().getAxiomsIgnoreAnnotations(ax)) {
+				annotations.addAll(ax1.getAnnotations());
+			}
+		}
+		return annotations;
+	}
+
+
+	/**
+	 * @deprecated
+	 * 
 	 * <p>Returns a list of annotations that annotate the logical axioms of the given snippet.
 	 * Only the ACE text annotation is not returned because this is already
 	 * explicitly present in the snippet.</p>
@@ -566,10 +590,15 @@ public final class ACETextManager {
 	 */
 	public static List<OWLAnnotation> getAnnotationsExceptAcetext(ACESnippet snippet) {
 		List<OWLAnnotation> annotations = Lists.newArrayList();
+		// get the logical axioms of the snippet
 		for (OWLLogicalAxiom ax : snippet.getLogicalAxioms()) {
-			for (OWLAnnotation annotation : ax.getAnnotations()) {
-				if (! annotation.getProperty().getIRI().equals(ACETextManager.acetextIRI)) {
-					annotations.add(annotation);
+			// get the structurally equivalent axioms from the ontology
+			// ignoring annotations
+			for (OWLAxiom ax1 : getOWLModelManager().getActiveOntology().getAxiomsIgnoreAnnotations(ax)) {
+				for (OWLAnnotation annotation : ax1.getAnnotations()) {
+					if (! annotation.getProperty().getIRI().equals(ACETextManager.acetextIRI)) {
+						annotations.add(annotation);
+					}
 				}
 			}
 		}

@@ -288,8 +288,12 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	}
 
 
+	/**
+	 * <p>Returns a set of snippets that reference the given axiom.
+	 * Note that we make a copy to avoid ConcurrentModification.</p>
+	 */
 	public Set<ACESnippet> getAxiomSnippets(OWLLogicalAxiom axiom) {
-		return (Set<ACESnippet>) axiomToSnippets.get((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations());
+		return Sets.newHashSet(axiomToSnippets.get((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations()));
 	}
 
 
