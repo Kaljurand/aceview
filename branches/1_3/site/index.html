@@ -996,16 +996,13 @@ locally).</p>
 <p>To set up APE Local, do the following steps.</p>
 
 <ol>
-	<li>Install the latest version of SWI-Prolog (we have tested with v5.6.61, but more recent
-	versions should work as well),
+	<li>Install a recent version of SWI-Prolog,
 	with packages: <code>clib</code>, <code>sgml</code>, <code>http</code>,
 	and <code>jpl</code>. On Windows and Mac OS X, you get all the required packages
 	with the default installation. On Linux you might need to install the packages separately,
 	e.g. on Ubuntu, install the Ubuntu packages: <code>swi-prolog</code>, <code>swi-prolog-clib</code>,
-	<code>swi-prolog-http</code>, <code>swi-prolog-sgml</code>.</li>
-
-	<li>Create <code>ape.exe</code> as explained on
-	the <a href="http://attempto.ifi.uzh.ch/site/downloads/">Attempto Downloads page</a>.</li>
+	<code>swi-prolog-sgml</code>, <code>swi-prolog-http</code>, <code>swi-prolog-java</code>
+	(or <code>swi-prolog-jpl</code>).</li>
 
 	<li>Make sure that SWI-Prolog's <code>libjpl</code> is referenced by the Java library path.
 	<ul>
@@ -1035,6 +1032,11 @@ For example, in MacOS X Tiger/PPC, this file is located in
 -->
 <li>(This step you probably do not need to do.) In the lib-directory of the ACE View jar-file,
 replace <code>jpl.jar</code> with the version that comes with your SWI Prolog installation.</li>
+
+<li>Create <code>ape.exe</code> by downloading the APE package from
+the <a href="http://attempto.ifi.uzh.ch/site/downloads/">Attempto Downloads page</a>
+and following the <code>README.txt</code>.</li>
+
 <li>Start Prot&eacute;g&eacute; and modify the ACE View preferences:
 <ul>
 	<li>Set the ACE&rarr;OWL/SWRL service to <em>APE Local</em>.</li>
@@ -1106,7 +1108,7 @@ to become a project member.</p>
 
 <address>
 Kaarel Kaljurand
-2010-11-10
+2010-11-13
 </address>
 
 </body>
