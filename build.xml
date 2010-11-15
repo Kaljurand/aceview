@@ -54,6 +54,11 @@
 	<property name="aceview_test_src" location="test/"/>
 	<property name="aceview_test_report" location="test_report/"/>
 
+	<property name="site_server" value="attempto.ifi.uzh.ch"/>
+	<property name="site_dir" value="/Library/WebServer/Documents/aceview/"/>
+	<property name="site_user" value="attempto"/>
+
+
 	<target name="init">
 		<tstamp>
 			<format property="build.time" pattern="yyyy_MM_dd_hhmm"/>
@@ -332,6 +337,25 @@ author=Kaarel Kaljurand
 				</fileset>
 			</batchtest>
 		</junit>
+	</target>
+
+
+	<target name="publish" description="Update the ACE View website based on the files in the site-directory.">
+		<echo message="Updating the ACE View website..."/>
+		<input message="Enter a user name for ${site_server}: " addproperty="username" defaultvalue="${site_user}"/>
+		<input message="Enter ${username}'s password on ${site_server}: " addproperty="password"/>
+
+		<echo message="Copying files to ${username}@${site_server}:${site_dir} ..."/>
+
+		<scp todir="${username}:${password}@${site_server}:${site_dir}" trust="yes" verbose="true">
+			<fileset dir="site">
+				<exclude name="icon.png"/>
+			</fileset>
+		</scp>
+
+		<!--
+		<sshexec host="${server}" username="${username}" password="${password}" command="ls" trust="yes"/>
+		-->
 	</target>
 
 </project>
