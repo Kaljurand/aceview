@@ -14,6 +14,7 @@ import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomChange;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -94,13 +95,7 @@ public final class OntologyUtils {
 	 * <p>Parses the given string with the Manchester OWL Syntax parser and
 	 * returns the corresponding OWL logical axiom or throws an exception if
 	 * parsing failed. The string is assumed to correspond to an OWL axiom,
-	 * i.e. we use only the following methods to obtain the result.</p>
-	 * 
-	 * <ul>
-	 * <li>parseClassAxiom()</li>
-	 * <li>TODO: parsePropertyChainSubPropertyAxiom()</li>
-	 * <li>TODO: parseObjectPropertyAxiom()</li>
-	 * </ul>
+	 * or class expression (if isClassExpression is set to true).</p>
 	 * 
 	 * <p>TODO: would be nice to call parseAxiom() to be able to
 	 * parse all types of axioms, but this doesn't seem to work.</p>
@@ -111,15 +106,22 @@ public final class OntologyUtils {
 	 * @param ec
 	 * @param base
 	 * @param str String that possibly represents an OWL axiom in Manchester OWL Syntax
+	 * @param isClassExpression Parse the string as if it was a class expression rather than an axiom
 	 * @return OWL logical axiom that corresponds to the given string.
 	 * @throws ParserException 
 	 */
-	public static OWLLogicalAxiom parseWithMosParser(OWLDataFactory df, OWLEntityChecker ec, String base, String str) throws ParserException {
+	public static OWLLogicalAxiom parseWithMosParser(OWLDataFactory df, OWLEntityChecker ec, String base, String str, boolean isClassExpression) throws ParserException {
 		ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(df, str);
 		// TODO: what does this do?
 		parser.setOWLEntityChecker(ec);
 		// TODO: what does this do?
 		parser.setBase(base);
+
+		if (isClassExpression) {
+			OWLClassExpression clExpr = parser.parseClassExpression();
+			return df.getOWLSubClassOfAxiom(clExpr, df.getOWLThing());
+		}
+
 		// TODO: BUG: parseAxiom() doesn't seem to work
 		OWLAxiom axiom = parser.parseClassAxiom();
 		if (axiom instanceof OWLLogicalAxiom) {

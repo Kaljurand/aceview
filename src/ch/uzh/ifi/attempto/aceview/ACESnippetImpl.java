@@ -509,7 +509,9 @@ public class ACESnippetImpl implements ACESnippet {
 				// TODO: BUG: it's not clear what this "base" is
 				// supposed to be, the OWL-API Javadoc doesn't say anything about it.
 				String base = getOntologyIRIAsString();
+				logger.info("Parsing with the MOS parser: " + sentences.iterator().next());
 				mosAxiom = ACETextManager.parseWithMos(sentences.iterator().next(), base);
+				logger.info(mosAxiom);
 			} catch (ParserException e) {
 				// e.printStackTrace();
 			}

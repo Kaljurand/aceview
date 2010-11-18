@@ -56,7 +56,7 @@
 
 	<property name="site_server" value="attempto.ifi.uzh.ch"/>
 	<property name="site_dir" value="/Library/WebServer/Documents/aceview/"/>
-	<property name="site_user" value="attempto"/>
+	<property name="site_user" value="${user.name}"/>
 
 
 	<target name="init">
