@@ -663,9 +663,8 @@ public final class ACETextManager {
 	public static OWLLogicalAxiom parseWithMos(ACESentence sentence, String base) throws ParserException {
 		// Remove the last token (a dot or a question mark) of the given sentence.
 		String mosStr = sentence.toMOSString();
-		logger.info("Parsing with the MOS parser: " + mosStr);
 		OWLModelManager mngr = getOWLModelManager();
-		return OntologyUtils.parseWithMosParser(mngr.getOWLDataFactory(), new ProtegeOWLEntityChecker(mngr.getOWLEntityFinder()), base, mosStr);
+		return OntologyUtils.parseWithMosParser(mngr.getOWLDataFactory(), new ProtegeOWLEntityChecker(mngr.getOWLEntityFinder()), base, mosStr, sentence.isQuestion());
 	}
 
 
