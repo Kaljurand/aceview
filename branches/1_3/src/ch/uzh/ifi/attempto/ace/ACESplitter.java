@@ -37,10 +37,13 @@ public class ACESplitter {
 
 		// ACE supports Perl-style comments
 		t.commentChar('#');
-		// ACE supports quoted strings
-		t.quoteChar('"');
 		// ACE supports C-style comments
 		t.slashStarComments(true);
+
+		// ACE supports quoted strings
+		t.quoteChar('"');
+		// ACE supports quoted words
+		t.quoteChar('`');
 
 		t.wordChars('_', '_');
 		t.wordChars('$', '$');
@@ -75,6 +78,9 @@ public class ACESplitter {
 				}
 				else if (t.ttype == '"') {
 					tok = ACEToken.newQuotedString(t.sval);
+				}
+				else if (t.ttype == '`') {
+					tok = ACEToken.newToken(t.sval);
 				}
 				else if (t.ttype == StreamTokenizer.TT_NUMBER) {
 					tok = ACEToken.newNumber(t.nval);
