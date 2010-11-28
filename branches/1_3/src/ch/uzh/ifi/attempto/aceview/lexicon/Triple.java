@@ -37,19 +37,22 @@ public class Triple {
 		return morphType.equals(property);
 	}
 
+
 	/**
-	 * TODO: Note that the lemma is an IRI fragment, rather that the full
-	 * IRI. This is not good as http://money#bank and http://river#bank
-	 * would not be distinguished. We should use the full IRIs but currently
-	 * the the "namespace" URI is sent to the ACE parser and this URI is
-	 * treated as a prefix (e.g. as a namespace for unknown words). Think
-	 * about it.
+	 * <p>There are two conventions to pass the full IRI via the lexicon to
+	 * the ACE->OWL/SWRL translator: iri('IRI') and 'iri|IRI', where IRI is the
+	 * actual IRI. Neither is supported by the latest released APE and the first
+	 * is not supported by the Attempto Java Packages.</p>
+	 * 
+	 * TODO: BUG: If ACE View is released before APE then revert to using the IRI fragment
+	 * as the lemma (which works incorrectly in some cases).
 	 * 
 	 * @return ACE lexicon entry
 	 */
 	public LexiconEntry getLexiconEntry() {
-		//String lemma = subject.toString();
-		String lemma = subject.getFragment();
+		// String lemma = subject.getFragment();
+		String lemma = "iri|" + subject.toString();
+
 		switch (property) {
 		case PN_SG:
 			return LexiconEntry.createPropernameSgEntry(object, lemma, Gender.NEUTRAL);
