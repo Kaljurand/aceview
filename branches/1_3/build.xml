@@ -197,7 +197,7 @@
 	</target>
 
 
-	<target name="run" depends="install">
+	<target name="run" depends="install" description="Install the ACE View jar-file and launch Protege.">
 		<java fork="true" dir="${protege.home}"
 			classname="org.protege.osgi.framework.Launcher">
 			<jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
