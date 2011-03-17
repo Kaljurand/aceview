@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -24,7 +24,7 @@ import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
-import org.protege.editor.owl.ui.renderer.OWLEntityRenderer;
+import org.protege.editor.owl.ui.renderer.OWLModelManagerEntityRenderer;
 import org.protege.editor.owl.ui.renderer.OWLEntityRendererListener;
 import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.AddAxiom;
@@ -133,7 +133,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	// 5. (ACE View annotations are removed and added back 4 times for all possible
 	// entity types, only the last change (adding PN_sg) prevails.
 	private final OWLEntityRendererListener entityRendererListener = new OWLEntityRendererListener() {
-		public void renderingChanged(OWLEntity entity, OWLEntityRenderer renderer) {
+		public void renderingChanged(OWLEntity entity, OWLModelManagerEntityRenderer renderer) {
 			String entityRendering = renderer.render(entity);
 			logger.info("Rendering for " + entity + " with type " + entity.getEntityType() + " changed to " + entityRendering);
 
