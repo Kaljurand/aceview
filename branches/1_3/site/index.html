@@ -77,10 +77,10 @@ and
 <a href="http://www.w3.org/Submission/SWRL/">SWRL</a> rulesets.</p>
 
 <ul>
-	<li>You can create OWL/SWRL knowledge bases by working solely in ACE.</li>
+	<li>You can create OWL/SWRL knowledge bases by working solely in ACE (i.e. a fragment of English)</li>
 	<li>You can open existing OWL ontologies and view them as ACE texts.</li>
 	<li>You can edit OWL/SWRL knowledge bases (i.e. add, remove, modify OWL axioms
-	and SWRL rules) by switching between the ACE view (i.e. controlled English) and
+	and SWRL rules) by switching between the ACE view and
 	the traditional "Prot&eacute;g&eacute; views" (forms and description logic formulas).</li>
 </ul>
 
@@ -105,7 +105,7 @@ Note that ACE View only works with Prot&eacute;g&eacute; 4.1 and not with any ea
 <p>Installing ACE View is a simple process thanks to the
 <a href="http://protegewiki.stanford.edu/index.php/EnablePluginAutoUpdate">Prot&eacute;g&eacute;
 plug-in auto update feature</a> which provides an
-overview of the Prot&eacute;g&eacute; plug-in repository,
+overview of the available Prot&eacute;g&eacute; plug-ins,
 allows new plugins to be installed, and existing ones to
 be updated in case they have newer versions.</p>
 
@@ -192,13 +192,13 @@ is to select "Create new OWL ontology", press "Continue" twice, and press "Finis
 The Prot&eacute;g&eacute; interface opens up with all its tabs, including the
 "ACE View" tab.
 In case the "ACE View" tab is not visible, then load it by clicking on the "ACE View"
-menu item in the <span class="menu">Tabs</span>-menu. All ACE views
-are available under <span class="menu">View&nbsp;&rarr;&nbsp;ACE&nbsp;views</span> but note that most
+menu item in the <span class="menu">Window&nbsp;&rarr;&nbsp;Tabs</span> menu. All ACE views
+are available under <span class="menu">Window&nbsp;&rarr;&nbsp;Views&nbsp;&rarr;&nbsp;ACE&nbsp;views</span> but note that most
 of them are displayed automatically by the "ACE View" tab.</p>
 
 <p class="warning">Note: if some ACE View views did not load (and there was an error message)
 then execute:
-<span class="menu">Tabs&nbsp;&rarr;&nbsp;Reset selected tab to default state</span>.</p>
+<span class="menu">Window&nbsp;&rarr;&nbsp;Reset selected tab to default state</span>.</p>
 
 <p>ACE View relies on two external translation tools &mdash; ACE&rarr;OWL/SWRL
 and OWL&rarr;ACE. By default, ACE View is configured to use their respective
@@ -211,7 +211,7 @@ configure the webservice addresses. For example, set them as shown in
 the following screenshot of the preferences-panel.</p>
 
 <div class="image">
-<img src="images/aceview_preferences_090218.png" alt="ACE View preferences"/>
+<img src="images/aceview_preferences_110317.png" alt="ACE View preferences"/>
 </div>
 
 <p>Normally, one is expected to first define the content words before they are going to be used in
@@ -352,7 +352,7 @@ modified version of <a href="http://www.co-ode.org/downloads/protege-x/plugins/#
 </table>
 
 <p>All views are available from
-the <span class="menu">View&nbsp;&rarr;&nbsp;ACE&nbsp;views</span> menu.
+the <span class="menu">Window&nbsp;&rarr;&nbsp;Views&nbsp;&rarr;&nbsp;ACE&nbsp;views</span> menu.
 Unless the view is more technical, it is also
 included in the default configuration of the ACE View tab.</p>
 
@@ -466,7 +466,8 @@ What is an animal and is a vegetarian?
 </pre>
 -->
 
-<p>Now press "Update" to integrate this text into the ontology.</p>
+<p>Now press "Update" to integrate this text into the ontology. Every ACE view will now
+display an aspect of this text and many of the views let you modify it.</p>
 
 <!--
 <p>You should see something like the following.</p>
@@ -518,7 +519,7 @@ Clicking on the word selects the word so that other views will start displaying
 information about the word, e.g. its usage will be displayed in the "ACE Word Usage" view.</p>
 
 <div class="image">
-<img src="images/aceview_words_080929.png" alt="ACE View Words and Word Usage: vegetarian"/>
+<img src="images/aceview_words_110317.png" alt="ACE View Words and Word Usage: enclave"/>
 </div>
 
 <p>Words that do not have linguistic annotations (singular, plural, and past participle forms) yet
@@ -528,7 +529,7 @@ are displayed in grey color.</p>
 <h3>Snippets view</h3>
 
 <p>The "ACE Snippets" view is similar to the "ACE Text" as it displays the
-complete ACE text. The "ACE Snippets" view, however, is much more structured as
+complete ACE text. The "ACE Snippets" view, however, is much more structured because
 the snippets are listed in a table making the individual snippets easier to access.</p>
 
 <p>Clicking on "ACE Snippets" opens a view that lists all the snippets
@@ -556,7 +557,7 @@ will show the properties of the snippet.</p>
 which will be answered on the basis of the existing text
 including also the implicit knowledge in the text that is calculated by the reasoner.
 In order to use the Q&amp;A view you first need to select and start a reasoner
-(e.g. <span class="menu">Reasoner&nbsp;&rarr;&nbsp;HermiT 1.3.1</span>,
+(e.g. <span class="menu">Reasoner&nbsp;&rarr;&nbsp;HermiT 1.3.3</span>,
 <span class="menu">Reasoner&nbsp;&rarr;&nbsp;Start Reasoner</span>).
 Now, every time you synchronize the reasoner
 (<span class="menu">Reasoner&nbsp;&rarr;&nbsp;Synchronize Reasoner</span>)
@@ -892,7 +893,7 @@ This ontology contains 12,774 axioms and it imports an ontology with 356 axioms.
 
 <p>With the OWL verbalizer installed locally, the ontology should be loaded in
 a few minutes (e.g. in 3 minutes on a PowerBook G4, a 6-year-old laptop).
-Switching between views and sorting snippet and lexicon tables is reasonable fast.</p>
+Switching between views and sorting snippet and lexicon tables is reasonably fast.</p>
 
 <p>Note that it is better to switch off ACE surface form generation in the preferences
 before loading the ontology.</p>
@@ -1104,11 +1105,12 @@ to become a project member.</p>
 <li><a href="http://attempto.ifi.uzh.ch/acewiki">AceWiki</a></li>
 <li><a href="http://sourceforge.net/projects/confluence">ROO Rabbit to OWL Ontology construction</a></li>
 <li><a href="http://smile.deri.ie/evaluation/2008/ROA">RoundTrip Ontology Authoring (ROA)</a></li>
+<li><a href="http://www.cognitum.eu/Products/FluentEditor/Default.aspx">FluentEditor for OWL</a></li>
 </ul>
 
 <address>
 Kaarel Kaljurand
-2011-03-16
+2011-03-17
 </address>
 
 </body>
