@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -21,7 +21,7 @@ import java.awt.BorderLayout;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 
-import org.protege.editor.owl.ui.renderer.OWLEntityRenderer;
+import org.protege.editor.owl.ui.renderer.OWLModelManagerEntityRenderer;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -120,7 +120,7 @@ public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 		StringBuilder str = new StringBuilder();
 		if (entity != null && ont != null) {
 			str.append("<table>");
-			OWLEntityRenderer entityRenderer = getOWLModelManager().getOWLEntityRenderer();
+			OWLModelManagerEntityRenderer entityRenderer = getOWLModelManager().getOWLEntityRenderer();
 
 			str.append("<tr><td>Type</td><td>");
 			str.append(entity.getClass());
