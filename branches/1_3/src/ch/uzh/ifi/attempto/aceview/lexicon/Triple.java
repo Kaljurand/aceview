@@ -50,8 +50,8 @@ public class Triple {
 	 * @return ACE lexicon entry
 	 */
 	public LexiconEntry getLexiconEntry() {
-		// String lemma = subject.getFragment();
-		String lemma = "iri|" + subject.toString();
+		String lemma = subject.getFragment();
+		//String lemma = "iri|" + subject.toString();
 
 		switch (property) {
 		case PN_SG:
