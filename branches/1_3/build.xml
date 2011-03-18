@@ -17,7 +17,7 @@
 	<property file="version.properties"/>
 	<property name="major.version" value="1"/>
 	<property name="minor.version" value="3"/>
-	<property name="micro.version" value="0"/>
+	<property name="micro.version" value="1"/>
 
 	<property name="plugin" value="ch.uzh.ifi.attempto.aceview.ui.view"/>
 	<!--
