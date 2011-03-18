@@ -1,11 +1,11 @@
 = ACE View for developers =
 
 Author: Kaarel Kaljurand
-Version: 2010-10-25
+Version: 2011-03-18
 
 == License ==
 
-Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
 
 ACE View is free software licensed under the GNU Lesser General Public
 License (see LICENSE.txt and http://www.gnu.org/licenses/lgpl.html).
