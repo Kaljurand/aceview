@@ -25,6 +25,8 @@ import org.protege.editor.core.prefs.PreferencesManager;
 /**
  * <p>ACE View preferences</p>
  * 
+ * TODO: move all strings (webservice URLs etc.) into an external configuration file
+ * 
  * @author Kaarel Kaljurand
  */
 public final class ACEViewPreferences {

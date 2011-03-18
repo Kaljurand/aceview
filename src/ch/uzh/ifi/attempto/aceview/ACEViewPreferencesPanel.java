@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -287,10 +287,23 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 	}
 
 
+	/**
+	 * <p>Returns the items of the given combobox as a list of strings.
+	 * Because the combobox is editable, it can be the case that its selected
+	 * item is not among its items. If this is the case then adds the selected
+	 * item as the first element of the returned list.</p>
+	 * 
+	 * @param cb ComboBox to be turned into a list of strings
+	 * @return List of strings
+	 */
 	private List<String> getComboBoxItemsAsStrings(JComboBox cb) {
 		List<String> strings = Lists.newArrayList();
 		for (int i = 0; i < cb.getItemCount(); i++) {
 			strings.add(cb.getItemAt(i).toString());
+		}
+		String selectedItemAsString = cb.getSelectedItem().toString();
+		if (selectedItemAsString.length() > 0 && ! strings.contains(selectedItemAsString)) {
+			strings.add(0, selectedItemAsString);
 		}
 		return strings;
 	}
