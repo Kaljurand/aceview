@@ -1,0 +1,160 @@
+/**
+
+The ACE-version of the Jobs puzzle.
+The original natural English specification goes as follows:
+
+==
+1. There are four people: Roberta, Thelma, Steve, and Pete.
+2. Among them, they hold eight different jobs.
+3. Each holds exactly two jobs.
+4. The jobs are: chef, guard, nurse, telephone operator,
+police officer (gender not implied), teacher, actor, and
+boxer.
+5. The job of nurse is held by a male.
+6. The husband of the chef is the telephone operator.
+7. Roberta is not a boxer.
+8. Pete has no education past the ninth grade.
+9. Roberta, the chef, and the police officer went golfing together.
+Question: Who holds which jobs?
+==
+
+See also:
+
+The Jobs Puzzle A Challenge for Logical Expressibility and Automated Reasoning
+Stuart C. Shapiro
+
+
+@author Kaarel Kaljurand
+@version 0.1
+@ace_version 6.6
+@date 2011-05-09
+@lexicon jobs.lex.pl
+@entails "Roberta holds Guard." under OWL
+@entails "Roberta holds Teacher." under OWL
+@entails "Thelma holds Boxer." under OWL
+@entails "Thelma holds Chef." under OWL
+@entails "Steve holds Nurse." under OWL
+@entails "Steve holds Police-officer." under OWL
+@entails "Pete holds Actor." under OWL
+@entails "Pete holds Telephone-operator." under OWL
+@tags puzzle
+
+Notes:
+
+* Tested with HermiT.
+
+*/
+
+# 1. There are 4 people ...
+Every person is Roberta or is Thelma or is Steve or is Pete.
+Roberta is not Thelma.
+Roberta is not Steve.
+Roberta is not Pete.
+Thelma is not Steve.
+Thelma is not Pete.
+Steve is not Pete.
+Roberta is a person.
+Thelma is a person.
+Steve is a person.
+Pete is a person.
+
+# Some info derived from names
+Every man is a person.
+Every woman is a person.
+
+No man is a woman.
+
+Roberta is a woman.
+Thelma is a woman.
+Steve is a man.
+Pete is a man.
+
+# 2. Among them, they hold eight different jobs.
+Every job is held by exactly 1 person.
+
+# 3. Each holds exactly two jobs.
+Every person holds exactly 2 jobs.
+
+# A simplification:
+Everything that holds something is a person.
+Everything that is held by something is a job.
+
+# 4. The jobs are ...
+Every job is Chef or is Guard or is Nurse or is Telephone-operator or is Police-officer or is Teacher or is Actor or is Boxer.
+Chef is not Guard.
+Chef is not Nurse.
+Chef is not Telephone-operator.
+Chef is not Police-officer.
+Chef is not Teacher.
+Chef is not Actor.
+Chef is not Boxer.
+Guard is not Nurse.
+Guard is not Telephone-operator.
+Guard is not Police-officer.
+Guard is not Teacher.
+Guard is not Actor.
+Guard is not Boxer.
+Nurse is not Telephone-operator.
+Nurse is not Police-officer.
+Nurse is not Teacher.
+Nurse is not Actor.
+Nurse is not Boxer.
+Telephone-operator is not Police-officer.
+Telephone-operator is not Teacher.
+Telephone-operator is not Actor.
+Telephone-operator is not Boxer.
+Police-officer is not Teacher.
+Police-officer is not Actor.
+Police-officer is not Boxer.
+Teacher is not Actor.
+Teacher is not Boxer.
+Actor is not Boxer.
+Chef is a job.
+Guard is a job.
+Nurse is a job.
+Telephone-operator is a job.
+Police-officer is a job.
+Teacher is a job.
+Actor is a job.
+Boxer is a job.
+
+# 5. The job of nurse is held by a male.
+Nurse is held by a man.
+
+# Info derived from word: actor is male
+Actor is held by a man.
+
+# 6. The husband of the chef is the telephone operator.
+X has-husband Y and X holds Chef and Y holds Telephone-operator.
+
+# Some common sense about husbands
+# If X has-husband Y then X is a woman and Y is a man.
+If X has-husband somebody then X is a woman.
+If somebody has-husband Y then Y is a man.
+
+# 7. Roberta is not a boxer.
+Roberta does not hold Boxer.
+
+# 8. Pete has no education past the ninth grade.
+Pete does not hold Nurse.
+Pete does not hold Teacher.
+Pete does not hold Police-officer.
+
+# Roberta, the chef, and the police officer went golfing together
+Roberta does not hold Chef.
+Roberta does not hold Police-officer.
+Nobody holds Chef and holds Police-officer.
+
+# Question: Who holds which jobs?
+
+Which job does a man hold?
+
+Which job does a woman hold?
+
+Which job does Roberta hold?
+
+Which job does Thelma hold?
+
+Which job does Steve hold?
+
+Which job does Pete hold?
