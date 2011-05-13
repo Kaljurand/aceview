@@ -224,7 +224,7 @@
 	</target>
 
 
-	<target name="clean">
+	<target name="clean" description="Delete automatically generated files.">
 		<delete dir="${build}"/>
 		<delete dir="${javadoc}"/>
 	</target>
