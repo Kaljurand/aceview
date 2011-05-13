@@ -892,12 +892,13 @@ The explanation service will take even longer.</p>
 This ontology contains 12,774 axioms and it imports an ontology with 356 axioms.</p>
 
 <p>With the OWL verbalizer installed locally, the ontology should be loaded in
-a few minutes (e.g. in 3 minutes on a PowerBook G4, a 6-year-old laptop).
-Switching between views and sorting snippet and lexicon tables is reasonably fast.</p>
+under a minute on a modern computer (e.g. it takes 45 seconds on an Intel Core i3 laptop).
+Updates to the ACE views when the ontology is changed occur also reasonably fast.</p>
 
 <p>Note that it is better to switch off ACE surface form generation in the preferences
 before loading the ontology.</p>
 
+<!-- loading: 3 minutes on a PowerBook G4 (from 2004) -->
 
 <h3>Jobs Puzzle</h3>
 
@@ -952,30 +953,40 @@ so the resulting verbalization is not perfect.</li>
 <h2>Known issues</h2>
 
 <!--
-<p>ACE View is made available for demonstration purposes.
+ACE View is made available for demonstration purposes.
 Do not expect it to solve real knowledge engineering problems yet.
-Some known issues:</p>
 -->
 
 <ul>
-<!--
-<li>Because ACE View currently uses webservices to translate between ACE and OWL/SWRL,
-it is relatively slow. Do not try to parse large ACE texts or verbalize
-large ontologies (e.g. more than 500 sentences/axioms).</li>
--->
-<li>Some operations provided by standard Prot&eacute;g&eacute; menus do not yet work correctly with ACE View: Rename, Change ontology URI, Show all loaded ontologies, etc.</li>
-<li>OWL data properties and SWRL rules are not fully supported.</li>
-<li>Anonymous individuals could be handled in a smarter way.</li>
+<li>Some operations provided by standard Prot&eacute;g&eacute; menus do not
+yet work correctly with ACE View:
+	<ul>
+		<li>View-menu: changes in this menu have no effect on the ACE views.
+		(Note that the ACE views only show the active ontology.)</li>
+	</ul>
+</li>
+
+<li>Some type of axioms cannot be expressed via ACE sentences, i.e. they
+have to be entered using one of the standard Prot&eacute;g&eacute; views:
+	<ul>
+		<li>some data property axioms, e.g. <em>FunctionalDataProperty</em>;</li>
+		<li>SWRL rules with built-ins that go beyond +, -, *, /, &amp;, &lt;, =, &gt;.</li>
+	</ul>
+</li>
+
+<li>Some type of axioms, when entered in Prot&eacute;g&eacute; views, are not verbalized
+into ACE:
+	<ul>
+		<li>SWRL rules;</li>
+		<li>axioms that contain very complex class expressions;</li>
+		<li><em>DisjointClasses</em>, <em>DifferentIndividuals</em> and other such list/set constructs.</li>
+	</ul>
+</li>
+
 <li>The lexicon does not have a dedicated type for relational nouns (e.g. `part of')
 and adjectives (e.g. `red').
 As a result, roundtripping of sentences that contain <em>of</em>-constructions or
 adjectives does not work correctly.</li>
-<li>Some types of OWL axioms are not verbalized:
-<ul>
-<li>Axioms that contain very complex class expressions,</li>
-<li><em>DisjointClasses</em> and other such "lists".</li>
-</ul>
-</li>
 </ul>
 
 
@@ -1126,7 +1137,7 @@ to become a project member.</p>
 
 <address>
 Kaarel Kaljurand
-2011-03-18
+2011-05-13
 </address>
 
 </body>
