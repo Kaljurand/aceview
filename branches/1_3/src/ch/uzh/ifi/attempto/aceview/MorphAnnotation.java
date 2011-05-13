@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -56,20 +56,11 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  */
 public class MorphAnnotation {
 
-	/**
-	 * <p>The "lemma" of an entity is its IRI fragment.</p>
-	 * 
-	 * @param df
-	 * @param ont
-	 * @param entity
-	 * @return Set of annotation axioms
-	 */
-	/*
-	public static Set<OWLAnnotationAssertionAxiom> getMorphAnnotations(OWLDataFactory df, OWLOntology ont, OWLEntity entity) {
-		String lemma = entity.getIRI().getFragment();
-		return getMorphAnnotations(df, ont, entity, lemma);
+
+	public static Set<OWLAnnotationAssertionAxiom> getAdditionalMorphAnnotations(OWLDataFactory df, OWLOntology ontology, OWLEntity entity) {
+		String lemma = ACETextManager.getRendering(entity);
+		return getAdditionalMorphAnnotations(df, ontology, entity, lemma);
 	}
-	 */
 
 
 	/**
@@ -87,7 +78,7 @@ public class MorphAnnotation {
 	 * @param lemma Lemma form of the entity which should be taken as the basis when generating surface forms
 	 * @return Set of OWL entity annotation axioms
 	 */
-	public static Set<OWLAnnotationAssertionAxiom> getAdditionalMorphAnnotations(OWLDataFactory df, OWLOntology ontology, OWLEntity entity, String lemma) {
+	private static Set<OWLAnnotationAssertionAxiom> getAdditionalMorphAnnotations(OWLDataFactory df, OWLOntology ontology, OWLEntity entity, String lemma) {
 
 		Set<OWLAnnotationAssertionAxiom> axioms = Sets.newHashSet();
 
