@@ -216,3 +216,10 @@ $ svn propset svn:mime-type "text/html" RELEASE_NOTES.html
 == Protege and ACE View preferences ==
 
 Are stored in ~/Library/Preferences/ (on Mac OS X).
+
+== Other ==
+
+What is the simplest way of replacing a file in a zip archive?
+Something like:
+
+zip -in ch.uzh.ifi.attempto.aceview.ui.view.jar -replace lib/jpl.jar -with /usr/lib/blah/jpl.jar

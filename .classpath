@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="lib/swing-worker-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/simplenlg-v37.jar"/>
 	<classpathentry kind="lib" path="lib/jemmy-2.2.7.5.jar"/>
-	<classpathentry kind="lib" path="lib/guava-r08.jar"/>
+	<classpathentry kind="lib" path="lib/guava-r09.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="var" path="PROTEGE41/bundles/org.protege.editor.core.application.jar" sourcepath="/PROTEGE41_SRC/org.protege.editor.core.application/src"/>
