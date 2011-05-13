@@ -244,7 +244,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			for (OWLEntity entity : ont.getSignature()) {
 				if (Showing.isShow(entity)) {
 					IRI subject = entity.getIRI();
-					String lemma = subject.getFragment(); // TODO: or toRendering()
+					String lemma = ACETextManager.getRendering(entity);
 					for (MorphType morphType : MorphType.getMorphTypeSet(LexiconUtils.getLexiconEntryType(entity))) {
 						tokenMapper.addEntry(lemma, subject, morphType);
 					}
@@ -285,7 +285,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			if (Showing.isShow(entity)) {
 				updateLexiconFromExistingAnnotations(entity, ont, tokenMapper);
 				// TODO: BUG: Use rendering instead of the fragment
-				Set<OWLAnnotationAssertionAxiom> annSet = MorphAnnotation.getAdditionalMorphAnnotations(df, ont, entity, entity.getIRI().getFragment());
+				Set<OWLAnnotationAssertionAxiom> annSet = MorphAnnotation.getAdditionalMorphAnnotations(df, ont, entity);
 				logger.info("Init: entity " + entity + " adding additional annotations: " + annSet);
 				for (OWLAnnotationAssertionAxiom ax : annSet) {
 					changes.add(new AddAxiom(ont, ax));
@@ -399,7 +399,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 					if (change instanceof AddAxiom) {
 						OWLEntity entity = declarationAxiom.getEntity();
 						logger.info("Add declaration axiom: " + entity);
-						Set<OWLAnnotationAssertionAxiom> morphAnnotations = MorphAnnotation.getAdditionalMorphAnnotations(df, changeOnt, entity, entity.getIRI().getFragment());
+						Set<OWLAnnotationAssertionAxiom> morphAnnotations = MorphAnnotation.getAdditionalMorphAnnotations(df, changeOnt, entity);
 						logger.info("Triggered: add: " + morphAnnotations);
 						ACETextManager.addAxiomsToOntology(ontologyManager, changeOnt, morphAnnotations);
 					}
@@ -668,7 +668,7 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 	 */
 	private static void updateLexicon(OWLEntity entity, TokenMapper tokenMapper, OWLOntologyChange change) {
 		IRI subject = entity.getIRI();
-		String lemma = subject.getFragment(); // TODO: or toRendering()
+		String lemma = ACETextManager.getRendering(entity);
 
 		EntryType entryType = LexiconUtils.getLexiconEntryType(entity);
 		for (MorphType morphType : MorphType.getMorphTypeSet(entryType)) {

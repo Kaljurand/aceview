@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -267,8 +267,7 @@ public class AxiomVerbalizer {
 				datavalue = literal.getLiteral();
 			}
 
-			// TODO: BUG: get the current rendering instead
-			String dpAsString = dpExpression.asOWLDataProperty().getIRI().getFragment();
+			String dpAsString = ACETextManager.getRendering(dpExpression.asOWLDataProperty());
 			// John's temperature is 36.
 			return getSg(subject.asOWLNamedIndividual(), ont) + "'s " + dpAsString + " is " + datavalue + ".";
 		}
@@ -346,9 +345,9 @@ public class AxiomVerbalizer {
 
 
 	/**
-	 * <p>Returns the surface form for the given entity.
+	 * <p>Returns the singular surface form for the given entity.
 	 * Looks for it among the annotation axioms in the given
-	 * ontology. If this fails then just returns the IRI fragment.</p>
+	 * ontology. If this fails then just returns the rendering of the entity.</p>
 	 * 
 	 * @param entity OWL entity
 	 * @param ont OWL ontology that contains surfaceform-annotations for the entity
@@ -373,6 +372,6 @@ public class AxiomVerbalizer {
 				break;
 			}
 		}
-		return entity.getIRI().getFragment();
+		return ACETextManager.getRendering(entity);
 	}
 }

@@ -19,5 +19,6 @@
 	<classpathentry kind="var" path="PROTEGE41/plugins/org.semanticweb.owl.owlapi.jar" sourcepath="/PROTEGE41_SRC/org.semanticweb.owl.owlapi/src"/>
 	<classpathentry kind="var" path="PROTEGE41/bin/felix.jar"/>
 	<classpathentry kind="var" path="PROTEGE41/bin/ProtegeLauncher.jar"/>
+	<classpathentry kind="var" path="PROTEGE41"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

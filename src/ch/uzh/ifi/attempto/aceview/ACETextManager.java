@@ -638,6 +638,8 @@ public final class ACETextManager {
 	 * (e.g. a label like "Eesti Vabariik"). We remove such quotes,
 	 * otherwise it would confuse the sorter.</p>
 	 * 
+	 * TODO: maybe fall back to: entity.getIRI().getFragment()
+	 * 
 	 * @param entity OWL entity to be rendered
 	 * @return Rendering without quotes
 	 */
