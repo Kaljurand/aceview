@@ -232,6 +232,11 @@ public class ACESnippetImpl implements ACESnippet {
 					sb.append(token);
 					sb.append("</i>");
 				}
+				else if (token.isButToken()) {
+					sb.append("<span bgcolor='yellow'>");
+					sb.append(token);
+					sb.append("</span>");
+				}
 				else if (token.isFunctionWord()) {
 					sb.append(token);
 				}
@@ -281,13 +286,6 @@ public class ACESnippetImpl implements ACESnippet {
 	// TODO: Do this at creation time
 	public String getTags() {
 		StringBuilder tags = new StringBuilder();
-
-		for (ACESentence s : sentences) {
-			if (s.isNothingbut()) {
-				tags.append("<i><span bgcolor='yellow'>/*nothing but*/</span></i>");
-				break;
-			}
-		}
 
 		if (axiomSet.isEmpty()) {
 			tags.append("<i><span color='red'>/*neither OWL nor SWRL*/</span></i>");

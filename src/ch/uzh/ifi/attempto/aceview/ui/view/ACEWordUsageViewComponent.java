@@ -97,7 +97,7 @@ public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 					indexEntry = "";
 				}
 				int snippetCount = acetext.getSnippetCount(entity);
-				String thereAreXSnippets = "<p>There are " + snippetCount + " referencing snippets.</p>";
+				String thereAreXSnippets = "<p><em>There are " + snippetCount + " referencing snippets.</em></p>";
 				editorpaneIndex.setText(ACETextManager.wrapInHtml(entityAnnotations + thereAreXSnippets + indexEntry));
 			}
 			else {
@@ -123,7 +123,7 @@ public class ACEWordUsageViewComponent extends AbstractACEViewComponent {
 			OWLModelManagerEntityRenderer entityRenderer = getOWLModelManager().getOWLEntityRenderer();
 
 			str.append("<tr><td>Type</td><td>");
-			str.append(entity.getClass());
+			str.append(entity.getEntityType().getName());
 			str.append("</td></tr>");
 			str.append("<tr><td>IRI</td><td>");
 			str.append(entity.getIRI());
