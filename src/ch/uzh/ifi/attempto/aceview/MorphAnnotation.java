@@ -28,7 +28,12 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import simplenlg.lexicon.lexicalitems.Noun;
+import simplenlg.framework.InflectedWordElement;
+import simplenlg.framework.LexicalCategory;
+import simplenlg.framework.NLGFactory;
+import simplenlg.framework.WordElement;
+import simplenlg.lexicon.Lexicon;
+import simplenlg.realiser.english.Realiser;
 
 import com.google.common.collect.Sets;
 
@@ -55,6 +60,10 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  * @author Kaarel Kaljurand
  */
 public class MorphAnnotation {
+
+	private static Lexicon sLexicon = Lexicon.getDefaultLexicon();
+	private static NLGFactory sNlgFactory = new NLGFactory(sLexicon);
+	private static Realiser sRealiser = new Realiser(sLexicon);
 
 
 	public static Set<OWLAnnotationAssertionAxiom> getAdditionalMorphAnnotations(OWLDataFactory df, OWLOntology ontology, OWLEntity entity) {
@@ -98,8 +107,7 @@ public class MorphAnnotation {
 			}
 
 			if (! annotationIRIs.contains(MorphType.CN_PL.getIRI())) {
-				Noun noun = new Noun(lemma);
-				axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entityIRI, noun.getPlural()));
+				axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entityIRI, makePluralNoun(lemma)));
 			}
 		}
 		else if (isVerblike(entity)) {
@@ -146,9 +154,8 @@ public class MorphAnnotation {
 		IRI entityIRI = entity.getIRI();
 
 		if (entity instanceof OWLClass) {
-			Noun noun = new Noun(lemma);
 			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.CN_SG.getIRI(), entityIRI, lemma));
-			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entityIRI, noun.getPlural()));
+			axioms.add(OntologyUtils.createIRIAnnotationAxiom(df, MorphType.CN_PL.getIRI(), entityIRI, makePluralNoun(lemma)));
 		}
 		else if (isVerblike(entity)) {
 			ACEVerb verb = new ACEVerb(lemma);
@@ -214,5 +221,13 @@ public class MorphAnnotation {
 
 	private static boolean isVerblike(OWLEntity entity) {
 		return (entity instanceof OWLObjectProperty || entity instanceof OWLDataProperty);
+	}
+
+
+	private static String makePluralNoun(String lemma) {
+		WordElement word = (WordElement) sNlgFactory.createWord(lemma, LexicalCategory.NOUN);
+		InflectedWordElement inflectedWord = new InflectedWordElement(word);
+		inflectedWord.setPlural(true);
+		return sRealiser.realise(inflectedWord).getRealisation();
 	}
 }

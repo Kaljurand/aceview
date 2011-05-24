@@ -201,6 +201,9 @@
 		<java fork="true" dir="${protege.home}"
 			classname="org.protege.osgi.framework.Launcher">
 			<jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
+			<!--
+			<jvmarg value="-Djava.library.path=/usr/local/lib/swipl-5.11.19/lib/x86_64-linux/jpl.jar"/>
+			-->
 			<jvmarg value="-Xmx1500M"/>
 			<classpath>
 				<pathelement path="${protege.osgi}"/>
