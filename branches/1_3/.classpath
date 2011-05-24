@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="lib/RadixTree-0.3.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/swing-worker-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/simplenlg-v37.jar"/>
+	<classpathentry kind="lib" path="lib/simplenlgv4.2.jar"/>
 	<classpathentry kind="lib" path="lib/jemmy-2.2.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/guava-r09.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>

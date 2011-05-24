@@ -1,12 +1,22 @@
 package ch.uzh.ifi.attempto.ace;
 
-import simplenlg.lexicon.lexicalitems.Verb;
+import simplenlg.features.Feature;
+import simplenlg.features.Form;
+import simplenlg.features.Person;
+import simplenlg.framework.InflectedWordElement;
+import simplenlg.framework.LexicalCategory;
+import simplenlg.framework.WordElement;
+import simplenlg.lexicon.Lexicon;
+import simplenlg.realiser.english.Realiser;
 
 import com.google.common.collect.ImmutableSet;
 
 public class ACEVerb {
 
-	private final Verb verb;
+	private static Lexicon sLexicon = Lexicon.getDefaultLexicon();
+	private static Realiser sRealiser = new Realiser(sLexicon);
+
+	private final WordElement mWord;
 	private boolean isPrepositional = false;
 	private String preposition = "";
 	private String end = "";
@@ -38,7 +48,6 @@ public class ACEVerb {
 	 */
 	public ACEVerb(String lemma) {
 		String lemmaWithoutPreposition = lemma;
-
 		String [] pieces = lemma.split("[+_-]");
 
 		int last = 0;
@@ -46,8 +55,7 @@ public class ACEVerb {
 		for (int i = pieces.length - 1; i >= 0; i--) {
 			if (prepositions.contains(pieces[i])) {
 				isPrepositional = true;
-			}
-			else {
+			} else {
 				last = i;
 				break;
 			}
@@ -67,7 +75,8 @@ public class ACEVerb {
 			}
 		}
 
-		verb = new Verb(lemmaWithoutPreposition);
+		// mWord = (WordElement) sNlgFactory.createWord(lemmaWithoutPreposition, LexicalCategory.VERB);
+		mWord = sLexicon.lookupWord(lemmaWithoutPreposition, LexicalCategory.VERB);
 	}
 
 	public boolean isPrepositional() {
@@ -88,16 +97,28 @@ public class ACEVerb {
 
 	public String getPresent3SG() {
 		if (isPrepositional()) {
-			return verb.getPresent3SG() + end;
+			return makePresent3SG(mWord) + end;
 		}
-		return verb.getPresent3SG();
+		return makePresent3SG(mWord);
 	}
 
 
 	public String getPastParticiple() {
 		if (isPrepositional()) {
-			return verb.getPastParticiple() + end;
+			return makePastParticiple(mWord) + end;
 		}
-		return verb.getPastParticiple();
+		return makePastParticiple(mWord);
+	}
+
+	private static String makePresent3SG(WordElement word) {
+		InflectedWordElement inflectedWord = new InflectedWordElement(word);
+		inflectedWord.setFeature(Feature.PERSON, Person.THIRD);
+		return sRealiser.realise(inflectedWord).getRealisation();
+	}
+
+	private static String makePastParticiple(WordElement word) {
+		InflectedWordElement inflectedWord = new InflectedWordElement(word);
+		inflectedWord.setFeature(Feature.FORM, Form.PAST_PARTICIPLE);
+		return sRealiser.realise(inflectedWord).getRealisation();
 	}
 }
