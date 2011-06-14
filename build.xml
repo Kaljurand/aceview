@@ -3,6 +3,10 @@
 <project name="ACE View" default="install" basedir=".">
 	<description>Building and deployment of the ACE View jar-file.</description>
 
+	<!-- These are specific to Kaarel's machine, but these
+	are ignored when not using JPL. -->
+	<property name="PLBASE_lib_PLARCH" location="/usr/local/lib/swipl-5.11.22/lib/x86_64-linux"/>
+	<property name="PLBASE_lib_jpl_jar" location="/usr/local/lib/swipl-5.11.22/lib/jpl.jar"/>
 	<!--
 		To run this build file set the environment variable
 		PROTEGE_HOME to point to a protege distribution and type ant
@@ -201,13 +205,12 @@
 		<java fork="true" dir="${protege.home}"
 			classname="org.protege.osgi.framework.Launcher">
 			<jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
-			<!--
-			<jvmarg value="-Djava.library.path=/usr/local/lib/swipl-5.11.19/lib/x86_64-linux/jpl.jar"/>
-			-->
+			<jvmarg value="-Djava.library.path=${PLBASE_lib_PLARCH}"/>
 			<jvmarg value="-Xmx1500M"/>
 			<classpath>
 				<pathelement path="${protege.osgi}"/>
 				<pathelement path="${protege.launcher}"/>
+				<pathelement path="${PLBASE_lib_jpl_jar}"/>
 			</classpath>
 		</java>
 	</target>
