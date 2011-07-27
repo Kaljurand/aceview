@@ -215,7 +215,11 @@ $ svn propset svn:mime-type "text/html" RELEASE_NOTES.html
 
 == Protege and ACE View preferences ==
 
-Are stored in ~/Library/Preferences/ (on Mac OS X).
+See: http://protegewiki.stanford.edu/wiki/ClearingP4Preferences
+
+Linux: ~/.java/.userPrefs
+Mac OS X: ~/Library/Preferences/com.apple.java.util.prefs.plist
+Windows: Windows Registry at HKEY_CURRENT_USER/Software/JavaSoft/Prefs
 
 == Other ==
 

@@ -327,9 +327,13 @@ author=Kaarel Kaljurand
 		<junit printsummary="yes" haltonfailure="no"
 			dir="${protege.home}" fork="on" >
 
+			<jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
+			<jvmarg value="-Djava.library.path=${PLBASE_lib_PLARCH}"/>
+			<jvmarg value="-Xmx1500M"/>
 			<classpath>
 				<pathelement location="${classes}"/>
-				<pathelement location="${protege.home}/bin/ProtegeLauncher.jar"/>
+				<pathelement path="${protege.launcher}"/>
+				<pathelement path="${PLBASE_lib_jpl_jar}"/>
 			</classpath>
 
 			<classpath refid="project.classpath"/>
