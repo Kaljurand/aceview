@@ -14,7 +14,7 @@
  * If not, see http://www.gnu.org/licenses/.
  */
 
-package ch.uzh.ifi.attempto.aceview.lexicon;
+package ch.uzh.ifi.attempto.ace;
 
 /**
  * 

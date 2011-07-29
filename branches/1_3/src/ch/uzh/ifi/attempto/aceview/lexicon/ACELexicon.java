@@ -18,6 +18,7 @@ package ch.uzh.ifi.attempto.aceview.lexicon;
 
 import java.util.Set;
 
+import ch.uzh.ifi.attempto.ace.FieldType;
 import ch.uzh.ifi.attempto.ape.Lexicon;
 
 /**

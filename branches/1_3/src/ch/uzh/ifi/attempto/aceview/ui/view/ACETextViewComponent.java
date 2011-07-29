@@ -26,10 +26,12 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
+import ch.uzh.ifi.attempto.aceview.IriRenderer;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
 import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
@@ -168,15 +170,21 @@ public class ACETextViewComponent extends AbstractOWLViewComponent {
 
 
 	private void showText() {
-		ACEText acetext = ACETextManager.getActiveACEText();
+		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
 		int numberOfSnippets = acetext.size();
 		if (numberOfSnippets == 1) {
 			getView().setHeaderText("1 snippet");
-		}
-		else {
+		} else {
 			getView().setHeaderText(numberOfSnippets + " snippets");
 		}
-		aceTextArea.setText(acetext.toString());
+
+		// TODO: cleanup and optimize
+		String all = "";
+		for (ACESnippet snippet : acetext.getSnippets()) {
+			ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(getOWLModelManager()), snippet.getSentences());
+			all += snippetRenderer.getRendering();
+		}
+		aceTextArea.setText(all);
 	}
 
 

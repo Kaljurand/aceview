@@ -4,6 +4,9 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.IRI;
 
+import ch.uzh.ifi.attempto.ace.EntryType;
+import ch.uzh.ifi.attempto.ace.FieldType;
+
 import com.google.common.collect.Sets;
 
 public enum MorphType {
