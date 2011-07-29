@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -43,6 +43,7 @@ public class ACESentenceRenderer {
 	private final Multimap<Integer, Integer> hl = HashMultimap.create();
 	private final Multimap<Integer, Integer> spans;
 	private final StringBuilder sb = new StringBuilder();
+	private final ACETokenRenderer mTokenRenderer;
 
 	private final static String TS = "    ";
 
@@ -57,12 +58,14 @@ public class ACESentenceRenderer {
 	};
 
 
-	public ACESentenceRenderer(List<ACESentence> sentences, Multimap<Integer, Integer> spans) {
+	public ACESentenceRenderer(ACETokenRenderer tokenRenderer, List<ACESentence> sentences, Multimap<Integer, Integer> spans) {
+		this.mTokenRenderer = tokenRenderer;
 		this.spans = spans;
 		render(sentences);
 	}
 
-	public ACESentenceRenderer(List<ACESentence> sentences) {
+	public ACESentenceRenderer(ACETokenRenderer tokenRenderer, List<ACESentence> sentences) {
+		this.mTokenRenderer = tokenRenderer;
 		spans = null;
 		render(sentences);
 	}
@@ -110,25 +113,25 @@ public class ACESentenceRenderer {
 				// As there is unfortunately no explicit token standing on this border, we would
 				// have to process the syntax tree to derive this information.
 				sb.append('\n');
-				appendToken(sId, i, tokStr);
+				appendToken(sId, i, tok);
 				indentLevel = 0;
 			}
 			else if (i > 0 && tok.isOrdinationWord()) {
 				sb.append(getIndentString(indentLevel));
-				appendToken(sId, i, tokStr);
+				appendToken(sId, i, tok);
 				if (indentLevel > 0) {
 					indentLevel--;
 				}
 			}
 			else if (tokenIsRelClPronoun) {
 				sb.append(getIndentString(indentLevel));
-				appendToken(sId, i, tokStr);
+				appendToken(sId, i, tok);
 			}
 			else {
 				if (i > 0) {
 					sb.append(' ');
 				}
-				appendToken(sId, i, tokStr);
+				appendToken(sId, i, tok);
 			}
 		}
 		return sb.toString();
@@ -143,15 +146,15 @@ public class ACESentenceRenderer {
 	}
 
 
-	private void appendToken(int sId, int tId, String token) {
+	private void appendToken(int sId, int tId, ACEToken token) {
 		if (spans != null && spans.containsEntry(sId, tId)) {
 			int before = sb.length();
-			sb.append(token);
+			sb.append(mTokenRenderer.render(token));
 			int after = sb.length();
 			hl.put(before, after);
 		}
 		else {
-			sb.append(token);
+			sb.append(mTokenRenderer.render(token));
 		}
 	}
 }

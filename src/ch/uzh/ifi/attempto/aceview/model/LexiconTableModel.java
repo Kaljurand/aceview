@@ -32,13 +32,13 @@ import org.semanticweb.owlapi.model.OWLOntology;
 
 import com.google.common.collect.Lists;
 
+import ch.uzh.ifi.attempto.ace.EntryType;
+import ch.uzh.ifi.attempto.ace.FieldType;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.AddAxiomByACEView;
 import ch.uzh.ifi.attempto.aceview.RemoveAxiomByACEView;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
-import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
-import ch.uzh.ifi.attempto.aceview.lexicon.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;

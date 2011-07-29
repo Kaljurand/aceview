@@ -16,6 +16,9 @@
 
 package ch.uzh.ifi.attempto.aceview.lexicon;
 
+import ch.uzh.ifi.attempto.ace.EntryType;
+import ch.uzh.ifi.attempto.ace.FieldType;
+
 public interface ACELexiconEntry {
 	String get(FieldType fieldType) throws IncompatibleMorphTagException;
 	void set(FieldType fieldType, String fieldValue) throws IncompatibleMorphTagException;

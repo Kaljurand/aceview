@@ -11,6 +11,8 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
+import ch.uzh.ifi.attempto.ace.EntryType;
+
 public class LexiconUtils {
 
 	/**

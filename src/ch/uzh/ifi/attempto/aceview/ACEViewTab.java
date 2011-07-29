@@ -52,7 +52,7 @@ import org.semanticweb.owlapi.model.RemoveAxiom;
 
 import com.google.common.collect.Lists;
 
-import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.ace.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;

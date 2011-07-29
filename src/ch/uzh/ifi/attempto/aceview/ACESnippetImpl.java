@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -47,9 +47,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.ace.ACEToken;
-import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.ace.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
@@ -171,6 +172,26 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
+	public ACESnippetImpl(OWLOntologyID ns, List<ACESentence> sentences, OWLLogicalAxiom axiom, String altRendering) {
+		this.timestamp = new SnippetDate();
+		this.ns = ns;
+		this.axiomSet = ImmutableSet.of((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations());
+		this.sentences = ImmutableList.copyOf(sentences);
+		if (! sentences.isEmpty()) {
+			if (sentences.get(sentences.size() - 1).isQuestion()) {
+				isQuestion = true;
+			}
+		}
+		this.altRendering = altRendering;
+		this.stringID = makeStringID();
+	}
+
+
+	public ACESnippetImpl(OWLOntologyID ns, List<ACESentence> sentences, OWLLogicalAxiom axiom) {
+		this(ns, sentences, axiom, null);
+	}
+
+
 	public String toStringID() {
 		return stringID;
 	}
@@ -203,12 +224,19 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
+	/**
+	 * TODO: optimize
+	 */
 	@Override
-	public String toString() {		
+	public String toString() {
+		ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), getSentences(), getErrorSpans());
+		return snippetRenderer.getRendering();
+		/*
 		if (isEmpty()) {
 			return getAltRendering();
 		}
 		return joiner.join(sentences);
+		 */
 	}
 
 

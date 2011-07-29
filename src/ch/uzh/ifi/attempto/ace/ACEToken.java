@@ -27,6 +27,9 @@ public final class ACEToken {
 	// The token itself
 	private String token;
 
+	private EntryType mEntryType = null;
+	private FieldType mFieldType = null;
+
 	private boolean isBadToken = false;
 	private boolean isBorderToken = false;
 	private boolean isButToken = false;
@@ -38,9 +41,29 @@ public final class ACEToken {
 	private boolean isApos = false;
 	private boolean isVariable = false;
 	private boolean isFunctionWord = false;
+
+	// TODO: this should be decided by the renderer
 	private boolean needsQuoting = false;
 
 	private ACEToken() {}
+
+
+	/**
+	 * <p>Constructs content words.</p>
+	 * 
+	 * @param str
+	 * @param entryType
+	 * @param fieldType
+	 * @return
+	 */
+	public static ACEToken newToken(String str, EntryType entryType, FieldType fieldType) {
+		ACEToken t = new ACEToken();
+		t.token = str;
+		t.mEntryType = entryType;
+		t.mFieldType = fieldType;
+		t.isFunctionWord = false;
+		return t;
+	}
 
 
 	public static ACEToken newToken(String token) {
@@ -182,6 +205,16 @@ public final class ACEToken {
 
 	public String getToken() {
 		return token;
+	}
+
+
+	public EntryType getEntryType() {
+		return mEntryType;
+	}
+
+
+	public FieldType getFieldType() {
+		return mFieldType;
 	}
 
 

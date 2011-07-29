@@ -58,6 +58,7 @@ import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACESnippetImpl;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
+import ch.uzh.ifi.attempto.aceview.IriRenderer;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
 import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
 import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
@@ -325,7 +326,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 
 		getView().setHeaderText(snippet.toString());
 
-		ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(snippet.getSentences(), snippet.getErrorSpans());
+		ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(getOWLModelManager()), snippet.getSentences(), snippet.getErrorSpans());
 		snippetEditor.setText(snippetRenderer.getRendering());
 		snippetEditor.getHighlighter().removeAllHighlights();
 		// Snippet editor buttons

@@ -1,13 +1,5 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 
-<!--
-This is the Protege 4 config.xml file customized for ACE View.
-This file must be used instead of the official config.xml when
-using APELocal for the ACE->OWL/SWRL translation.
-The only difference with respect to the official Protege config-file
-is the addition of 'jpl' to org.osgi.framework.system.packages.extra
--->
-
 <launch>
   <pluginDirectory dir="plugins"/>
   <systemProperties>
@@ -21,6 +13,7 @@ is the addition of 'jpl' to org.osgi.framework.system.packages.extra
               value="javax.xml.parsers,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers,jpl"/>
     <property name="org.osgi.framework.storage.clean" 
               value="onFirstInit"/>
+    <property name="org.osgi.service.http.port" value="8081"/>
   </frameworkProperties>
   <bundles dir="bundles">
     <bundle name="org.protege.common.jar"/>
@@ -33,4 +26,22 @@ is the addition of 'jpl' to org.osgi.framework.system.packages.extra
 
 </launch>
 
+<!--
+This is the Protege 4 config.xml file customized for ACE View.
+This file must be used instead of the official config.xml when
+using APELocal for the ACE->OWL/SWRL translation.
+The only difference with respect to the official Protege config-file
+is the addition of 'jpl' to org.osgi.framework.system.packages.extra
 
+Note: this comment is at the end of the file only because moving it before
+<launch> causes this exception:
+
+Exception in thread "main" java.lang.NullPointerException
+	at java.util.Hashtable.put(Hashtable.java:411)
+	at java.util.Properties.setProperty(Properties.java:160)
+	at java.lang.System.setProperty(System.java:748)
+	at org.protege.osgi.framework.Launcher.setSystemProperties(Launcher.java:65)
+	at org.protege.osgi.framework.Launcher.parseConfig(Launcher.java:50)
+	at org.protege.osgi.framework.Launcher.<init>(Launcher.java:36)
+	at org.protege.osgi.framework.Launcher.main(Launcher.java:143)
+-->

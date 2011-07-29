@@ -42,6 +42,7 @@ import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
+import ch.uzh.ifi.attempto.aceview.IriRenderer;
 import ch.uzh.ifi.attempto.aceview.model.AnnotationsTableModel;
 import ch.uzh.ifi.attempto.aceview.model.MessagesTableModel;
 import ch.uzh.ifi.attempto.aceview.model.SimilarSnippetsTableModel;
@@ -275,7 +276,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 			panelParaphrase.setTitle(PANEL_PARAPHRASES_TITLE + ": 1");
 			List<String> snippetRenderings = Lists.newArrayList();
 			for (List<ACESentence> paragraph : paraphrase) {
-				ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(paragraph);
+				ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(getOWLModelManager()), paragraph);
 				snippetRenderings.add(snippetRenderer.getRendering());
 			}
 			textareaParaphrase.setText(paragraphJoiner.join(snippetRenderings));

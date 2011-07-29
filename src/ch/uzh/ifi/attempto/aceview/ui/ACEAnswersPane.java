@@ -56,6 +56,7 @@ import ch.uzh.ifi.attempto.aceview.ACEAnswer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
+import ch.uzh.ifi.attempto.aceview.IriRenderer;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 
 public class ACEAnswersPane extends JTextPane {
@@ -289,7 +290,7 @@ public class ACEAnswersPane extends JTextPane {
 			e.printStackTrace();
 		}
 		if (snippet != null) {
-			ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(snippet.getSentences());
+			ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ws.getOWLModelManager()), snippet.getSentences());
 			JComponent comp = ComponentFactory.makeSnippetDialogPanel("Add this snippet to the active ACE text?", snippetRenderer.getRendering());
 			int ret = new UIHelper(ws.getOWLEditorKit()).showDialog(LABEL_DECLARE_COMPLETE, comp, JOptionPane.OK_CANCEL_OPTION);
 			if (ret == JOptionPane.OK_OPTION) {

@@ -8,7 +8,7 @@ import org.protege.editor.owl.model.OWLWorkspace;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 
-import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
+import ch.uzh.ifi.attempto.ace.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 
 public class WordsHyperlinkListener implements HyperlinkListener {
