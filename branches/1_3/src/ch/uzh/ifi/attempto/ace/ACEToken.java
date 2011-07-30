@@ -9,6 +9,10 @@ import ch.uzh.ifi.attempto.ape.FunctionWords;
 /**
  * <p>ACE token and its features.</p>
  * 
+ * TODO: we cannot decide anymore during token creation time
+ * if the token needs quoting or not. Now the IRI is stored here instead
+ * and need for quoting depends on the current IRI rendering.
+ * 
  * @author Kaarel Kaljurand
  */
 public final class ACEToken {
@@ -99,13 +103,16 @@ public final class ACEToken {
 
 
 	public static ACEToken newNumber(double number) {
-		ACEToken newToken = new ACEToken();
 		if (number == (int) number) {
-			newToken.token = Integer.toString((int) number);
+			return newNumber(Integer.toString((int) number));
 		}
-		else {
-			newToken.token = Double.toString(number);
-		}
+		return newNumber(Double.toString(number));
+	}
+
+
+	public static ACEToken newNumber(String number) {
+		ACEToken newToken = new ACEToken();
+		newToken.token = number;
 		newToken.isNumber = true;
 		newToken.isFunctionWord = true;
 		return newToken;
@@ -122,8 +129,13 @@ public final class ACEToken {
 
 
 	public static ACEToken newSymbol(char ch) {
+		return newSymbol(String.valueOf(ch));
+	}
+
+
+	public static ACEToken newSymbol(String str) {
 		ACEToken newToken = new ACEToken();
-		newToken.token = String.valueOf(ch);
+		newToken.token = str;
 		newToken.isSymbol = true;
 		if (newToken.token.equals("'")) {
 			newToken.isApos = true;
@@ -131,6 +143,7 @@ public final class ACEToken {
 		newToken.isFunctionWord = true;
 		return newToken;
 	}
+
 
 	public static ACEToken newBorderToken(char ch) {
 		ACEToken newToken = new ACEToken();
