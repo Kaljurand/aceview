@@ -2,6 +2,8 @@ package ch.uzh.ifi.attempto.ace;
 
 import java.util.regex.Pattern;
 
+import org.semanticweb.owlapi.model.IRI;
+
 import com.google.common.collect.ImmutableSet;
 
 import ch.uzh.ifi.attempto.ape.FunctionWords;
@@ -31,6 +33,7 @@ public final class ACEToken {
 	// The token itself
 	private String token;
 
+	private IRI mIri = null;
 	private EntryType mEntryType = null;
 	private FieldType mFieldType = null;
 
@@ -60,9 +63,10 @@ public final class ACEToken {
 	 * @param fieldType
 	 * @return
 	 */
-	public static ACEToken newToken(String str, EntryType entryType, FieldType fieldType) {
+	public static ACEToken newToken(IRI iri, EntryType entryType, FieldType fieldType) {
 		ACEToken t = new ACEToken();
-		t.token = str;
+		t.token = iri.toString();
+		t.mIri = iri;
 		t.mEntryType = entryType;
 		t.mFieldType = fieldType;
 		t.isFunctionWord = false;
@@ -218,6 +222,11 @@ public final class ACEToken {
 
 	public String getToken() {
 		return token;
+	}
+
+
+	public IRI getIri() {
+		return mIri;
 	}
 
 

@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+import org.semanticweb.owlapi.model.IRI;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -99,12 +101,12 @@ public class ACESplitterFromCsv {
 		System.out.println(type + " --- " + word);
 
 		if ("qs".equals(type)) return ACEToken.newQuotedString(word);
-		if ("cn_sg".equals(type)) return ACEToken.newToken(word, EntryType.CN, FieldType.SG);
-		if ("cn_pl".equals(type)) return ACEToken.newToken(word, EntryType.CN, FieldType.PL);
-		if ("tv_sg".equals(type)) return ACEToken.newToken(word, EntryType.TV, FieldType.SG);
-		if ("tv_pl".equals(type)) return ACEToken.newToken(word, EntryType.TV, FieldType.SG);
-		if ("tv_vbg".equals(type)) return ACEToken.newToken(word, EntryType.TV, FieldType.PL);
-		if ("pn_sg".equals(type)) return ACEToken.newToken(word, EntryType.PN, FieldType.VBG);
+		if ("cn_sg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.CN, FieldType.SG);
+		if ("cn_pl".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.CN, FieldType.PL);
+		if ("tv_sg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.TV, FieldType.SG);
+		if ("tv_pl".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.TV, FieldType.SG);
+		if ("tv_vbg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.TV, FieldType.PL);
+		if ("pn_sg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.PN, FieldType.VBG);
 
 		if ("f".equals(type)) {
 			if (".".equals(word)) return ACEToken.DOT;

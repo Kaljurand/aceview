@@ -153,7 +153,8 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 
 		buttonNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				List<ACESentence> sentences = ACESplitter.getSentences(snippetEditor.getText());
+				ACESplitter splitter = new ACESplitter(ACETextManager.getActiveACELexicon());
+				List<ACESentence> sentences = splitter.getSentences(snippetEditor.getText());
 				if (sentences.isEmpty()) {
 					displayWarningMessage("Not added. There are no sentences.");
 				}
@@ -182,7 +183,8 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 			public void actionPerformed(ActionEvent event) {
 				ACESnippet selectedSnippet = ACETextManager.getSelectedSnippet();
 				if (selectedSnippet != null) {
-					List<ACESentence> sentences = ACESplitter.getSentences(snippetEditor.getText());
+					ACESplitter splitter = new ACESplitter(ACETextManager.getActiveACELexicon());
+					List<ACESentence> sentences = splitter.getSentences(snippetEditor.getText());
 					if (sentences.isEmpty()) {
 						deleteSnippet(selectedSnippet);
 					}

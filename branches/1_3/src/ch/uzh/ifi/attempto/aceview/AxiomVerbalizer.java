@@ -224,13 +224,13 @@ public class AxiomVerbalizer {
 
 			OWLNamedIndividual namedIndividual = ind.asOWLNamedIndividual();
 
-			tokens.add(ACEToken.newToken(namedIndividual.getIRI().toString(), EntryType.PN, FieldType.SG));
+			tokens.add(ACEToken.newToken(namedIndividual.getIRI(), EntryType.PN, FieldType.SG));
 			tokens.add(ACEToken.newToken("is"));
 			if (desc.isOWLThing()) {
 				tokens.add(ACEToken.newToken("something"));
 			} else {
 				tokens.add(ACEToken.newToken("a"));
-				tokens.add(ACEToken.newToken(((OWLClass) desc).getIRI().toString(), EntryType.CN, FieldType.SG));
+				tokens.add(ACEToken.newToken(((OWLClass) desc).getIRI(), EntryType.CN, FieldType.SG));
 			}
 			tokens.add(ACEToken.DOT);
 			sentences.add(new ACESentence(tokens));
@@ -247,9 +247,9 @@ public class AxiomVerbalizer {
 				return null;
 			}
 
-			tokens.add(ACEToken.newToken(subject.asOWLNamedIndividual().getIRI().toString(), EntryType.PN, FieldType.SG));
-			tokens.add(ACEToken.newToken(opExpression.asOWLObjectProperty().getIRI().toString(), EntryType.TV, FieldType.SG));
-			tokens.add(ACEToken.newToken(object.asOWLNamedIndividual().getIRI().toString(), EntryType.PN, FieldType.SG));
+			tokens.add(ACEToken.newToken(subject.asOWLNamedIndividual().getIRI(), EntryType.PN, FieldType.SG));
+			tokens.add(ACEToken.newToken(opExpression.asOWLObjectProperty().getIRI(), EntryType.TV, FieldType.SG));
+			tokens.add(ACEToken.newToken(object.asOWLNamedIndividual().getIRI(), EntryType.PN, FieldType.SG));
 			tokens.add(ACEToken.DOT);
 			sentences.add(new ACESentence(tokens));
 			return sentences;
@@ -275,10 +275,10 @@ public class AxiomVerbalizer {
 			}
 
 			// John's temperature is 36.
-			tokens.add(ACEToken.newToken(subject.asOWLNamedIndividual().getIRI().toString(), EntryType.PN, FieldType.SG));
+			tokens.add(ACEToken.newToken(subject.asOWLNamedIndividual().getIRI(), EntryType.PN, FieldType.SG));
 			tokens.add(ACEToken.newToken("'s"));
-			// TODO: set the morph type for data properties
-			tokens.add(ACEToken.newToken(dpExpression.asOWLDataProperty().getIRI().toString()));
+			// TODO: think about the morph type for data properties
+			tokens.add(ACEToken.newToken(dpExpression.asOWLDataProperty().getIRI(), EntryType.CN, FieldType.SG));
 			tokens.add(ACEToken.newToken("is"));
 			tokens.add(ACEToken.newToken(datavalue));
 			tokens.add(ACEToken.DOT);
@@ -330,7 +330,7 @@ public class AxiomVerbalizer {
 			tokens.add(ACEToken.newToken(prefix + "thing"));
 		} else {
 			tokens.add(ACEToken.newToken(prefix));
-			tokens.add(ACEToken.newToken(class1.getIRI().toString(), EntryType.CN, FieldType.SG));
+			tokens.add(ACEToken.newToken(class1.getIRI(), EntryType.CN, FieldType.SG));
 		}
 
 		tokens.add(ACEToken.newToken("is"));
@@ -339,7 +339,7 @@ public class AxiomVerbalizer {
 			tokens.add(ACEToken.newToken("something"));
 		} else {
 			tokens.add(ACEToken.newToken("a"));
-			tokens.add(ACEToken.newToken(class2.getIRI().toString(), EntryType.CN, FieldType.SG));
+			tokens.add(ACEToken.newToken(class2.getIRI(), EntryType.CN, FieldType.SG));
 		}
 		tokens.add(ACEToken.DOT);
 

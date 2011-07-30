@@ -4,7 +4,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Joiner;
+import ch.uzh.ifi.attempto.aceview.ACETextManager;
+import ch.uzh.ifi.attempto.aceview.IriRenderer;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -21,14 +23,12 @@ public class ACESentence {
 	private final ImmutableList<ACEToken> tokens;
 	private final Set<ACEToken> badChars = Sets.newHashSet();
 	private final List<ACEToken> contentWords = Lists.newArrayList();
-	private final String sentenceAsString;
 	private boolean isNothingbut = false;
 	private boolean isQuestion = false;
 
-	private final Joiner joiner = Joiner.on(" ");
-
+	// TODO: remove this method, or at least do not call getActiveACELexicon
 	public ACESentence(String str) {
-		this(ACESplitter.getTokens(str));
+		this(new ACESplitter(ACETextManager.getActiveACELexicon()).getTokens(str));
 	}
 
 	public ACESentence(List<ACEToken> tokens) {
@@ -48,7 +48,6 @@ public class ACESentence {
 				contentWords.add(token);
 			}
 		}
-		this.sentenceAsString = createString(this.tokens);
 	}
 
 
@@ -70,12 +69,7 @@ public class ACESentence {
 	 */
 	@Override
 	public String toString() {
-		return sentenceAsString;
-	}
-
-
-	public String toSimpleString() {
-		return joiner.join(tokens);
+		return createString(this.tokens);
 	}
 
 
@@ -162,6 +156,8 @@ public class ACESentence {
 	 * @return Pretty-printed token list
 	 */
 	private static String createString(List<ACEToken> tokens) {
+		IriRenderer renderer = new IriRenderer(ACETextManager.getOWLModelManager());
+
 		if (tokens.isEmpty()) {
 			return "";
 		}
@@ -172,7 +168,7 @@ public class ACESentence {
 		ACEToken token = it.next();
 
 		while (it.hasNext()) {
-			sb.append(token);
+			sb.append(renderer.render(token));
 			ACEToken nextToken = it.next();
 			if (! (nextToken.isSymbol() || token.isApos() && nextToken.toString().equals("s"))) {
 				sb.append(' ');
