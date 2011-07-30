@@ -4,14 +4,24 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
+import ch.uzh.ifi.attempto.aceview.lexicon.Triple;
 
 import com.google.common.collect.Lists;
 
 public class ACESplitter {
 
 	static final Pattern dotSeparator = Pattern.compile("([0-9])[.]([^0-9])");
+
+	private final TokenMapper mTokenMapper;
+
+	public ACESplitter(TokenMapper tokenMapper) {
+		mTokenMapper = tokenMapper;
+	}
 
 
 	/**
@@ -23,7 +33,7 @@ public class ACESplitter {
 	 * @param str ACE text as string
 	 * @return ACE text as list of paragraphs (sentence lists)
 	 */
-	public static List<List<ACESentence>> getParagraphs(String str) {
+	public List<List<ACESentence>> getParagraphs(String str) {
 
 		Reader r = new StringReader(fixNumbers(str));
 		StreamTokenizer t = new StreamTokenizer(r);
@@ -74,7 +84,18 @@ public class ACESplitter {
 				ACEToken tok;
 
 				if (t.ttype == StreamTokenizer.TT_WORD) {
-					tok = ACEToken.newToken(t.sval);
+					// TODO: get the IRI based on the wordfrom
+					Collection<Triple> triples = mTokenMapper.getWordformEntries(t.sval);
+					if (triples.isEmpty()) {
+						// TODO: unknown wordform or function word
+						tok = ACEToken.newToken(t.sval);
+					} else if (triples.size() == 1) {
+						Triple trip = triples.iterator().next();
+						tok = ACEToken.newToken(trip.getSubjectIRI(), trip.getProperty().getEntryType(), trip.getProperty().getFieldType());
+					} else {
+						// TODO: ambiguous wordform, think what to do here
+						tok = ACEToken.newToken(t.sval);
+					}
 				}
 				else if (t.ttype == '"') {
 					tok = ACEToken.newQuotedString(t.sval);
@@ -124,7 +145,7 @@ public class ACESplitter {
 	 * @param str ACE text as string
 	 * @return ACE sentence (as a list of tokens)
 	 */
-	public static List<ACEToken> getTokens(String str) {
+	public List<ACEToken> getTokens(String str) {
 		List<ACESentence> sentences = getSentences(str);
 		if (sentences.isEmpty()) {
 			return Lists.newArrayList();
@@ -140,7 +161,7 @@ public class ACESplitter {
 	 * @param str ACE text as string
 	 * @return ACE paragraph (sentence list)
 	 */
-	public static List<ACESentence> getSentences(String str) {
+	public List<ACESentence> getSentences(String str) {
 		List<List<ACESentence>> paragraphs = getParagraphs(str);
 		if (paragraphs.isEmpty()) {
 			return Lists.newArrayList();

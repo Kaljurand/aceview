@@ -36,11 +36,11 @@ public class IriRenderer implements ACETokenRenderer {
 
 	@Override
 	public String render(ACEToken token) {
-		if (token.isFunctionWord()) {
+		IRI iri = token.getIri();
+
+		if (iri == null) {
 			return token.toString();
 		}
-
-		IRI iri = IRI.create(token.toString());
 
 		if (mMngr == null) {
 			return "?" + iri.getFragment();

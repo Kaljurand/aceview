@@ -89,7 +89,8 @@ public abstract class AbstractSnippetsTableModel extends AbstractTableModel {
 			Object object = getValueAt(row, column);
 			if (object != null && object instanceof ACESnippet) {
 				ACESnippet oldSnippet = (ACESnippet) object;
-				List<ACESentence> newSentences = ACESplitter.getSentences((String) text);
+				ACESplitter splitter = new ACESplitter(ACETextManager.getActiveACELexicon());
+				List<ACESentence> newSentences = splitter.getSentences((String) text);
 
 				if (oldSnippet.getSentences().equals(newSentences)) {
 					logger.info("Del/Add nothing: oldSnippet = newSentences = " + oldSnippet.getSentences());

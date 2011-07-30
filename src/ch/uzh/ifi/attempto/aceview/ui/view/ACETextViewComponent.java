@@ -119,7 +119,8 @@ public class ACETextViewComponent extends AbstractOWLViewComponent {
 				final Set<ACESnippet> removedSnippets = Sets.newHashSet();
 				Set<List<ACESentence>> oldSentenceLists = Sets.newHashSet();
 
-				List<List<ACESentence>> textareaSentenceLists = ACESplitter.getParagraphs(aceTextArea.getText());
+				ACESplitter splitter = new ACESplitter(ACETextManager.getActiveACELexicon());
+				List<List<ACESentence>> textareaSentenceLists = splitter.getParagraphs(aceTextArea.getText());
 				for (List<ACESentence> sentences : textareaSentenceLists) {
 					if (acetext.contains(sentences)) {
 						oldSentenceLists.add(sentences);

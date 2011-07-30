@@ -16,7 +16,8 @@
 
 
 /**
- * This package contains various utilities for manipulating ACE sentences. These classes do not depend on neither Protege nor OWL-API libraries.
+ * <p>This package contains various utilities for manipulating ACE sentences.
+ * Ideally, these classes should not depend on neither Protege nor OWL-API libraries.</p>
  * 
  * @author Kaarel Kaljurand
  */

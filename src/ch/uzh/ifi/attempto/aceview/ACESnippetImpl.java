@@ -159,7 +159,7 @@ public class ACESnippetImpl implements ACESnippet {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		this.axiomSet = ImmutableSet.of((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations());
-		mSentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
+		mSentences = ImmutableList.copyOf(new ACESplitter(ACETextManager.getACELexicon(ns)).getSentences(str));
 		if (! mSentences.isEmpty()) {
 			if (mSentences.get(mSentences.size() - 1).isQuestion()) {
 				isQuestion = true;
@@ -623,7 +623,8 @@ public class ACESnippetImpl implements ACESnippet {
 
 			if (errorMessages.isEmpty()) {
 				if (paraphrase1Enabled) {
-					para1 = ACESplitter.getParagraphs(result.get(OutputType.PARAPHRASE1));
+					ACESplitter splitter = new ACESplitter(ACETextManager.getACELexicon(ns));
+					para1 = splitter.getParagraphs(result.get(OutputType.PARAPHRASE1));
 				}
 				String owlxml = result.get(OutputType.OWLXML);
 				if (owlxml == null || owlxml.length() == 0) {
@@ -673,12 +674,12 @@ public class ACESnippetImpl implements ACESnippet {
 	// TODO Do this during construction time
 	private String toSimpleString() {
 		if (mSentences.size() == 1) {
-			return mSentences.iterator().next().toSimpleString();
+			return mSentences.iterator().next().toString();
 		}
 
 		String str = "";
 		for (ACESentence s : mSentences) {
-			str += s.toSimpleString() + " ";
+			str += s.toString() + " ";
 		}
 		return str;
 	}
@@ -738,12 +739,12 @@ public class ACESnippetImpl implements ACESnippet {
 			return getLogicalAxioms().toString();
 		}
 		else if (mSentences.size() == 1) {
-			return mSentences.iterator().next().toSimpleString();
+			return mSentences.iterator().next().toString();
 		}
 
 		String str = "";
 		for (ACESentence s : mSentences) {
-			str += s.toSimpleString() + " ";
+			str += s.toString() + " ";
 		}
 		return str;
 	}
