@@ -182,7 +182,7 @@ public class ACETextViewComponent extends AbstractOWLViewComponent {
 		// TODO: cleanup and optimize
 		String all = "";
 		for (ACESnippet snippet : acetext.getSnippets()) {
-			ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(getOWLModelManager()), snippet.getSentences());
+			ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getActiveACELexicon()), snippet.getSentences());
 			all += snippetRenderer.getRendering();
 		}
 		aceTextArea.setText(all);

@@ -328,7 +328,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 
 		getView().setHeaderText(snippet.toString());
 
-		ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(getOWLModelManager()), snippet.getSentences(), snippet.getErrorSpans());
+		ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getActiveACELexicon()), snippet.getSentences(), snippet.getErrorSpans());
 		snippetEditor.setText(snippetRenderer.getRendering());
 		snippetEditor.getHighlighter().removeAllHighlights();
 		// Snippet editor buttons

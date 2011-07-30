@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.IRI;
 
+import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.ape.Lexicon;
 
 /**
@@ -116,6 +117,16 @@ public interface TokenMapper {
 	 * @return Lexicon
 	 */
 	Lexicon createLexicon(Set<String> contentWordforms);
+
+
+	/**
+	 * <p>Creates the <code>Lexicon</code> on the basis of the given
+	 * set of content word tokens.</p>
+	 * 
+	 * @param tokens Set of ACE content word tokens
+	 * @return Lexicon
+	 */
+	Lexicon createLexiconFromTokens(Set<ACEToken> tokens);
 
 
 	/**

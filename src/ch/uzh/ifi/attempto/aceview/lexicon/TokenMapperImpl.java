@@ -26,6 +26,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import ch.uzh.ifi.attempto.ace.ACEToken;
 import ch.uzh.ifi.attempto.ape.Lexicon;
 import ch.uzh.ifi.attempto.ape.LexiconEntry;
 
@@ -211,6 +212,22 @@ public class TokenMapperImpl implements TokenMapper {
 		for (String wordform : wordforms) {
 			for (Triple triple : map.get(wordform)) {
 				entries.add(triple.getLexiconEntry());
+			}
+		}
+		Lexicon lexicon = new Lexicon();
+		lexicon.addEntries(entries);
+		return lexicon;
+	}
+
+
+	public Lexicon createLexiconFromTokens(Set<ACEToken> tokens) {
+		Set<LexiconEntry> entries = Sets.newHashSet();
+		for (ACEToken tok : tokens) {
+			IRI iri = tok.getIri();
+			if (iri != null) {
+				for (Triple triple : map2.get(iri)) {
+					entries.add(triple.getLexiconEntry());
+				}
 			}
 		}
 		Lexicon lexicon = new Lexicon();

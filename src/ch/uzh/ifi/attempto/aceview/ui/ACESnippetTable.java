@@ -40,7 +40,7 @@ public class ACESnippetTable extends ACETable {
 					tooltip = snippet.toString();
 				}
 				else {
-					ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), snippet.getSentences());
+					ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getActiveACELexicon()), snippet.getSentences());
 					tooltip = snippetRenderer.getRendering();
 				}
 				return "<html><body><pre style='font-family: monospace; padding: 2px 2px 2px 2px'>" + tooltip + "</pre></body></html>";

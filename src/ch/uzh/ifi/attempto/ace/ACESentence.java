@@ -156,7 +156,7 @@ public class ACESentence {
 	 * @return Pretty-printed token list
 	 */
 	private static String createString(List<ACEToken> tokens) {
-		IriRenderer renderer = new IriRenderer(ACETextManager.getOWLModelManager());
+		IriRenderer renderer = new IriRenderer(ACETextManager.getActiveACELexicon());
 
 		if (tokens.isEmpty()) {
 			return "";

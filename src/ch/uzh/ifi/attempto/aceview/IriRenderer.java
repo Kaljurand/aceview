@@ -1,5 +1,6 @@
 package ch.uzh.ifi.attempto.aceview;
 
+import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -14,6 +15,7 @@ import ch.uzh.ifi.attempto.ace.EntryType;
 import ch.uzh.ifi.attempto.ace.FieldType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 
 /**
  * <p>If the ACE token is a function word, then returns its string content.
@@ -24,18 +26,31 @@ import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
  */
 public class IriRenderer implements ACETokenRenderer {
 
-	private final OWLModelManager mMngr;
+	private static final Logger logger = Logger.getLogger(IriRenderer.class);
 
-	public IriRenderer() {
-		this(null);
+	private final TokenMapper mTokenMapper;
+
+	public IriRenderer(TokenMapper tokenMapper) {
+		mTokenMapper = tokenMapper;
 	}
 
-	public IriRenderer(OWLModelManager mngr) {
-		mMngr = mngr;
-	}
 
-	@Override
 	public String render(ACEToken token) {
+		IRI iri = token.getIri();
+		if (iri == null) {
+			return token.toString();
+		}
+		return mTokenMapper.getWordform(iri, MorphType.getMorphType(token.getEntryType(), token.getFieldType()));
+	}
+
+
+	/**
+	 * TODO: this is experimental
+	 * @param token
+	 * @return
+	 */
+	/*
+	public String renderBasedOnEntity(ACEToken token) {
 		IRI iri = token.getIri();
 
 		if (iri == null) {
@@ -43,22 +58,26 @@ public class IriRenderer implements ACETokenRenderer {
 		}
 
 		if (mMngr == null) {
+			logger.warn("OWLModelManager == null");
 			return "?" + iri.getFragment();
 		}
 
 		OWLEntity entity = ACETextManager.findEntity(token.getEntryType(), iri);
 
 		if (entity == null) {
+			logger.warn("Cannot find entity for: " + token.getEntryType() + " and " + iri);
 			return "??" + iri.getFragment();
 		}
 
 		String rendering = mMngr.getRendering(entity);
 		if (rendering == null) {
+			logger.warn("Cannot find rendering for: " + entity);
 			return "???" + iri.getFragment();
 		}
 		// TODO: return the morph form based on getFieldType(), not the rendering
 		return rendering;
 	}
+	 */
 
 
 	/**
