@@ -74,7 +74,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 	private static final Logger logger = Logger.getLogger(ACESnippetImpl.class);
 
-	private final ImmutableList<ACESentence> sentences;
+	private final ImmutableList<ACESentence> mSentences;
 	private final OWLOntologyID ns;
 
 	private final String stringID;
@@ -91,6 +91,7 @@ public class ACESnippetImpl implements ACESnippet {
 	private List<List<ACESentence>> para1 = Lists.newArrayList();
 	private boolean isQuestion = false;
 	private int errorMessagesCount = 0;
+	private final ACESentenceRenderer mRenderer;
 	private int owlErrorMessagesCount = 0;
 
 	private final Joiner joiner = Joiner.on(" ");
@@ -108,9 +109,9 @@ public class ACESnippetImpl implements ACESnippet {
 		}
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
-		this.sentences = ImmutableList.copyOf(sentences);
-		if (! this.sentences.isEmpty()) {
-			if (this.sentences.get(sentences.size() - 1).isQuestion()) {
+		mSentences = ImmutableList.copyOf(sentences);
+		if (! mSentences.isEmpty()) {
+			if (mSentences.get(sentences.size() - 1).isQuestion()) {
 				isQuestion = true;
 			}
 			init();
@@ -118,6 +119,7 @@ public class ACESnippetImpl implements ACESnippet {
 		}
 		this.altRendering = null;
 		this.stringID = makeStringID();
+		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), mSentences, getErrorSpans());
 	}
 
 
@@ -133,11 +135,12 @@ public class ACESnippetImpl implements ACESnippet {
 		if (sentence.isQuestion()) {
 			isQuestion = true;
 		}
-		this.sentences = ImmutableList.of(sentence);
+		mSentences = ImmutableList.of(sentence);
 		init();
 		countMessages();
 		this.altRendering = null;
 		this.stringID = makeStringID();
+		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), mSentences, getErrorSpans());
 	}
 
 
@@ -156,14 +159,15 @@ public class ACESnippetImpl implements ACESnippet {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		this.axiomSet = ImmutableSet.of((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations());
-		this.sentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
-		if (! sentences.isEmpty()) {
-			if (sentences.get(sentences.size() - 1).isQuestion()) {
+		mSentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
+		if (! mSentences.isEmpty()) {
+			if (mSentences.get(mSentences.size() - 1).isQuestion()) {
 				isQuestion = true;
 			}
 		}
 		this.altRendering = altRendering;
 		this.stringID = makeStringID();
+		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), mSentences, getErrorSpans());
 	}
 
 
@@ -176,14 +180,15 @@ public class ACESnippetImpl implements ACESnippet {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		this.axiomSet = ImmutableSet.of((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations());
-		this.sentences = ImmutableList.copyOf(sentences);
-		if (! sentences.isEmpty()) {
-			if (sentences.get(sentences.size() - 1).isQuestion()) {
+		mSentences = ImmutableList.copyOf(sentences);
+		if (! mSentences.isEmpty()) {
+			if (mSentences.get(mSentences.size() - 1).isQuestion()) {
 				isQuestion = true;
 			}
 		}
 		this.altRendering = altRendering;
 		this.stringID = makeStringID();
+		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), mSentences, getErrorSpans());
 	}
 
 
@@ -198,12 +203,12 @@ public class ACESnippetImpl implements ACESnippet {
 
 
 	public List<ACESentence> getSentences() {
-		return sentences;
+		return mSentences;
 	}
 
 
 	public boolean isEmpty() {
-		return sentences.isEmpty();
+		return mSentences.isEmpty();
 	}
 
 
@@ -229,14 +234,11 @@ public class ACESnippetImpl implements ACESnippet {
 	 */
 	@Override
 	public String toString() {
-		ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), getSentences(), getErrorSpans());
-		return snippetRenderer.getRendering();
-		/*
 		if (isEmpty()) {
 			return getAltRendering();
 		}
-		return joiner.join(sentences);
-		 */
+		// return joiner.join(sentences);
+		return mRenderer.getRendering();
 	}
 
 
@@ -248,7 +250,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 		StringBuilder sb = new StringBuilder();
 
-		for (ACESentence sentence : sentences) {
+		for (ACESentence sentence : mSentences) {
 			for (ACEToken token : sentence.getTokens()) {
 				if (token.isOrdinationWord()) {
 					sb.append("<span color='green'>");
@@ -375,7 +377,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public List<ACESentence> getRest(ACESentence sentence) {
 		List<ACESentence> restSentences = Lists.newArrayList();
-		for (ACESentence s : this.sentences) {
+		for (ACESentence s : mSentences) {
 			if (! s.equals(sentence)) {
 				restSentences.add(s);
 			}
@@ -386,7 +388,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public int getContentWordCount() {
 		int count = 0;
-		for (ACESentence s : sentences) {
+		for (ACESentence s : mSentences) {
 			count = count + s.getContentWords().size();
 		}
 		return count;
@@ -510,7 +512,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 */
 	private Set<String> getContentWordsAsStrings() {
 		Set<String> contentWordsAsStrings = Sets.newHashSet();
-		for (ACESentence s : sentences) {
+		for (ACESentence s : mSentences) {
 			for (ACEToken contentWord : s.getContentWords()) {
 				contentWordsAsStrings.add(contentWord.toString());
 			}
@@ -529,14 +531,14 @@ public class ACESnippetImpl implements ACESnippet {
 
 		// As possible MOS strings,
 		// we only accept snippets which contain exactly one sentence.
-		if (prefs.getUseMos() && sentences.size() == 1) {
+		if (prefs.getUseMos() && mSentences.size() == 1) {
 			OWLLogicalAxiom mosAxiom = null;
 			try {
 				// TODO: BUG: it's not clear what this "base" is
 				// supposed to be, the OWL-API Javadoc doesn't say anything about it.
 				String base = getOntologyIRIAsString();
-				logger.info("Parsing with the MOS parser: " + sentences.iterator().next());
-				mosAxiom = ACETextManager.parseWithMos(sentences.iterator().next(), base);
+				logger.info("Parsing with the MOS parser: " + mSentences.iterator().next());
+				mosAxiom = ACETextManager.parseWithMos(mSentences.iterator().next(), base);
 				logger.info(mosAxiom);
 			} catch (ParserException e) {
 				// e.printStackTrace();
@@ -658,7 +660,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 			int sentenceIndex = sid.intValue() - 1;
 			int tokenIndex = tid.intValue() - 1;
-			if (sentences.size () > sentenceIndex && sentences.get(sentenceIndex).size() > tokenIndex) {
+			if (mSentences.size () > sentenceIndex && mSentences.get(sentenceIndex).size() > tokenIndex) {
 				pinpointers.put(sentenceIndex, tokenIndex);
 			}
 			else {
@@ -670,12 +672,12 @@ public class ACESnippetImpl implements ACESnippet {
 
 	// TODO Do this during construction time
 	private String toSimpleString() {
-		if (sentences.size() == 1) {
-			return sentences.iterator().next().toSimpleString();
+		if (mSentences.size() == 1) {
+			return mSentences.iterator().next().toSimpleString();
 		}
 
 		String str = "";
-		for (ACESentence s : sentences) {
+		for (ACESentence s : mSentences) {
 			str += s.toSimpleString() + " ";
 		}
 		return str;
@@ -732,15 +734,15 @@ public class ACESnippetImpl implements ACESnippet {
 	 * @return ID-rendering of the snippet
 	 */
 	private String makeStringID() {
-		if (sentences.size() == 0) {
+		if (mSentences.size() == 0) {
 			return getLogicalAxioms().toString();
 		}
-		else if (sentences.size() == 1) {
-			return sentences.iterator().next().toSimpleString();
+		else if (mSentences.size() == 1) {
+			return mSentences.iterator().next().toSimpleString();
 		}
 
 		String str = "";
-		for (ACESentence s : sentences) {
+		for (ACESentence s : mSentences) {
 			str += s.toSimpleString() + " ";
 		}
 		return str;

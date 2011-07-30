@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 public class ACESplitterFromCsv {
+
+	private static ImmutableSet<String> sSymbols = ImmutableSet.of("'", ",", ":", "+", "-", "*", "/", "=", "(", ")");
 
 	/**
 	 * <p>Tokenizes the given string and returns the result
@@ -17,8 +20,6 @@ public class ACESplitterFromCsv {
 	 * 
 	 * @param str ACE text as string
 	 * @return ACE text as list of paragraphs (sentence lists)
-	 * 
-	 * TODO: number and symbols
 	 */
 	public static List<List<ACESentence>> getParagraphs(String str) {
 
@@ -97,48 +98,36 @@ public class ACESplitterFromCsv {
 		String word = itt.next();
 		System.out.println(type + " --- " + word);
 
-		ACEToken tok;
-		if ("qs".equals(type)) {
-			tok = ACEToken.newQuotedString(word);
-		} else if (".".equals(word)) {
-			tok = ACEToken.DOT;
-		} else if ("?".equals(word)) {
-			tok = ACEToken.newBorderToken('?');
-		} else if ("!".equals(word)) {
-			tok = ACEToken.newBorderToken('!');
-		} else if ("cn_sg".equals(type)) {
-			tok = ACEToken.newToken(word, EntryType.CN, FieldType.SG);
-		} else if ("cn_pl".equals(type)) {
-			tok = ACEToken.newToken(word, EntryType.CN, FieldType.PL);
-		} else if ("tv_sg".equals(type)) {
-			tok = ACEToken.newToken(word, EntryType.TV, FieldType.SG);
-		} else if ("tv_pl".equals(type)) {
-			tok = ACEToken.newToken(word, EntryType.TV, FieldType.SG);
-		} else if ("tv_vbg".equals(type)) {
-			tok = ACEToken.newToken(word, EntryType.TV, FieldType.PL);
-		} else if ("pn_sg".equals(type)) {
-			tok = ACEToken.newToken(word, EntryType.PN, FieldType.VBG);
-		} else if ("ignored".equals(type)) {
-			return null;
-		} else if ("unsupported".equals(type)) {
-			return null;
-		} else if ("comment".equals(type)) {
-			return null;
-		} else {
+		if ("qs".equals(type)) return ACEToken.newQuotedString(word);
+		if ("cn_sg".equals(type)) return ACEToken.newToken(word, EntryType.CN, FieldType.SG);
+		if ("cn_pl".equals(type)) return ACEToken.newToken(word, EntryType.CN, FieldType.PL);
+		if ("tv_sg".equals(type)) return ACEToken.newToken(word, EntryType.TV, FieldType.SG);
+		if ("tv_pl".equals(type)) return ACEToken.newToken(word, EntryType.TV, FieldType.SG);
+		if ("tv_vbg".equals(type)) return ACEToken.newToken(word, EntryType.TV, FieldType.PL);
+		if ("pn_sg".equals(type)) return ACEToken.newToken(word, EntryType.PN, FieldType.VBG);
+
+		if ("f".equals(type)) {
+			if (".".equals(word)) return ACEToken.DOT;
+			if ("?".equals(word)) return ACEToken.newBorderToken('?');
+			if ("!".equals(word)) return ACEToken.newBorderToken('!');
+
+			if (sSymbols.contains(word)) {
+				return ACEToken.newSymbol(word);
+			}
+
+			// If the token parses as number then we return it as a number token,
+			// otherwise we continue in this method.
+			try {
+				Float.valueOf(word);
+				return ACEToken.newNumber(word);
+			} catch (NumberFormatException e) {}
+
 			// TODO: capture bad tokens
-			tok = ACEToken.newToken(word);
+			return ACEToken.newToken(word);
 		}
-		/*
-		else if (t.ttype == StreamTokenizer.TT_NUMBER) {
-			tok = ACEToken.newNumber(t.nval);
-		}
-		else if (t.ttype == '\'' || t.ttype == ',' || t.ttype == ':' ||
-				t.ttype == '+' || t.ttype == '-' || t.ttype == '*' || t.ttype == '/' ||
-				t.ttype == '=' || t.ttype == '(' || t.ttype == ')') {
-			tok = ACEToken.newSymbol((char) t.ttype);
-		}
-		 */
-		return tok;
+
+		// unsupported, ignored, comment, ... -> null
+		return null;
 	}
 
 
