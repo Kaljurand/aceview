@@ -119,7 +119,7 @@ public class ACESnippetImpl implements ACESnippet {
 		}
 		this.altRendering = null;
 		this.stringID = makeStringID();
-		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), mSentences, getErrorSpans());
+		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getActiveACELexicon()), mSentences, getErrorSpans());
 	}
 
 
@@ -140,7 +140,7 @@ public class ACESnippetImpl implements ACESnippet {
 		countMessages();
 		this.altRendering = null;
 		this.stringID = makeStringID();
-		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), mSentences, getErrorSpans());
+		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getActiveACELexicon()), mSentences, getErrorSpans());
 	}
 
 
@@ -167,7 +167,7 @@ public class ACESnippetImpl implements ACESnippet {
 		}
 		this.altRendering = altRendering;
 		this.stringID = makeStringID();
-		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), mSentences, getErrorSpans());
+		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getActiveACELexicon()), mSentences, getErrorSpans());
 	}
 
 
@@ -188,7 +188,7 @@ public class ACESnippetImpl implements ACESnippet {
 		}
 		this.altRendering = altRendering;
 		this.stringID = makeStringID();
-		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getOWLModelManager()), mSentences, getErrorSpans());
+		mRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getActiveACELexicon()), mSentences, getErrorSpans());
 	}
 
 
@@ -510,14 +510,26 @@ public class ACESnippetImpl implements ACESnippet {
 	 * 
 	 * @return Set of contentword forms
 	 */
-	private Set<String> getContentWordsAsStrings() {
+	/*
+	private Set<String> getContentWordsAsStrings(TokenMapper aceLexicon) {
 		Set<String> contentWordsAsStrings = Sets.newHashSet();
 		for (ACESentence s : mSentences) {
-			for (ACEToken contentWord : s.getContentWords()) {
-				contentWordsAsStrings.add(contentWord.toString());
+			for (ACEToken token : s.getContentWords()) {
+				String wordFrom = aceLexicon.getWordform(token, morphType);
+				contentWordsAsStrings.add(wordFrom);
 			}
 		}
 		return contentWordsAsStrings;
+	}
+	 */
+
+
+	private Set<ACEToken> getContentWords() {
+		Set<ACEToken> tokens = Sets.newHashSet();
+		for (ACESentence s : mSentences) {
+			tokens.addAll(s.getContentWords());
+		}
+		return tokens;
 	}
 
 
@@ -553,6 +565,7 @@ public class ACESnippetImpl implements ACESnippet {
 		try {
 			parse(prefs);
 		} catch (OWLOntologyCreationException e) {
+			// TODO: show this error in the GUI
 			e.printStackTrace();
 		}
 	}
@@ -560,21 +573,24 @@ public class ACESnippetImpl implements ACESnippet {
 
 	private void parse(ACEViewPreferences prefs) throws OWLOntologyCreationException {
 		TokenMapper aceLexicon = ACETextManager.getACELexicon(ns);
-		Set<String> contentWordForms = getContentWordsAsStrings();
+		//Set<String> contentWordForms = getContentWordsAsStrings(aceLexicon);
 
 		if (! prefs.getParseWithUndefinedTokens()) {
+			logger.info("Checking for undefined wordforms is currently not performed.");
 			// logger.info("Content word forms: " + contentWordForms);
+			/*
 			for (String wordFrom : contentWordForms) {
 				if (! aceLexicon.containsWordform(wordFrom)) {
 					messages.add(new Message("error", "token", null, null, wordFrom, "Add this wordform to the lexicon"));
 				}
 			}
+			 */
 		}
 
 		// In case there are no lexical entries for at least one token, and the preferences
 		// tell us not to parse in this case, then abort immediately.
 		if (messages.isEmpty()) {
-			parseWithAceParser(prefs, aceLexicon, contentWordForms);
+			parseWithAceParser(prefs, aceLexicon);
 		}
 		else {
 			//logger.info("Not parsing, there are messages.");
@@ -583,14 +599,12 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	private void parseWithAceParser(ACEViewPreferences prefs, TokenMapper aceLexicon, Set<String> contentWordforms) throws OWLOntologyCreationException {
-		logger.info("Wordforms: " + contentWordforms);
-		Lexicon lexicon = aceLexicon.createLexicon(contentWordforms);
+	private void parseWithAceParser(ACEViewPreferences prefs, TokenMapper aceLexicon) throws OWLOntologyCreationException {
+		Lexicon lexicon = aceLexicon.createLexiconFromTokens(getContentWords());
 		if (lexicon.getEntries().isEmpty()) {
 			logger.info("Parsing with empty lexicon.");
 			lexicon = null;
-		}
-		else {
+		} else {
 			logger.info("Parsing with lexicon:\n" + lexicon.toString());
 		}
 

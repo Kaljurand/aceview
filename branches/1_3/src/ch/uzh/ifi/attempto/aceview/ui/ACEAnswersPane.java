@@ -290,7 +290,7 @@ public class ACEAnswersPane extends JTextPane {
 			e.printStackTrace();
 		}
 		if (snippet != null) {
-			ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ws.getOWLModelManager()), snippet.getSentences());
+			ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getActiveACELexicon()), snippet.getSentences());
 			JComponent comp = ComponentFactory.makeSnippetDialogPanel("Add this snippet to the active ACE text?", snippetRenderer.getRendering());
 			int ret = new UIHelper(ws.getOWLEditorKit()).showDialog(LABEL_DECLARE_COMPLETE, comp, JOptionPane.OK_CANCEL_OPTION);
 			if (ret == JOptionPane.OK_OPTION) {

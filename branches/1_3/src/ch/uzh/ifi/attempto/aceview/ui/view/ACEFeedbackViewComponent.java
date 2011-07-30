@@ -276,7 +276,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 			panelParaphrase.setTitle(PANEL_PARAPHRASES_TITLE + ": 1");
 			List<String> snippetRenderings = Lists.newArrayList();
 			for (List<ACESentence> paragraph : paraphrase) {
-				ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(getOWLModelManager()), paragraph);
+				ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(new IriRenderer(ACETextManager.getActiveACELexicon()), paragraph);
 				snippetRenderings.add(snippetRenderer.getRendering());
 			}
 			textareaParaphrase.setText(paragraphJoiner.join(snippetRenderings));
