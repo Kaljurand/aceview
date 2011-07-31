@@ -85,7 +85,7 @@ public class ACEQandAViewComponent extends AbstractACESnippetsViewComponent {
 				updateView();
 			}
 		});
-		panelButtons.add(filterByAnswers);
+		panelMiddleButtons.add(filterByAnswers);
 
 		isCompleteHighlighter.setBackground(Colors.ANSWERS_COMPLETE_COLOR);
 

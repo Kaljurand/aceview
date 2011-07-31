@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -16,9 +16,12 @@
 
 package ch.uzh.ifi.attempto.aceview.ui.view;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
@@ -37,6 +40,9 @@ public abstract class AbstractACEFilterableViewComponent extends AbstractACEView
 	protected final JRadioButton buttonHighlight = new JRadioButton("Highlight");
 	protected final JRadioButton buttonFilter = new JRadioButton("Filter");
 	protected final JPanel panelButtons = new JPanel();
+	protected final JPanel panelLeftButtons = new JPanel();
+	protected final JPanel panelMiddleButtons = new JPanel();
+	protected final JPanel panelRightButtons = new JPanel();
 
 	@Override
 	public void initialiseView() throws Exception {
@@ -46,9 +52,22 @@ public abstract class AbstractACEFilterableViewComponent extends AbstractACEView
 		}};
 
 		panelButtons.setLayout(new BoxLayout(panelButtons, BoxLayout.LINE_AXIS));
-		panelButtons.add(new JLabel("Find snippet by: "));
-		panelButtons.add(buttonHighlight);
-		panelButtons.add(buttonFilter);
+		panelButtons.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+		panelLeftButtons.setLayout(new BoxLayout(panelLeftButtons, BoxLayout.LINE_AXIS));
+		panelLeftButtons.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		panelMiddleButtons.setLayout(new BoxLayout(panelMiddleButtons, BoxLayout.LINE_AXIS));
+		panelMiddleButtons.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		panelRightButtons.setLayout(new BoxLayout(panelRightButtons, BoxLayout.LINE_AXIS));
+		panelRightButtons.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		panelLeftButtons.add(new JLabel("Find snippet by: "));
+		panelLeftButtons.add(buttonHighlight);
+		panelLeftButtons.add(Box.createRigidArea(new Dimension(5, 0)));
+		panelLeftButtons.add(buttonFilter);
+		panelButtons.add(panelLeftButtons);
+		panelButtons.add(Box.createHorizontalGlue());
+		panelButtons.add(panelMiddleButtons);
+		panelButtons.add(Box.createHorizontalGlue());
+		panelButtons.add(panelRightButtons);
 
 		buttonHighlight.setSelected(true);
 		buttonHighlight.addActionListener(new ActionListener() {
