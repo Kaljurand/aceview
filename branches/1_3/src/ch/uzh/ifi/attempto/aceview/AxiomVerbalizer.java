@@ -22,10 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import org.apache.log4j.Logger;
 import org.coode.owlapi.owlxml.renderer.OWLXMLRenderer;
+import org.protege.editor.core.ProtegeApplication;
 import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -119,15 +118,22 @@ public class AxiomVerbalizer {
 		try {
 			verbalization = verbalizeWithWS(axiomWithoutAnnotations);
 		} catch (Exception e) {
-			// TODO: instead of the popup use the Protege error pane
-			JOptionPane.showMessageDialog(null, "OWL verbalizer error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			logger.info("OWL verbalizer error: " + e.getMessage());
+			// Note that we can only log throwables using the central Protege error log.
+			// Because the stack trace takes a lot of space in the error message,
+			// and because it is not so interesting in this case, we just set it to empty.
+			e.setStackTrace(new StackTraceElement[0]);
+			ProtegeApplication.getErrorLog().logError(e);
+
+			// Other options for displaying an error message
+			//JOptionPane.showMessageDialog(null, "OWL verbalizer error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			//ErrorLogPanel.showErrorDialog(e);
 		}
 
-		logger.info("verbalization: " + verbalization);
 		if (verbalization == null || verbalization.isEmpty()) {
 			return new ACESnippetImpl(iri, "", axiomWithoutAnnotations, getAlternativeRendering(axiomWithoutAnnotations));
 		}
-
+		logger.info("verbalization: " + verbalization);
 		return new ACESnippetImpl(iri, verbalization, axiomWithoutAnnotations);
 	}
 

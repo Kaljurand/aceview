@@ -16,14 +16,12 @@
 
 package ch.uzh.ifi.attempto.aceview;
 
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import org.apache.log4j.Logger;
+import org.protege.editor.core.ProtegeApplication;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.io.StringDocumentSource;
 import org.semanticweb.owlapi.model.IRI;
@@ -620,13 +618,12 @@ public class ACESnippetImpl implements ACESnippet {
 		try {
 			if (paraphrase1Enabled) {
 				result = parser.getMultiOutput(toSimpleString(), lexicon, OutputType.PARAPHRASE1, OutputType.OWLXML);
-			}
-			else {
+			} else {
 				result = parser.getMultiOutput(toSimpleString(), lexicon, OutputType.OWLXML);
 			}
 		} catch (RuntimeException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "ACE Parser error:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			logger.info("ACE Parser error: " + e.getMessage());
+			ProtegeApplication.getErrorLog().logError(e);
 		}
 
 		if (result != null) {
