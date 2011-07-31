@@ -270,23 +270,15 @@ public class AxiomVerbalizer {
 			if (isAnonymous(subject)) return null;
 
 			OWLLiteral literal = dpAssertionAxiom.getObject();
-			OWLDatatype datatype = literal.getDatatype();
-			String datavalue = "";
-			if (datatype.isString()) {
-				datavalue = "\"" + literal.getLiteral() + "\"";
-			}
-			else {
-				// BUG: we accept all types of data here (although ACE only supports numbers and strings)
-				datavalue = literal.getLiteral();
-			}
 
-			// John's temperature is 36.
+			// John's temperature is 36.5.
 			tokens.add(ACEToken.newToken(subject.asOWLNamedIndividual().getIRI(), EntryType.PN, FieldType.SG));
-			tokens.add(ACEToken.newToken("'s"));
+			tokens.add(ACEToken.newSymbol('\''));
+			tokens.add(ACEToken.newToken("s"));
 			// TODO: think about the morph type for data properties
-			tokens.add(ACEToken.newToken(dpExpression.asOWLDataProperty().getIRI(), EntryType.CN, FieldType.SG));
+			tokens.add(ACEToken.newToken(dpExpression.asOWLDataProperty().getIRI(), EntryType.TV, FieldType.PL));
 			tokens.add(ACEToken.newToken("is"));
-			tokens.add(ACEToken.newToken(datavalue));
+			tokens.add(createTokenFromLiteral(literal));
 			tokens.add(ACEToken.DOT);
 			sentences.add(new ACESentence(tokens));
 			return sentences;
@@ -315,6 +307,18 @@ public class AxiomVerbalizer {
 			return getSimpleClassRelationVerbalization((OWLClass) desc1, (OWLClass) desc2, "No");
 		}
 		return null;
+	}
+
+
+	private static ACEToken createTokenFromLiteral(OWLLiteral literal) {
+		OWLDatatype datatype = literal.getDatatype();
+		if (datatype.isString()) {
+			return ACEToken.newQuotedString(literal.getLiteral());
+		} else if (datatype.isDouble() || datatype.isInteger() || datatype.isFloat()) {
+			return ACEToken.newNumber(literal.getLiteral());
+		}
+		// BUG: we accept all types of data here (although ACE only supports numbers and strings)
+		return ACEToken.newToken(literal.getLiteral());
 	}
 
 

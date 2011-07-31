@@ -104,9 +104,9 @@ public class ACESplitterFromCsv {
 		if ("cn_sg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.CN, FieldType.SG);
 		if ("cn_pl".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.CN, FieldType.PL);
 		if ("tv_sg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.TV, FieldType.SG);
-		if ("tv_pl".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.TV, FieldType.SG);
-		if ("tv_vbg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.TV, FieldType.PL);
-		if ("pn_sg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.PN, FieldType.VBG);
+		if ("tv_pl".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.TV, FieldType.PL);
+		if ("tv_vbg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.TV, FieldType.VBG);
+		if ("pn_sg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.PN, FieldType.SG);
 
 		if ("f".equals(type)) {
 			if (".".equals(word)) return ACEToken.DOT;
