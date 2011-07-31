@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -15,6 +15,16 @@
  */
 
 package ch.uzh.ifi.attempto.aceview.ui.view;
+
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
@@ -47,6 +57,7 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 		new ColorHighlighter(new SnippetHighlightPredicate(new SnippetIsWeirdPredicate(), SNIPPET_COLUMN));
 
 	private ColorHighlighter entityHightlighter;
+	private final JButton buttonCopy = new JButton("Copy");
 
 	@Override
 	public void initialiseView() throws Exception {
@@ -56,6 +67,13 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 		isWeirdHighlighter.setForeground(Colors.WEIRD_COLOR);
 		tableSnippets = new ACESnippetTable(SNIPPET_COLUMN);
 		tableSnippets.addHighlighter(isWeirdHighlighter);
+		buttonCopy.setToolTipText("Copy the snippets of the table to clipboard");
+		buttonCopy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				copyToClipboard();
+			}
+		});
+		panelRightButtons.add(buttonCopy);
 		refreshComponent();
 	}
 
@@ -115,5 +133,26 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 			}
 			getView().setHeaderText(numberOfSnippets + " snippet" + pl1 + " (" + numberOfSnippetsShown + " shown)");
 		}
+	}
+
+
+	/**
+	 * <p>Copies the snippet table onto the system clipboard.
+	 * Copies only the visible rows (in the visible order).</p>
+	 */
+	private void copyToClipboard() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < tableSnippets.getRowCount(); i++) {
+			if (i > 0) {
+				sb.append("\n\n");
+			}
+			sb.append(tableSnippets.getValueAt(i, SNIPPET_COLUMN));
+		}
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(new StringSelection(sb.toString()), new ClipboardOwner() {
+			@Override
+			public void lostOwnership(Clipboard arg0, Transferable arg1) {
+			}
+		});
 	}
 }
