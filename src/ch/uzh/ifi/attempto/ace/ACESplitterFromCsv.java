@@ -98,7 +98,7 @@ public class ACESplitterFromCsv {
 		Iterator<String> itt = it.iterator();
 		String type = itt.next();
 		String word = itt.next();
-		System.out.println(type + " --- " + word);
+		//System.out.println(type + " --- " + word);
 
 		if ("qs".equals(type)) return ACEToken.newQuotedString(word);
 		if ("cn_sg".equals(type)) return ACEToken.newToken(IRI.create(word), EntryType.CN, FieldType.SG);

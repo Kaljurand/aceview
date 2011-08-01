@@ -74,7 +74,14 @@ public class AxiomVerbalizer {
 
 	/**
 	 * <p>Verbalizes a single logical OWL axiom and constructs
-	 * a new ACE snippet containing the verbalization and the axiom.</p>
+	 * a new ACE snippet containing the verbalization and the axiom.
+	 * The following can happen:</p>
+	 * 
+	 * <ol>
+	 * <li>Axiom is not supported: use Protege rendering (MOS, or if it fails then toString()</li>
+	 * <li>Axiom is simple: verbalize it in Java (90% of the cases in a typical ontology)</li>
+	 * <li>Axiom is complex: verbalize it using the OWL Verbalizer webservice (or use MOS, or toString() is it fails)</li>
+	 * </ol>
 	 * 
 	 * @param axiom OWL logical axiom to be verbalized
 	 * @param ont Ontology that annotates the entities of the given axiom
@@ -88,12 +95,15 @@ public class AxiomVerbalizer {
 		OWLOntologyID iri = ont.getOntologyID();
 
 		OWLLogicalAxiom axiomWithoutAnnotations = (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations();
+		logger.info("Verbalizing axiom: " + axiomWithoutAnnotations);
 
 		// TODO: Currently the verbalization of certain axioms is not supported.
 		// We just return the Protege rendering.
 		// Checking for unsupported axioms here increases processing speed.
 		if (OntologyUtils.verbalizationNotSupported(axiomWithoutAnnotations)) {
-			return new ACESnippetImpl(iri, "", axiomWithoutAnnotations, getAlternativeRendering(axiomWithoutAnnotations));
+			String verbalization = OntologyUtils.getRendering(ACETextManager.getOWLModelManager(), axiomWithoutAnnotations);
+			logger.info("Unsupported axiom verbalized as: " + verbalization);
+			return new ACESnippetImpl(iri, "", axiomWithoutAnnotations, verbalization);
 		}
 
 
@@ -105,15 +115,11 @@ public class AxiomVerbalizer {
 		List<ACESentence> verbalization = verbalizeSimpleAxiom(axiomWithoutAnnotations);
 
 		if (verbalization != null) {
-			logger.info("Simple axiom verbalized: " + verbalization);
+			logger.info("Simple axiom verbalized as: " + verbalization);
 			return new ACESnippetImpl(iri, verbalization, axiomWithoutAnnotations);
 		}
 
-		// If the axiom was not simple, then we verbalize it using the
-		// OWL verbalizer webservice. We first remove the axiom annotation
-		// from the axiom because the verbalizer does not need it
-		// (and currently fails to ignore it as well).
-		logger.info("Using OWL Verbalizer WS to verbalize: " + axiomWithoutAnnotations);
+		// If the axiom was not simple, then we verbalize it using the OWL verbalizer webservice.
 
 		try {
 			verbalization = verbalizeWithWS(axiomWithoutAnnotations);
@@ -131,20 +137,12 @@ public class AxiomVerbalizer {
 		}
 
 		if (verbalization == null || verbalization.isEmpty()) {
-			return new ACESnippetImpl(iri, "", axiomWithoutAnnotations, getAlternativeRendering(axiomWithoutAnnotations));
+			String altRendering = OntologyUtils.getRendering(ACETextManager.getOWLModelManager(), axiomWithoutAnnotations);
+			logger.info("Complex axiom failed to be verbalized, using Protege rendering: " + altRendering);
+			return new ACESnippetImpl(iri, "", axiomWithoutAnnotations, altRendering);
 		}
-		logger.info("verbalization: " + verbalization);
+		logger.info("Complex axiom verbalized as: " + verbalization);
 		return new ACESnippetImpl(iri, verbalization, axiomWithoutAnnotations);
-	}
-
-
-	private String getAlternativeRendering(OWLLogicalAxiom axiom) {
-		logger.info("Axiom is not verbalized, using Protege rendering.");
-		String rendering = ACETextManager.getOWLModelManager().getRendering(axiom);
-		if (rendering == null) {
-			rendering = axiom.toString();
-		}
-		return rendering;
 	}
 
 

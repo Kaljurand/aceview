@@ -53,6 +53,7 @@ import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.FeedbackPane;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
+import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.ape.Message;
 
 
@@ -193,7 +194,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 			OWLClassExpression dlquery = snippet.getDLQuery();
 			if (dlquery != null) {
 				html.append("<pre>");
-				html.append(mm.getRendering(dlquery));
+				html.append(OntologyUtils.getRendering(mm, dlquery));
 				html.append("</pre>");
 			}
 		}
@@ -201,7 +202,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 			Set<OWLLogicalAxiom> axioms = snippet.getLogicalAxioms();
 			for (OWLLogicalAxiom ax : axioms) {
 				html.append("<pre>");
-				html.append(mm.getRendering(ax));
+				html.append(OntologyUtils.getRendering(mm, ax));
 				html.append("</pre>");
 			}
 		}
