@@ -267,16 +267,15 @@ public class AxiomVerbalizer {
 			OWLIndividual subject = dpAssertionAxiom.getSubject();
 			if (isAnonymous(subject)) return null;
 
-			OWLLiteral literal = dpAssertionAxiom.getObject();
-
 			// John's temperature is 36.5.
+			// TODO: James' temperature is 36.5. (without the "s")
 			tokens.add(ACEToken.newToken(subject.asOWLNamedIndividual().getIRI(), EntryType.PN, FieldType.SG));
 			tokens.add(ACEToken.newSymbol('\''));
 			tokens.add(ACEToken.newToken("s"));
 			// TODO: think about the morph type for data properties
 			tokens.add(ACEToken.newToken(dpExpression.asOWLDataProperty().getIRI(), EntryType.TV, FieldType.PL));
 			tokens.add(ACEToken.newToken("is"));
-			tokens.add(createTokenFromLiteral(literal));
+			tokens.add(createTokenFromLiteral(dpAssertionAxiom.getObject()));
 			tokens.add(ACEToken.DOT);
 			sentences.add(new ACESentence(tokens));
 			return sentences;

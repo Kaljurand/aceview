@@ -1,7 +1,7 @@
 package ch.uzh.ifi.attempto.aceview;
 
-import org.apache.log4j.Logger;
-import org.protege.editor.owl.model.OWLModelManager;
+import java.util.regex.Pattern;
+
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
@@ -20,13 +20,16 @@ import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 /**
  * <p>If the ACE token is a function word, then returns its string content.
  * Otherwise treats it as an IRI, and returns its corresponding entity rendering.
- * If something goes from then returns the IRI fragment prefixed by question marks.</p>
+ * If something goes wrong then returns the IRI fragment prefixed by question marks.</p>
+ * 
+ * <p>If the token needs quoting (i.e. matches <code>ACE_CONTENT_WORD_PATTERN</code>), then
+ * adds backticks around the token.</p>
  * 
  * @author Kaarel Kaljurand
  */
 public class IriRenderer implements ACETokenRenderer {
 
-	private static final Logger logger = Logger.getLogger(IriRenderer.class);
+	public static final Pattern ACE_CONTENT_WORD_PATTERN = Pattern.compile("[a-zA-Z$_-][a-zA-Z0-9$_-]*");
 
 	private final TokenMapper mTokenMapper;
 
@@ -40,7 +43,11 @@ public class IriRenderer implements ACETokenRenderer {
 		if (iri == null) {
 			return token.toString();
 		}
-		return mTokenMapper.getWordform(iri, MorphType.getMorphType(token.getEntryType(), token.getFieldType()));
+		String form = mTokenMapper.getWordform(iri, MorphType.getMorphType(token.getEntryType(), token.getFieldType()));
+		if (ACE_CONTENT_WORD_PATTERN.matcher(form).matches()) {
+			return form;
+		}
+		return "`" + form + "`";
 	}
 
 

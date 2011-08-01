@@ -163,6 +163,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 					ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(oid);
 					ACESnippet oldSnippet = acetext.find(sentences);
 					if (oldSnippet == null) {
+						logger.info("Adding sentences: " + sentences.iterator().next().getTokens());
 						ACESnippetImpl newSnippet = new ACESnippetImpl(oid, sentences);
 						ACETextManager.addSnippet(newSnippet);
 						ACETextManager.setSelectedSnippet(newSnippet);
