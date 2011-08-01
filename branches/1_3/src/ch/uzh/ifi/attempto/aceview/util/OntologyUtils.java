@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser;
+import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.IRI;
@@ -17,8 +18,11 @@ import org.semanticweb.owlapi.model.OWLAxiomChange;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLHasKeyAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -169,12 +173,29 @@ public final class OntologyUtils {
 	 * @return True is axiom cannot be verbalized
 	 */
 	public static boolean verbalizationNotSupported(OWLLogicalAxiom axiom) {
-		if (axiom instanceof SWRLRule) {
-			return true;
-		}
-		else if (axiom instanceof OWLDataPropertyAxiom) {
-			return true;
-		}
+		if (axiom instanceof SWRLRule) return true;
+		if (axiom instanceof OWLDataPropertyAxiom) return true;
+		if (axiom instanceof OWLDatatypeDefinitionAxiom) return true;
+		if (axiom instanceof OWLHasKeyAxiom) return true;
 		return false;
+	}
+
+
+	/**
+	 * <p>Return the Protege rendering of the given OWL object. If this fails then
+	 * just return the toString() rendering. Possibly it's a Protege bug but sometimes
+	 * (in case of DatatypeDefinitionAxiom) the Protege rendering is an empty
+	 * string. We then return toString() instead.</p>
+	 * 
+	 * @param mngr OWLModelManager
+	 * @param owlObject OWL object e.g. axiom, class expression, ...
+	 * @return Protege rendering of the OWL object or toString()
+	 */
+	public static String getRendering(OWLModelManager mngr, OWLObject owlObject) {
+		String rendering = mngr.getRendering(owlObject);
+		if (rendering == null || rendering.isEmpty()) {
+			rendering = owlObject.toString();
+		}
+		return rendering;
 	}
 }
