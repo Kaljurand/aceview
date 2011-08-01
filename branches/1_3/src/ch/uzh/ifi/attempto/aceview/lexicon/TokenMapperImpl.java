@@ -222,12 +222,48 @@ public class TokenMapperImpl implements TokenMapper {
 
 	public Lexicon createLexiconFromTokens(Set<ACEToken> tokens) {
 		Set<LexiconEntry> entries = Sets.newHashSet();
-		for (ACEToken tok : tokens) {
-			IRI iri = tok.getIri();
+		for (ACEToken t : tokens) {
+			IRI iri = t.getIri();
 			if (iri != null) {
-				for (Triple triple : map2.get(iri)) {
-					entries.add(triple.getLexiconEntry());
+				// Get all the triples registered for this IRI
+				Collection<Triple> triples = map2.get(iri);
+				if (triples.isEmpty()) {
+					logger.warn("No triples found for: " + iri);
+				} else {
+					for (Triple triple : triples) {
+						entries.add(triple.getLexiconEntry());
+					}
 				}
+			}
+		}
+		Lexicon lexicon = new Lexicon();
+		lexicon.addEntries(entries);
+		return lexicon;
+	}
+
+
+	/**
+	 * <p>Creates a lexicon based on the information stored in the
+	 * tokens. Ignores function word tokens. The wordform that the ACE
+	 * parser is eventually going to parse can be anything as long
+	 * as it is a legal ACE token.</p>
+	 * 
+	 * TODO: this doesn't work we need the actual wordforms, for
+	 * the paraphraser
+	 */
+	public Lexicon EXP_createLexiconFromTokens(Set<ACEToken> tokens) {
+		Set<LexiconEntry> entries = Sets.newHashSet();
+		for (ACEToken t : tokens) {
+			IRI iri = t.getIri();
+			if (iri != null) {
+				entries.add(
+						new Triple(
+								iri,
+								MorphType.getMorphType(t.getEntryType(), t.getFieldType()),
+								t.getToken()
+						)
+						.getLexiconEntry()
+				);
 			}
 		}
 		Lexicon lexicon = new Lexicon();

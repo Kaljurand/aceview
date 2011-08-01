@@ -598,7 +598,9 @@ public class ACESnippetImpl implements ACESnippet {
 
 
 	private void parseWithAceParser(ACEViewPreferences prefs, TokenMapper aceLexicon) throws OWLOntologyCreationException {
-		Lexicon lexicon = aceLexicon.createLexiconFromTokens(getContentWords());
+		Set<ACEToken> contentWords = getContentWords();
+		logger.info("Content words: " + contentWords);
+		Lexicon lexicon = aceLexicon.createLexiconFromTokens(contentWords);
 		if (lexicon.getEntries().isEmpty()) {
 			logger.info("Parsing with empty lexicon.");
 			lexicon = null;

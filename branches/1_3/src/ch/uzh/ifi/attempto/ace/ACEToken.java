@@ -11,10 +11,6 @@ import ch.uzh.ifi.attempto.ape.FunctionWords;
 /**
  * <p>ACE token and its features.</p>
  * 
- * TODO: we cannot decide anymore during token creation time
- * if the token needs quoting or not. Now the IRI is stored here instead
- * and need for quoting depends on the current IRI rendering.
- * 
  * @author Kaarel Kaljurand
  */
 public final class ACEToken {
@@ -28,14 +24,13 @@ public final class ACEToken {
 		ImmutableSet.of("s", "at", "less", "least", "exactly", "thing", "things", "false", "does", "do", "he/she");
 
 	private static final Pattern variablePattern = Pattern.compile("[A-Z][0-9]*");
-	private static final Pattern wordPattern = Pattern.compile("[a-zA-Z$_-][a-zA-Z0-9$_-]*");
 
-	// The token itself
+	// The token of the function word
 	private String token;
-
-	private IRI mIri = null;
-	private EntryType mEntryType = null;
-	private FieldType mFieldType = null;
+	// The IRI and types of the content word
+	private IRI mIri;
+	private EntryType mEntryType;
+	private FieldType mFieldType;
 
 	private boolean isBadToken = false;
 	private boolean isBorderToken = false;
@@ -49,11 +44,7 @@ public final class ACEToken {
 	private boolean isVariable = false;
 	private boolean isFunctionWord = false;
 
-	// TODO: this should be decided by the renderer
-	private boolean needsQuoting = false;
-
 	private ACEToken() {}
-
 
 	/**
 	 * <p>Constructs content words.</p>
@@ -99,9 +90,6 @@ public final class ACEToken {
 			newToken.isFunctionWord = true;
 		}
 
-		if (! wordPattern.matcher(token).matches()) {
-			newToken.needsQuoting = true;
-		}
 		return newToken;
 	}
 
@@ -242,9 +230,6 @@ public final class ACEToken {
 
 	@Override
 	public String toString() {
-		if (needsQuoting) {
-			return "`" + token + "`";
-		}
 		return token;
 	}
 
@@ -255,12 +240,29 @@ public final class ACEToken {
 		if ((obj == null) || (obj.getClass() != this.getClass())) return false;
 		ACEToken t = (ACEToken) obj;
 		return token.equals(t.getToken());
+		/*
+		if (mIri == null) {
+			// TODO: current comparison is string-based, i.e. numbers and quoted strings
+			// might match regular tokens, which is unwanted
+			return token.equals(t.getToken());
+		}
+		return mIri.equals(t.getIri()) && mEntryType.equals(t.getEntryType()) && mFieldType.equals(t.getFieldType());
+		 */
 	}
 
 
 	@Override
 	public int hashCode() {
 		return token.hashCode();
+		/*
+		if (mIri == null) {
+			// TODO: current hashCode if string-based, i.e. numbers and quoted strings
+			// might match regular tokens, which is unwanted
+			token.hashCode();
+		}
+		// TODO: return a sensible hash code
+		return mIri.hashCode() + mEntryType.hashCode() + mFieldType.hashCode();
+		 */
 	}
 
 
@@ -278,7 +280,6 @@ public final class ACEToken {
 		if (FunctionWords.isFunctionWord(tokenLC) || ADDITIONAL_FUNCTIONWORDS.contains(tokenLC)) {
 			return true;
 		}
-
 		return false;
 	}
 }

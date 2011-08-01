@@ -8,12 +8,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.lexicon.Triple;
 
 import com.google.common.collect.Lists;
 
 public class ACESplitter {
+
+	private static final Logger logger = Logger.getLogger(ACESplitter.class);
 
 	static final Pattern dotSeparator = Pattern.compile("([0-9])[.]([^0-9])");
 
@@ -87,14 +91,18 @@ public class ACESplitter {
 					// TODO: get the IRI based on the wordfrom
 					Collection<Triple> triples = mTokenMapper.getWordformEntries(t.sval);
 					if (triples.isEmpty()) {
+						logger.warn("Wordfrom not in lexicon: " + t.sval);
 						// TODO: unknown wordform or function word
 						tok = ACEToken.newToken(t.sval);
 					} else if (triples.size() == 1) {
 						Triple trip = triples.iterator().next();
 						tok = ACEToken.newToken(trip.getSubjectIRI(), trip.getProperty().getEntryType(), trip.getProperty().getFieldType());
 					} else {
-						// TODO: ambiguous wordform, think what to do here
-						tok = ACEToken.newToken(t.sval);
+						// TODO: ambiguous wordform, think what to do here,
+						// currently taking the first reading, which is definitely a wrong approach.
+						logger.warn("Wordfrom ambiguous in lexicon: " + t.sval + " " + triples);
+						Triple trip = triples.iterator().next();
+						tok = ACEToken.newToken(trip.getSubjectIRI(), trip.getProperty().getEntryType(), trip.getProperty().getFieldType());
 					}
 				}
 				else if (t.ttype == '"') {
