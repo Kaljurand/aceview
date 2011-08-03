@@ -71,11 +71,12 @@ public class TokenMapperImpl implements TokenMapper {
 	}
 
 
-	public void addEntry(String wordform, IRI lemma, MorphType morphType) {
-		Triple triple = new Triple(lemma, morphType, wordform);
+	public void addEntry(Triple triple) {
+
+		String wordform = triple.getObject();
 
 		map.put(wordform, triple);
-		map2.put(lemma, triple);
+		map2.put(triple.getSubjectIRI(), triple);
 		ac.add(wordform);
 
 		// If there are now exactly 2 triples for the
@@ -84,7 +85,7 @@ public class TokenMapperImpl implements TokenMapper {
 			ambiguousWordforms.add(wordform);
 		}
 
-		switch (morphType) {
+		switch (triple.getProperty()) {
 		case PN_SG:
 			pnSgCount++; break;
 		case CN_SG:
@@ -117,18 +118,23 @@ public class TokenMapperImpl implements TokenMapper {
 	}
 
 
-	public void removeEntry(String wordform, IRI lemma, MorphType morphType) {
-		// TODO: BUG: check that the triple is in the map
+	// TODO: make private
+	public void addEntry(String wordform, IRI lemma, MorphType morphType) {
+		addEntry(new Triple(lemma, morphType, wordform));
+	}
 
+
+	public void removeEntry(Triple triple) {
+		// TODO: BUG: check that the triple is in the map
+		String wordform = triple.getObject();
 		// If there are currently exactly 2 triples for the
 		// same wordform then this wordform will become unambiguous.
 		if (map.get(wordform).size() == 2) {
 			ambiguousWordforms.remove(wordform);
 		}
 
-		Triple triple = new Triple(lemma, morphType, wordform);
 		map.remove(wordform, triple);
-		map2.remove(lemma, triple);
+		map2.remove(triple.getSubjectIRI(), triple);
 		if (! map.containsKey(wordform)) {
 			ac.remove(wordform);
 			logger.info("Removed: " + wordform + " -> " + triple + " (no tokens remaining)");
@@ -138,7 +144,7 @@ public class TokenMapperImpl implements TokenMapper {
 		}
 
 
-		switch (morphType) {
+		switch (triple.getProperty()) {
 		case PN_SG:
 			pnSgCount--; break;
 		case CN_SG:
@@ -167,6 +173,11 @@ public class TokenMapperImpl implements TokenMapper {
 				throw new RuntimeException("Programmer expected CN/TV/PN");
 			}
 		 */
+	}
+
+
+	public void removeEntry(String wordform, IRI lemma, MorphType morphType) {
+		removeEntry(new Triple(lemma, morphType, wordform));
 	}
 
 
