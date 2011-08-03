@@ -222,8 +222,7 @@ define the words `dog', `hate', `cat' as OWL entities (class and property names)
 (Note that the morphological surface forms like `hates' are generated automatically
 and stored as entity annotations while the entity is being declared.)
 If you want to enter a sentence without defining the words first, then you can enable
-"Parse sentences that contain undefined wordforms" and rely on the built-in lexicon ("Use Clex")
-and guessing ("Guess unknown words") that the ACE&rarr;OWL/SWRL service provides.
+"Parse sentences that contain undefined wordforms".
 In case you switch on "Generate paraphrase" then all the sentences entered in the ACE View
 are additionally paraphrased. The paraphrases belong to a fragment of ACE called Core ACE.
 This fragment reformulates <em>every</em>-sentences as <em>if-then</em>-sentences and
@@ -409,6 +408,7 @@ sentence because it lacks a determiner in front of a noun.</p>
 You can enter, change and delete snippets in this view, and integrate the changes
 into the knowledge base by pressing "Update".</p>
 
+<!--
 <p>For example, create a new ontology and enter the following ACE text
 in the "ACE Text" view. (Note that you have to use "Clex" and "guessing" to successfully
 parse this text, unless you enter all the words as OWL entities first.)</p>
@@ -444,6 +444,7 @@ What is a territory?
 
 Which enclave is not a landlocked-territory?
 </pre>
+-->
 
 <!--
 <pre>
@@ -466,8 +467,10 @@ What is an animal and is a vegetarian?
 </pre>
 -->
 
+<!--
 <p>Now press "Update" to integrate this text into the ontology. Every ACE view will now
 display an aspect of this text and many of the views let you modify it.</p>
+-->
 
 <!--
 <p>You should see something like the following.</p>
@@ -819,14 +822,15 @@ which is used via punning both as a class name and object property name.</p>
 
 <h3>Countries</h3>
 
+<p>First load the vocabulary <a href="examples/countries_base.owl">countries_base.owl</a>.</p>
+
 <p><a href="examples/countries.ace.txt">countries.ace.txt</a> (~250 snippets) contains
 some membership and bordering information about (mostly European) countries.
 This text also contains many questions (the answers to which will be filled in
-if the reasoner is executed).
-Note that one should first load the vocabulary <a href="examples/countries_base.owl">countries_base.owl</a>
-before the ACE text can be parsed.</p>
+if the reasoner is executed).</p>
 
 
+<!--
 <h3>Iokaste</h3>
 
 <p>The <a href="http://www.inf.unibz.it/~franconi/dl/course/dlhb/dlhb-02.pdf">"Iokaste" example (on pages 73, 74)</a>
@@ -856,6 +860,7 @@ Everybody whose child is a patricide whose child is
 <pre>
 Whose child is a patricide whose child is somebody who is not a patricide?
 </pre>
+-->
 
 <!--
 <p class="warning">The entailment explanation is unfortunately done by listing
@@ -864,6 +869,7 @@ all the sentences in the text. A "branching explanation" would be better.</p>
 
 <h3>Zebra Puzzle</h3>
 
+<p>First load the vocabulary <a href="examples/zebra_base.owl">zebra_base.owl</a>.</p>
 <p><a href="examples/zebra.ace.txt">zebra.ace.txt</a> (~45 snippets)
 constitutes one possible way to encode the Zebra puzzle in ACE. Our starting point
 was the formulation of the puzzle in
@@ -902,12 +908,10 @@ before loading the ontology.</p>
 
 <h3>Jobs Puzzle</h3>
 
+<p>First load the vocabulary <a href="examples/jobs_base.owl">jobs_base.owl</a>.</p>
 <p><a href="examples/jobs.ace.txt">jobs.ace.txt</a> is an ACE formulation of the
 Jobs Puzzle.
-Note that one should first load the vocabulary <a href="examples/jobs_base.owl">jobs_base.owl</a>
-before the ACE text can be parsed.</p>
-
-<p>After reasoning and question answering the Q&amp;A View will display:</p>
+After reasoning and question answering the Q&amp;A View will display:</p>
 
 <div class="image">
 <img src="images/demo_jobs.png" alt="Demo: Jobs Puzzle: Q&amp;A View"/>
@@ -916,6 +920,7 @@ before the ACE text can be parsed.</p>
 <p>e.g. Thelma holds exactly two jobs, Boxer and Chef.</p>
 
 
+<!--
 <h3>Five houses</h3>
 
 <p><a href="examples/five_houses.ace.txt">five_houses.ace.txt</a> (~20 snippets)
@@ -935,6 +940,7 @@ House_1 (first) &rarr; House_? &rarr; House_3 (middle) &rarr; House_? &rarr; Hou
 
 <p>Note that although this text is tiny, it can take a reasoner a long time to answer
 these questions.</p>
+-->
 
 <!--
 <li><a href="examples/primer.owl">primer.owl</a> (78 snippets when verbalized) is
@@ -1150,7 +1156,7 @@ to become a project member.</p>
 
 <address>
 Kaarel Kaljurand
-2011-06-14
+2011-08-03
 </address>
 
 </body>
