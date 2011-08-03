@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -47,8 +47,6 @@ public final class ACEViewPreferences {
 	private static final String ACE_TO_OWL_SOCKET_PORT_KEY = "ACE_TO_OWL_SOCKET_PORT";
 
 	private static final String PARAPHRASE1_KEY = "PARAPHRASE1";
-	private static final String GUESS_KEY = "GUESS";
-	private static final String CLEX_KEY = "CLEX";
 
 	private static final String OWL_TO_ACE_WEBSERVICES_KEY = "OWL_TO_ACE_WEBSERVICES";
 	private static final String OWL_TO_ACE_KEY = "OWL_TO_ACE";
@@ -213,31 +211,6 @@ public final class ACEViewPreferences {
 		return prefs.getString(PARAPHRASE1_KEY, Boolean.toString(false)).equals(Boolean.toString(true));
 	}
 
-	public void setGuessingEnabled(boolean b) {
-		PreferencesManager prefMan = PreferencesManager.getInstance();
-		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, GUESS_KEY);
-		prefs.putString(GUESS_KEY, Boolean.toString(b));
-	}
-
-	// Default: true
-	public boolean isGuessingEnabled() {
-		PreferencesManager prefMan = PreferencesManager.getInstance();
-		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, GUESS_KEY);
-		return prefs.getString(GUESS_KEY, Boolean.toString(true)).equals(Boolean.toString(true));
-	}
-
-	public void setClexEnabled(boolean b) {
-		PreferencesManager prefMan = PreferencesManager.getInstance();
-		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, CLEX_KEY);
-		prefs.putString(CLEX_KEY, Boolean.toString(b));
-	}
-
-	// Default: true
-	public boolean isClexEnabled() {
-		PreferencesManager prefMan = PreferencesManager.getInstance();
-		Preferences prefs = prefMan.getPreferencesForSet(PREFERENCES_SET_KEY, CLEX_KEY);
-		return prefs.getString(CLEX_KEY, Boolean.toString(true)).equals(Boolean.toString(true));
-	}
 
 	public void setParseWithUndefinedTokens(boolean b) {
 		PreferencesManager prefMan = PreferencesManager.getInstance();
