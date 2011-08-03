@@ -99,6 +99,11 @@
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
+        <IRI>#last-item</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">last-item</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
         <IRI>#ordered-item</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">ordered-item</Literal>
     </AnnotationAssertion>

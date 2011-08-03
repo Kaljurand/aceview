@@ -19,6 +19,15 @@ import ch.uzh.ifi.attempto.ape.Lexicon;
  */
 public interface TokenMapper {
 
+
+	/**
+	 * <p>Adds the lexicon entry triple in the lexicon.</p>
+	 * 
+	 * @param triple in the form of (IRI, MorphType, Wordform)
+	 */
+	void addEntry(Triple triple);
+
+
 	/**
 	 * <p>Adds token with its lemma and morphological category.</p>
 	 * @param token
@@ -26,6 +35,13 @@ public interface TokenMapper {
 	 * @param morph
 	 */
 	void addEntry(String token, IRI lemma, MorphType morph);
+
+	/**
+	 * <p>Removes the lexicon entry triple from the lexicon.</p>
+	 * 
+	 * @param triple in the form of (IRI, MorphType, Wordform)
+	 */
+	void removeEntry(Triple triple);
 
 
 	/**

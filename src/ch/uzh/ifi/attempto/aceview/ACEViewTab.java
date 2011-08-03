@@ -28,6 +28,7 @@ import org.protege.editor.owl.ui.renderer.OWLModelManagerEntityRenderer;
 import org.protege.editor.owl.ui.renderer.OWLEntityRendererListener;
 import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.model.AddAxiom;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -56,6 +57,7 @@ import ch.uzh.ifi.attempto.ace.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
 import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
+import ch.uzh.ifi.attempto.aceview.lexicon.Triple;
 import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
@@ -235,23 +237,8 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 
 		OWLOntologyID id = ont.getOntologyID();
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(id);
-		TokenMapper tokenMapper = ACETextManager.getACELexicon(id);
-		if (prefs.isUseLexicon()) {
-			Set<OWLEntity> entities = ont.getSignature();
-			addMorfAnnotations(mngr, df, ont, entities, tokenMapper);
-		}
-		else {
-			for (OWLEntity entity : ont.getSignature()) {
-				if (Showing.isShow(entity)) {
-					IRI subject = entity.getIRI();
-					String lemma = ACETextManager.getRendering(entity);
-					for (MorphType morphType : MorphType.getMorphTypeSet(LexiconUtils.getLexiconEntryType(entity))) {
-						tokenMapper.addEntry(lemma, subject, morphType);
-					}
-				}
-			}
-		}
 
+		initLexiconFromOntology(mngr, df, prefs, ont);
 
 		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(prefs.getOwlToAce());
 		int axiomCount = ont.getLogicalAxiomCount();
@@ -263,6 +250,41 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		}
 	}
 
+
+	/**
+	 * The ontology has been loaded, we now want to populate the ACE lexicon
+	 * that is going to be used when parsing ACE texts. The lexicon will contain:
+	 * <ol>
+	 * <li>Entries created from the annotation assertions</li>
+	 * <li>Entries automatically generated from the entities (with or without morph generation)</li>
+	 * </ol>
+	 */
+	private static void initLexiconFromOntology(OWLOntologyManager mngr, OWLDataFactory df, ACEViewPreferences prefs, OWLOntology ont) {
+		TokenMapper tokenMapper = ACETextManager.getACELexicon(ont.getOntologyID());
+
+		for (OWLAnnotationAssertionAxiom ax : ont.getAxioms(AxiomType.ANNOTATION_ASSERTION)) {
+			Triple triple = createTripleFromAnnotation(ax);
+			if (triple != null) {
+				tokenMapper.addEntry(triple);
+			}
+		}
+
+		if (prefs.isUseLexicon()) {
+			Set<OWLEntity> entities = ont.getSignature();
+			addMorfAnnotations(mngr, df, ont, entities, tokenMapper);
+		} else {
+			// No morph. generation
+			for (OWLEntity entity : ont.getSignature()) {
+				if (Showing.isShow(entity)) {
+					IRI subject = entity.getIRI();
+					String rendering = ACETextManager.getRendering(entity);
+					for (MorphType morphType : MorphType.getMorphTypeSet(LexiconUtils.getLexiconEntryType(entity))) {
+						tokenMapper.addEntry(rendering, subject, morphType);
+					}
+				}
+			}
+		}
+	}
 
 	/**
 	 * <p>This is called when a new ontology is loaded. This ontology
@@ -365,30 +387,14 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 			}
 			else if (axiom instanceof OWLAnnotationAssertionAxiom) {
 				logger.info("Processing annotation: " + axiom);
-				OWLAnnotationAssertionAxiom annAx = (OWLAnnotationAssertionAxiom) axiom;
-				IRI annotationIRI = annAx.getProperty().getIRI();
-
-				MorphType morphType = MorphType.getMorphType(annotationIRI);
-
-				if (morphType != null) {
-					OWLAnnotationSubject subject = annAx.getSubject();
-
-					if (subject instanceof IRI) {
-						String annValue = getAnnotationValueAsString(annAx.getValue());
-
-						if (annValue == null) {
-							// The annotation value is not a constant.
-							logger.error("Malformed ACE lexicon annotation ignored: " + annAx);
-						}
-						else {
-							lexiconAxiomCounter++;
-							if (change instanceof AddAxiom) {
-								acelexicon.addEntry(annValue, (IRI) subject, morphType);
-							}
-							else if (change instanceof RemoveAxiom) {
-								acelexicon.removeEntry(annValue, (IRI) subject, morphType);
-							}
-						}
+				Triple triple = createTripleFromAnnotation((OWLAnnotationAssertionAxiom) axiom);
+				if (triple != null) {
+					lexiconAxiomCounter++;
+					if (change instanceof AddAxiom) {
+						acelexicon.addEntry(triple);
+					}
+					else if (change instanceof RemoveAxiom) {
+						acelexicon.removeEntry(triple);
 					}
 				}
 			}
@@ -714,5 +720,28 @@ public class ACEViewTab extends OWLWorkspaceViewsTab {
 		sb.append("Entities (here): " + ont.getSignature(false).size() + "\n");
 		sb.append("Entities (here + imported): " + ont.getSignature(true).size() + "\n");
 		return sb.toString();
+	}
+
+
+	private static Triple createTripleFromAnnotation(OWLAnnotationAssertionAxiom ax) {
+		IRI annotationIRI = ax.getProperty().getIRI();
+		MorphType morphType = MorphType.getMorphType(annotationIRI);
+
+		if (morphType == null) {
+			return null;
+		}
+		OWLAnnotationSubject subject = ax.getSubject();
+
+		if (! (subject instanceof IRI)) {
+			return null;
+		}
+		String annValue = getAnnotationValueAsString(ax.getValue());
+
+		if (annValue == null) {
+			// The annotation value is not a constant.
+			logger.error("Malformed ACE lexicon annotation ignored: " + ax);
+			return null;
+		}
+		return new Triple((IRI) subject, morphType, annValue);
 	}
 }
