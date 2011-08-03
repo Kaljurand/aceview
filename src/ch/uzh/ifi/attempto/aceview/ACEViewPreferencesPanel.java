@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -55,8 +54,6 @@ import ch.uzh.ifi.attempto.aceview.ui.ServiceSelectionPane;
 public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 
 	private ServiceSelectionPane serviceSelectionPaneAceToOwl;
-	private final JCheckBox checkboxGuessingEnabled = new JCheckBox();
-	private final JCheckBox checkboxClexEnabled = new JCheckBox();
 	private final JCheckBox checkboxParaphrase1Enabled = new JCheckBox();
 	private final JCheckBox checkboxParseWithUndefinedTokens = new JCheckBox();
 	private final JCheckBox checkboxUseMos = new JCheckBox();
@@ -94,8 +91,6 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		prefs.setAceToOwlSocketPort(Integer.parseInt(tfApeSocket.getText()));
 
 		prefs.setParaphrase1Enabled(checkboxParaphrase1Enabled.isSelected());
-		prefs.setGuessingEnabled(checkboxParseWithUndefinedTokens.isSelected() && checkboxGuessingEnabled.isSelected());
-		prefs.setClexEnabled(checkboxParseWithUndefinedTokens.isSelected() && checkboxClexEnabled.isSelected());
 
 		// OWL to ACE
 		prefs.setOwlToAceWebservices(getComboBoxItemsAsStrings(comboboxOwlToAce));
@@ -129,21 +124,6 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 
 		checkboxParaphrase1Enabled.setSelected(prefs.isParaphrase1Enabled());
 		checkboxParaphrase1Enabled.setToolTipText("Generate a Core ACE paraphrase for every snippet.");
-
-		checkboxParseWithUndefinedTokens.setSelected(prefs.getParseWithUndefinedTokens());
-		checkboxParseWithUndefinedTokens.setToolTipText("<html>Call the ACE parser even if some wordforms are undefined in the lexicon.<br>In this case you can rely on Clex and guessing.</html>");
-		checkboxParseWithUndefinedTokens.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				if (checkboxParseWithUndefinedTokens.isSelected()) {
-					checkboxGuessingEnabled.setEnabled(true);
-					checkboxClexEnabled.setEnabled(true);
-				}
-				else {
-					checkboxGuessingEnabled.setEnabled(false);
-					checkboxClexEnabled.setEnabled(false);
-				}
-			}
-		});
 
 		checkboxUseMos.setSelected(prefs.getUseMos());
 		checkboxUseMos.setToolTipText("Try to parse the snippets with the Manchester OWL Syntax parser first.");
@@ -217,28 +197,9 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 
 		// ACE->OWL/SWRL configuration panel
 
-		// checkboxClexEnabled is enabled only is prefs.getParseWithUndefinedTokens() is true
-		checkboxClexEnabled.setSelected(prefs.isClexEnabled());
-		checkboxClexEnabled.setToolTipText("Use ACE parser's built-in large English common words lexicon.");
-		checkboxClexEnabled.setEnabled(prefs.getParseWithUndefinedTokens());
-		Box clexBox = new Box(BoxLayout.X_AXIS);
-		clexBox.add(checkboxClexEnabled);
-		clexBox.add(new JLabel("Use Clex (large English common words lexicon)"));
-
-		// checkboxGuessingEnabled is enabled only is prefs.getParseWithUndefinedTokens() is true
-		checkboxGuessingEnabled.setSelected(prefs.isGuessingEnabled());
-		checkboxGuessingEnabled.setToolTipText("Make ACE parser guess the word class of unknown words.");
-		checkboxGuessingEnabled.setEnabled(prefs.getParseWithUndefinedTokens());
-		Box guessBox = new Box(BoxLayout.X_AXIS);
-		guessBox.add(checkboxGuessingEnabled);
-		guessBox.add(new JLabel("Guess unknown words"));
-
-
 		JPanel panelAceToOwl = new JPanel(new VerticalLayout());
 		panelAceToOwl.setBorder(ComponentFactory.createTitledBorder("ACE\u2192OWL/SWRL service"));
 		panelAceToOwl.add(serviceSelectionPaneAceToOwl);
-		panelAceToOwl.add(clexBox);
-		panelAceToOwl.add(guessBox);
 
 
 		// OWL->ACE configuration panel
@@ -320,22 +281,5 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 	private File chooseApeExecutable() {
 		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, getParent());
 		return UIUtil.openFile(frame, "Specify the location of APE", "APE executable", Sets.newHashSet("exe"));
-	}
-
-
-	/**
-	 * @deprecatd
-	 * 
-	 * This is the old way of opening files, which uses a Protege method
-	 * that is now deprecated.
-	 * 
-	 * @param title
-	 * @return
-	 */
-	private File chooseFile(String title) {
-		Set<String> extensions = Sets.newHashSet();
-		//extensions.add("exe");
-		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, getParent());
-		return UIUtil.openFile(frame, title, extensions);
 	}
 }
