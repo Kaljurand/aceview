@@ -1,14 +1,25 @@
 <?xml version="1.0"?>
 
+
 <!DOCTYPE Ontology [
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY xml "http://www.w3.org/XML/1998/namespace" >
     <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-    <!ENTITY ace_lexicon "http://attempto.ifi.uzh.ch/ace_lexicon#" >
 ]>
 
 
 <Ontology xmlns="http://www.w3.org/2002/07/owl#"
-     xml:base="http://www.semanticweb.org/ontologies/2010/9/27/countries_base.owl"
-     ontologyIRI="http://www.semanticweb.org/ontologies/2010/9/27/countries_base.owl">
+     xml:base="http://attempto.ifi.uzh.ch/aceview/examples/countries_base.owl"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     ontologyIRI="http://attempto.ifi.uzh.ch/aceview/examples/countries_base.owl">
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="e" IRI="http://attempto.ifi.uzh.ch/aceview/examples/countries_base.owl#"/>
+    <Prefix name="t" IRI="http://attempto.ifi.uzh.ch/ace_lexicon#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
     <Declaration>
         <Class IRI="#EU-country"/>
     </Declaration>
@@ -25,7 +36,13 @@
         <Class IRI="#baltic-state"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#sea"/>
+        <Class IRI="#country"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#doubly-landlocked-territory"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#enclave"/>
     </Declaration>
     <Declaration>
         <Class IRI="#island-country"/>
@@ -34,7 +51,16 @@
         <Class IRI="#landlocked-territory"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#neutral-NATO-country"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#neutral-country"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#sea"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#territory"/>
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="#border"/>
@@ -48,158 +74,237 @@
     <Declaration>
         <ObjectProperty IRI="#like"/>
     </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#surround"/>
+    </Declaration>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
+        <AbbreviatedIRI>owl:Thing</AbbreviatedIRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">things</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
+        <AbbreviatedIRI>owl:Thing</AbbreviatedIRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">thing</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
         <IRI>#EU-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">EU-countries</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
         <IRI>#EU-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">EU-country</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
         <IRI>#European-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">European-countries</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
         <IRI>#European-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">European-country</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
         <IRI>#G8-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">G8-countries</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
         <IRI>#G8-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">G8-country</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
         <IRI>#NATO-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">NATO-countries</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
         <IRI>#NATO-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">NATO-country</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
         <IRI>#baltic-state</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">baltic-states</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
         <IRI>#baltic-state</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">baltic-state</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
-        <IRI>#sea</IRI>
-        <Literal datatypeIRI="&rdf;PlainLiteral">seas</Literal>
-    </AnnotationAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
-        <IRI>#sea</IRI>
-        <Literal datatypeIRI="&rdf;PlainLiteral">sea</Literal>
-    </AnnotationAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_pl"/>
         <IRI>#border</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">border</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_sg"/>
         <IRI>#border</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">borders</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_vbg"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_vbg"/>
         <IRI>#border</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">bordered</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_pl"/>
         <IRI>#contain</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">contain</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_sg"/>
         <IRI>#contain</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">contains</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_vbg"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_vbg"/>
         <IRI>#contain</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">contained</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
+        <IRI>#country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">countries</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
+        <IRI>#country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">country</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:TV_pl"/>
         <IRI>#dislike</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">dislike</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_sg"/>
         <IRI>#dislike</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">dislikes</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_vbg"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_vbg"/>
         <IRI>#dislike</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">disliked</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
+        <IRI>#doubly-landlocked-territory</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">doublies-landlocked-territories</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
+        <IRI>#doubly-landlocked-territory</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">doubly-landlocked-territory</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
+        <IRI>#enclave</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">enclaves</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
+        <IRI>#enclave</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">enclave</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
         <IRI>#island-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">island-countries</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
         <IRI>#island-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">island-country</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
         <IRI>#landlocked-territory</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">landlocked-territories</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
         <IRI>#landlocked-territory</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">landlocked-territory</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_pl"/>
         <IRI>#like</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">like</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_sg"/>
         <IRI>#like</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">likes</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;TV_vbg"/>
+        <AnnotationProperty abbreviatedIRI="t:TV_vbg"/>
         <IRI>#like</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">liked</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_pl"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
+        <IRI>#neutral-NATO-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">neutral-NATO-countries</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
+        <IRI>#neutral-NATO-country</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">neutral-NATO-country</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
         <IRI>#neutral-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">neutral-countries</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="&ace_lexicon;CN_sg"/>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
         <IRI>#neutral-country</IRI>
         <Literal datatypeIRI="&rdf;PlainLiteral">neutral-country</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
+        <IRI>#sea</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">seas</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
+        <IRI>#sea</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">sea</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:TV_pl"/>
+        <IRI>#surround</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">surround</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:TV_sg"/>
+        <IRI>#surround</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">surrounds</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:TV_vbg"/>
+        <IRI>#surround</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">surrounded</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_pl"/>
+        <IRI>#territory</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">territories</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="t:CN_sg"/>
+        <IRI>#territory</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">territory</Literal>
     </AnnotationAssertion>
 </Ontology>
 
 
-<!-- Generated by the OWL API (version 3.1.0.20069) http://owlapi.sourceforge.net -->
-<!-- Unused XML entities and prefixes and OWL/XML prefixes removed by Kaarel Kaljurand -->
+
+<!-- Generated by the OWL API (version 3.2.3.1824) http://owlapi.sourceforge.net -->
+
