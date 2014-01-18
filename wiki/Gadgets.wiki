@@ -1,4 +1,5 @@
 #summary Just testing some gadgets
+#labels Deprecated
 
 <wiki:gadget url="http://www.ohloh.net/p/aceview/widgets/project_basic_stats.xml" height="220" border="1" />
 
