@@ -170,7 +170,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 				resetUI();
 			}
 			else {
-				getView().setHeaderText(snippet.toString());
+				setHeaderText(snippet.toString());
 
 				updateMessages(snippet);
 
@@ -222,7 +222,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 	 */
 	private void resetUI() {
 		// Header
-		getView().setHeaderText("(No snippet selected.)");
+		setHeaderText("(No snippet selected.)");
 
 		// Messages table
 		panelMessages.setTitle(PANEL_MESSAGES_TITLE);

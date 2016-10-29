@@ -99,7 +99,7 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 	protected void setHeaderText() {
 		int numberOfSnippets = tableSnippets.getModel().getRowCount();
 		if (numberOfSnippets == 0) {
-			getView().setHeaderText("There are no snippets.");
+			setHeaderText("There are no snippets.");
 		}
 		else {
 			String numberOfSnippetsShown = "all";
@@ -113,7 +113,7 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 			if (numberOfSnippets > 1) {
 				pl1 = "s";
 			}
-			getView().setHeaderText(numberOfSnippets + " snippet" + pl1 + " (" + numberOfSnippetsShown + " shown)");
+			setHeaderText(numberOfSnippets + " snippet" + pl1 + " (" + numberOfSnippetsShown + " shown)");
 		}
 	}
 }

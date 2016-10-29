@@ -78,7 +78,7 @@ public class ACEExplanationViewComponent extends AbstractOWLViewComponent {
 			if (isSynchronizing() && event.isType(SnippetEventType.WHY_SNIPPET_CHANGED)) {
 				ACESnippet whySnippet = ACETextManager.getWhySnippet();
 				if (whySnippet != null) {
-					getView().setHeaderText(whySnippet.toString());
+					setHeaderText(whySnippet.toString());
 					calculateAndShowExplanations(whySnippet);
 				}
 			}

@@ -98,7 +98,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 		if (sentenceCount > 1) {
 			pl2 = "s";
 		}
-		getView().setHeaderText(contentWordCount + " content word" + pl1 + " in " + sentenceCount + " sentence" + pl2);
+		setHeaderText(contentWordCount + " content word" + pl1 + " in " + sentenceCount + " sentence" + pl2);
 		if (contentWordCount > 0) {
 			editorpaneWords.setText(ACETextManager.wrapInHtml(getContentWordsInHtml(acetext)));
 		}

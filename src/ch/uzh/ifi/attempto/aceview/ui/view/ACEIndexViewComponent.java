@@ -62,7 +62,7 @@ public class ACEIndexViewComponent extends AbstractACEViewComponent {
 		OWLOntologyID oid = ont.getOntologyID();
 		ACEText<OWLEntity, ?> acetext = ACETextManager.getACEText(oid);
 		TokenMapper tokenMapper = ACETextManager.getACELexicon(oid);
-		getView().setHeaderText(acetext.getReferencedEntities().size() + " content word(s) in " + acetext.getSentences().size() + " sentence(s)");
+		setHeaderText(acetext.getReferencedEntities().size() + " content word(s) in " + acetext.getSentences().size() + " sentence(s)");
 
 		SortedSet<OWLEntity> entitiesSorted = new TreeSet<OWLEntity>(new EntityComparator());
 		entitiesSorted.addAll(ont.getSignature());

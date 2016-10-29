@@ -73,10 +73,10 @@ public class ACELexiconFormatViewComponent extends AbstractOWLViewComponent {
 
 		int numberOfEntries = aceLexicon.size();
 		if (numberOfEntries == 1) {
-			getView().setHeaderText("1 entry");
+			setHeaderText("1 entry");
 		}
 		else {
-			getView().setHeaderText(numberOfEntries + " entries");
+			setHeaderText(numberOfEntries + " entries");
 		}
 	}
 

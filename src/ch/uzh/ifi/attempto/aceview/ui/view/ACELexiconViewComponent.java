@@ -129,7 +129,7 @@ public class ACELexiconViewComponent extends AbstractACEFilterableViewComponent 
 		if (numberOfEntries > 1) {
 			form = " entries";
 		}
-		getView().setHeaderText(numberOfEntries + form + " (" + numberOfEntriesShown + " shown)");
+		setHeaderText(numberOfEntries + form + " (" + numberOfEntriesShown + " shown)");
 	}
 
 

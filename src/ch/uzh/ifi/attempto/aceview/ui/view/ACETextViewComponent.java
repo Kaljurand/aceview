@@ -171,10 +171,10 @@ public class ACETextViewComponent extends AbstractOWLViewComponent {
 		ACEText acetext = ACETextManager.getActiveACEText();
 		int numberOfSnippets = acetext.size();
 		if (numberOfSnippets == 1) {
-			getView().setHeaderText("1 snippet");
+			setHeaderText("1 snippet");
 		}
 		else {
-			getView().setHeaderText(numberOfSnippets + " snippets");
+			setHeaderText(numberOfSnippets + " snippets");
 		}
 		aceTextArea.setText(acetext.toString());
 	}

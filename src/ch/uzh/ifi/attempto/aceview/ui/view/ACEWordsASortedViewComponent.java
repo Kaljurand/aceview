@@ -118,7 +118,7 @@ public class ACEWordsASortedViewComponent extends AbstractACEViewComponent {
 		if (sentenceCount > 1) {
 			pl2 = "s";
 		}
-		getView().setHeaderText(contentWordCount + " content word" + pl1 + " in " + sentenceCount + " sentence" + pl2);
+		setHeaderText(contentWordCount + " content word" + pl1 + " in " + sentenceCount + " sentence" + pl2);
 		if (contentWordCount > 0) {
 			textpaneWords.setDocument(getContentWordsAsStyledDocument(acetext, owlRendererPreferences.getFont()));
 		}

@@ -298,7 +298,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 	 */
 	private void resetUI() {
 		// Header
-		getView().setHeaderText("(No snippet selected.)");
+		setHeaderText("(No snippet selected.)");
 
 		// Snippet editor text-area
 		snippetEditor.setText("");
@@ -323,7 +323,8 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 			return;
 		}
 
-		getView().setHeaderText(snippet.toString());
+		setHeaderText(snippet.toString());
+		setHeaderText(snippet.toString());
 
 		ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(snippet.getSentences(), snippet.getErrorSpans());
 		snippetEditor.setText(snippetRenderer.getRendering());
