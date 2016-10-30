@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 
-<plugin id="ch.uzh.ifi.attempto.aceview" version="1.3.1.ACEViewTab">
+<plugin id="ch.uzh.ifi.attempto.aceview" version="1.3.2.ACEViewTab">
 
 <!-- Tab -->
 <extension id="ACEViewTab"
@@ -234,7 +234,7 @@
 <extension id="menu.ACEViewHelpReleaseNotesMenuItem" point="org.protege.editor.core.application.EditorKitMenuAction">
 	<name value="ACE View: Release Notes"/>
 	<toolTip value="ACE View release notes"/>
-	<url value="http://aceview.googlecode.com/svn/trunk/RELEASE_NOTES.html"/>
+	<url value="https://raw.githubusercontent.com/Kaljurand/aceview/v1.3.2/RELEASE_NOTES.html"/>
 	<path value="org.protege.editor.core.application.menu.HelpMenu/SlotACEView-B"/>
 	<editorKitId value="any"/>
 </extension>
