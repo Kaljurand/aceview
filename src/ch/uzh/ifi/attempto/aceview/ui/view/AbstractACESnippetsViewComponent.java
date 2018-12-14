@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -18,8 +18,8 @@ package ch.uzh.ifi.attempto.aceview.ui.view;
 
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLObject;
 
 import com.google.common.base.Predicate;
 
@@ -64,7 +64,7 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 	protected OWLObject updateView() {
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
 
-		Predicate<ACESnippet> snippetPredicate = new SnippetReferencesEntity(entity);
+		Predicate<ACESnippet> snippetPredicate = getSnippetPredicate(entity);
 
 		if (isShowing() && entity != null) {
 			if (buttonFilter.isSelected()) {
@@ -91,10 +91,15 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 	}
 
 
+	protected Predicate<ACESnippet> getSnippetPredicate(OWLEntity entity) {
+		return new SnippetReferencesEntity(entity);
+	}
+
+
 	protected void setHeaderText() {
 		int numberOfSnippets = tableSnippets.getModel().getRowCount();
 		if (numberOfSnippets == 0) {
-			getView().setHeaderText("There are no snippets.");
+			setHeaderText("There are no snippets.");
 		}
 		else {
 			String numberOfSnippetsShown = "all";
@@ -108,7 +113,7 @@ public abstract class AbstractACESnippetsViewComponent extends AbstractACEFilter
 			if (numberOfSnippets > 1) {
 				pl1 = "s";
 			}
-			getView().setHeaderText(numberOfSnippets + " snippet" + pl1 + " (" + numberOfSnippetsShown + " shown)");
+			setHeaderText(numberOfSnippets + " snippet" + pl1 + " (" + numberOfSnippetsShown + " shown)");
 		}
 	}
 }

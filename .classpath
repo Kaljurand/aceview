@@ -3,18 +3,22 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/protege4/trunk/build/dist/bundles/org.protege.editor.owl.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/protege4/trunk/build/dist/bundles/org.protege.editor.core.application.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/protege4/trunk/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Extra/Users/kalju/mywork/protege4/trunk/plugins/org.protege.common/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/attempto-ape.jar"/>
 	<classpathentry kind="lib" path="lib/attempto-owl.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/RadixTree-0.3.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/swing-worker-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/google-collect-1.0-rc2.jar"/>
-	<classpathentry kind="lib" path="lib/simplenlg-v37.jar"/>
+	<classpathentry kind="lib" path="lib/simplenlgv4.2.jar"/>
+	<classpathentry kind="lib" path="lib/jemmy-2.2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/guava-r09.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="var" path="PROTEGE41/bundles/org.protege.editor.core.application.jar" sourcepath="/PROTEGE41_SRC/org.protege.editor.core.application/src"/>
+	<classpathentry kind="var" path="PROTEGE41/plugins/org.protege.editor.owl.jar" sourcepath="/PROTEGE41_SRC/org.protege.editor.owl/src"/>
+	<classpathentry kind="var" path="PROTEGE41/plugins/org.semanticweb.owl.owlapi.jar" sourcepath="/PROTEGE41_SRC/org.semanticweb.owl.owlapi/src"/>
+	<classpathentry kind="var" path="PROTEGE41/bin/felix.jar"/>
+	<classpathentry kind="var" path="PROTEGE41/bin/ProtegeLauncher.jar"/>
+	<classpathentry kind="var" path="PROTEGE41"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

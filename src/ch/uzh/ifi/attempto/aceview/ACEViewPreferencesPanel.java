@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2011, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -61,6 +61,7 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 	private final JCheckBox checkboxParseWithUndefinedTokens = new JCheckBox();
 	private final JCheckBox checkboxUseMos = new JCheckBox();
 	private final JCheckBox checkboxUpdateAnswersOnClassify = new JCheckBox();
+	private final JCheckBox checkboxUseLexicon = new JCheckBox();
 
 	private JTextField textfieldApe;
 
@@ -104,6 +105,7 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		prefs.setParseWithUndefinedTokens(checkboxParseWithUndefinedTokens.isSelected());
 		prefs.setUseMos(checkboxUseMos.isSelected());
 		prefs.setUpdateAnswersOnClassify(checkboxUpdateAnswersOnClassify.isSelected());
+		prefs.setUseLexicon(checkboxUseLexicon.isSelected());
 
 		// Because the parser settings might have changed, we update the parser holder.
 		try {
@@ -149,11 +151,14 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		checkboxUpdateAnswersOnClassify.setSelected(prefs.isUpdateAnswersOnClassify());
 		checkboxUpdateAnswersOnClassify.setToolTipText("Update answers automatically after each classification.");
 
+		checkboxUseLexicon.setSelected(prefs.isUseLexicon());
+		checkboxUseLexicon.setToolTipText("For each entity generate morphological annotations (e.g. plural forms) and use them when displaying the entity in ACE sentences.");
+
 		textfieldApe = new JTextField(prefs.getApePath());
 
 		buttonBrowseApePath.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				File f = chooseFile("Specify the location of APE");
+				File f = chooseApeExecutable();
 				if (f != null) {
 					textfieldApe.setText(f.getAbsolutePath());
 				}
@@ -259,13 +264,17 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 		boxUpdateAnswersOnClassify.add(checkboxUpdateAnswersOnClassify);
 		boxUpdateAnswersOnClassify.add(new JLabel("Automatically update answers after classifying"));
 
+		Box boxUseLexicon = new Box(BoxLayout.X_AXIS);
+		boxUseLexicon.add(checkboxUseLexicon);
+		boxUseLexicon.add(new JLabel("Use the lexicon of morphological annotations"));
 
-		JPanel panelOptions = new JPanel(new GridLayout(4, 1));
+		JPanel panelOptions = new JPanel(new GridLayout(5, 1));
 		panelOptions.setBorder(ComponentFactory.createTitledBorder("Options"));
 		panelOptions.add(boxParaphrase);
 		panelOptions.add(boxParseWithUndefinedTokens);
 		panelOptions.add(boxUseMos);
 		panelOptions.add(boxUpdateAnswersOnClassify);
+		panelOptions.add(boxUseLexicon);
 
 
 		Box holderBox = new Box(BoxLayout.Y_AXIS);
@@ -278,15 +287,51 @@ public class ACEViewPreferencesPanel extends OWLPreferencesPanel {
 	}
 
 
+	/**
+	 * <p>Returns the items of the given combobox as a list of strings.
+	 * Because the combobox is editable, it can be the case that its selected
+	 * item is not among its items. If this is the case then adds the selected
+	 * item as the first element of the returned list.</p>
+	 * 
+	 * @param cb ComboBox to be turned into a list of strings
+	 * @return List of strings
+	 */
 	private List<String> getComboBoxItemsAsStrings(JComboBox cb) {
 		List<String> strings = Lists.newArrayList();
 		for (int i = 0; i < cb.getItemCount(); i++) {
 			strings.add(cb.getItemAt(i).toString());
 		}
+		String selectedItemAsString = cb.getSelectedItem().toString();
+		if (selectedItemAsString.length() > 0 && ! strings.contains(selectedItemAsString)) {
+			strings.add(0, selectedItemAsString);
+		}
 		return strings;
 	}
 
 
+	/**
+	 * <p>One could also use
+	 * <code>getOWLEditorKit().getOWLWorkspace()</code>
+	 * in the first argument to <code>UIUtil.openFile</code> but gets
+	 * a differently behaving (and less useful) file chooser then, at least on Mac OS tiger.</p>
+	 * 
+	 * @return File path to the APE executable chosen my the user
+	 */
+	private File chooseApeExecutable() {
+		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, getParent());
+		return UIUtil.openFile(frame, "Specify the location of APE", "APE executable", Sets.newHashSet("exe"));
+	}
+
+
+	/**
+	 * @deprecatd
+	 * 
+	 * This is the old way of opening files, which uses a Protege method
+	 * that is now deprecated.
+	 * 
+	 * @param title
+	 * @return
+	 */
 	private File chooseFile(String title) {
 		Set<String> extensions = Sets.newHashSet();
 		//extensions.add("exe");

@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -33,29 +33,34 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXHyperlink;
 import org.protege.editor.owl.model.OWLWorkspace;
 import org.protege.editor.owl.ui.UIHelper;
-import org.semanticweb.owl.io.OWLRendererException;
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLIndividual;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLOntologyChangeException;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLOntologyChangeException;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.reasoner.Node;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.aceview.ACEAnswer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
-import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 
 public class ACEAnswersPane extends JTextPane {
+
+	private static final Logger logger = Logger.getLogger(ACEAnswersPane.class);
 
 	private static final String LABEL_DECLARE_COMPLETE = "Declare complete!";
 
@@ -96,8 +101,9 @@ public class ACEAnswersPane extends JTextPane {
 			if (answer == null) {
 			}
 			else {
-				final OWLDescription dlquery = question.getDLQuery();
+				final OWLClassExpression dlquery = question.getDLQuery();
 				if (answer.isSatisfiable()) {
+					logger.info("Showing answers");
 					showAnswers(dlquery, answer);
 				}
 				else {
@@ -112,9 +118,9 @@ public class ACEAnswersPane extends JTextPane {
 	}
 
 
-	private void showNothingSnippet(OWLDescription dlquery) {
+	private void showNothingSnippet(OWLClassExpression dlquery) {
 		addComponent(ComponentFactory.makeItalicLabel("This question is unsatisfiable because"));
-		OWLLogicalAxiom axiom = df.getOWLSubClassAxiom(dlquery, df.getOWLNothing());
+		OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLNothing());
 		try {
 			ACESnippet nothingSnippet = verbalizationCache.get(axiom);
 			if (nothingSnippet == null) {
@@ -134,6 +140,8 @@ public class ACEAnswersPane extends JTextPane {
 				}
 			});
 			addLinebreak();
+			// TODO: BUG: The next line creates some HTML with words linked to entities,
+			// but these links will not be clickable because there is no listener.
 			addComponent(new JLabel("<html>" + nothingSnippet.toHtmlString(ACETextManager.getActiveACELexicon()) + "</html>"));
 			addLinebreak();
 			addComponent(buttonWhy);
@@ -147,11 +155,11 @@ public class ACEAnswersPane extends JTextPane {
 	}
 
 
-	private void showAnswers(final OWLDescription dlquery, final ACEAnswer answer) {
+	private void showAnswers(final OWLClassExpression dlquery, final ACEAnswer answer) {
 
-		final Set<OWLIndividual> individuals = answer.getIndividuals();
-		final Set<OWLClass> subclasses = answer.getSubClasses();
-		final Set<OWLClass> superclasses = answer.getSuperClasses();
+		final Set<Node<OWLNamedIndividual>> individuals = answer.getIndividuals();
+		final Set<Node<OWLClass>> subclasses = answer.getSubClasses();
+		final Set<Node<OWLClass>> superclasses = answer.getSuperClasses();
 
 		int ic = individuals.size();
 		int dc = subclasses.size();
@@ -161,24 +169,22 @@ public class ACEAnswersPane extends JTextPane {
 			addComponent(ComponentFactory.makeItalicLabel("This question has no known answers."));
 		}
 		else {
-			addComponent(ComponentFactory.makeItalicLabel(ic + " named individuals:"));
-			for (OWLEntity entity : individuals) {
-				addComponent(getHyperlink(entity, df.getOWLClassAssertionAxiom((OWLIndividual) entity, dlquery)));
-			}
+			addComponent(ComponentFactory.makeItalicLabel(ic + " named individuals (" + answer.getIndividualNodeSetPolicy() + "): "));
+			final Set<OWLNamedIndividual> completeIndividuals = renderIndividuals(individuals, dlquery);
 
 			if (answer.isIndividualAnswersComplete()) {
 				addLinebreak();
 				addComponent(ComponentFactory.makeItalicLabel("[This individuals answer is complete.]"));
 				addLinebreak();
 			}
-			else if (! individuals.isEmpty()) {
+			else if (! completeIndividuals.isEmpty()) {
 				final JButton buttonCompleter = ComponentFactory.makeButton(LABEL_DECLARE_COMPLETE);
 				buttonCompleter.setToolTipText("Add a new snippet asserting that this answer is complete.");
 				buttonCompleter.setBackground(Colors.BG_COLOR);
 
 				buttonCompleter.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						OWLLogicalAxiom axiom = df.getOWLSubClassAxiom(dlquery, df.getOWLObjectOneOf(individuals));
+						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectOneOf(completeIndividuals));
 						if (confirmAndAdd(buttonCompleter, axiom)) {
 							answer.setIndividualAnswersComplete(true);
 						}
@@ -194,23 +200,21 @@ public class ACEAnswersPane extends JTextPane {
 			}
 
 			addComponent(ComponentFactory.makeItalicLabel(dc + " named classes:"));
-			for (OWLEntity entity : subclasses) {
-				addComponent(getHyperlink(entity, df.getOWLSubClassAxiom((OWLClass) entity, dlquery)));
-			}
+			final Set<OWLClass> completeSubClasses = renderSubClasses(subclasses, dlquery);
 
 			if (answer.isSubClassesAnswersComplete()) {
 				addLinebreak();
 				addComponent(ComponentFactory.makeItalicLabel("[This subclasses answer is complete.]"));
 				addLinebreak();
 			}
-			else if (! subclasses.isEmpty()) {
+			else if (! completeSubClasses.isEmpty()) {
 				final JButton buttonCompleter = ComponentFactory.makeButton(LABEL_DECLARE_COMPLETE);
 				buttonCompleter.setToolTipText("Add a new snippet asserting that this answer is complete.");
 				buttonCompleter.setBackground(Colors.BG_COLOR);
 
 				buttonCompleter.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						OWLLogicalAxiom axiom = df.getOWLSubClassAxiom(dlquery, df.getOWLObjectUnionOf(subclasses));
+						OWLLogicalAxiom axiom = df.getOWLSubClassOfAxiom(dlquery, df.getOWLObjectUnionOf(completeSubClasses));
 						if (confirmAndAdd(buttonCompleter, axiom)) {
 							answer.setSubClassesAnswersComplete(true);
 						}
@@ -226,9 +230,7 @@ public class ACEAnswersPane extends JTextPane {
 			}
 
 			addComponent(ComponentFactory.makeItalicLabel("Every answer is:"));
-			for (OWLEntity entity : superclasses) {
-				addComponent(getHyperlink(entity, df.getOWLSubClassAxiom(dlquery, (OWLClass) entity)));
-			}
+			final Set<OWLClass> completeSupClasses = renderSupClasses(superclasses, dlquery);
 			addComponent(ComponentFactory.makeItalicLabel("(" + ac + " named classes)"));
 		}
 	}
@@ -261,7 +263,7 @@ public class ACEAnswersPane extends JTextPane {
 
 
 	private JXHyperlink getHyperlink(OWLEntity entity, OWLLogicalAxiom axiom) {
-		return new JXHyperlink(new HyperlinkAction(ws, entity, axiom));
+		return new JXHyperlink(new AxiomLinkAction(ws, entity, axiom));
 	}
 
 
@@ -287,7 +289,7 @@ public class ACEAnswersPane extends JTextPane {
 			e.printStackTrace();
 		}
 		if (snippet != null) {
-			SnippetRenderer snippetRenderer = new SnippetRenderer(snippet);
+			ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(snippet.getSentences());
 			JComponent comp = ComponentFactory.makeSnippetDialogPanel("Add this snippet to the active ACE text?", snippetRenderer.getRendering());
 			int ret = new UIHelper(ws.getOWLEditorKit()).showDialog(LABEL_DECLARE_COMPLETE, comp, JOptionPane.OK_CANCEL_OPTION);
 			if (ret == JOptionPane.OK_OPTION) {
@@ -298,5 +300,66 @@ public class ACEAnswersPane extends JTextPane {
 			}
 		}
 		return false;
+	}
+
+
+	private Set<OWLNamedIndividual> renderIndividuals(Set<Node<OWLNamedIndividual>> entityNodes, OWLClassExpression dlquery) {
+		Set<OWLNamedIndividual> repEntities = Sets.newHashSet();
+		for (Node<OWLNamedIndividual> node : entityNodes) {
+			OWLNamedIndividual repEntity = node.getRepresentativeElement();
+			repEntities.add(repEntity);
+
+			if (node.isSingleton()) {
+				addComponent(getHyperlink(repEntity, df.getOWLClassAssertionAxiom(dlquery, repEntity)));					
+			}
+			else {
+				addComponent(ComponentFactory.makeItalicLabel("{"));
+				for (OWLNamedIndividual ind : node.getEntities()) {
+					addComponent(getHyperlink(ind, df.getOWLClassAssertionAxiom(dlquery, ind)));
+				}
+				addComponent(ComponentFactory.makeItalicLabel("}"));
+			}
+		}
+		return repEntities;
+	}
+
+	private Set<OWLClass> renderSubClasses(Set<Node<OWLClass>> entityNodes, OWLClassExpression dlquery) {
+		Set<OWLClass> repEntities = Sets.newHashSet();
+		for (Node<OWLClass> node : entityNodes) {
+			OWLClass repEntity = node.getRepresentativeElement();
+			repEntities.add(repEntity);
+
+			if (node.isSingleton()) {
+				addComponent(getHyperlink(repEntity, df.getOWLSubClassOfAxiom(repEntity, dlquery)));
+			}
+			else {
+				addComponent(ComponentFactory.makeItalicLabel("{"));
+				for (OWLClass entity : node.getEntities()) {
+					addComponent(getHyperlink(entity, df.getOWLSubClassOfAxiom(entity, dlquery)));
+				}
+				addComponent(ComponentFactory.makeItalicLabel("}"));
+			}
+		}
+		return repEntities;
+	}
+
+	private Set<OWLClass> renderSupClasses(Set<Node<OWLClass>> entityNodes, OWLClassExpression dlquery) {
+		Set<OWLClass> repEntities = Sets.newHashSet();
+		for (Node<OWLClass> node : entityNodes) {
+			OWLClass repEntity = node.getRepresentativeElement();
+			repEntities.add(repEntity);
+
+			if (node.isSingleton()) {
+				addComponent(getHyperlink(repEntity, df.getOWLSubClassOfAxiom(dlquery, repEntity)));
+			}
+			else {
+				addComponent(ComponentFactory.makeItalicLabel("{"));
+				for (OWLClass entity : node.getEntities()) {
+					addComponent(getHyperlink(entity, df.getOWLSubClassOfAxiom(dlquery, entity)));
+				}
+				addComponent(ComponentFactory.makeItalicLabel("}"));
+			}
+		}
+		return repEntities;
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -20,8 +20,9 @@ import java.util.Date;
 
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 
 /**
  * @author Kaarel Kaljurand
@@ -70,8 +71,8 @@ public class SnippetsTableModel extends AbstractSnippetsTableModel {
 
 	public SnippetsTableModel() {
 		snippets = ACETextManager.getActiveACEText().getSnippets();
-		aceTextManagerListener = new ACETextManagerListener() {
-			public void handleChange(ACETextChangeEvent event) {
+		aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+			public void handleChange(ACEViewEvent<TextEventType> event) {
 				snippets = ACETextManager.getActiveACEText().getSnippets();
 				// BUG: return something more precise here
 				fireTableDataChanged();
@@ -119,7 +120,7 @@ public class SnippetsTableModel extends AbstractSnippetsTableModel {
 		case NAMESPACE:
 			return snippet.getDefaultNamespace();
 		case ANNOTATIONS:
-			return ACETextManager.getAnnotations(snippet).size();
+			return ACETextManager.getAnnotationsExceptAcetext(snippet).size();
 		default:
 			throw new RuntimeException("Programmer error.");
 		}

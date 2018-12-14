@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -27,9 +27,8 @@ import javax.swing.ProgressMonitor;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingworker.SwingWorker;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owl.inference.OWLReasonerException;
 
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 
 
 public class UpdateAnswersUI {
@@ -66,6 +65,8 @@ public class UpdateAnswersUI {
 		}
 
 
+		/*
+		TODO: BUG: This doesn't work anymore, maybe not needed
 		try {
 			if (! mngr.getReasoner().isClassified()) {
 				showMessage(JOptionPane.WARNING_MESSAGE, NSYNC_MESSAGE);
@@ -74,6 +75,7 @@ public class UpdateAnswersUI {
 			showMessage(JOptionPane.ERROR_MESSAGE, e.getMessage());
 			return;
 		}
+		 */
 
 		progressMonitor = new ProgressMonitor(parent, "Updating answers to " + questionCount + " questions...", "", 0, questionCount);
 		progressMonitor.setProgress(0);
@@ -113,7 +115,6 @@ public class UpdateAnswersUI {
 				if (isCancelled()) {
 					break;
 				}
-				logger.info(question.getSentences());
 				acetext.setAnswer(question, new ACEAnswer(mngr, question));
 				progress++;
 				setProgress(progress);
@@ -123,7 +124,8 @@ public class UpdateAnswersUI {
 
 		@Override
 		public void done() {
-			ACETextManager.fireEvent(EventType.ACETEXT_ANSWERS_CHANGED);
+			// TODO: BUG: nothing is monitoring this event
+			//ACETextManager.fireEvent(EventType.ACETEXT_ANSWERS_CHANGED);
 			progressMonitor.setProgress(0);
 		}
 	}

@@ -20,8 +20,8 @@ import org.apache.log4j.Logger;
 import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.core.ui.progress.BackgroundTask;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import com.google.common.collect.Sets;
 
@@ -30,9 +30,9 @@ import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.ui.ACESnippetEditor;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 
@@ -67,10 +67,9 @@ public class ACETextViewComponent extends AbstractOWLViewComponent {
 	private final JLabel labelMessage = new JLabel();
 	private final JButton buttonUpdate = ComponentFactory.makeButton("Update");
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
-			if (event.isType(EventType.ACTIVE_ACETEXT_CHANGED) ||
-					event.isType(EventType.ACETEXT_CREATED)) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
+			if (event.isType(TextEventType.ACTIVE_ACETEXT_CHANGED)) {
 				aceTextArea.setAutocompleter(ACETextManager.getActiveACELexicon().getAutocompleter());
 			}
 			showText();
@@ -172,10 +171,10 @@ public class ACETextViewComponent extends AbstractOWLViewComponent {
 		ACEText acetext = ACETextManager.getActiveACEText();
 		int numberOfSnippets = acetext.size();
 		if (numberOfSnippets == 1) {
-			getView().setHeaderText("1 snippet");
+			setHeaderText("1 snippet");
 		}
 		else {
-			getView().setHeaderText(numberOfSnippets + " snippets");
+			setHeaderText(numberOfSnippets + " snippets");
 		}
 		aceTextArea.setText(acetext.toString());
 	}

@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE Ontology [
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY xml "http://www.w3.org/XML/1998/namespace" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.semanticweb.org/ontologies/2010/9/19/Ontology1287489212828.owl"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     ontologyIRI="http://www.semanticweb.org/ontologies/2010/9/19/Ontology1287489212828.owl">
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Declaration>
+        <Class IRI="#employee"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#employer"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#employ"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#like"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#John"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#CN_pl"/>
+    </Declaration>
+    <SubClassOf>
+        <Annotation>
+            <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+            <Literal datatypeIRI="&xsd;string">This is a general class inclusion axiom about John.</Literal>
+        </Annotation>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#employ"/>
+            <ObjectOneOf>
+                <NamedIndividual IRI="#John"/>
+            </ObjectOneOf>
+        </ObjectSomeValuesFrom>
+        <Class IRI="#employer"/>
+    </SubClassOf>
+    <ClassAssertion>
+        <Class IRI="#employer"/>
+        <NamedIndividual IRI="#John"/>
+    </ClassAssertion>
+    <AsymmetricObjectProperty>
+        <ObjectProperty IRI="#employ"/>
+    </AsymmetricObjectProperty>
+    <ObjectPropertyDomain>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+            <Literal datatypeIRI="&rdf;PlainLiteral">Comment1</Literal>
+        </Annotation>
+        <ObjectProperty IRI="#employ"/>
+        <Class IRI="#employer"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <Annotation>
+            <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/contributor"/>
+            <Literal datatypeIRI="&rdf;PlainLiteral">Kaarel</Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:seeAlso"/>
+            <IRI>#employer</IRI>
+        </Annotation>
+        <ObjectProperty IRI="#employ"/>
+        <Class IRI="#employee"/>
+    </ObjectPropertyRange>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/ace_lexicon#PN_sg"/>
+        <IRI>#John</IRI>
+        <Literal datatypeIRI="&xsd;string">John</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/ace_lexicon#TV_pl"/>
+        <IRI>#employ</IRI>
+        <Literal datatypeIRI="&xsd;string">employ</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/ace_lexicon#TV_sg"/>
+        <IRI>#employ</IRI>
+        <Literal datatypeIRI="&xsd;string">employs</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/ace_lexicon#TV_vbg"/>
+        <IRI>#employ</IRI>
+        <Literal datatypeIRI="&xsd;string">employed</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/ace_lexicon#CN_pl"/>
+        <IRI>#employee</IRI>
+        <Literal datatypeIRI="&xsd;string">employees</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/ace_lexicon#CN_sg"/>
+        <IRI>#employee</IRI>
+        <Literal datatypeIRI="&xsd;string">employee</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/ace_lexicon#CN_pl"/>
+        <IRI>#employer</IRI>
+        <Literal datatypeIRI="&xsd;string">employers</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://attempto.ifi.uzh.ch/ace_lexicon#CN_sg"/>
+        <IRI>#employer</IRI>
+        <Literal datatypeIRI="&xsd;string">employer</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#CN_pl"/>
+        <IRI>#employer</IRI>
+        <Literal datatypeIRI="&rdf;PlainLiteral">employerS</Literal>
+    </AnnotationAssertion>
+</Ontology>
+
+
+
+<!-- Generated by the OWL API (version 3.1.0.20069) http://owlapi.sourceforge.net -->
+

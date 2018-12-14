@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -14,16 +14,13 @@
  * If not, see http://www.gnu.org/licenses/.
  */
 
-package ch.uzh.ifi.attempto.aceview.util;
+package ch.uzh.ifi.attempto.ace;
 
 import java.util.List;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.ace.ACEToken;
-import ch.uzh.ifi.attempto.aceview.ACESnippet;
 
 /**
  * <p>Pretty-prints the snippet by placing each sentence on a separate line, and
@@ -41,7 +38,7 @@ import ch.uzh.ifi.attempto.aceview.ACESnippet;
  * 
  * @author Kaarel Kaljurand
  */
-public class SnippetRenderer {
+public class ACESentenceRenderer {
 
 	private final Multimap<Integer, Integer> hl = HashMultimap.create();
 	private final Multimap<Integer, Integer> spans;
@@ -59,12 +56,13 @@ public class SnippetRenderer {
 		"\n" + TS + TS + TS + TS + TS
 	};
 
-	public SnippetRenderer(ACESnippet snippet) {
-		spans = snippet.getErrorSpans();
-		render(snippet.getSentences());
+
+	public ACESentenceRenderer(List<ACESentence> sentences, Multimap<Integer, Integer> spans) {
+		this.spans = spans;
+		render(sentences);
 	}
 
-	public SnippetRenderer(List<ACESentence> sentences) {
+	public ACESentenceRenderer(List<ACESentence> sentences) {
 		spans = null;
 		render(sentences);
 	}

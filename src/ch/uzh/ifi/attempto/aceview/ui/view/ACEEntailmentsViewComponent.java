@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -28,37 +28,34 @@ import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.semanticweb.owl.inference.OWLReasoner;
-import org.semanticweb.owl.inference.OWLReasonerException;
-import org.semanticweb.owl.io.OWLRendererException;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLClassAssertionAxiom;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEquivalentDataPropertiesAxiom;
-import org.semanticweb.owl.model.OWLEquivalentObjectPropertiesAxiom;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLNaryPropertyAxiom;
-import org.semanticweb.owl.model.OWLOntology;
-import org.semanticweb.owl.model.OWLOntologyChangeException;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
-import org.semanticweb.owl.model.OWLOntologyManager;
-import org.semanticweb.owl.model.OWLSubClassAxiom;
-import org.semanticweb.owl.util.InferredAxiomGenerator;
-import org.semanticweb.owl.util.InferredAxiomGeneratorException;
-import org.semanticweb.owl.util.InferredClassAssertionAxiomGenerator;
-import org.semanticweb.owl.util.InferredEquivalentClassAxiomGenerator;
-import org.semanticweb.owl.util.InferredEquivalentObjectPropertyAxiomGenerator;
-import org.semanticweb.owl.util.InferredObjectPropertyCharacteristicAxiomGenerator;
-import org.semanticweb.owl.util.InferredOntologyGenerator;
-import org.semanticweb.owl.util.InferredPropertyAssertionGenerator;
-import org.semanticweb.owl.util.InferredSubClassAxiomGenerator;
-import org.semanticweb.owl.util.InferredSubObjectPropertyAxiomGenerator;
+import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyChangeException;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.InferredAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredClassAssertionAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredEquivalentClassAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredEquivalentObjectPropertyAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredObjectPropertyCharacteristicAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredOntologyGenerator;
+import org.semanticweb.owlapi.util.InferredPropertyAssertionGenerator;
+import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
+import org.semanticweb.owlapi.util.InferredSubObjectPropertyAxiomGenerator;
 
 import ch.uzh.ifi.attempto.aceview.ACEViewPreferences;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.AxiomVerbalizer;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.model.EntailmentsTableModel;
 import ch.uzh.ifi.attempto.aceview.ui.ACETable;
 import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
@@ -143,11 +140,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 			getInferredSentences();
 		} catch (OWLOntologyCreationException e) {
 			logger.error(e.getMessage());
-		} catch (InferredAxiomGeneratorException e) {
-			logger.error(e.getMessage());
 		} catch (OWLOntologyChangeException e) {
-			logger.error(e.getMessage());
-		} catch (OWLReasonerException e) {
 			logger.error(e.getMessage());
 		} catch (OWLRendererException e) {
 			logger.error(e.getMessage());
@@ -193,16 +186,19 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 	 * @throws OWLReasonerException
 	 * @throws OWLRendererException
 	 */
-	private void getInferredSentences() throws OWLOntologyCreationException, InferredAxiomGeneratorException, OWLOntologyChangeException, OWLReasonerException, OWLRendererException {
+	private void getInferredSentences() throws OWLOntologyCreationException, OWLOntologyChangeException, OWLRendererException {
 
 		OWLModelManager mm = getOWLModelManager();
 		OWLReasoner reasoner = mm.getReasoner();
 
+		/*
+		TODO: BUG: these don't work anymore, maybe not needed
 		if (reasoner.getLoadedOntologies().isEmpty()) {
 			return;
 		}
 
 		logger.info("Reasoner ontologies: " + reasoner.getLoadedOntologies());
+		 */
 
 		// Creates an inferred ontology generator and configures it.
 		InferredOntologyGenerator ontGen = new InferredOntologyGenerator(reasoner, new ArrayList<InferredAxiomGenerator<? extends OWLAxiom>>());
@@ -235,8 +231,8 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 		}
 
 		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
-		ACELexicon<OWLEntity> lexicon = ACETextManager.getActiveACELexicon();
-		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(new VerbalizerWebservice(prefs.getOwlToAce()), lexicon);
+		TokenMapper lexicon = ACETextManager.getActiveACELexicon();
+		AxiomVerbalizer axiomVerbalizer = new AxiomVerbalizer(new VerbalizerWebservice(prefs.getOwlToAce()));
 
 		OWLOntology activeOntology = mm.getActiveOntology();
 
@@ -245,10 +241,10 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 			if (activeOntology.containsAxiom(ax)) {
 				// Not showing the ASSERTED axiom.
 			}
-			else if (ax instanceof OWLSubClassAxiom && ((OWLSubClassAxiom) ax).getSuperClass().isOWLThing()) {
+			else if (ax instanceof OWLSubClassOfAxiom && ((OWLSubClassOfAxiom) ax).getSuperClass().isOWLThing()) {
 				logger.info("NOT showing: " + ax.toString());
 			}
-			else if (ax instanceof OWLClassAssertionAxiom && ((OWLClassAssertionAxiom) ax).getDescription().isOWLThing()) {
+			else if (ax instanceof OWLClassAssertionAxiom && ((OWLClassAssertionAxiom) ax).getClassExpression().isOWLThing()) {
 				logger.info("NOT showing: " + ax.toString());
 			}
 			else if (ax instanceof OWLEquivalentObjectPropertiesAxiom && ((OWLNaryPropertyAxiom) ax).getProperties().size() < 2) {
@@ -263,7 +259,7 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 				logger.info("NOT showing: " + ax + ", contains tricks");
 			}
 			else {
-				ACESnippet snippet = axiomVerbalizer.verbalizeAxiom(activeOntology.getURI(), ax);
+				ACESnippet snippet = axiomVerbalizer.verbalizeAxiom(ax, activeOntology);
 				if (ACETextManager.getActiveACEText().contains(snippet)) {
 					logger.info("NOT showing: " + ax.toString() + ", snippet matches asserted snippet: " + snippet);
 				}
@@ -274,8 +270,11 @@ public class ACEEntailmentsViewComponent extends AbstractACESnippetsViewComponen
 			}
 		}
 
-		logger.info("removing: " + inferredOnt.getURI());
-		ontologyManager.removeOntology(inferredOnt.getURI());
+		logger.info("removing: " + inferredOnt.getOntologyID());
+
+		// TODO: Check if this works like this as before removeOntology
+		// took the URI as the argument, rather than the ontology object.
+		ontologyManager.removeOntology(inferredOnt);
 	}
 
 

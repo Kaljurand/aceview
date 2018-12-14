@@ -21,19 +21,19 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import uk.ac.manchester.cs.bhig.util.Tree;
 import uk.ac.manchester.cs.owl.explanation.ordering.DefaultExplanationOrderer;
 import uk.ac.manchester.cs.owl.explanation.ordering.ExplanationTree;
 
-import com.clarkparsia.explanation.BlackBoxExplanation;
-import com.clarkparsia.explanation.ExplanationGenerator;
-import com.clarkparsia.explanation.HSTExplanationGenerator;
-import com.clarkparsia.explanation.SatisfiabilityConverter;
+//import com.clarkparsia.explanation.BlackBoxExplanation;
+//import com.clarkparsia.explanation.ExplanationGenerator;
+//import com.clarkparsia.explanation.HSTExplanationGenerator;
+//import com.clarkparsia.explanation.SatisfiabilityConverter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -41,6 +41,7 @@ import com.google.common.collect.Sets;
  * <p>Explains an OWL axiom by a set of sets of ACE snippets.</p>
  * 
  * @author Kaarel Kaljurand
+ * @deprecated
  */
 public class AxiomExplainer {
 
@@ -186,9 +187,10 @@ public class AxiomExplainer {
 	 * @return Set of sets of axioms
 	 */
 	private Set<Set<OWLAxiom>> getAxiomSets() {
+		/*
 		// Converts an axiom into an unsatisfiable class expression.
 		SatisfiabilityConverter satCon = new SatisfiabilityConverter(modelManager.getOWLDataFactory());
-		OWLDescription desc = satCon.convert(axiom);
+		OWLClassExpression desc = satCon.convert(axiom);
 
 		// Sets up the BlackBoxExplanation
 		BlackBoxExplanation exp = new BlackBoxExplanation(ACETextManager.createOWLOntologyManager());
@@ -200,5 +202,8 @@ public class AxiomExplainer {
 		ExplanationGenerator gen = new HSTExplanationGenerator(exp);
 
 		return gen.getExplanations(desc);
+		 */
+
+		return Sets.newHashSet();
 	}
 }

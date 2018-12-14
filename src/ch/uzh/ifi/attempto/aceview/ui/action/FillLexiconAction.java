@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -24,34 +24,18 @@ import javax.swing.JOptionPane;
 
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
-import org.semanticweb.owl.model.AddAxiom;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEntityAnnotationAxiom;
-import org.semanticweb.owl.model.OWLOntology;
-/*
- * This file is part of ACE View.
- * Copyright 2008, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
- *
- * ACE View is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * ACE View is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with ACE View.
- * If not, see http://www.gnu.org/licenses/.
- */
-
-import org.semanticweb.owl.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.AddAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import com.google.common.collect.Lists;
 
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.MorphAnnotation;
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.util.OntologyUtils;
 
 /**
@@ -88,13 +72,12 @@ public class FillLexiconAction extends ProtegeOWLAction {
 
 		for (OWLOntology ont : ontologies) {
 			ontologyCounter++;
-			for (OWLEntity entity : ont.getReferencedEntities()) {
+			for (OWLEntity entity : ont.getSignature()) {
 				entityCounter++;
-				String entityRendering = getOWLModelManager().getRendering(entity);
-				Set<OWLEntityAnnotationAxiom> entityAnnotationAxioms = MorphAnnotation.getMorphAnnotations(df, ont, entity, entityRendering);
+				Set<OWLAnnotationAssertionAxiom> entityAnnotationAxioms = MorphAnnotation.getAdditionalMorphAnnotations(df, ont, entity);
 				int size = entityAnnotationAxioms.size();
 				if (size > 0) {
-					for (OWLEntityAnnotationAxiom ax : entityAnnotationAxioms) {
+					for (OWLAnnotationAssertionAxiom ax : entityAnnotationAxioms) {
 						additions.add(new AddAxiom(ont, ax));
 					}
 					annotatedEntityCounter++;
@@ -105,7 +88,7 @@ public class FillLexiconAction extends ProtegeOWLAction {
 
 		OntologyUtils.changeOntology(ontologyManager, additions);
 
-		ACETextManager.fireEvent(EventType.ACELEXICON_CHANGED);
+		ACETextManager.fireEvent(TextEventType.ACELEXICON_CHANGED);
 		String message = "Checked " + entityCounter + " entities in " + ontologyCounter + " active ontologies.";
 		message += "\nAnnotated " + annotatedEntityCounter + " entities with " + annotationCounter + " annotations.";
 		JOptionPane.showMessageDialog(null, message, "Fill Lexicon Action", JOptionPane.INFORMATION_MESSAGE);

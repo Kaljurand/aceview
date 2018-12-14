@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -32,6 +32,10 @@ import ch.uzh.ifi.attempto.ape.Gender;
 import ch.uzh.ifi.attempto.ape.Lexicon;
 import ch.uzh.ifi.attempto.ape.LexiconEntry;
 
+/**
+ * @deprecated
+ *
+ */
 public class OwlApiACELexicon implements ACELexicon<OWLEntity> {
 
 	private static final Logger logger = Logger.getLogger(OwlApiACELexicon.class);

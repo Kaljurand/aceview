@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -16,24 +16,27 @@
 
 package ch.uzh.ifi.attempto.aceview;
 
-import java.net.URI;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
-import org.protege.editor.owl.model.description.OWLExpressionParserException;
-import org.semanticweb.owl.io.StringInputSource;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLEquivalentClassesAxiom;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
-import org.semanticweb.owl.model.OWLOntologyManager;
-import org.semanticweb.owl.model.OWLSubClassAxiom;
-import org.semanticweb.owl.model.SWRLRule;
+import org.semanticweb.owlapi.expression.ParserException;
+import org.semanticweb.owlapi.io.StringDocumentSource;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyID;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.SWRLRule;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -46,9 +49,11 @@ import com.google.common.collect.Sets;
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
 import ch.uzh.ifi.attempto.ace.ACEToken;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.EntryType;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
+import ch.uzh.ifi.attempto.aceview.lexicon.MorphType;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
+import ch.uzh.ifi.attempto.aceview.lexicon.Triple;
 import ch.uzh.ifi.attempto.aceview.util.SnippetDate;
 import ch.uzh.ifi.attempto.ape.ACEParser;
 import ch.uzh.ifi.attempto.ape.Lexicon;
@@ -69,7 +74,10 @@ public class ACESnippetImpl implements ACESnippet {
 	private static final Logger logger = Logger.getLogger(ACESnippetImpl.class);
 
 	private final ImmutableList<ACESentence> sentences;
-	private final URI ns;
+	private final OWLOntologyID ns;
+
+	private final String stringID;
+
 	// Alternative rendering which could be used if this snippet is empty.
 	private final String altRendering;
 	private final SnippetDate timestamp;
@@ -93,7 +101,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 * @param ns Default namespace of the snippet
 	 * @param sentences List of sentences that the snippet contains
 	 */
-	public ACESnippetImpl(URI ns, List<ACESentence> sentences) {
+	public ACESnippetImpl(OWLOntologyID ns, List<ACESentence> sentences) {
 		if (sentences == null) {
 			throw new IllegalArgumentException("Sentences must not be null!");
 		}
@@ -108,6 +116,7 @@ public class ACESnippetImpl implements ACESnippet {
 			countMessages();
 		}
 		this.altRendering = null;
+		this.stringID = makeStringID();
 	}
 
 
@@ -117,7 +126,7 @@ public class ACESnippetImpl implements ACESnippet {
 	 * @param ns Default namespace of the snippet
 	 * @param sentence Sentence that the snippet contains
 	 */
-	public ACESnippetImpl(URI ns, ACESentence sentence) {
+	public ACESnippetImpl(OWLOntologyID ns, ACESentence sentence) {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
 		if (sentence.isQuestion()) {
@@ -127,36 +136,25 @@ public class ACESnippetImpl implements ACESnippet {
 		init();
 		countMessages();
 		this.altRendering = null;
+		this.stringID = makeStringID();
 	}
 
 
 	/**
 	 * <p>Constructs an ACE snippet from a string.
 	 * The corresponding (single) OWL axiom is given as input,
-	 * therefore the snippet is not parsed.</p>
+	 * therefore the snippet is not parsed.
+	 * Note that any annotations (if present) are stripped from the axiom.</p>
 	 * 
 	 * @param ns Default namespace of the snippet
 	 * @param str Textual content of the snippet
 	 * @param axiom OWL axiom that the snippet corresponds to
+	 * @param altRendering alternative rendering (MOS syntax) for the snippet
 	 */
-	public ACESnippetImpl(URI ns, String str, OWLLogicalAxiom axiom) {
+	public ACESnippetImpl(OWLOntologyID ns, String str, OWLLogicalAxiom axiom, String altRendering) {
 		this.timestamp = new SnippetDate();
 		this.ns = ns;
-		this.axiomSet = ImmutableSet.of(axiom);
-		this.sentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
-		if (! sentences.isEmpty()) {
-			if (sentences.get(sentences.size() - 1).isQuestion()) {
-				isQuestion = true;
-			}
-		}
-		this.altRendering = null;
-	}
-
-
-	public ACESnippetImpl(URI ns, String str, OWLLogicalAxiom axiom, String altRendering) {
-		this.timestamp = new SnippetDate();
-		this.ns = ns;
-		this.axiomSet = ImmutableSet.of(axiom);
+		this.axiomSet = ImmutableSet.of((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations());
 		this.sentences = ImmutableList.copyOf(ACESplitter.getSentences(str));
 		if (! sentences.isEmpty()) {
 			if (sentences.get(sentences.size() - 1).isQuestion()) {
@@ -164,6 +162,17 @@ public class ACESnippetImpl implements ACESnippet {
 			}
 		}
 		this.altRendering = altRendering;
+		this.stringID = makeStringID();
+	}
+
+
+	public ACESnippetImpl(OWLOntologyID ns, String str, OWLLogicalAxiom axiom) {
+		this(ns, str, axiom, null);
+	}
+
+
+	public String toStringID() {
+		return stringID;
 	}
 
 
@@ -197,69 +206,86 @@ public class ACESnippetImpl implements ACESnippet {
 	@Override
 	public String toString() {		
 		if (isEmpty()) {
-			if (altRendering == null) {
-				return "/*" + getLogicalAxioms().toString() + "*/";
-			}
-			// The Manchester Syntax rendering contains layout symbols,
-			// which we convert into a single space.
-			return "/* MOS: " + altRendering.replaceAll("[ \t\n\f\b\r]+", " ") + " */";
+			return getAltRendering();
 		}
 		return joiner.join(sentences);
 	}
 
 
-	public String toHtmlString(ACELexicon<OWLEntity> aceLexicon) {
+	public String toHtmlString(TokenMapper aceLexicon) {
 
-		if (isEmpty() && altRendering != null) {
-			return "<span color='red'>" + altRendering + "</span>";
+		if (isEmpty()) {
+			return "<span color='red'>" + getAltRendering() + "</span>";
 		}
 
-		String span = "";
+		StringBuilder sb = new StringBuilder();
 
 		for (ACESentence sentence : sentences) {
 			for (ACEToken token : sentence.getTokens()) {
 				if (token.isOrdinationWord()) {
-					span += "<span color='green'>" + token + "</span>";				
+					sb.append("<span color='green'>");
+					sb.append(token);
+					sb.append("</span>");
 				}
 				else if (token.isQuotedString() || token.isNumber()) {
-					span += "<i>" + token + "</i>";
+					sb.append("<i>");
+					sb.append(token);
+					sb.append("</i>");
+				}
+				else if (token.isButToken()) {
+					sb.append("<span bgcolor='yellow'>");
+					sb.append(token);
+					sb.append("</span>");
 				}
 				else if (token.isFunctionWord()) {
-					span += token;
+					sb.append(token);
 				}
 				else if (token.isBadToken()) {
-					span += "<span color='red'>" + token + "</span>";
+					sb.append("<span color='red'>");
+					sb.append(token);
+					sb.append("</span>");
 				}
 				else {
-					Set<OWLEntity> entitySet = aceLexicon.getWordformEntities(token.toString());
-					if (entitySet.isEmpty()) {
-						span += "<span color='#777777'>" + token + "</span>";
+					Set<IRI> iris = aceLexicon.getWordformIRIs(token.toString());
+					Collection<Triple> triples = aceLexicon.getWordformEntries(token.toString());
+					int iriCount = iris.size();
+					if (iriCount == 0) {
+						sb.append("<span color='#777777'>");
+						sb.append(token);
+						sb.append("</span>");
+					}
+					else if (iriCount == 1) {
+						Triple triple = triples.iterator().next();
+						EntryType type = MorphType.getWordClass(triple.getProperty());
+						sb.append("<a href='#");
+						sb.append(LexiconUtils.getHrefId(type, triple.getSubjectIRI()));
+						sb.append("'>");
+						sb.append(token);
+						sb.append("</a>");
+					}
+					else if (iriCount > 1) {
+						logger.info("Ambiguous: " + token + " " + triples);
+						sb.append("<span color='#777777'>");
+						sb.append(token);
+						sb.append("<sup>");
+						sb.append(iriCount);
+						sb.append("<sup>");
+						sb.append("</span>");
 					}
 					else {
-						// TODO: BUG: in case a wordform maps to multiple different entities then
-						// we just take the first. This shouldn't occur often though.
-						OWLEntity firstEntity = entitySet.iterator().next();
-						EntryType type = LexiconUtils.getLexiconEntryType(firstEntity);
-						span += "<a href='#" + type + ":" + firstEntity.toString() + "'>" + token + "</a>";
+						// TODO: throw something
 					}
 				}
-				span += " ";
+				sb.append(' ');
 			}
 		}
-		return span;
+		return sb.toString();
 	}
 
 
 	// TODO: Do this at creation time
 	public String getTags() {
 		StringBuilder tags = new StringBuilder();
-
-		for (ACESentence s : sentences) {
-			if (s.isNothingbut()) {
-				tags.append("<i><span bgcolor='yellow'>/*nothing but*/</span></i>");
-				break;
-			}
-		}
 
 		if (axiomSet.isEmpty()) {
 			tags.append("<i><span color='red'>/*neither OWL nor SWRL*/</span></i>");
@@ -281,13 +307,13 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public boolean isUnsatisfiable() {
 		for (OWLAxiom axiom : axiomSet) {
-			if (axiom instanceof OWLSubClassAxiom) {
-				if (((OWLSubClassAxiom) axiom).getSuperClass().isOWLNothing()) {
+			if (axiom instanceof OWLSubClassOfAxiom) {
+				if (((OWLSubClassOfAxiom) axiom).getSuperClass().isOWLNothing()) {
 					return true;
 				}
 			}
 			if (axiom instanceof OWLEquivalentClassesAxiom) {
-				for (OWLDescription desc : ((OWLEquivalentClassesAxiom) axiom).getDescriptions()) {
+				for (OWLClassExpression desc : ((OWLEquivalentClassesAxiom) axiom).getClassExpressions()) {
 					if (desc.isOWLNothing()) {
 						return true;
 					}
@@ -300,14 +326,14 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public boolean isEqualToThing() {
 		for (OWLAxiom axiom : axiomSet) {
-			if (axiom instanceof OWLSubClassAxiom) {
-				if (((OWLSubClassAxiom) axiom).getSubClass().isOWLThing()) {
+			if (axiom instanceof OWLSubClassOfAxiom) {
+				if (((OWLSubClassOfAxiom) axiom).getSubClass().isOWLThing()) {
 					return true;
 				}
 			}
 
 			if (axiom instanceof OWLEquivalentClassesAxiom) {
-				for (OWLDescription desc : ((OWLEquivalentClassesAxiom) axiom).getDescriptions()) {
+				for (OWLClassExpression desc : ((OWLEquivalentClassesAxiom) axiom).getClassExpressions()) {
 					if (desc.isOWLThing()) {
 						return true;
 					}
@@ -349,7 +375,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public URI getDefaultNamespace() {
+	public OWLOntologyID getDefaultNamespace() {
 		return ns;
 	}
 
@@ -368,13 +394,13 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	public OWLDescription getDLQuery() {
+	public OWLClassExpression getDLQuery() {
 		OWLLogicalAxiom rawAxiom = getAxiom();
 		if (rawAxiom == null) {
 			return null;
 		}
-		if (rawAxiom instanceof OWLSubClassAxiom) {
-			OWLSubClassAxiom axiom = (OWLSubClassAxiom) rawAxiom;
+		if (rawAxiom instanceof OWLSubClassOfAxiom) {
+			OWLSubClassOfAxiom axiom = (OWLSubClassOfAxiom) rawAxiom;
 			return axiom.getSubClass();
 		}
 		return null;
@@ -398,7 +424,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 	public boolean containsEntityReference(OWLEntity entity) {
 		for (OWLLogicalAxiom axiom : axiomSet) {
-			if (axiom.getReferencedEntities().contains(entity)) {
+			if (axiom.getSignature().contains(entity)) {
 				return true;
 			}
 		}
@@ -409,7 +435,7 @@ public class ACESnippetImpl implements ACESnippet {
 	public Set<OWLEntity> getReferencedEntities() {
 		Set<OWLEntity> entities = Sets.newHashSet();
 		for (OWLLogicalAxiom axiom : axiomSet) {
-			entities.addAll(axiom.getReferencedEntities());
+			entities.addAll(axiom.getSignature());
 		}
 		return entities;
 	}
@@ -425,13 +451,13 @@ public class ACESnippetImpl implements ACESnippet {
 		if (this == obj) return true;
 		if ((obj == null) || (obj.getClass() != this.getClass())) return false;
 		ACESnippet s = (ACESnippet) obj;
-		return sentences.equals(s.getSentences());
+		return stringID.equals(s.toStringID());
 	}
 
 
 	@Override
 	public int hashCode() {
-		return sentences.hashCode();
+		return stringID.hashCode();
 	}
 
 
@@ -478,10 +504,14 @@ public class ACESnippetImpl implements ACESnippet {
 		if (prefs.getUseMos() && sentences.size() == 1) {
 			OWLLogicalAxiom mosAxiom = null;
 			try {
-				mosAxiom = ACETextManager.parseWithMos(sentences.iterator().next());
-			} catch (OWLExpressionParserException e) {
-				// Note: we are silent about using ManchesterSyntaxParser, i.e.
-				// we do not return the syntax errors.
+				// TODO: BUG: it's not clear what this "base" is
+				// supposed to be, the OWL-API Javadoc doesn't say anything about it.
+				String base = getOntologyIRIAsString();
+				logger.info("Parsing with the MOS parser: " + sentences.iterator().next());
+				mosAxiom = ACETextManager.parseWithMos(sentences.iterator().next(), base);
+				logger.info(mosAxiom);
+			} catch (ParserException e) {
+				// e.printStackTrace();
 			}
 			if (mosAxiom != null) {
 				axiomSet = ImmutableSet.of(mosAxiom);
@@ -499,7 +529,7 @@ public class ACESnippetImpl implements ACESnippet {
 
 
 	private void parse(ACEViewPreferences prefs) throws OWLOntologyCreationException {
-		ACELexicon<OWLEntity> aceLexicon = ACETextManager.getActiveACELexicon();
+		TokenMapper aceLexicon = ACETextManager.getACELexicon(ns);
 		Set<String> contentWordForms = getContentWordsAsStrings();
 
 		if (! prefs.getParseWithUndefinedTokens()) {
@@ -523,9 +553,9 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	private void parseWithAceParser(ACEViewPreferences prefs, ACELexicon<OWLEntity> aceLexicon, Set<String> contentWordForms) throws OWLOntologyCreationException {
-		Lexicon lexicon = aceLexicon.createLexicon(contentWordForms);
-
+	private void parseWithAceParser(ACEViewPreferences prefs, TokenMapper aceLexicon, Set<String> contentWordforms) throws OWLOntologyCreationException {
+		logger.info("Wordforms: " + contentWordforms);
+		Lexicon lexicon = aceLexicon.createLexicon(contentWordforms);
 		if (lexicon.getEntries().isEmpty()) {
 			logger.info("Parsing with empty lexicon.");
 			lexicon = null;
@@ -536,9 +566,10 @@ public class ACESnippetImpl implements ACESnippet {
 
 		boolean paraphrase1Enabled = prefs.isParaphrase1Enabled();
 
-		// Note: parser might by null in case the ParserHolder has not been initialized
+		// Note: parser might be null in case the ParserHolder has not been initialized
 		ACEParser parser = ParserHolder.getACEParser();
-		parser.setURI(ns.toString());
+
+		parser.setURI(getOntologyIRIAsString());
 
 		ACEParserResult result = null;
 
@@ -568,11 +599,17 @@ public class ACESnippetImpl implements ACESnippet {
 				if (owlxml == null || owlxml.length() == 0) {
 					throw new OWLOntologyCreationException("get(OutputType.OWLXML) is null or empty");
 				}
+
 				// TODO: BUG: creating a new ontology manager just to parse a snippet
 				// might be bad for performance
 				OWLOntologyManager manager = ACETextManager.createOWLOntologyManager();
+
+				// TODO: BUG: remove this temporary hack that converts the APE output into
+				// correct OWL 2 XML.
+				String owl2xml = OWLXMLTransformer.transform(owlxml);
+
 				// BUG: we should copy the axioms and then throw away the created ontology
-				axiomSet = ImmutableSet.copyOf(manager.loadOntology(new StringInputSource(owlxml)).getLogicalAxioms());
+				axiomSet = ImmutableSet.copyOf(manager.loadOntologyFromOntologyDocument(new StringDocumentSource(owl2xml)).getLogicalAxioms());
 			}
 			else {
 				setPinpointers(errorMessages);
@@ -603,7 +640,7 @@ public class ACESnippetImpl implements ACESnippet {
 	}
 
 
-	// BUG: What is the purpose of this method?
+	// TODO Do this during construction time
 	private String toSimpleString() {
 		if (sentences.size() == 1) {
 			return sentences.iterator().next().toSimpleString();
@@ -630,5 +667,54 @@ public class ACESnippetImpl implements ACESnippet {
 	 */
 	private boolean hasErrors() {
 		return (errorMessagesCount > 0);
+	}
+
+
+	/**
+	 * <p>Extracts the IRI from the OntologyID
+	 * and converts it into a string. If the IRI is
+	 * missing the returns an empty string.</p>
+	 * 
+	 * <p>TODO: think about it</p>
+	 * 
+	 * @return Ontology IRI as string, or an empty string
+	 */
+	private String getOntologyIRIAsString() {
+		IRI ontologyIRI = ns.getOntologyIRI();
+		if (ontologyIRI == null) {
+			return "";
+		}
+		return ontologyIRI.toString();
+	}
+
+
+	private String getAltRendering() {
+		if (altRendering == null) {
+			return "/*" + getLogicalAxioms().toString() + "*/";
+		}
+		// The Manchester Syntax rendering contains layout symbols,
+		// which we convert into a single space.
+		return "/* MOS: " + altRendering.replaceAll("[ \t\n\f\b\r]+", " ") + " */";
+	}
+
+
+	/**
+	 * <p>Note: This rendering is the basis of equals and hashCode.</p>
+	 * 
+	 * @return ID-rendering of the snippet
+	 */
+	private String makeStringID() {
+		if (sentences.size() == 0) {
+			return getLogicalAxioms().toString();
+		}
+		else if (sentences.size() == 1) {
+			return sentences.iterator().next().toSimpleString();
+		}
+
+		String str = "";
+		for (ACESentence s : sentences) {
+			str += s.toSimpleString() + " ";
+		}
+		return str;
 	}
 }

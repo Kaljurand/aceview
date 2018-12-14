@@ -16,6 +16,8 @@ ontology and rule editor. ACE View uses Attempto Controlled English (ACE) in the
 Web Ontology Language (OWL) and Semantic Web Rule Language (SWRL) in
 the back-end."/>
 
+<link rel="icon" type="image/png" href="icon.png"/>
+
 <script type="text/javascript"
 		src="js/toc.js"> </script>
 
@@ -69,46 +71,41 @@ body { font-family: Verdana, Arial, sans-serif }
 
 <p>ACE View is an ontology and rule editor that uses
 <a href="http://attempto.ifi.uzh.ch/">Attempto Controlled English</a> (ACE)
-in order to create, view and edit
-<a href="http://www.w3.org/2007/OWL/wiki/OWL_Working_Group">OWL 2</a> ontologies
+in order to create, view, edit and query
+<a href="http://www.w3.org/TR/owl2-overview/">OWL</a> ontologies
 and
 <a href="http://www.w3.org/Submission/SWRL/">SWRL</a> rulesets.</p>
 
 <ul>
-	<li>You can create OWL/SWRL knowledge bases by working solely in ACE.</li>
-	<li>You can open existing OWL 2 ontologies and view them as ACE texts.</li>
+	<li>You can create OWL/SWRL knowledge bases by working solely in ACE (i.e. a fragment of English)</li>
+	<li>You can open existing OWL ontologies and view them as ACE texts.</li>
 	<li>You can edit OWL/SWRL knowledge bases (i.e. add, remove, modify OWL axioms
-	and SWRL rules) by switching between the ACE view (i.e. controlled English) and
+	and SWRL rules) by switching between the ACE view and
 	the traditional "Prot&eacute;g&eacute; views" (forms and description logic formulas).</li>
 </ul>
 
 <p>In many cases you don't have to know the details of OWL and SWRL &mdash;
-the ACE view hides them from you.
-But you do have to know ACE. In order to get started read:
-<a href="http://attempto.ifi.uzh.ch/site/docs/writing_owl_in_ace.html">Writing OWL ontologies in ACE</a>.
-Later visit the <a href="http://attempto.ifi.uzh.ch">Attempto project website</a> to learn more.</p>
-
-<p>ACE View is implemented as an extension to
-the popular ontology editor
-<a href="http://protege.stanford.edu/download/registered.html#p4">Prot&eacute;g&eacute; 4</a>
-(please take time to
-<a href="http://protege.stanford.edu/download/register.html">register</a>
-as a Prot&eacute;g&eacute; user).
-Note that ACE View does not work with Prot&eacute;g&eacute; 3.</p>
+the ACE view hides them from you. But you do have to know ACE. In order to learn ACE
+visit the <a href="http://attempto.ifi.uzh.ch">Attempto project website</a>
+and read e.g.
+<a href="http://attempto.ifi.uzh.ch/site/docs/writing_owl_in_ace.html">Writing OWL ontologies in ACE</a>.</p>
 
 <p>If you have questions, then post them to the
 <a href="https://lists.ifi.uzh.ch/listinfo/attempto">Attempto Mailing List</a>.</p>
 <p>In order submit bugs and feature requests use the
 <a href="http://code.google.com/p/aceview/issues/list">ACE View Issues List</a>.</p>
-
-
+<p>The latest version of ACE View is 1.3.1, see the <a href="http://aceview.googlecode.com/svn/trunk/RELEASE_NOTES.html">RELEASE NOTES</a>.</p>
 
 <h2>How to install ACE View?</h2>
 
+<p>ACE View is implemented as an extension to
+the popular ontology editor
+<a href="http://protege.stanford.edu">Prot&eacute;g&eacute;</a>.
+Note that ACE View only works with Prot&eacute;g&eacute; 4.1 and not with any earlier version.</p>
 <p>Installing ACE View is a simple process thanks to the
 <a href="http://protegewiki.stanford.edu/index.php/EnablePluginAutoUpdate">Prot&eacute;g&eacute;
 plug-in auto update feature</a> which provides an
-overview of the Prot&eacute;g&eacute; plug-in repository,
+overview of the available Prot&eacute;g&eacute; plug-ins,
 allows new plugins to be installed, and existing ones to
 be updated in case they have newer versions.</p>
 
@@ -124,9 +121,9 @@ the ACE View jar-file (already placed into the plugins-directory).</p>
 <p>Proceed as follows.</p>
 
 <ol>
-	<li>Download and install Prot&eacute;g&eacute; 4.0 by following
+	<li>Download and install Prot&eacute;g&eacute; 4.1 by following
 	the installation instructions at
-	<a href="http://protege.stanford.edu/download/registered.html#p4">http://protege.stanford.edu/download/registered.html#p4</a>.</li>
+	<a href="http://protege.stanford.edu/download/registered.html#p4.1">http://protege.stanford.edu/download/registered.html#p4.1</a>. (Also, please take time to <a href="http://protege.stanford.edu/download/register.html">register</a> as a Prot&eacute;g&eacute; user.)</li>
 	<li>Start Prot&eacute;g&eacute;.</li>
 	<li>Press <span class="menu">File&nbsp;&rarr;&nbsp;Check for plugins...</span>.</li>
 	<li>Select "ACE View" and press "Install".</li>
@@ -135,10 +132,23 @@ the ACE View jar-file (already placed into the plugins-directory).</p>
 
 <p>That's it!</p>
 
-<p class="warning">If this didn't work for some reason, then
-just manually copy the ACE View jar-file
-<a href="http://aceview.googlecode.com/files/ch.uzh.ifi.attempto.aceview.jar?v=1.2.20">ch.uzh.ifi.attempto.aceview.jar</a> (3 MB)
+
+<div class="warning" style="font-size: 90%">
+<p>In case ACE View is not included in the default set of Prot&eacute;g&eacute;
+plugins you can override the location where Prot&eacute;g&eacute; is looking
+for the plugins. Enter either one of the following URLs in
+<span class="menu">Preferences...&rarr;Plugins</span>:</p>
+
+<ul>
+<li><a href="http://aceview.googlecode.com/svn/branches/1_3/update.properties">http://aceview.googlecode.com/svn/branches/1_3/update.properties</a> points to the latest version of ACE View.</li>
+<li><a href="http://attempto.ifi.uzh.ch/aceview/aceview.repository">http://attempto.ifi.uzh.ch/aceview/aceview.repository</a> points to the latest version of ACE View and other Prot&eacute;g&eacute; plugins.</li>
+</ul>
+
+<p>If everything else fails, then
+just manually download and copy the ACE View jar-file
+<a href="http://aceview.googlecode.com/files/ch.uzh.ifi.attempto.aceview.ui.view.jar?v=1.3.1">ch.uzh.ifi.attempto.aceview.ui.view.jar</a> (4 MB)
 into the Prot&eacute;g&eacute; plugins-directory.</p>
+</div>
 
 <!--
 <p>(Note: these instructions are for Unix/Mac users. Windows
@@ -182,27 +192,26 @@ is to select "Create new OWL ontology", press "Continue" twice, and press "Finis
 The Prot&eacute;g&eacute; interface opens up with all its tabs, including the
 "ACE View" tab.
 In case the "ACE View" tab is not visible, then load it by clicking on the "ACE View"
-menu item in the <span class="menu">Tabs</span>-menu. All ACE views
-are available under <span class="menu">View&nbsp;&rarr;&nbsp;ACE&nbsp;views</span> but note that most
+menu item in the <span class="menu">Window&nbsp;&rarr;&nbsp;Tabs</span> menu. All ACE views
+are available under <span class="menu">Window&nbsp;&rarr;&nbsp;Views&nbsp;&rarr;&nbsp;ACE&nbsp;views</span> but note that most
 of them are displayed automatically by the "ACE View" tab.</p>
 
 <p class="warning">Note: if some ACE View views did not load (and there was an error message)
 then execute:
-<span class="menu">Tabs&nbsp;&rarr;&nbsp;Reset selected tab to default state</span>.</p>
+<span class="menu">Window&nbsp;&rarr;&nbsp;Reset selected tab to default state</span>.</p>
 
-
-<p>In order to be able to use ACE View you must
-be connected to the internet
-because the OWL&rarr;ACE translator is currently only available as a webservice.
-(By default, the ACE&rarr;OWL/SWRL translator is also used via a webservice,
-but it is also possible to install it locally, see below for the instructions.)
+<p>ACE View relies on two external translation tools &mdash; ACE&rarr;OWL/SWRL
+and OWL&rarr;ACE. By default, ACE View is configured to use their respective
+webservices running on the Attempto server, i.e. you must be connected
+to the internet to be able to use ACE View. However you can also install these tools
+locally and configure ACE View to use the local versions (see below).
 The Prot&eacute;g&eacute; preferences panel contains a tab with the ACE View preferences
 where you can
 configure the webservice addresses. For example, set them as shown in
 the following screenshot of the preferences-panel.</p>
 
 <div class="image">
-<img src="images/aceview_preferences_090218.png" alt="ACE View preferences"/>
+<img src="images/aceview_preferences_110317.png" alt="ACE View preferences"/>
 </div>
 
 <p>Normally, one is expected to first define the content words before they are going to be used in
@@ -219,6 +228,14 @@ In case you switch on "Generate paraphrase" then all the sentences entered in th
 are additionally paraphrased. The paraphrases belong to a fragment of ACE called Core ACE.
 This fragment reformulates <em>every</em>-sentences as <em>if-then</em>-sentences and
 replaces relative clauses with full sentences.</p>
+
+<p>If "Support Manchester OWL Syntax ..." is set then each input
+is first parsed with the Manchester OWL Syntax (MOS) parser, and only if this fails
+the ACE parser is used. This allows one to mix ACE and MOS in the ontology.
+Note that currently only class axioms
+(<em>SubClassOf</em>, <em>DisjointWith</em>, and <em>EquivalentTo</em>)
+are supported and every entity in their signature must be already declared in the
+ontology.</p>
 
 
 <h2>Views</h2>
@@ -335,11 +352,11 @@ modified version of <a href="http://www.co-ode.org/downloads/protege-x/plugins/#
 </table>
 
 <p>All views are available from
-the <span class="menu">View&nbsp;&rarr;&nbsp;ACE&nbsp;views</span> menu.
+the <span class="menu">Window&nbsp;&rarr;&nbsp;Views&nbsp;&rarr;&nbsp;ACE&nbsp;views</span> menu.
 Unless the view is more technical, it is also
 included in the default configuration of the ACE View tab.</p>
 
-<h3>Snippet editor</h3>
+<h3>Snippet editor and feedback</h3>
 
 <p>The Snippet Editor is for working with very short texts
 (one or two sentences),
@@ -354,7 +371,7 @@ where the sentences are syntactically or logically very connected, e.g.</p>
 <p>The Snippet Editor shows the currently selected snippet (either asserted or
 entailed) and allows you to
 change or delete it, or add a new snippet to the active ACE text. The editor
-supports auto-completion of content word forms.
+supports auto-completion of content word forms (press <code>Tab</code>).
 The <span class="button">Annotate</span>-button lets you annotate the
 snippet (e.g. add tags or comments), and
 the <span class="button">Why?</span>-button lets you ask for an explanation
@@ -388,10 +405,9 @@ sentence because it lacks a determiner in front of a noun.</p>
 
 <h3>Text view</h3>
 
-<p>Text view is a simple view that shows the complete knowledge base.
-You can enter sentences and integrate them into the knowledge base by
-pressing "Update". You can store the complete knowledge base (in ACE) by
-select, copy, and paste.</p>
+<p>Text view is a simple view that shows the complete knowledge base as an ACE text.
+You can enter, change and delete snippets in this view, and integrate the changes
+into the knowledge base by pressing "Update".</p>
 
 <p>For example, create a new ontology and enter the following ACE text
 in the "ACE Text" view. (Note that you have to use "Clex" and "guessing" to successfully
@@ -450,7 +466,8 @@ What is an animal and is a vegetarian?
 </pre>
 -->
 
-<p>Now press "Update" to integrate this text into the ontology.</p>
+<p>Now press "Update" to integrate this text into the ontology. Every ACE view will now
+display an aspect of this text and many of the views let you modify it.</p>
 
 <!--
 <p>You should see something like the following.</p>
@@ -487,24 +504,33 @@ you can also use the standard Prot&eacute;g&eacute; annotation views to get info
 about the linguistic annotations added to the words.</p>
 -->
 
+<!--
+<p>You can store the complete knowledge base (in ACE) by
+select, copy, and paste.</p>
+-->
 
-<h3>Words views</h3>
+
+<h3>Words and word usage views</h3>
 
 <p>"ACE Words" provides a view to all the content words (nouns, verbs, proper names)
 of the ACE text. For each word its frequency is show in parentheses.
-The frequency denotes the number of sentences that contain this word in the text.
+The frequency denotes the number of snippets that contain this word in the text.
 Clicking on the word selects the word so that other views will start displaying
 information about the word, e.g. its usage will be displayed in the "ACE Word Usage" view.</p>
 
 <div class="image">
-<img src="images/aceview_words_080929.png" alt="ACE View Words and Word Usage: vegetarian"/>
+<img src="images/aceview_words_110317.png" alt="ACE View Words and Word Usage: enclave"/>
 </div>
 
 <p>Words that do not have linguistic annotations (singular, plural, and past participle forms) yet
 are displayed in grey color.</p>
 
 
-<h3>Snippet views</h3>
+<h3>Snippets view</h3>
+
+<p>The "ACE Snippets" view is similar to the "ACE Text" as it displays the
+complete ACE text. The "ACE Snippets" view, however, is much more structured because
+the snippets are listed in a table making the individual snippets easier to access.</p>
 
 <p>Clicking on "ACE Snippets" opens a view that lists all the snippets
 in the ACE text together with some of their properties (content word count,
@@ -528,11 +554,13 @@ will show the properties of the snippet.</p>
 <h3>Q&amp;A view</h3>
 
 <p>The Q&amp;A view lists all the questions (i.e. asserted interrogative snippets)
-which will be answered on the
-basis of the existing text (including also the implicit knowledge in the text) whenever you
-run the reasoner. First you need to switch on the
-reasoner (e.g. select: <span class="menu">Reasoner&nbsp;&rarr;&nbsp;Pellet</span>).
-Every time you run the reasoner (by: <span class="menu">Reasoner&nbsp;&rarr;&nbsp;Classify</span>)
+which will be answered on the basis of the existing text
+including also the implicit knowledge in the text that is calculated by the reasoner.
+In order to use the Q&amp;A view you first need to select and start a reasoner
+(e.g. <span class="menu">Reasoner&nbsp;&rarr;&nbsp;HermiT 1.3.3</span>,
+<span class="menu">Reasoner&nbsp;&rarr;&nbsp;Start Reasoner</span>).
+Now, every time you synchronize the reasoner
+(<span class="menu">Reasoner&nbsp;&rarr;&nbsp;Synchronize Reasoner</span>)
 followed by the "Update answers" action the answers to the questions are updated.</p>
 
 <p>The questions must contain exactly one query word (either `who', `what', `which', or `whose'), e.g.</p>
@@ -589,14 +617,21 @@ Portugal borders nothing but EU-countries.
 <span class="acetext">Every baltic-state is a <b>territory</b>.</span></li>
 </ol>
 
-<p>For example the following picture shows a list of questions
+<p>For example the following screenshot shows a list of questions
 about a text about European countries, and shows the answers to the question
 <span class="acetext">Which EU-country is a NATO-country?</span>.</p>
 
 <div class="image">
-<img src="images/aceview_qanda.png" alt="ACE Q&amp;A view"/>
+<img src="images/aceview_qanda_win7.png" alt="ACE Q&amp;A view"/>
 </div>
 
+<p>The list of questions can be highlighted and filtered by selecting an entity,
+just like with the list of regular snippets, i.e. only questions that contain
+the selected entity are highlighted/shown. The Q&amp;A view offers also
+another option &mdash; by checking "Search answers" only the questions
+are highlighted/shown <em>whose answer</em> contains the selected entity.
+For example, the above screenshot shows only the questions whose answer
+contains the selected entity <b>Latvia</b>.</p>
 
 <p>The answer counts are presented in a tabular and sortable form, so that
 you can easily get answers to questions that involve counting and comparison
@@ -613,7 +648,12 @@ nor in ACE (at least currently). Such questions are for example:</p>
 was able to derive on the basis of the knowledge base. If the reasoner has not yet been
 applied to the question then a question mark (<b>?</b>) is shown in the count cells. In case
 the question corresponds to an unsatisfiable expression (e.g. <span class="acetext">Which
-EU-country is not an EU-country?</span>) then nothing is displayed in the cell.</p>
+EU-country is not an EU-country?</span>) then nothing is displayed in the cell.
+If the answer is known to be complete (i.e. no new individual/class can become
+part of the answer) then the cell background is
+<span style="background-color: #0f0">green</span>. Incomplete answers can be
+declared complete: this means that a new snippet that asserts completeness
+will be added to the text.</p>
 
 <p>Every answer can be expressed as an ACE sentence (i.e. as full answer)
 but for a better overview just lists of words are presented.
@@ -627,7 +667,7 @@ the text (if it is there), or ask for the explanations using the
 <h3>Entailments view</h3>
 
 <p>The Entailments view lists sentences that follow from but that were not explicitly stated in
-the text. The list is updated whenever you run the reasoner (similarly to the Q&amp;A view).
+the text. The list is updated whenever you sync the reasoner (similarly to the Q&amp;A view).
 As any non-trivial text entails infinitely many sentences, only the sentences with certain simple
 structure are reported in this view, e.g.</p>
 
@@ -688,7 +728,7 @@ ways.</p>
 <p>The lexicon view lists all the content words
 (nouns, transitive verbs, proper names) in the ACE text. The surface forms
 (singular, plural, past participle) of each word
-can be edited.</p>
+can be edited by double-clicking on the respective table cell.</p>
 
 <div class="image">
 <img src="images/aceview_lexicon.png" alt="ACE Lexicon view"/>
@@ -711,6 +751,7 @@ The actions apply to the active ACE text.</p>
 </tr>
 </thead>
 <tbody>
+<!--
 <tr>
 <td>Create AceWiki</td>
 <td>Pops up a file chooser to ask for a zip file name. Writes the
@@ -722,10 +763,11 @@ corresponding article created.
 (You can run the "Fill lexicon" action to automatically generate
 missing forms.)</td>
 </tr>
+-->
 <tr>
 <td>Reparse failed snippets</td>
 <td>Reparses every snippet that has no corresponding OWL/SWRL axioms.
-Useful if there are many snippets which have failed because of missing lexical entries,
+Useful if there are many snippets which have failed to parse because of missing lexical entries,
 and meanwhile the required entries have been added.</td>
 </tr>
 <tr>
@@ -736,27 +778,44 @@ and meanwhile the required entries have been added.</td>
 <tr>
 <td>Update answers</td>
 <td>Updates the answers to every question in the ACE text.
-This can take a long time, depending on the complexity and the amount
-of questions.</td>
+This can take a long time, depending on the complexity of the text and the amount
+and complexity of the questions.
+(Note that you can set an ACE View preference to launch this action automatically
+whenever the reasoner has completed the synchronization.)</td>
+</tr>
+<tr>
+<td>Annotate every axiom with ACE text</td>
+<td>Adds an ACE text annotation to every logical axiom in the ontology.
+(When the ontology is reloaded then these axioms are not verbalized
+but instead the annotations are used to create the corresponding snippets.)</td>
 </tr>
 </tbody>
 </table>
+
 
 <h2>Examples</h2>
 
 <p>Here are some example ACE texts and OWL/SWRL ontologies for you to play with.
 The ACE texts should be copied into the "Text view", after which "Update" should be pressed.
 The OWL ontologies can be opened in the usual way, via <span class="menu">File&rarr;Open...</span>.</p>
-<p>Reasoning with the examples was tested with Pellet 2.</p>
+<p>Reasoning with the examples was tested with the
+<a href="http://hermit-reasoner.com/">HermiT 1.3 reasoner</a> plugin.</p>
+
 
 <h3>People and Pets</h3>
 
-<p><a href="examples/people_pets_nice.ace.txt">people_pets_nice.ace.txt</a> (122 snippets)
+<p><a href="examples/people_pets_nice.ace.txt">people_pets_nice.ace.txt</a> (122 sentences)
 is the famous "People and pets" ontology automatically verbalized in ACE
 and later manually modified a bit to make it more readable. Note that it
 uses the word `pet' as both a regular noun and
 a relational noun (<em>of</em>-construct). As a result you get an entity `pet'
 which is used via punning both as a class name and object property name.</p>
+
+<p>You can also verbalize the
+<a href="http://owl.cs.manchester.ac.uk/repository/download?ontology=file:/Users/seanb/Desktop/Cercedilla2005/hands-on/people.owl&amp;format=OWL/XML">original OWL version from the TONES Ontology Repository</a>.</p>
+
+<p>This text/ontology entails that <span class="acetext">Nothing is a mad-cow.</span>.</p>
+
 
 <h3>Countries</h3>
 
@@ -773,7 +832,7 @@ before the ACE text can be parsed.</p>
 <p>The <a href="http://www.inf.unibz.it/~franconi/dl/course/dlhb/dlhb-02.pdf">"Iokaste" example (on pages 73, 74)</a>
 demonstrates a complex (open-world) reasoning problem.
 The question is who of the Greek characters mentioned in the text
-could be classified as "answer".</p>
+could be classified as "answer". The ACE version of the puzzle is</p>
 
 <pre>
 Iokaste's child is Oedipus.
@@ -802,6 +861,60 @@ Whose child is a patricide whose child is somebody who is not a patricide?
 <p class="warning">The entailment explanation is unfortunately done by listing
 all the sentences in the text. A "branching explanation" would be better.</p>
 -->
+
+<h3>Zebra Puzzle</h3>
+
+<p><a href="examples/zebra.ace.txt">zebra.ace.txt</a> (~45 snippets)
+constitutes one possible way to encode the Zebra puzzle in ACE. Our starting point
+was the formulation of the puzzle in
+<a href="http://stackoverflow.com/questions/318888">Stackoverflow: Solving “Who owns the Zebra” programmatically?</a>.
+(There exist many
+other slightly different formulations, where the only difference seems to
+be the choice of words, see more at
+<a href="http://en.wikipedia.org/wiki/Zebra_Puzzle">Wikipedia: Zebra Puzzle</a>.)</p>
+
+<p>This text entails that <span class="acetext">German has Zebra.</span> but
+note that reasoners (at least HermiT and Pellet) take a long time to figure
+this out (especially considering the tiny size of this text).
+The explanation service will take even longer.</p>
+
+<div class="image">
+<img src="images/demo_zebra_qa.png" alt="Demo: Zebra Puzzle: Q&amp;A View"/>
+</div>
+
+
+<h3>Aneurist</h3>
+
+<p>To test the speed of ACE View on very large ontologies, load e.g.
+<a href="http://ontology.aneurist.org/download">aneurist-1.0.owl</a> from the
+<a href="http://ontology.aneurist.org">@neurIST project</a>.
+(Another copy is <a href="examples/aneurist-1.0.owl">here</a>.)
+This ontology contains 12,774 axioms and it imports an ontology with 356 axioms.</p>
+
+<p>With the OWL verbalizer installed locally, the ontology should be loaded in
+under a minute on a modern computer (e.g. it takes 45 seconds on an Intel Core i3 laptop).
+Updates to the ACE views when the ontology is changed occur also reasonably fast.</p>
+
+<p>Note that it is better to switch off ACE surface form generation in the preferences
+before loading the ontology.</p>
+
+<!-- loading: 3 minutes on a PowerBook G4 (from 2004) -->
+
+<h3>Jobs Puzzle</h3>
+
+<p><a href="examples/jobs.ace.txt">jobs.ace.txt</a> is an ACE formulation of the
+Jobs Puzzle.
+Note that one should first load the vocabulary <a href="examples/jobs_base.owl">jobs_base.owl</a>
+before the ACE text can be parsed.</p>
+
+<p>After reasoning and question answering the Q&amp;A View will display:</p>
+
+<div class="image">
+<img src="images/demo_jobs.png" alt="Demo: Jobs Puzzle: Q&amp;A View"/>
+</div>
+
+<p>e.g. Thelma holds exactly two jobs, Boxer and Chef.</p>
+
 
 <h3>Five houses</h3>
 
@@ -840,28 +953,40 @@ so the resulting verbalization is not perfect.</li>
 <h2>Known issues</h2>
 
 <!--
-<p>ACE View is made available for demonstration purposes.
+ACE View is made available for demonstration purposes.
 Do not expect it to solve real knowledge engineering problems yet.
-Some known issues:</p>
 -->
 
 <ul>
-<li>Because ACE View currently uses webservices to translate between ACE and OWL/SWRL,
-it is relatively slow. Do not try to parse large ACE texts or verbalize
-large ontologies (e.g. more than 500 sentences/axioms).</li>
-<li>Some operations provided by standard Prot&eacute;g&eacute; menus do not yet work correctly with ACE View: Rename, Change ontology URI, Show all loaded ontologies, etc.</li>
-<li>OWL data properties are not fully supported.</li>
-<li>Anonymous individuals could be handled in a smarter way.</li>
-<li>The lexicon does not have a dedicated type for relational nouns (e.g. `part of').
-As a result, roundtripping of sentences that contain <em>of</em>-constructions does not
-work correctly.</li>
-<li>Some types of axioms are not verbalized:
-<ul>
-<li>SWRL rules,</li>
-<li>Axioms that contain very complex class expressions,</li>
-<li><em>DisjointClasses</em> and other such "lists".</li>
-</ul>
+<li>Some operations provided by standard Prot&eacute;g&eacute; menus do not
+yet work correctly with ACE View:
+	<ul>
+		<li>View-menu: changes in this menu have no effect on the ACE views.
+		(Note that the ACE views only show the active ontology.)</li>
+	</ul>
 </li>
+
+<li>Some type of axioms cannot be expressed via ACE sentences, i.e. they
+have to be entered using one of the standard Prot&eacute;g&eacute; views:
+	<ul>
+		<li>some data property axioms, e.g. <em>FunctionalDataProperty</em>;</li>
+		<li>SWRL rules with built-ins that go beyond +, -, *, /, &amp;, &lt;, =, &gt;.</li>
+	</ul>
+</li>
+
+<li>Some type of axioms, when entered in Prot&eacute;g&eacute; views, are not verbalized
+into ACE:
+	<ul>
+		<li>SWRL rules;</li>
+		<li>axioms that contain very complex class expressions;</li>
+		<li><em>DisjointClasses</em>, <em>DifferentIndividuals</em> and other such list/set constructs.</li>
+	</ul>
+</li>
+
+<li>The lexicon does not have a dedicated type for relational nouns (e.g. `part of')
+and adjectives (e.g. `red').
+As a result, roundtripping of sentences that contain <em>of</em>-constructions or
+adjectives does not work correctly.</li>
 </ul>
 
 
@@ -892,24 +1017,29 @@ If you have a local APE installation (i.e. the file <code>ape.exe</code>), then 
 can use all the three types of interfaces. See the <code>README.txt</code> that comes
 with the APE distribution to learn how to run APE in the various modes.</p>
 
-<p>The fastest ACE processing is provided by APE Local.
-(APE Local is about 1.5 times faster than an HTTP or socket interface that is set up
-locally).</p>
+<p>It is easy to set up a locally running APE Webservice or APE socket, so we only
+discuss APE Local (which is more complicated to set up) in detail.</p>
 
-<p>To set up APE Local, do the following steps.</p>
+
+<h3>Setting up APE Local</h3>
+
+<p>The benefit of using APE Local over APE Webservice or APE Socket is its
+better performance (1.5-2x faster) on doing the ACE&rarr;OWL/SWRL conversion.</p>
+
+<p>To set up APE Local, do the following steps (somewhat Linux-specific).</p>
 
 <ol>
-	<li>Install the latest version of SWI-Prolog (we have tested with v5.6.61, but more recent
-	versions should work as well),
+	<li>Install a recent version of SWI-Prolog,
 	with packages: <code>clib</code>, <code>sgml</code>, <code>http</code>,
 	and <code>jpl</code>. On Windows and Mac OS X, you get all the required packages
 	with the default installation. On Linux you might need to install the packages separately,
 	e.g. on Ubuntu, install the Ubuntu packages: <code>swi-prolog</code>, <code>swi-prolog-clib</code>,
-	<code>swi-prolog-http</code>, <code>swi-prolog-sgml</code>.</li>
+	<code>swi-prolog-sgml</code>, <code>swi-prolog-http</code>, <code>swi-prolog-java</code>
+	(or <code>swi-prolog-jpl</code>).</li>
+	<li>Make sure SWI-Prolog is on the PATH, i.e. that you can execute <code>swipl</code>
+	in any directory.</li>
 
-	<li>Create <code>ape.exe</code> as explained on
-	the <a href="http://attempto.ifi.uzh.ch/site/downloads/">Attempto Downloads page</a>.</li>
-
+<!--
 	<li>Make sure that SWI-Prolog's <code>libjpl</code> is referenced by the Java library path.
 	<ul>
 		<li>On Windows: add a reference to the SWI-Prolog's bin-directory to <code>PATH</code>.
@@ -927,65 +1057,75 @@ locally).</p>
 		<li>On Linux: similar to Mac OS X (but <code>libjpl</code> is called <code>libjpl.so</code>)</li>
 	</ul>
 </li>
-<!--
-<li>Copy <code>libjpl.jnilib</code> (<code>libjpl.so</code> on Linux, <code>libjpl.dll</code>
-on Windows)
-into the Prot&eacute;g&eacute; root directory.
-You can find this file among the libraries that come with your SWI Prolog installation.
-The installation paths differ among operating systems and SWI Prolog versions.
-For example, in MacOS X Tiger/PPC, this file is located in
-<code>/opt/local/lib/swipl-5.6.61/lib/powerpc-darwin8.11.0/</code></li>
 -->
-<li>(This step you probably do not need to do.) In the lib-directory of the ACE View jar-file,
-replace <code>jpl.jar</code> with the version that comes with your SWI Prolog installation.</li>
-<li>Start Prot&eacute;g&eacute; and modify the ACE View preferences:
+
+<li>Create <code>ape.exe</code> by downloading the APE package from
+the <a href="http://attempto.ifi.uzh.ch/site/downloads/">Attempto Downloads page</a>
+and following the <code>README.txt</code>.</li>
+
+<li>Copy the files
+<a href="config.xml">config.xml</a> and <a href="run_with_jpl.sh">run_with_jpl.sh</a>
+into the Prot&eacute;g&eacute; root directory. Note that <code>config.xml</code>
+overwrites the official Prot&eacute;g&eacute; <code>config.xml</code> file, so you
+might want to back it up before.</li>
+
+<li>Start Prot&eacute;g&eacute; by executing <code>run_with_jpl.sh</code>
+and modify the ACE View preferences:
 <ul>
 	<li>Set the ACE&rarr;OWL/SWRL service to <em>APE Local</em>.</li>
-	<!--
-	<li>[BUG: this is ignored] Point to the location of the SWI-Prolog executable, e.g. <code>/opt/local/bin/swipl</code>
-	on Mac OS X/Linux, <code>C:\Program Files\pl\bin\plcon.exe</code> on Windows (???).</li>
-	-->
 	<li>Point to the location of <code>ape.exe</code>.</li>
 </ul>
 </li>
 </ol>
 
+<p class="warning">Note: <code>run_with_jpl.sh</code> is a modified version of <code>run.sh</code>,
+which is the Prot&eacute;g&eacute; start-up script for Linux. It is probably easy to
+provide similar modifications for Mac OS X (<code>run.command</code>) and
+Windows (<code>run.bat</code>), following the example of <code>run_with_jpl.sh</code>
+but this remains future work.</p>
 
-<h2>Installing the OWL verbalizer locally</h2>
 
-<p>It is also possible to install the OWL&rarr;ACE webservice locally.
-Download it from 
-<a href="http://attempto.ifi.uzh.ch/site/downloads/files/owl_verbalizer-090602_unofficial.zip">here</a>.
-It depends on SWI-Prolog with packages
-<code>clib</code>, <code>sgml</code>, <code>http</code>. Installation instructions are
-in the <code>README.txt</code> file.</p>
+<h2>Running the OWL verbalizer locally</h2>
+
+<p>It is also possible to run the OWL&rarr;ACE webservice locally,
+resulting in much increased performance:</p>
+
+<ol>
+<li>Download it from <a href="http://code.google.com/p/owlverbalizer/">http://code.google.com/p/owlverbalizer/</a></li>
+<li>Install it following the instructions in the <code>README.txt</code> file</li>
+<li>Launch it in the HTTP-server mode, e.g. on Unix / Linux / Mac OS X:
+<pre>
+nohup swipl -x owl_to_ace.exe -- -httpserver -port 5123 -workers 2 -timelimit 30 > stdout.txt 2> stderr.txt &amp;
+</pre>
+</li>
+<li>Change the ACE View preferences to use the OWL&rarr;ACE service from
+<code>http://localhost:5123</code></li>
+</ol>
 
 
 <h2>Dependencies on external libraries</h2>
 
-<p>Apart from the libraries that come with Prot&eacute;g&eacute; 4, ACE View depends of the following
+<p>Apart from the libraries that come with Prot&eacute;g&eacute; 4, ACE View depends on the following
 libraries. These are all included in the ACE View distribution and also in the jar-file, so
 that you do not need to download them separately.</p>
 
 <ul>
-<li><code>attempto_ape.jar</code> (LGPL) from <a href="http://attempto.ifi.uzh.ch">Attempto project</a>
+<li><code>attempto_ape.jar</code> (LGPL) from the <a href="http://attempto.ifi.uzh.ch">Attempto project</a>
 (in Attempto Java Packages) provides three interfaces to the ACE parser (APELocal, APEWebservice, and APESocket).</li>
-<li><code>attempto_owl.jar</code> (LGPL) from <a href="http://attempto.ifi.uzh.ch">Attempto project</a>
-(in Attempto Java Packages) provides an interface to the OWL verbalizer.</li>
+<li><code>attempto_owl.jar</code> (LGPL) from the <a href="http://code.google.com/p/owlverbalizer/">OWL verbalizer project</a> provides an interface to the OWL verbalizer.</li>
 <li><code>swingx-1.0.jar</code> (LGPL) from <a href="http://swinglabs.org">SwingLabs</a> is used for the rich (sortable,
 editable, filterable, highlightable) tables.</li>
 <li><code>swing-worker-1.2.jar</code> (LGPL) from <a href="http://swingworker.dev.java.net">http://swingworker.dev.java.net</a> is used to run some time-consuming jobs (e.g. explanation generation)
 in the background.</li>
-<li><code>simplenlg-v37.jar</code> (<a href="licenses/simplenlg-license.txt">simplenlg-license.txt</a>) from <a href="http://www.csd.abdn.ac.uk/~ereiter/simplenlg/">SimpleNLG package</a>
+<li><code>simplenlgv4.2.jar</code> (MPL 1.1) from <a href="http://code.google.com/p/simplenlg/">SimpleNLG (Java API for Natural Language Generation)</a>
 is used to automatically generate surface forms (plural nounforms, and singular and past participle verbforms)
 for classes, properties and individuals.</li>
 <li><code>commons-httpclient-3.1.jar</code> (Apache 2) used by <code>attempto_ape.jar</code> (specifically APEWebservice)
 and <code>attempto_owl.jar</code> which use it for the HTTP communication with the ACE webservices (see <a href="http://hc.apache.org/httpclient-3.x/">Jakarta Commons HTTP Client</a>).</li>
-<li><code>jpl.jar</code> (LGPL) used by <code>attempto_ape.jar</code> (specifically APELocal).</li>
 <li><code>jdom.jar</code> ("Apache-style" license) used by <code>attempto_ape.jar</code>.</li>
 <li><code>commons-codec-1.3.jar</code> (Apache 2) used by <code>commons-httpclient-3.1.jar</code>.</li>
-<li><code>RadixTree-0.3.jar</code> (MIT) from <a href="http://code.google.com/p/radixtree/">Google Code: radixtree</a> used for auto-completion.</li>
-<li><code>google-collect-1.0-rc2.jar</code> (Apache 2) from <a href="http://code.google.com/p/google-collections/">Google Collections Library</a></li>
+<li><code>RadixTree-0.3.jar</code> (MIT) from <a href="http://code.google.com/p/radixtree/">radixtree (Implementation of Radix Tree/Patricia trie/crit bit tree)</a> used for auto-completion.</li>
+<li><code>guava-r09.jar</code> (Apache 2) from <a href="http://code.google.com/p/guava-libraries/">guava-libraries (Guava: Google Core Libraries for Java 1.5+)</a></li>
 </ul>
 
 
@@ -1005,11 +1145,12 @@ to become a project member.</p>
 <li><a href="http://attempto.ifi.uzh.ch/acewiki">AceWiki</a></li>
 <li><a href="http://sourceforge.net/projects/confluence">ROO Rabbit to OWL Ontology construction</a></li>
 <li><a href="http://smile.deri.ie/evaluation/2008/ROA">RoundTrip Ontology Authoring (ROA)</a></li>
+<li><a href="http://www.cognitum.eu/Products/FluentEditor/Default.aspx">FluentEditor for OWL</a></li>
 </ul>
 
 <address>
 Kaarel Kaljurand
-2009-10-15
+2011-06-14
 </address>
 
 </body>

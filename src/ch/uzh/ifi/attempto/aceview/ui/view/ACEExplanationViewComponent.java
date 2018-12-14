@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -34,14 +34,14 @@ import javax.swing.tree.TreeSelectionModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingworker.SwingWorker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLRuntimeException;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLRuntimeException;
 
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.AxiomExplainer;
-import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACESnippetListener;
+import ch.uzh.ifi.attempto.aceview.AxiomBlackboxExplainer;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
 import ch.uzh.ifi.attempto.aceview.model.event.SnippetEventType;
 
 
@@ -73,12 +73,12 @@ public class ACEExplanationViewComponent extends AbstractOWLViewComponent {
 		}
 	};
 
-	private final ACESnippetListener snippetListener = new ACESnippetListener() {
-		public void handleChange(ACESnippetEvent event) {
+	private final ACEViewListener<ACEViewEvent<SnippetEventType>> snippetListener = new ACEViewListener<ACEViewEvent<SnippetEventType>>() {
+		public void handleChange(ACEViewEvent<SnippetEventType> event) {
 			if (isSynchronizing() && event.isType(SnippetEventType.WHY_SNIPPET_CHANGED)) {
 				ACESnippet whySnippet = ACETextManager.getWhySnippet();
 				if (whySnippet != null) {
-					getView().setHeaderText(whySnippet.toString());
+					setHeaderText(whySnippet.toString());
 					calculateAndShowExplanations(whySnippet);
 				}
 			}
@@ -130,7 +130,7 @@ public class ACEExplanationViewComponent extends AbstractOWLViewComponent {
 			return;
 		}
 
-		final AxiomExplainer axex = new AxiomExplainer(getOWLModelManager(), axiom);
+		final AxiomBlackboxExplainer axex = new AxiomBlackboxExplainer(getOWLModelManager(), axiom);
 		model.setRoot(new DefaultMutableTreeNode("<html><i>Working ...</i></html>"));
 
 		new SwingWorker<Set<Set<ACESnippet>>, Object>() {

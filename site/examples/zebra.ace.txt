@@ -1,0 +1,287 @@
+/**
+
+The ACE-version of the Zebra puzzle.
+The original natural English specification goes as follows:
+
+==
+There are five houses.
+Each house has its own unique color.
+All house owners are of different nationalities.
+They all have different pets.
+They all drink different drinks.
+They all smoke different cigarettes.
+
+The English man lives in the red house.
+The Swede has a dog.
+The Dane drinks tea.
+The green house is on the left side of the white house.
+They drink coffee in the green house.
+The man who smokes Pall Mall has birds.
+In the yellow house they smoke Dunhill.
+In the middle house they drink milk.
+The Norwegian lives in the first house.
+The man who smokes Blend lives in the house next to the house with cats.
+In the house next to the house where they have a horse, they smoke Dunhill.
+The man who smokes Blue Master drinks beer.
+The German smokes Prince.
+The Norwegian lives next to the blue house.
+They drink water in the house next to the house where they smoke Blend.
+
+... who owns the Zebra?
+==
+
+@author Kaarel Kaljurand
+@ace_version 6.5
+@date 2010-10-09
+@entails "German has Zebra." under OWL
+@tags puzzle
+
+Notes:
+
+* Tested with Hermit and Pellet.
+* Probably contains sentences that are redundant.
+
+*/
+
+# The components of the puzzle
+
+Every man is Englishman or is Norwegian or is German or is Dane or is Swede.
+Englishman is not Norwegian.
+Englishman is not German.
+Englishman is not Dane.
+Englishman is not Swede.
+Norwegian is not German.
+Norwegian is not Dane.
+Norwegian is not Swede.
+German is not Dane.
+German is not Swede.
+Dane is not Swede.
+Englishman is a man.
+Norwegian is a man.
+German is a man.
+Dane is a man.
+Swede is a man.
+
+Every smoke is Pall_Mall or is Blue_Master or is Prince or is Blend or is Dunhill.
+Pall_Mall is not Blue_Master.
+Pall_Mall is not Prince.
+Pall_Mall is not Blend.
+Pall_Mall is not Dunhill.
+Blue_Master is not Prince.
+Blue_Master is not Blend.
+Blue_Master is not Dunhill.
+Prince is not Blend.
+Prince is not Dunhill.
+Blend is not Dunhill.
+Pall_Mall is a smoke.
+Blue_Master is a smoke.
+Prince is a smoke.
+Blend is a smoke.
+Dunhill is a smoke.
+
+Every color is Red or is White or is Green or is Yellow or is Blue.
+Red is not White.
+Red is not Green.
+Red is not Yellow.
+Red is not Blue.
+White is not Green.
+White is not Yellow.
+White is not Blue.
+Green is not Yellow.
+Green is not Blue.
+Yellow is not Blue.
+Red is a color.
+White is a color.
+Green is a color.
+Yellow is a color.
+Blue is a color.
+
+Every drink is Beer or is Milk or is Water or is Tea or is Coffee.
+Beer is not Milk.
+Beer is not Water.
+Beer is not Tea.
+Beer is not Coffee.
+Milk is not Water.
+Milk is not Tea.
+Milk is not Coffee.
+Water is not Tea.
+Water is not Coffee.
+Tea is not Coffee.
+Beer is a drink.
+Milk is a drink.
+Water is a drink.
+Tea is a drink.
+Coffee is a drink.
+
+Every pet is Bird or is Dog or is Cat or is Horse or is Zebra.
+Bird is not Dog.
+Bird is not Cat.
+Bird is not Horse.
+Bird is not Zebra.
+Dog is not Cat.
+Dog is not Horse.
+Dog is not Zebra.
+Cat is not Horse.
+Cat is not Zebra.
+Horse is not Zebra.
+Bird is a pet.
+Dog is a pet.
+Cat is a pet.
+Horse is a pet.
+Zebra is a pet.
+
+
+No man is a smoke.
+No man is a color.
+No man is a drink.
+No man is a pet.
+No smoke is a color.
+No smoke is a drink.
+No smoke is a pet.
+No color is a drink.
+No color is a pet.
+No drink is a pet.
+
+
+#
+# The has-relation is a bijection from man to color/pet/drink/smoke
+#
+
+Every man has exactly 1 color.
+Every color is had by exactly 1 man.
+
+Every man has exactly 1 pet.
+Every pet is had by exactly 1 man.
+
+Every man has exactly 1 drink.
+Every drink is had by exactly 1 man.
+
+Every man has exactly 1 smoke.
+Every smoke is had by exactly 1 man.
+
+#
+# Describing three types of ordered items
+#
+# 1 Those that can follow or be followed by at most one item
+# 1.1 Those that can only be followed by (first item)
+# 1.2 Those that can only follow (last item)
+#
+Every ordered-item follows at most 1 ordered-item and is followed by at most 1 ordered-item.
+
+Every first-item is an ordered-item that follows no ordered-item and is followed by an ordered-item.
+
+Every last-item is an ordered-item that follows an ordered-item and is followed by no ordered-item.
+
+# Link 'man' to 'ordered-item'
+Every man is an ordered-item.
+Every ordered-item is a man.
+
+Every first-man is a man that is a first-item.
+
+Every last-man is a man that is a last-item.
+
+Every middle-man is a man.
+Every middle-man follows a man that follows a first-man.
+# Not needed because logically redundant:
+#Every middle-man is followed by a man that is followed by a last-man.
+
+
+# The green house is on the left side of the white house.
+# In the middle house they drink milk.
+# The Norwegian lives in the first house.
+# The man who smokes Blend lives in the house next to the house with cats.
+# In the house next to the house where they have a horse, they smoke Dunhill.
+# The Norwegian lives next to the blue house.
+# They drink water in the house next to the house where they smoke Blend.
+
+A man that has White follows a man that has Green.
+/*
+The puzzle can be made a bit harder (but the answer remains the same)
+by replacing the above sentence with this:
+
+There is a man X1 that has White.
+There is a man X2 that has Green.
+X1 follows X2 or is followed by X2.
+
+This doesn't seem to increase the reasoner (Hermit) runtime though.
+*/
+
+A middle-man has Milk.
+
+Norwegian is a first-man.
+
+There is a man X1 that has Blend.
+There is a man X2 that has Cat.
+X1 follows X2 or X2 follows X1.
+
+There is a man X1 that has Dunhill.
+There is a man X2 that has Horse.
+X1 follows X2 or X2 follows X1.
+
+There is a man X2 that has Blue.
+Norwegian follows X2 or is followed by X2.
+
+There is a man X1 that has Water.
+There is a man X2 that has Blend.
+X1 follows X2 or X2 follows X1.
+
+
+# The English man lives in the red house.
+# The Swede has a dog.
+# The Dane drinks tea.
+# They drink coffee in the green house.
+# The man who smokes Pall Mall has birds.
+# In the yellow house they smoke Dunhill.
+# The man who smokes Blue Master drinks beer.
+# The German smokes Prince.
+
+Englishman has Red.
+
+Swede has Dog.
+
+Dane has Tea.
+
+There is a man that has Coffee and that has Green.
+
+There is a man that has Pall_Mall and that has Bird.
+
+There is a man that has Dunhill and that has Yellow.
+
+There is a man that has Blue_Master and that has Beer.
+
+German has Prince.
+
+
+/* Questions about the text */
+
+Who has Zebra?
+
+
+What does a man have?
+
+What does German have?
+
+What does Dane have?
+
+What does Englishman have?
+
+What does Norwegian have?
+
+What does Swede have?
+
+
+What does a man follow?
+
+What does German follow?
+
+What does Dane follow?
+
+What does Englishman follow?
+
+What does Swede follow?
+
+What does Norwegian follow?
+
+
+# This takes too long:
+#Who does not have Horse?

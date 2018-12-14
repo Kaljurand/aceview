@@ -6,9 +6,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 
 public class ACESnippetTable extends ACETable {
 
@@ -24,8 +24,6 @@ public class ACESnippetTable extends ACETable {
 	 * <p>We override the table tooltip to be the ACE snippet rendering,
 	 * if the mouse event happened on a snippet column.</p>
 	 * 
-	 * TODO: Show the tooltip only if the text does not fit into the cell.
-	 * How can I detect that?
 	 */
 	@Override
 	public String getToolTipText(MouseEvent event) {
@@ -36,8 +34,15 @@ public class ACESnippetTable extends ACETable {
 			Object o = getValueAt(row, col);
 			if (o != null && o instanceof ACESnippet) {
 				ACESnippet snippet = (ACESnippet) o;
-				SnippetRenderer snippetRenderer = new SnippetRenderer(snippet);
-				return "<html><body><pre style='font-family: sans-serif; padding: 2px 2px 2px 2px'>" + snippetRenderer.getRendering() + "</pre></body></html>";
+				String tooltip = "";
+				if (snippet.isEmpty()) {
+					tooltip = snippet.toString();
+				}
+				else {
+					ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(snippet.getSentences());
+					tooltip = snippetRenderer.getRendering();
+				}
+				return "<html><body><pre style='font-family: monospace; padding: 2px 2px 2px 2px'>" + tooltip + "</pre></body></html>";
 			}
 		}
 		return "";

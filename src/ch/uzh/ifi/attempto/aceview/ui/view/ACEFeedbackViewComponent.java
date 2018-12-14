@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -30,15 +30,16 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
-import org.semanticweb.owl.model.OWLAnnotation;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.model.AnnotationsTableModel;
@@ -51,7 +52,6 @@ import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.FeedbackPane;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
 import ch.uzh.ifi.attempto.aceview.ui.util.TableColumnHelper;
-import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 import ch.uzh.ifi.attempto.ape.Message;
 
 
@@ -170,7 +170,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 				resetUI();
 			}
 			else {
-				getView().setHeaderText(snippet.toString());
+				setHeaderText(snippet.toString());
 
 				updateMessages(snippet);
 
@@ -189,7 +189,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 	private static String renderSnippetAxioms(OWLModelManager mm, ACESnippet snippet) {
 		StringBuilder html = new StringBuilder();
 		if (snippet.isQuestion()) {
-			OWLDescription dlquery = snippet.getDLQuery();
+			OWLClassExpression dlquery = snippet.getDLQuery();
 			if (dlquery != null) {
 				html.append("<pre>");
 				html.append(mm.getRendering(dlquery));
@@ -222,7 +222,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 	 */
 	private void resetUI() {
 		// Header
-		getView().setHeaderText("(No snippet selected.)");
+		setHeaderText("(No snippet selected.)");
 
 		// Messages table
 		panelMessages.setTitle(PANEL_MESSAGES_TITLE);
@@ -275,7 +275,7 @@ public class ACEFeedbackViewComponent extends AbstractACESnippetSelectionViewCom
 			panelParaphrase.setTitle(PANEL_PARAPHRASES_TITLE + ": 1");
 			List<String> snippetRenderings = Lists.newArrayList();
 			for (List<ACESentence> paragraph : paraphrase) {
-				SnippetRenderer snippetRenderer = new SnippetRenderer(paragraph);
+				ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(paragraph);
 				snippetRenderings.add(snippetRenderer.getRendering());
 			}
 			textareaParaphrase.setText(paragraphJoiner.join(snippetRenderings));

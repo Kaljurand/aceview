@@ -1,30 +1,38 @@
 package ch.uzh.ifi.attempto.aceview.util;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.coode.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser;
-import org.protege.editor.owl.model.OWLModelManager;
-import org.protege.editor.owl.model.description.OWLExpressionParserException;
-import org.protege.editor.owl.model.parser.ParserUtil;
-import org.protege.editor.owl.model.parser.ProtegeOWLEntityChecker;
-import org.semanticweb.owl.expression.ParserException;
-import org.semanticweb.owl.model.OWLAnnotation;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLAxiomAnnotationAxiom;
-import org.semanticweb.owl.model.OWLAxiomChange;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLOntology;
-import org.semanticweb.owl.model.OWLOntologyChangeException;
-import org.semanticweb.owl.model.OWLOntologyCreationException;
-import org.semanticweb.owl.model.OWLOntologyManager;
+import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
+import org.semanticweb.owlapi.expression.ParserException;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAnnotationValue;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLAxiomChange;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyChangeException;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.SWRLRule;
 
 import com.google.common.collect.Sets;
 
+/**
+ * 
+ * This class should not import any Protege classes.
+ * 
+ * @author Kaarel Kaljurand
+ */
 public final class OntologyUtils {
 
 	private OntologyUtils() {}
@@ -68,18 +76,18 @@ public final class OntologyUtils {
 	}
 
 
-	public static Set<URI> getAnnotationURIs(OWLOntology ontology, OWLEntity entity) {
-		Set<URI> annotationURIs = Sets.newHashSet();
+
+	/**
+	 * @param ontology
+	 * @param entity
+	 * @return Set of annotation IRIs for the given entity in the given ontology
+	 */
+	public static Set<IRI> getAnnotationIRIs(OWLOntology ontology, OWLEntity entity) {
+		Set<IRI> annotationIRIs = Sets.newHashSet();
 		for (OWLAnnotation annotation : entity.getAnnotations(ontology)) {
-			annotationURIs.add(annotation.getAnnotationURI());
+			annotationIRIs.add(annotation.getProperty().getIRI());
 		}
-		return annotationURIs;
-	}
-
-
-	public static OWLAxiomAnnotationAxiom createAxiomAnnotation(OWLDataFactory df, OWLAxiom axiom, URI uri, String str) {
-		OWLAnnotation ann = df.getOWLConstantAnnotation(uri, df.getOWLUntypedConstant(str));
-		return df.getOWLAxiomAnnotationAxiom(axiom, ann);
+		return annotationIRIs;
 	}
 
 
@@ -87,31 +95,86 @@ public final class OntologyUtils {
 	 * <p>Parses the given string with the Manchester OWL Syntax parser and
 	 * returns the corresponding OWL logical axiom or throws an exception if
 	 * parsing failed. The string is assumed to correspond to an OWL axiom,
-	 * i.e. we use only the following methods to obtain the result.</p>
+	 * or class expression (if isClassExpression is set to true).</p>
+	 * 
+	 * <p>TODO: would be nice to call parseAxiom() to be able to
+	 * parse all types of axioms, but this doesn't seem to work.</p>
+	 * 
+	 * <p>Note: this method depends only on OWL-API classes.</p>
+	 * 
+	 * @param df
+	 * @param ec
+	 * @param base
+	 * @param str String that possibly represents an OWL axiom in Manchester OWL Syntax
+	 * @param isClassExpression Parse the string as if it was a class expression rather than an axiom
+	 * @return OWL logical axiom that corresponds to the given string.
+	 * @throws ParserException 
+	 */
+	public static OWLLogicalAxiom parseWithMosParser(OWLDataFactory df, OWLEntityChecker ec, String base, String str, boolean isClassExpression) throws ParserException {
+		ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(df, str);
+		// TODO: what does this do?
+		parser.setOWLEntityChecker(ec);
+		// TODO: what does this do?
+		parser.setBase(base);
+
+		if (isClassExpression) {
+			OWLClassExpression clExpr = parser.parseClassExpression();
+			return df.getOWLSubClassOfAxiom(clExpr, df.getOWLThing());
+		}
+
+		// TODO: BUG: parseAxiom() doesn't seem to work
+		OWLAxiom axiom = parser.parseClassAxiom();
+		if (axiom instanceof OWLLogicalAxiom) {
+			return (OWLLogicalAxiom) axiom;
+		}
+		return null;
+	}
+
+
+	/**
+	 * <p>Creates an annotation assertion axiom, e.g.
+	 * (http://morph#CN_pl, http://www.net/man, "men").</p>
+	 * 
+	 * @param df OWLDataFactory
+	 * @param propertyIRI IRI of the annotation property (e.g. morph#CN_pl)
+	 * @param subjectIRI (e.g. IRI of the entity, e.g. http://www.net/man)
+	 * @param valueAsString Annotation value as string (e.g. men)
+	 * @return OWLAnnotationAssertionAxiom
+	 */
+	public static OWLAnnotationAssertionAxiom createIRIAnnotationAxiom(OWLDataFactory df, IRI propertyIRI, IRI subjectIRI, String valueAsString) {
+
+		// e.g. morph#CN_pl
+		OWLAnnotationProperty property = df.getOWLAnnotationProperty(propertyIRI);
+
+		// e.g. "men"
+		// TODO: We could also set the lang-attribute to "en", but
+		// I'm not sure it's that useful.
+		OWLAnnotationValue value = df.getOWLLiteral(valueAsString, "");
+
+		return df.getOWLAnnotationAssertionAxiom(property, subjectIRI, value);
+	}
+
+
+	/**
+	 * <p>List of axiom types that the OWL verbalizer currently
+	 * cannot handle, namely:</p>
 	 * 
 	 * <ul>
-	 * <li>parseClassAxiom()</li>
-	 * <li>TODO: parsePropertyChainSubPropertyAxiom()</li>
-	 * <li>TODO: parseObjectPropertyAxiom()</li>
+	 * <li><code>OWLDataPropertyAxiom</code>: all types of data property
+	 * axioms, not including <code>OWLDataPropertyAssertionAxiom</code></li>
+	 * <li><code>SWRLRule</code>: SWRL rules</li>
 	 * </ul>
 	 * 
-	 * @param str String that possibly represents an OWL axiom in Manchester OWL Syntax
-	 * @return OWL logical axiom that corresponds to the given string.
-	 * @throws OWLExpressionParserException 
+	 * @param axiom OWL logical axiom
+	 * @return True is axiom cannot be verbalized
 	 */
-	public static OWLLogicalAxiom parseWithManchesterSyntaxParser(OWLModelManager mngr, URI uri, String str) throws OWLExpressionParserException {
-		ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(mngr.getOWLDataFactory(), str);
-		parser.setOWLEntityChecker(new ProtegeOWLEntityChecker(mngr));
-		parser.setBase(uri.toString());
-		try {
-			OWLAxiom axiom = parser.parseClassAxiom();
-			if (axiom instanceof OWLLogicalAxiom) {
-				return (OWLLogicalAxiom) axiom;
-			}
-			return null;
+	public static boolean verbalizationNotSupported(OWLLogicalAxiom axiom) {
+		if (axiom instanceof SWRLRule) {
+			return true;
 		}
-		catch (ParserException e) {
-			throw ParserUtil.convertException(e);
+		else if (axiom instanceof OWLDataPropertyAxiom) {
+			return true;
 		}
+		return false;
 	}
 }

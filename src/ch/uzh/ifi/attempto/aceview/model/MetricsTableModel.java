@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -20,16 +20,20 @@ import javax.swing.table.AbstractTableModel;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 
 public class MetricsTableModel extends AbstractTableModel {
 
 	private ACEText acetext = ACETextManager.getActiveACEText();
+	private TokenMapper tokenMapper = ACETextManager.getActiveACELexicon();
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
 			acetext = ACETextManager.getActiveACEText();
+			tokenMapper = ACETextManager.getActiveACELexicon();
 			fireTableDataChanged();
 		}
 	};
@@ -42,15 +46,21 @@ public class MetricsTableModel extends AbstractTableModel {
 		NON_OWLSWRL_SNIPPET_COUNT("Non OWL/SWRL snippets"),
 		UNVERBALIZED_AXIOM_COUNT("Unverbalized axioms"),
 		NOTHING_BUT_COUNT("<html>Snippets that contain <i>nothing but</i></html>"),
-		CONTENT_WORD_COUNT("Content words (CN + TV + PN)"),
-		CN_COUNT("Common nouns (CN)"),
-		TV_COUNT("Transitive verbs (TV)"),
-		PN_COUNT("Proper names (PN)"),
-		UNUSED_CONTENT_WORD_COUNT("Unused content words"),
+		CONTENT_WORD_COUNT("!Content words (CN + TV + PN)"),
+		CN_COUNT("!Common nouns (CN)"),
+		TV_COUNT("!Transitive verbs (TV)"),
+		PN_COUNT("!Proper names (PN)"),
+		UNUSED_CONTENT_WORD_COUNT("!Unused content words"),
 		WORDFORM_COUNT("Wordforms"),
+		WORDFORM_PN_SG_COUNT("<html><code>PN_sg</code></html>"),
+		WORDFORM_CN_SG_COUNT("<html><code>CN_sg</code></html>"),
+		WORDFORM_CN_PL_COUNT("<html><code>CN_pl</code></html>"),
+		WORDFORM_TV_SG_COUNT("<html><code>TV_sg</code></html>"),
+		WORDFORM_TV_PL_COUNT("<html><code>TV_pl</code></html>"),
+		WORDFORM_TV_VBG_COUNT("<html><code>TV_vbg</code></html>"),
 		AMBIGUOUS_WORDFORM_COUNT("Ambiguous wordforms"),
-		WORDCLASS_AMBIGUOUS_WORDFORM_COUNT("Ambiguous wordforms in the same wordclass"),
-		PARTIAL_ENTRY_COUNT("Incomplete lexicon entries");
+		WORDCLASS_AMBIGUOUS_WORDFORM_COUNT("!Ambiguous wordforms in the same wordclass"),
+		PARTIAL_ENTRY_COUNT("!Incomplete lexicon entries");
 
 		private final String name;
 
@@ -62,7 +72,7 @@ public class MetricsTableModel extends AbstractTableModel {
 			return name;
 		}
 
-		public static int getCount(ACEText acetext, int row) {
+		public static int getCount(ACEText acetext, TokenMapper tokenMapper, int row) {
 			switch (values()[row]) {
 			case SNIPPET_COUNT:
 				return acetext.size();
@@ -71,13 +81,13 @@ public class MetricsTableModel extends AbstractTableModel {
 			case QUESTION_COUNT:
 				return acetext.getQuestions().size();
 			case CONTENT_WORD_COUNT:
-				return acetext.getACELexicon().size();
+				return tokenMapper.size();
 			case CN_COUNT:
-				return acetext.getACELexicon().getCNCount();
+				return tokenMapper.getCNCount();
 			case TV_COUNT:
-				return acetext.getACELexicon().getTVCount();
+				return tokenMapper.getTVCount();
 			case PN_COUNT:
-				return acetext.getACELexicon().getPNCount();
+				return tokenMapper.getPNCount();
 			case NOTHING_BUT_COUNT:
 				return acetext.getNothingbutCount();
 			case SWRL_SNIPPET_COUNT:
@@ -87,15 +97,27 @@ public class MetricsTableModel extends AbstractTableModel {
 			case UNVERBALIZED_AXIOM_COUNT:
 				return acetext.getUnverbalizedCount();
 			case UNUSED_CONTENT_WORD_COUNT:
-				return (acetext.getACELexicon().size() - acetext.getReferencedEntities().size());
+				return (tokenMapper.size() - acetext.getReferencedEntities().size());
 			case WORDFORM_COUNT:
-				return acetext.getACELexicon().getWordformCount();
+				return tokenMapper.getWordformCount();
+			case WORDFORM_PN_SG_COUNT:
+				return tokenMapper.getWordformPnSgCount();
+			case WORDFORM_CN_SG_COUNT:
+				return tokenMapper.getWordformCnSgCount();
+			case WORDFORM_CN_PL_COUNT:
+				return tokenMapper.getWordformCnPlCount();
+			case WORDFORM_TV_SG_COUNT:
+				return tokenMapper.getWordformTvSgCount();
+			case WORDFORM_TV_PL_COUNT:
+				return tokenMapper.getWordformTvPlCount();
+			case WORDFORM_TV_VBG_COUNT:
+				return tokenMapper.getWordformTvVbgCount();
 			case AMBIGUOUS_WORDFORM_COUNT:
-				return acetext.getACELexicon().getAmbiguousWordformCount();
+				return tokenMapper.getAmbiguousWordformCount();
 			case WORDCLASS_AMBIGUOUS_WORDFORM_COUNT:
-				return acetext.getACELexicon().getWordclassAmbiguousWordformCount();
+				return tokenMapper.getWordclassAmbiguousWordformCount();
 			case PARTIAL_ENTRY_COUNT:
-				return acetext.getACELexicon().getPartialEntryCount();
+				return tokenMapper.getPartialEntryCount();
 			default:
 				throw new RuntimeException("Programmer error.");
 			}
@@ -165,7 +187,7 @@ public class MetricsTableModel extends AbstractTableModel {
 			case METRIC:
 				return Row.values()[row].getName();
 			case COUNT:
-				return Row.getCount(acetext, row);
+				return Row.getCount(acetext, tokenMapper, row);
 			default:
 				throw new RuntimeException("Programmer error.");
 			}

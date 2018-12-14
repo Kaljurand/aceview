@@ -1,0 +1,63 @@
+/**
+
+Based on "[p4-feedback] Bug with DL reasoners", see:
+
+https://mailman.stanford.edu/pipermail/p4-feedback/2010-October/003336.html
+
+@author Kaarel Kaljurand
+@date 2010-10-13
+
+*/
+
+#a) Create the following class hierarchy:
+# ParentClass
+#     ClassA
+#     ClassB
+Every man is a person.
+
+Every woman is a person.
+
+# b) Define an object property: 'hasRelation'
+
+# c) Define a restriction for ClassA: 'hasRelation some ClassB'
+Every man likes a woman.
+
+#d) Create two individuals,
+#one for ClassA ('individualClassA') and one for ClassB ('individualClassB')
+
+John is a man.
+
+Mary is a woman.
+
+#e) Define a property assertion for
+#individualClassA: 'hasRelation individualClassB'
+John likes Mary.
+
+#f) Similar for individualClassB: 'hasRelation individualClassA'
+Mary likes John.
+
+/*
+Now, using the DL Query (or creating defined classes), try the
+following DL assertions:
+*/
+
+#1) ClassA and (hasRelation some ClassB) -- works fine
+Which man likes a woman?
+
+#2) ClassB and (hasRelation some ClassA) -- works fine
+Which woman likes a man?
+
+#3) ClassA and (hasRelation some ParentClass) -- works fine
+Which man likes a person?
+
+#4) ClassB and (hasRelation some ParentClass) -- works fine
+Which woman likes a person?
+
+#5) ParentClass and (hasRelation some ClassA) -- works fine
+Which person likes a man?
+
+#6) ParentClass and (hasRelation some ClassB) -- cannot find individualClassA
+Which person likes a woman?
+
+#7) ParentClass and (hasRelation some ParentClass) -- cannot find individualClassA
+Which person likes a person?

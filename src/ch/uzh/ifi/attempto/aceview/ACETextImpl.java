@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -17,19 +17,14 @@
 package ch.uzh.ifi.attempto.aceview;
 
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -39,9 +34,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
-import ch.uzh.ifi.attempto.aceview.lexicon.OwlApiACELexicon;
-import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
@@ -53,10 +45,16 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	// but the important thing is that we want to access the snippets by index.
 	private final List<ACESnippet> snippetList = Lists.newArrayList();
 
+	// We used to keep the referenced entities sorted, but this doesn't make sense, e.g.
+	// it creates a dependency on the entity rendering which can change anytime.
 	// Maps every OWL entity to a set of ACE snippets that contain a word that corresponds to the entity. 
-	private final SortedMap<OWLEntity, Set<ACESnippet>> entityToSnippets = new TreeMap<OWLEntity, Set<ACESnippet>>(new EntityComparator());
+	//private final SortedMap<OWLEntity, Set<ACESnippet>> entityToSnippets = new TreeMap<OWLEntity, Set<ACESnippet>>(new EntityComparator());
+	//private final SortedMap<OWLEntity, Set<ACESnippet>> entityToSnippets = new TreeMap<OWLEntity, Set<ACESnippet>>();
+	// May it's better to do the sorting in the caller, i.e. define here:
+	private final Map<OWLEntity, Set<ACESnippet>> entityToSnippets = new HashMap<OWLEntity, Set<ACESnippet>>();
 
 	// Maps every OWL axiom to a set of ACE snippets that correspond to the axiom.
+	// TODO: clarify the meaning of this
 	private final Multimap<OWLLogicalAxiom, ACESnippet> axiomToSnippets = HashMultimap.create();
 
 	// Maps every ACE sentence to a set of snippets that contain the sentence.
@@ -67,9 +65,6 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 	// List of questions in this ACE text.
 	private final List<ACESnippet> questions = Lists.newArrayList();
-
-	// The ACE lexicon that decides the surface forms of the snippets in this text.
-	private ACELexicon<OWLEntity> lexicon = null;
 
 	// Number of ACE snippets that reference one or more SWRL rules
 	private int ruleCount = 0;
@@ -84,7 +79,6 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 
 	public ACETextImpl() {
-		lexicon = new OwlApiACELexicon();
 	}
 
 
@@ -137,7 +131,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 				ruleCount++;
 			}
 			for (OWLLogicalAxiom axiom : snippetAxioms) {
-				for (OWLEntity entity : axiom.getReferencedEntities()) {
+				for (OWLEntity entity : axiom.getSignature()) {
 					if (Showing.isShow(entity)) {
 						Set<ACESnippet> snippets = entityToSnippets.get(entity);
 						if (snippets == null) {
@@ -219,7 +213,7 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 				ruleCount--;
 			}
 			for (OWLLogicalAxiom axiom : snippetAxioms) {
-				for (OWLEntity entity : axiom.getReferencedEntities()) {
+				for (OWLEntity entity : axiom.getSignature()) {
 					if (Showing.isShow(entity)) {
 						Set<ACESnippet> snippets = entityToSnippets.get(entity);
 						if (snippets == null) {
@@ -290,12 +284,16 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 
 	public boolean containsAxiom(OWLLogicalAxiom ax) {
-		return axiomToSnippets.containsKey(ax);
+		return axiomToSnippets.containsKey(ax.getAxiomWithoutAnnotations());
 	}
 
 
+	/**
+	 * <p>Returns a set of snippets that reference the given axiom.
+	 * Note that we make a copy to avoid ConcurrentModification.</p>
+	 */
 	public Set<ACESnippet> getAxiomSnippets(OWLLogicalAxiom axiom) {
-		return (Set<ACESnippet>) axiomToSnippets.get(axiom);
+		return Sets.newHashSet(axiomToSnippets.get((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations()));
 	}
 
 
@@ -311,11 +309,6 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	}
 
 
-	public Set<Entry<OWLEntity, Set<ACESnippet>>> getEntitySnippetSetPairs() {
-		return entityToSnippets.entrySet();
-	}
-
-
 	public int getRuleCount() {
 		return ruleCount;
 	}
@@ -328,51 +321,6 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 	public int getNothingbutCount() {
 		return nothingbutCount;
-	}
-
-
-	public String getIndexBody() {
-		String html = "";
-		for (Map.Entry<OWLEntity, Set<ACESnippet>> entry : entityToSnippets.entrySet()) {
-			OWLEntity word = entry.getKey();
-			Set<ACESnippet> snippets = entry.getValue();
-			html += "<p><strong><a name='" + word + "'>" + word + "</a></strong> (" + snippets.size() + ")</p>\n";
-			html += snippetsToHtml(snippets, lexicon);
-		}
-		return html;
-	}
-
-
-	public String getIndexEntry(OWLEntity entity) {
-		Set<ACESnippet> snippets = entityToSnippets.get(entity);
-		if (snippets == null) {
-			return null;
-		}
-		SortedSet<ACESnippet> snippetsSorted = new TreeSet<ACESnippet>(new SnippetComparator());
-		snippetsSorted.addAll(snippets);
-		return snippetsToHtml(snippetsSorted, lexicon);
-	}
-
-
-	/**
-	 * <p>Generates an HTML list on the basis of a set of snippets.</p>
-	 * 
-	 * @param snippets Set of ACE snippets
-	 * @return <code>String</code> representing an HTML list
-	 */
-	private static String snippetsToHtml(Set<ACESnippet> snippets, ACELexicon<OWLEntity> lexicon) {
-		if (snippets.isEmpty()) {
-			return "<em>No snippets.</em>";
-		}
-		StringBuilder sb = new StringBuilder();
-		for (ACESnippet snippet : snippets) {
-			sb.append("<p>");
-			sb.append(snippet.toHtmlString(lexicon));
-			sb.append(' ');
-			sb.append(snippet.getTags());
-			sb.append("</p>");
-		}
-		return sb.toString();
 	}
 
 
@@ -439,13 +387,14 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 
 
 	public Set<OWLLogicalAxiom> removeAxiom(OWLLogicalAxiom axiom) {
-		Set<ACESnippet> snippets = getAxiomSnippets(axiom);
+		OWLLogicalAxiom ax = (OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations();
+		Set<ACESnippet> snippets = getAxiomSnippets(ax);
 		if (snippets.isEmpty()) {
 			return Collections.<OWLLogicalAxiom>emptySet();
 		}
 		logger.info("We remove snippets: " + snippets);
 		Set<OWLLogicalAxiom> tanglingAxioms = removeAll(snippets);
-		tanglingAxioms.remove(axiom);
+		tanglingAxioms.remove(ax);
 		return tanglingAxioms;
 	}
 
@@ -455,16 +404,14 @@ public class ACETextImpl implements ACEText<OWLEntity, OWLLogicalAxiom> {
 	}
 
 
-	public ACELexicon<OWLEntity> getACELexicon() {
-		return lexicon;
-	}
-
-
-	class SnippetComparator implements Comparator<ACESnippet> {
-		public int compare(ACESnippet s1, ACESnippet s2) {
-			return s1.toString().compareToIgnoreCase(s2.toString());
+	public Set<ACESnippet> getSnippets(OWLEntity entity) {
+		Set<ACESnippet> snippets = entityToSnippets.get(entity);
+		if (snippets == null) {
+			return Sets.newHashSet();
 		}
+		return snippets;
 	}
+
 
 	public int getSnippetCount(OWLEntity entity) {
 		Set<ACESnippet> snippets = entityToSnippets.get(entity);

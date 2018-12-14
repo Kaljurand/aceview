@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -19,18 +19,21 @@ package ch.uzh.ifi.attempto.aceview;
 import java.awt.HeadlessException;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owl.inference.OWLReasoner;
-import org.semanticweb.owl.inference.OWLReasonerAdapter;
-import org.semanticweb.owl.inference.OWLReasonerException;
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.reasoner.IndividualNodeSetPolicy;
+import org.semanticweb.owlapi.reasoner.Node;
+import org.semanticweb.owlapi.reasoner.NodeSet;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import com.google.common.collect.Sets;
 
-import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
+import ch.uzh.ifi.attempto.aceview.util.NodeComparator;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
 
@@ -54,36 +57,42 @@ import ch.uzh.ifi.attempto.aceview.util.Showing;
  * 
  * <pre>
  * Question: What is a country? (i.e. class expression "country")
- * Individuals: Estonia, Latvia, Lithuania
+ * Individuals: Estonia = Estland, Latvia, Lithuania
  * Sub classes: baltic-state, EU-country, (owl:Nothing)
  * Sup classes: area, territory, (owl:Thing)
  * </pre>
  * 
- * TODO: We should return a structured set of individuals, where known sameAs individuals
- * are grouped together
- * 
- * TODO: We could also return a structured result where equivalent classes are grouped together.
- * Set<Set<OWLClass>> classes = reasoner.getDescendantClasses(desc);
- * 
  * @author Kaarel Kaljurand
  */
 public class ACEAnswer {
-	private Set<OWLIndividual> individuals = Sets.newTreeSet(new EntityComparator());
-	private Set<OWLClass> subClasses = Sets.newTreeSet(new EntityComparator());
-	private Set<OWLClass> supClasses = Sets.newTreeSet(new EntityComparator());
-	private boolean isSatisfiable = true;
 
+	private static final Logger logger = Logger.getLogger(ACEAnswer.class);
+
+	// TODO: make sure that individuals are returned so that sameAs-individuals
+	// are in the same node
+
+	// Set of all the entities that occur as answers
+	private Set<OWLEntity> entities = Sets.newHashSet();
+	private Set<Node<OWLClass>> subClasses = Sets.newTreeSet(new NodeComparator());
+	private Set<Node<OWLClass>> superClasses = Sets.newTreeSet(new NodeComparator());
+	private Set<Node<OWLNamedIndividual>> individuals = Sets.newTreeSet(new NodeComparator());
+
+	private boolean isSatisfiable = true;
 	private boolean isIndividualAnswersComplete = false;
 	private boolean isSubClassesAnswersComplete = false;
 
+	private IndividualNodeSetPolicy individualNodeSetPolicy = null;
+
 	public ACEAnswer(OWLModelManager mngr, ACESnippet snippet) {
-		OWLDescription dlquery = snippet.getDLQuery();
+		OWLClassExpression dlquery = snippet.getDLQuery();
 		if (dlquery == null) {
 			setAnswersToNull();
 		}
 		else {
 			try {
 				OWLReasoner reasoner = mngr.getReasoner();
+
+				individualNodeSetPolicy = reasoner.getIndividualNodeSetPolicy();
 
 				if (isSatisfiable(reasoner, dlquery)) {
 					setAnswerLists(mngr, reasoner, dlquery);
@@ -92,24 +101,27 @@ public class ACEAnswer {
 					isSatisfiable = false;
 					setAnswersToNull();
 				}
+				logger.info("new ACEAnswer:\n" + toString());
 			} catch (HeadlessException e) {
-				e.printStackTrace();
-			} catch (OWLReasonerException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public Set<OWLIndividual> getIndividuals() {
+	public boolean containsEntity(OWLEntity entity) {
+		return entities.contains(entity);
+	}
+
+	public Set<Node<OWLNamedIndividual>> getIndividuals() {
 		return individuals;
 	}
 
-	public Set<OWLClass> getSubClasses() {
+	public Set<Node<OWLClass>> getSubClasses() {
 		return subClasses;
 	}
 
-	public Set<OWLClass> getSuperClasses() {
-		return supClasses;
+	public Set<Node<OWLClass>> getSuperClasses() {
+		return superClasses;
 	}
 
 	public int getIndividualsCount() {
@@ -127,10 +139,10 @@ public class ACEAnswer {
 	}
 
 	public int getSuperClassesCount() {
-		if (supClasses == null) {
+		if (superClasses == null) {
 			return -1;
 		}
-		return supClasses.size();
+		return superClasses.size();
 	}
 
 	public boolean isSatisfiable() {
@@ -153,48 +165,76 @@ public class ACEAnswer {
 		isSubClassesAnswersComplete = b;
 	}
 
+	public IndividualNodeSetPolicy getIndividualNodeSetPolicy() {
+		return individualNodeSetPolicy;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("==== ANSWER ====\n");
+		sb.append("Satisfiable: " + isSatisfiable + "\n");
+
+		sb.append("Individuals complete: " + isIndividualAnswersComplete + "\n");
+		sb.append("Subclasses complete: " + isSubClassesAnswersComplete + "\n");
+		sb.append("Superclasses complete: " + "???\n");
+
+		sb.append("Individuals: " + getIndividualsCount() + ": " + getIndividuals() + "\n");
+		sb.append("Subclasses: " + getSubClassesCount() + ": " + getSubClasses() + "\n");
+		sb.append("Superclasses: " + getSuperClassesCount() + ": " + getSuperClasses() + "\n");
+		sb.append("================\n");
+
+		return sb.toString();
+	}
+
 
 	private void setAnswersToNull() {
 		individuals = null;
 		subClasses = null;
-		supClasses = null;
+		superClasses = null;
+		entities.clear();
 	}
 
-	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLDescription desc) throws OWLReasonerException {
-		Set<OWLIndividual> answerIndividuals = reasoner.getIndividuals(desc, false);
+	private void setAnswerLists(OWLModelManager mngr, OWLReasoner reasoner, OWLClassExpression desc) {
+		// false gives more answers (but might be slower)
+		NodeSet<OWLNamedIndividual> indNodeSet = reasoner.getInstances(desc, false);
+		setIndividualsAnswerList(indNodeSet.getNodes());
 
-		setIndividualAnswerList(individuals, answerIndividuals);
-		setClassAnswerList(subClasses, OWLReasonerAdapter.flattenSetOfSets(reasoner.getDescendantClasses(desc)));
-		setClassAnswerList(supClasses, OWLReasonerAdapter.flattenSetOfSets(reasoner.getAncestorClasses(desc)));
+		// false = get all the descendant classes, not just the direct ones
+		NodeSet<OWLClass> subNodeSet = reasoner.getSubClasses(desc, false);
+		setClassAnswerList(subClasses, subNodeSet.getNodes(), true);
 
-		// We remove inconsistent classes as they might be confusing when presented as answers.
-		subClasses.removeAll(reasoner.getInconsistentClasses());
+		NodeSet<OWLClass> superNodeSet = reasoner.getSuperClasses(desc, false);
+		setClassAnswerList(superClasses, superNodeSet.getNodes(), false);
 
-		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, individuals);
-		isSubClassesAnswersComplete = isCompleteSubClasses(mngr.getOWLDataFactory(), reasoner, desc, subClasses);
+		isIndividualAnswersComplete = isCompleteIndividuals(mngr.getOWLDataFactory(), reasoner, desc, indNodeSet.getFlattened());
+		isSubClassesAnswersComplete = isCompleteSubClasses(mngr.getOWLDataFactory(), reasoner, desc, subNodeSet.getFlattened());
 	}
 
 
-	private void setClassAnswerList(Set<OWLClass> answerList, Set<OWLClass> classes) {
-		for (OWLClass entity : classes) {
-			if (Showing.isShow(entity)) {
-				answerList.add(entity);
+	private void setIndividualsAnswerList(Set<Node<OWLNamedIndividual>> indNodes) {
+		for (Node<OWLNamedIndividual> node : indNodes) {
+			if (Showing.isShow(node)) {
+				individuals.add(node);
+				entities.addAll(node.getEntities());
 			}
 		}
 	}
 
 
-	private void setIndividualAnswerList(Set<OWLIndividual> answerList, Set<OWLIndividual> individuals) {
-		for (OWLIndividual answer : individuals) {
-			if (Showing.isShow(answer)) {
-				answerList.add(answer);
+	// TODO: exclude also based on Showing.isShow(node)
+	private void setClassAnswerList(Set<Node<OWLClass>> answerList, Set<Node<OWLClass>> classNodes, boolean sub) {
+		for (Node<OWLClass> node : classNodes) {
+			if (sub && ! node.isBottomNode() || ! sub && ! node.isTopNode()) {
+				answerList.add(node);
+				entities.addAll(node.getEntities());
 			}
 		}
 	}
 
 
-	private boolean isCompleteIndividuals(OWLDataFactory df, OWLReasoner reasoner, OWLDescription desc, Set<OWLIndividual> answers) {
-		OWLDescription completenessTest =
+	private boolean isCompleteIndividuals(OWLDataFactory df, OWLReasoner reasoner, OWLClassExpression desc, Set<OWLNamedIndividual> answers) {
+		OWLClassExpression completenessTest =
 			df.getOWLObjectIntersectionOf(
 					desc,
 					df.getOWLObjectComplementOf(
@@ -204,8 +244,8 @@ public class ACEAnswer {
 	}
 
 
-	private boolean isCompleteSubClasses(OWLDataFactory df, OWLReasoner reasoner, OWLDescription desc, Set<OWLClass> answers) {
-		OWLDescription completenessTest =
+	private boolean isCompleteSubClasses(OWLDataFactory df, OWLReasoner reasoner, OWLClassExpression desc, Set<OWLClass> answers) {
+		OWLClassExpression completenessTest =
 			df.getOWLObjectIntersectionOf(
 					desc,
 					df.getOWLObjectComplementOf(
@@ -215,12 +255,7 @@ public class ACEAnswer {
 	}
 
 
-	private boolean isSatisfiable(OWLReasoner reasoner, OWLDescription desc) {
-		try {
-			return reasoner.isSatisfiable(desc);
-		} catch (OWLReasonerException e) {
-			e.printStackTrace();
-			return false;
-		}	
+	private boolean isSatisfiable(OWLReasoner reasoner, OWLClassExpression desc) {
+		return reasoner.isSatisfiable(desc);
 	}
 }

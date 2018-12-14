@@ -1,0 +1,107 @@
+<project name="ACE View" default="jar" basedir=".">
+	<description>Building and deployment of the ACE View jar-file.</description>
+
+	<!-- The location of the local copy of Protege 4.1 trunk. -->
+	<property name="protege" location="${user.home}/mywork/protege4_1/trunk/"/>
+
+	<property name="swi_home_dir" location="/opt/local/lib/swipl-5.6.61/"/>
+
+	<!-- The following properties you probably do not need to modify. -->
+
+	<!-- The name of the ACE View jar-file which this build-script will generate. -->
+	<property name="aceview_jar" value="ch.uzh.ifi.attempto.aceview.jar"/>
+	<property name="aceview.command" value="aceview.command"/>
+
+	<property name="aceview_lib" location="lib"/>
+	<property name="aceview_dist" location="dist/"/>
+
+	<property name="protege_build" location="${protege}/build/"/>
+	<property name="protege_dist" location="${protege}/build/dist/"/>
+	<property name="protege_dist_equinox" location="${protege_dist}/equinox/"/>
+	<property name="protege_dist_bundles" location="${protege_dist}/bundles/"/>
+	<property name="protege_dist_plugins" location="${protege_dist_equinox}/plugins/"/>
+
+	<property name="jars" location="${protege_build}/org.protege.editor.owl.jar;${protege_build}/org.protege.editor.core.application.jar;${protege}/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar;${protege}/plugins/org.protege.common/lib/log4j.jar;${aceview_lib}/jdom.jar;${aceview_lib}/RadixTree-0.3.jar;${aceview_lib}/swingx-1.0.jar;${aceview_lib}/swing-worker-1.2.jar;${aceview_lib}/simplenlg-v37.jar;${aceview_lib}/attempto-ape.jar;${aceview_lib}/attempto-owl.jar;${aceview_lib}/google-collect-1.0-rc3.jar"/>
+
+	<property name="aceview_test_src" location="test/"/>
+	<property name="aceview_test_report" location="test_report/"/>
+
+	<target name="init">
+		<!-- <tstamp><format property="build.time" pattern="yyMMdd-HHmm"/></tstamp> -->
+		<tstamp><format property="build.time" pattern="yyMMdd"/></tstamp>
+		<mkdir dir="${aceview_dist}"/>
+	</target>
+
+	<target name="compile" depends="init" description="Compile the ACE View Java files.">
+		<echo>Using Protege jars from: ${protege}</echo>
+		<mkdir dir="classes"/>
+		<javac
+			srcdir="src/"
+			classpath="${jars}"
+			destdir="classes"/>
+	</target>
+
+	<target name="jar" depends="compile" description="Generate the ACE View jar-file.">
+		<jar
+			destfile="${aceview_dist}/${aceview_jar}"
+			manifest="manifest.txt"
+			basedir="."
+			includes="classes/**, lib/**, licenses/**, viewconfig-aceviewtab.xml, plugin.xml"
+			/>
+	</target>
+
+	<target name="deploy" depends="jar" description="Copy the ACE View jar-file into the Protege plug-in directory.">
+		<echo>Copy: ${aceview_jar}</echo>
+		<copy file="${aceview_dist}/${aceview_jar}" todir="${protege_dist_plugins}"/>
+		<!--
+		<echo>Copy: ${aceview.command}</echo>
+		<copy file="${aceview.command}" todir="${protege_dist_equinox}"/>
+		<chmod file="${protege_dist_equinox}/${aceview.command}" perm="750"/>
+		-->
+	</target>
+
+
+	<target name="clean" description="Clean up.">
+		<delete dir="classes"/>
+		<delete dir="${javadoc}"/>
+		<delete dir="${aceview_dist}"/>
+		<delete dir="${aceview_test_report}"/>
+	</target>
+
+
+	<target name="zip_source" depends="init" description="Generate a zip-archive of all the source files.">
+		<zip
+			destfile="${aceview_dist}/aceview_src-${build.time}.zip"
+			basedir="."
+			includes="lib/**, src/**, test/**, licenses/**, *.xml, *.txt, .classpath, .settings/**"
+			excludes="classes, **/.DS_Store, **/old/**, **/*.zip, **/*.bash, **/*.lst"
+			/>
+	</target>
+
+
+	<target name="test" depends="compile" description="Unit test some ACE View classes.">
+		<javac
+			srcdir="${aceview_test_src}"
+			classpath="${jars};${aceview_lib}/junit-4.5.jar"
+			destdir="classes"/>
+
+		<mkdir dir="${aceview_test_report}"/>
+
+		<junit printsummary="yes" haltonfailure="no">
+
+			<classpath>
+				<pathelement location="classes"/>
+				<pathelement path="${jars};${swi_home_dir}/lib/jpl.jar;${aceview_lib}/junit-4.5.jar"/>
+			</classpath>
+
+			<formatter type="plain"/>
+
+			<batchtest fork="yes" todir="${aceview_test_report}">
+				<fileset dir="${aceview_test_src}">
+					<include name="**/*Test.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+</project>

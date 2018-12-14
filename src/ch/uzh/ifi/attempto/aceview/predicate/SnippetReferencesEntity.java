@@ -1,6 +1,6 @@
 package ch.uzh.ifi.attempto.aceview.predicate;
 
-import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import com.google.common.base.Predicate;
 

@@ -2,17 +2,12 @@ package ch.uzh.ifi.attempto.aceview;
 
 import static org.junit.Assert.assertEquals;
 
-import java.net.URI;
 import java.util.List;
 
 import org.junit.Test;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLIndividual;
-import org.semanticweb.owl.model.OWLObjectProperty;
-
-import uk.ac.manchester.cs.owl.OWLDataFactoryImpl;
+import org.protege.editor.owl.model.OWLModelManager;
+import org.protege.editor.owl.model.OWLModelManagerImpl;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import com.google.common.collect.Sets;
 
@@ -21,18 +16,11 @@ import ch.uzh.ifi.attempto.ace.ACESplitter;
 
 public class ACESnippetImplTest {
 
-	private static final URI URI_TEST = URI.create("http://attempto.ifi.uzh.ch/aceview_test");
-
-	private static final OWLDataFactory df = new OWLDataFactoryImpl();
-
-	private static final OWLAxiom john_likes_mary = createAxiomJohnLikesMary();
-	private static final OWLAxiom every_man_is_a_human = createAxiomEveryManIsAHuman();
+	private static final OWLLogicalAxiom john_likes_mary = Utils.createAxiomJohnLikesMary();
+	private static final OWLLogicalAxiom every_man_is_a_human = Utils.createAxiomEveryManIsAHuman();
 
 	static {
-		ACEViewPreferences prefs = ACEViewPreferences.getInstance();
-		prefs.setParseWithUndefinedTokens(true);
-		prefs.setGuessingEnabled(true);
-		prefs.setClexEnabled(true);
+		Utils.setupACEParser();
 	}
 
 
@@ -41,8 +29,8 @@ public class ACESnippetImplTest {
 		String str = "Every man is a human.";
 		List<ACESentence> sents = ACESplitter.getSentences(str);
 
-		ACESnippet s1 = new ACESnippetImpl(URI_TEST, sents);
-		ACESnippet s2 = new ACESnippetImpl(URI_TEST, sents);
+		ACESnippet s1 = new ACESnippetImpl(Utils.ID_TEST, sents);
+		ACESnippet s2 = new ACESnippetImpl(Utils.ID_TEST, sents);
 
 		assertEquals(s1, s2);
 	}
@@ -53,7 +41,7 @@ public class ACESnippetImplTest {
 		String str = "Every man is a human.";
 		List<ACESentence> sents = ACESplitter.getSentences(str);
 
-		ACESnippet s = new ACESnippetImpl(URI_TEST, sents);
+		ACESnippet s = new ACESnippetImpl(Utils.ID_TEST, sents);
 
 		assertEquals(s.getAxiom(), every_man_is_a_human);
 		assertEquals(s.getLogicalAxioms(), Sets.newHashSet(every_man_is_a_human));
@@ -68,8 +56,8 @@ public class ACESnippetImplTest {
 		List<ACESentence> sents1 = ACESplitter.getSentences(str1);
 		List<ACESentence> sents2 = ACESplitter.getSentences(str2);
 
-		ACESnippet s1 = new ACESnippetImpl(URI_TEST, sents1);
-		ACESnippet s2 = new ACESnippetImpl(URI_TEST, sents2);
+		ACESnippet s1 = new ACESnippetImpl(Utils.ID_TEST, sents1);
+		ACESnippet s2 = new ACESnippetImpl(Utils.ID_TEST, sents2);
 
 		assertEquals(s1.getLogicalAxioms(), s2.getLogicalAxioms());
 	}
@@ -80,7 +68,7 @@ public class ACESnippetImplTest {
 		String str = "See tekst on vigane.";
 		List<ACESentence> sents = ACESplitter.getSentences(str);
 
-		ACESnippet s = new ACESnippetImpl(URI_TEST, sents);
+		ACESnippet s = new ACESnippetImpl(Utils.ID_TEST, sents);
 
 		assertEquals(s.getAxiom(), null);
 		assertEquals(s.getLogicalAxioms(), Sets.newHashSet());
@@ -92,25 +80,26 @@ public class ACESnippetImplTest {
 		String str = "John likes Mary.";
 		List<ACESentence> sents = ACESplitter.getSentences(str);
 
-		ACESnippet s = new ACESnippetImpl(URI_TEST, sents);
+		ACESnippet s = new ACESnippetImpl(Utils.ID_TEST, sents);
 
 		assertEquals(s.getLogicalAxioms(), Sets.newHashSet(john_likes_mary));
 	}
 
+	@Test
+	public final void test5() {
 
-	private static OWLAxiom createAxiomJohnLikesMary() {
-		OWLIndividual john = df.getOWLIndividual(URI.create(URI_TEST + "#John"));
-		OWLIndividual mary = df.getOWLIndividual(URI.create(URI_TEST + "#Mary"));
-		OWLObjectProperty like = df.getOWLObjectProperty(URI.create(URI_TEST + "#like"));
-		OWLAxiom john_likes_mary = df.getOWLObjectPropertyAssertionAxiom(john, like, mary);
-		return john_likes_mary;
-	}
+		// TODO: BUG: experimental
+		OWLModelManager modelManager = new OWLModelManagerImpl();
+		ACETextManager.setOWLModelManager(modelManager);
 
+		Utils.getPreferences().setUseMos(true);
 
-	private static OWLAxiom createAxiomEveryManIsAHuman() {
-		OWLClass man = df.getOWLClass(URI.create(URI_TEST + "#man"));
-		OWLClass human = df.getOWLClass(URI.create(URI_TEST + "#human"));
-		OWLAxiom every_man_is_a_human = df.getOWLSubClassAxiom(man, human);
-		return every_man_is_a_human;
+		String str = "man SubClassOf human";
+		List<ACESentence> sents = ACESplitter.getSentences(str);
+
+		ACESnippet s = new ACESnippetImpl(Utils.ID_TEST, sents);
+
+		assertEquals(s.getAxiom(), every_man_is_a_human);
+		assertEquals(s.getLogicalAxioms(), Sets.newHashSet(every_man_is_a_human));
 	}
 }

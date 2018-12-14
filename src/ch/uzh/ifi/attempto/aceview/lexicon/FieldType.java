@@ -16,55 +16,23 @@
 
 package ch.uzh.ifi.attempto.aceview.lexicon;
 
-import java.net.URI;
-
 /**
  * 
  * @author Kaarel Kaljurand
  *
  */
 public enum FieldType {
-	SG("Singular", "http://attempto.ifi.uzh.ch/ace_lexicon#sg"),
-	PL("Plural", "http://attempto.ifi.uzh.ch/ace_lexicon#pl"),
-	VBG("P. participle", "http://attempto.ifi.uzh.ch/ace_lexicon#vbg");
+	SG("Singular"),
+	PL("Plural"),
+	VBG("P. participle");
 
 	private final String name;
-	private final URI uri;
 
-	private FieldType(String name, String strURI) {
+	private FieldType(String name) {
 		this.name = name;
-		this.uri = URI.create(strURI);
 	}
 
 	public String getName() {
 		return name;
-	}
-
-	public URI getURI() {
-		return uri;
-	}
-
-	/**
-	 * <p>Returns the {@link FieldType} that corresponds to the given URI.</p>
-	 * 
-	 * @param uri URI
-	 * @return {@link FieldType} of the given URI
-	 */
-	public static FieldType getField(URI uri) {
-		if (uri.equals(SG.getURI())) {
-			return SG;
-		}
-		else if (uri.equals(PL.getURI())) {
-			return PL;
-		}
-		else if (uri.equals(VBG.getURI())) {
-			return VBG;
-		}
-		// BUG: throw an exception instead, e.g. UnsupportedURIException
-		return SG;
-	}
-
-	public static boolean isLexiconEntryURI(URI uri) {
-		return (uri.equals(SG.getURI()) || uri.equals(PL.getURI()) || uri.equals(VBG.getURI()));
 	}
 }

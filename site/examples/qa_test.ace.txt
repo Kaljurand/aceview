@@ -1,0 +1,34 @@
+/**
+
+The following is an attempt to write a text that
+tests the the ACE View Q&A functionality as
+conclusively as possible while staying as simple as possible.
+
+*/
+
+Bill is William.
+
+John is a man.
+
+Bill is a man.
+
+Bob is a man.
+
+Every man is a man2. Every man2 is a man.
+
+Every man is an animal.
+
+Every animal is a animal2. Every animal2 is a animal.
+
+Every fireman is a man.
+
+Every fireman is a fireman2. Every fireman2 is a fireman.
+
+Every policeman is a man.
+
+
+Who is a man?
+
+Who is Bill?
+
+Who is Bill and is not William?

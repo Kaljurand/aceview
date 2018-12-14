@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.net.URI;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -45,26 +44,27 @@ import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.util.OWLAxiomInstance;
 import org.protege.editor.owl.ui.UIHelper;
 import org.protege.editor.owl.ui.renderer.OWLRendererPreferences;
-import org.semanticweb.owl.model.OWLAxiom;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import com.google.common.collect.Multimap;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
 import ch.uzh.ifi.attempto.ace.ACESplitter;
+import ch.uzh.ifi.attempto.ace.ACESentenceRenderer;
 import ch.uzh.ifi.attempto.aceview.ACESnippet;
 import ch.uzh.ifi.attempto.aceview.ACESnippetImpl;
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
-import ch.uzh.ifi.attempto.aceview.model.event.EventType;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.ui.ACESnippetEditor;
 import ch.uzh.ifi.attempto.aceview.ui.AxiomAnnotationPanel;
 import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
-import ch.uzh.ifi.attempto.aceview.util.SnippetRenderer;
 
 
 /**
@@ -117,15 +117,14 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 	private AxiomAnnotationPanel axiomAnnotationPanel;
 
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
 			// We update the auto-completer if the lexicon changed,
-			// or an ACE text was created, or the active ACE text changed.
+			// or the active ACE text changed.
 			// TODO: maybe we should make sure that the lexicon change is
 			// the change of the active ACE text's lexicon.
-			if (event.isType(EventType.ACTIVE_ACETEXT_CHANGED) ||
-					event.isType(EventType.ACETEXT_CREATED) ||
-					event.isType(EventType.ACELEXICON_CHANGED)) {
+			if (event.isType(TextEventType.ACTIVE_ACETEXT_CHANGED) ||
+					event.isType(TextEventType.ACELEXICON_CHANGED)) {
 				snippetEditor.setAutocompleter(ACETextManager.getActiveACELexicon().getAutocompleter());
 			}
 		}
@@ -158,11 +157,11 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 					displayWarningMessage("Not added. There are no sentences.");
 				}
 				else {
-					ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
+					OWLOntologyID oid = ACETextManager.getOWLModelManager().getActiveOntology().getOntologyID();
+					ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getACEText(oid);
 					ACESnippet oldSnippet = acetext.find(sentences);
 					if (oldSnippet == null) {
-						URI name = ACETextManager.getActiveACETextURI();
-						ACESnippetImpl newSnippet = new ACESnippetImpl(name, sentences);
+						ACESnippetImpl newSnippet = new ACESnippetImpl(oid, sentences);
 						ACETextManager.addSnippet(newSnippet);
 						ACETextManager.setSelectedSnippet(newSnippet);
 					}
@@ -299,7 +298,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 	 */
 	private void resetUI() {
 		// Header
-		getView().setHeaderText("(No snippet selected.)");
+		setHeaderText("(No snippet selected.)");
 
 		// Snippet editor text-area
 		snippetEditor.setText("");
@@ -324,9 +323,10 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 			return;
 		}
 
-		getView().setHeaderText(snippet.toString());
+		setHeaderText(snippet.toString());
+		setHeaderText(snippet.toString());
 
-		SnippetRenderer snippetRenderer = new SnippetRenderer(snippet);
+		ACESentenceRenderer snippetRenderer = new ACESentenceRenderer(snippet.getSentences(), snippet.getErrorSpans());
 		snippetEditor.setText(snippetRenderer.getRendering());
 		snippetEditor.getHighlighter().removeAllHighlights();
 		// Snippet editor buttons
@@ -407,7 +407,7 @@ public class ACESnippetEditorViewComponent extends AbstractACESnippetSelectionVi
 		}
 		// TODO: BUG: think about it, we should get the ontology that contains the axiom,
 		// not the active ontology
-		axiomAnnotationPanel.setAxiom(new OWLAxiomInstance(ax, getOWLModelManager().getActiveOntology()));
+		axiomAnnotationPanel.setAxiomInstance(new OWLAxiomInstance(ax, getOWLModelManager().getActiveOntology()));
 		new UIHelper(editorKit).showDialog("Annotations", axiomAnnotationPanel, JOptionPane.CLOSED_OPTION);
 	}
 

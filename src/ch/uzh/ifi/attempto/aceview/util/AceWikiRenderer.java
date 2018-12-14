@@ -23,8 +23,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import com.google.common.collect.Maps;
 
@@ -35,6 +35,7 @@ import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 import ch.uzh.ifi.attempto.aceview.lexicon.ACELexiconEntry;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 
 /**
  * <p>Saves the given ACE text in AceWiki internal format. Each OWL entity gets a
@@ -72,13 +73,13 @@ import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
 public class AceWikiRenderer {
 
 	private final ACEText<OWLEntity, OWLLogicalAxiom> acetext;
-	private final ACELexicon<OWLEntity> lexicon;
+	private final TokenMapper lexicon;
 	private final Map<OWLEntity, Integer> seen = Maps.newHashMap();
 	private int counter = 0; // the "first" entity has index 1
 
-	public AceWikiRenderer(ACEText<OWLEntity, OWLLogicalAxiom> acetext) {
+	public AceWikiRenderer(ACEText<OWLEntity, OWLLogicalAxiom> acetext, TokenMapper lexicon) {
 		this.acetext = acetext;
-		this.lexicon = acetext.getACELexicon();
+		this.lexicon = lexicon;
 	}
 
 
@@ -91,6 +92,7 @@ public class AceWikiRenderer {
 	 */
 	public String render() {
 		StringBuilder sb = new StringBuilder();
+		/*
 		for (Map.Entry<OWLEntity, Set<ACESnippet>> entry : acetext.getEntitySnippetSetPairs()) {
 			OWLEntity entity = entry.getKey();
 			ACELexiconEntry lexiconEntry = lexicon.getEntry(entity);
@@ -103,6 +105,7 @@ public class AceWikiRenderer {
 			sb.append(getAceWikiEntry(entity, lexiconEntry, entry.getValue()));			
 			sb.append('\n');
 		}
+		 */
 		return sb.toString();
 	}
 
@@ -122,6 +125,7 @@ public class AceWikiRenderer {
 		ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFileName));
 		zip.putNextEntry(new ZipEntry(directoryNameWithSlash));
 
+		/*
 		for (Map.Entry<OWLEntity, Set<ACESnippet>> entry : acetext.getEntitySnippetSetPairs()) {
 			OWLEntity entity = entry.getKey();
 			ACELexiconEntry lexiconEntry = lexicon.getEntry(entity);
@@ -134,6 +138,7 @@ public class AceWikiRenderer {
 			zip.write(str.getBytes(), 0, str.length());
 			zip.closeEntry();
 		}
+		 */
 
 		zip.closeEntry();
 		zip.close();
@@ -158,6 +163,7 @@ public class AceWikiRenderer {
 		StringBuilder sb = new StringBuilder();
 		int lastIndex = sentence.size() - 1;
 		int counter = 0;
+		/*
 		for (ACEToken token : sentence.getTokens()) {
 			if (token.isFunctionWord()) {
 				sb.append(token);
@@ -182,6 +188,7 @@ public class AceWikiRenderer {
 			}
 			counter++;
 		}
+		 */
 		return sb.toString();
 	}
 

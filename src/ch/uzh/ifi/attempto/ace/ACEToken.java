@@ -13,17 +13,19 @@ import ch.uzh.ifi.attempto.ape.FunctionWords;
  */
 public final class ACEToken {
 
+	public static final ACEToken DOT = makeDot();
+
 	// Some function words (in lowercase) additionally to those provided by Attempto Java Packages.
 	// TODO: This list is probably not complete.
 	// TODO: Some of these words could maybe be moved to AJP.
 	private static final ImmutableSet ADDITIONAL_FUNCTIONWORDS =
 		ImmutableSet.of("s", "at", "less", "least", "exactly", "thing", "things", "false", "does", "do", "he/she");
 
+	private static final Pattern variablePattern = Pattern.compile("[A-Z][0-9]*");
+	private static final Pattern wordPattern = Pattern.compile("[a-zA-Z$_-][a-zA-Z0-9$_-]*");
+
 	// The token itself
 	private String token;
-
-	// The token in lowercase
-	private String tokenLC;
 
 	private boolean isBadToken = false;
 	private boolean isBorderToken = false;
@@ -36,11 +38,7 @@ public final class ACEToken {
 	private boolean isApos = false;
 	private boolean isVariable = false;
 	private boolean isFunctionWord = false;
-
-	private static final Pattern variablePattern = Pattern.compile("[A-Z][0-9]*");
-
-	public static final ACEToken DOT = makeDot();
-
+	private boolean needsQuoting = false;
 
 	private ACEToken() {}
 
@@ -48,16 +46,17 @@ public final class ACEToken {
 	public static ACEToken newToken(String token) {
 		ACEToken newToken = new ACEToken();
 		newToken.token = token;
-		newToken.tokenLC = token.toLowerCase();
 
-		if (newToken.tokenLC.equals("and")
-				|| newToken.tokenLC.equals("or")
-				|| newToken.tokenLC.equals("if")
-				|| newToken.tokenLC.equals("then")) {
+		String tokenLC = token.toLowerCase();
+
+		if (tokenLC.equals("and")
+				|| tokenLC.equals("or")
+				|| tokenLC.equals("if")
+				|| tokenLC.equals("then")) {
 			newToken.isOrdinationWord = true;
 			newToken.isFunctionWord = true;
 		}
-		else if (newToken.tokenLC.equals("but")) {
+		else if (tokenLC.equals("but")) {
 			newToken.isButToken = true;
 			newToken.isFunctionWord = true;
 		}
@@ -65,8 +64,12 @@ public final class ACEToken {
 			newToken.isVariable = true;
 			newToken.isFunctionWord = true;
 		}
-		else if (checkIsFunctionWord(newToken.tokenLC)) {
+		else if (checkIsFunctionWord(tokenLC)) {
 			newToken.isFunctionWord = true;
+		}
+
+		if (! wordPattern.matcher(token).matches()) {
+			newToken.needsQuoting = true;
 		}
 		return newToken;
 	}
@@ -81,7 +84,6 @@ public final class ACEToken {
 			newToken.token = Double.toString(number);
 		}
 		newToken.isNumber = true;
-		newToken.tokenLC = newToken.token;
 		newToken.isFunctionWord = true;
 		return newToken;
 	}
@@ -90,7 +92,6 @@ public final class ACEToken {
 	public static ACEToken newQuotedString(String str) {
 		ACEToken newToken = new ACEToken();
 		newToken.token = "\"" + str + "\"";
-		newToken.tokenLC = newToken.token;
 		newToken.isQuotedString = true;
 		newToken.isFunctionWord = true;
 		return newToken;
@@ -100,7 +101,6 @@ public final class ACEToken {
 	public static ACEToken newSymbol(char ch) {
 		ACEToken newToken = new ACEToken();
 		newToken.token = String.valueOf(ch);
-		newToken.tokenLC = newToken.token;
 		newToken.isSymbol = true;
 		if (newToken.token.equals("'")) {
 			newToken.isApos = true;
@@ -112,7 +112,6 @@ public final class ACEToken {
 	public static ACEToken newBorderToken(char ch) {
 		ACEToken newToken = new ACEToken();
 		newToken.token = String.valueOf(ch);
-		newToken.tokenLC = newToken.token;
 		newToken.isBorderToken = true;
 		newToken.isSymbol = true;
 		if (newToken.token.equals("?")) {
@@ -126,7 +125,6 @@ public final class ACEToken {
 	public static ACEToken newBadToken(char ch) {
 		ACEToken newToken = new ACEToken();
 		newToken.token = String.valueOf(ch);
-		newToken.tokenLC = newToken.token;
 		newToken.isBadToken = true;
 		newToken.isFunctionWord = true;
 		return newToken;
@@ -182,8 +180,16 @@ public final class ACEToken {
 	}
 
 
+	public String getToken() {
+		return token;
+	}
+
+
 	@Override
 	public String toString() {
+		if (needsQuoting) {
+			return "`" + token + "`";
+		}
 		return token;
 	}
 
@@ -193,20 +199,19 @@ public final class ACEToken {
 		if (this == obj) return true;
 		if ((obj == null) || (obj.getClass() != this.getClass())) return false;
 		ACEToken t = (ACEToken) obj;
-		return token.toString().equals(t.toString());
+		return token.equals(t.getToken());
 	}
 
 
 	@Override
 	public int hashCode() {
-		return token.toString().hashCode();
+		return token.hashCode();
 	}
 
 
 	private static ACEToken makeDot() {
 		ACEToken newToken = new ACEToken();
 		newToken.token = String.valueOf('.');
-		newToken.tokenLC = newToken.token;
 		newToken.isBorderToken = true;
 		newToken.isSymbol = true;
 		newToken.isFunctionWord = true;

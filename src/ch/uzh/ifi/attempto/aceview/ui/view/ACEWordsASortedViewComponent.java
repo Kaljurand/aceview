@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -34,14 +34,15 @@ import javax.swing.text.StyledDocument;
 import org.jdesktop.swingx.JXHyperlink;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLObject;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.ui.Colors;
 import ch.uzh.ifi.attempto.aceview.ui.EntityLinkAction;
 import ch.uzh.ifi.attempto.aceview.ui.util.ComponentFactory;
@@ -71,8 +72,8 @@ public class ACEWordsASortedViewComponent extends AbstractACEViewComponent {
 		}
 	};
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
 			showWords();
 		}
 	};
@@ -117,7 +118,7 @@ public class ACEWordsASortedViewComponent extends AbstractACEViewComponent {
 		if (sentenceCount > 1) {
 			pl2 = "s";
 		}
-		getView().setHeaderText(contentWordCount + " content word" + pl1 + " in " + sentenceCount + " sentence" + pl2);
+		setHeaderText(contentWordCount + " content word" + pl1 + " in " + sentenceCount + " sentence" + pl2);
 		if (contentWordCount > 0) {
 			textpaneWords.setDocument(getContentWordsAsStyledDocument(acetext, owlRendererPreferences.getFont()));
 		}
@@ -157,7 +158,7 @@ public class ACEWordsASortedViewComponent extends AbstractACEViewComponent {
 	 */
 	private StyledDocument getContentWordsAsStyledDocument(ACEText<OWLEntity, OWLLogicalAxiom> acetext, Font font) {
 		StyledDocument doc = new DefaultStyledDocument();
-		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getReferencedEntities();
+		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getSignature();
 		SortedSet<OWLEntity> entitiesSorted = new TreeSet<OWLEntity>(new EntityComparator());
 		entitiesSorted.addAll(entities);
 

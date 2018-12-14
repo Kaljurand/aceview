@@ -10,16 +10,17 @@ import javax.swing.JScrollPane;
 
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
-import org.semanticweb.owl.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLObject;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
 import ch.uzh.ifi.attempto.aceview.WordsHyperlinkListener;
 import ch.uzh.ifi.attempto.aceview.lexicon.LexiconUtils;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextChangeEvent;
-import ch.uzh.ifi.attempto.aceview.model.event.ACETextManagerListener;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewEvent;
+import ch.uzh.ifi.attempto.aceview.model.event.ACEViewListener;
+import ch.uzh.ifi.attempto.aceview.model.event.TextEventType;
 import ch.uzh.ifi.attempto.aceview.util.EntityComparator;
 import ch.uzh.ifi.attempto.aceview.util.Showing;
 
@@ -48,8 +49,8 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 		}
 	};
 
-	private final ACETextManagerListener aceTextManagerListener = new ACETextManagerListener() {
-		public void handleChange(ACETextChangeEvent event) {
+	private final ACEViewListener<ACEViewEvent<TextEventType>> aceTextManagerListener = new ACEViewListener<ACEViewEvent<TextEventType>>() {
+		public void handleChange(ACEViewEvent<TextEventType> event) {
 			showWords();
 		}
 	};
@@ -97,7 +98,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 		if (sentenceCount > 1) {
 			pl2 = "s";
 		}
-		getView().setHeaderText(contentWordCount + " content word" + pl1 + " in " + sentenceCount + " sentence" + pl2);
+		setHeaderText(contentWordCount + " content word" + pl1 + " in " + sentenceCount + " sentence" + pl2);
 		if (contentWordCount > 0) {
 			editorpaneWords.setText(ACETextManager.wrapInHtml(getContentWordsInHtml(acetext)));
 		}
@@ -133,7 +134,7 @@ public class ACEWordsAlphaSortedViewComponent extends AbstractACEViewComponent {
 	 * @return HTML-rendering of all contentwords in the text
 	 */
 	private String getContentWordsInHtml(ACEText<OWLEntity, OWLLogicalAxiom> acetext) {
-		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getReferencedEntities();
+		Set<OWLEntity> entities = getOWLModelManager().getActiveOntology().getSignature();
 		SortedSet<OWLEntity> entitiesSorted = new TreeSet<OWLEntity>(new EntityComparator());
 		entitiesSorted.addAll(entities);
 

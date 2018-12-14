@@ -78,8 +78,8 @@ public class ACESplitterTest {
 
 	@Test
 	public final void testTokenize1() {
-		assertEquals("[%, ;, @, \\, ^, `, |, ~, .]",
-				ACESplitter.getTokens("% ; @ \\ ^ ` | ~").toString());
+		assertEquals("[%, ;, @, \\, ^, :, |, ~, .]",
+				ACESplitter.getTokens("% ; @ \\ ^ : | ~").toString());
 	}
 
 
@@ -90,14 +90,15 @@ public class ACESplitterTest {
 						ACEToken.newNumber(123),
 						ACEToken.newToken("man"),
 						ACEToken.newToken("man123"),
-						ACEToken.newToken("ŠšŸp"),
+						ACEToken.newToken("Ã¤Ã¶Ã¼p"),
 						ACEToken.newNumber(123),
 						ACEToken.newToken("man123"),
 						ACEToken.newToken("man123man"),
-						ACEToken.newQuotedString("ŠšŸpŸp"),
+						ACEToken.newQuotedString("Ã¤Ã¶Ã¼pÃ¼p"),
+						ACEToken.newToken("Tom's Diner"),
 						ACEToken.DOT
 				),
-				ACESplitter.getTokens("123man man123 ŠšŸp 123man123 man123man \"ŠšŸpŸp\""));
+				ACESplitter.getTokens("123man man123 Ã¤Ã¶Ã¼p 123man123 man123man \"Ã¤Ã¶Ã¼pÃ¼p\" `Tom's Diner`"));
 	}
 
 	@Test

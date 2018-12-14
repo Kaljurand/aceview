@@ -26,13 +26,14 @@ import javax.swing.SwingUtilities;
 
 import org.protege.editor.core.ui.util.UIUtil;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import com.google.common.collect.Sets;
 
 import ch.uzh.ifi.attempto.aceview.ACEText;
 import ch.uzh.ifi.attempto.aceview.ACETextManager;
+import ch.uzh.ifi.attempto.aceview.lexicon.TokenMapper;
 import ch.uzh.ifi.attempto.aceview.util.AceWikiRenderer;
 
 /**
@@ -49,6 +50,7 @@ public class CreateAceWikiAction extends ProtegeOWLAction {
 
 	public void actionPerformed(ActionEvent actionEvent) {
 		ACEText<OWLEntity, OWLLogicalAxiom> acetext = ACETextManager.getActiveACEText();
+		TokenMapper tokenMapper = ACETextManager.getActiveACELexicon();
 		File f = saveZipFile(ACTION_TITLE);
 
 		if (f != null) {
@@ -62,7 +64,7 @@ public class CreateAceWikiAction extends ProtegeOWLAction {
 				absolutePath = absolutePath + ".zip";
 				directoryName = fileName;
 			}
-			AceWikiRenderer renderer = new AceWikiRenderer(acetext);
+			AceWikiRenderer renderer = new AceWikiRenderer(acetext, tokenMapper);
 			try {
 				renderer.createZipFile(absolutePath, directoryName);
 				showMessage(JOptionPane.INFORMATION_MESSAGE, "AceWiki saved into " + absolutePath + ".");

@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 
-<plugin id="ch.uzh.ifi.attempto.aceview" version="1.2.20.ACEViewTab">
+<plugin id="ch.uzh.ifi.attempto.aceview" version="1.3.2.ACEViewTab">
 
 <!-- Tab -->
 <extension id="ACEViewTab"
@@ -66,6 +66,7 @@
 	<category value="ACE"/>
 </extension>
 
+<!--
 <extension id="AceWikiFormatViewComponent"
 	point="org.protege.editor.core.application.ViewComponent">
 	<name value="AceWiki format"/>
@@ -74,6 +75,7 @@
 	<headerColor value="@org.protege.ontologycolor"/>
 	<category value="ACE"/>
 </extension>
+-->
 
 <extension id="ACEWordsAlphaSortedViewComponent"
 	point="org.protege.editor.core.application.ViewComponent">
@@ -170,7 +172,8 @@
 
 <!-- ACE menu -->
 <!-- Tasks related specifically to the ACE text -->
-    
+
+<!--
 <extension id="ch.uzh.ifi.attempto.aceview.ui.menu.CreateAceWikiAction"
 	point="org.protege.editor.core.application.EditorKitMenuAction">
 	<name value="ACE View: Export as AceWiki ..."/>
@@ -179,6 +182,7 @@
 	<path value="org.protege.editor.owl.menu.tools/SlotP-B"/>
 	<editorKitId value="OWLEditorKit"/>
 </extension>
+-->
 
 <extension id="ch.uzh.ifi.attempto.aceview.ui.menu.ACEReparse"
 	point="org.protege.editor.core.application.EditorKitMenuAction">
@@ -207,6 +211,15 @@
 	<editorKitId value="OWLEditorKit"/>
 </extension>
 
+<extension id="ch.uzh.ifi.attempto.aceview.ui.menu.AnnotateAxiomsWithACETextAction"
+	point="org.protege.editor.core.application.EditorKitMenuAction">
+	<name value="ACE View: Annotate every axiom with ACE text"/>
+	<class value="ch.uzh.ifi.attempto.aceview.ui.action.AnnotateAxiomsWithACETextAction"/>
+	<toolTip value="Add an ACE text annotation to every logical axiom."/>
+	<path value="org.protege.editor.owl.menu.tools/SlotP-F"/>
+	<editorKitId value="OWLEditorKit"/>
+</extension>
+
 
 <!-- ACE View related links -->
 
@@ -221,7 +234,7 @@
 <extension id="menu.ACEViewHelpReleaseNotesMenuItem" point="org.protege.editor.core.application.EditorKitMenuAction">
 	<name value="ACE View: Release Notes"/>
 	<toolTip value="ACE View release notes"/>
-	<url value="http://aceview.googlecode.com/svn/trunk/RELEASE_NOTES.html"/>
+	<url value="https://raw.githubusercontent.com/Kaljurand/aceview/v1.3.2/RELEASE_NOTES.html"/>
 	<path value="org.protege.editor.core.application.menu.HelpMenu/SlotACEView-B"/>
 	<editorKitId value="any"/>
 </extension>

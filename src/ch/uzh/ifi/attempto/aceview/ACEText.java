@@ -1,6 +1,6 @@
 /*
  * This file is part of ACE View.
- * Copyright 2008-2009, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
+ * Copyright 2008-2010, Attempto Group, University of Zurich (see http://attempto.ifi.uzh.ch).
  *
  * ACE View is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software Foundation,
@@ -19,10 +19,8 @@ package ch.uzh.ifi.attempto.aceview;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import ch.uzh.ifi.attempto.ace.ACESentence;
-import ch.uzh.ifi.attempto.aceview.lexicon.ACELexicon;
 
 /**
  * <p>Every ACE text is a sequence of ACE snippets.
@@ -131,18 +129,9 @@ public interface ACEText<E, A> {
 	 * properties, individuals) that are referenced by the axioms
 	 * that are referenced by the snippets of this text.</p>
 	 * 
-	 * TODO: We actually return a SortedSet
-	 * 
 	 * @return Set of OWL entities
 	 */
 	Set<E> getReferencedEntities();
-
-	/**
-	 * <p>Returns the set of pairs (Entity, Snippet set).</p>
-	 * 
-	 * @return Set of entity - snippet set map entries
-	 */
-	Set<Entry<E, Set<ACESnippet>>> getEntitySnippetSetPairs();
 
 	/**
 	 * <p>Returns the number of snippets that reference
@@ -179,32 +168,13 @@ public interface ACEText<E, A> {
 	 */
 	int getNothingbutCount();
 
-	/**
-	 * <p>Returns the index-style HTML-rendering of this text.</p>
-	 * 
-	 * TODO: move this into a "renderer class". Why?
-	 * 
-	 * @return HTML-rendering as string
-	 */
-	String getIndexBody();
-
-	/**
-	 * <p>Returns the HTML rendering of the snippets that
-	 * reference the given entity.</p>
-	 * 
-	 * TODO: move this into a "renderer class". Why?
-	 * 
-	 * @param entity OWL entity
-	 * @return HTML-rendering as string
-	 */
-	String getIndexEntry(E entity);
 
 	/**
 	 * <p>Returns <code>true</code> if this text contains a snippet
 	 * that contains the given sentence.
 	 * There can be several of such snippets.</p>
 	 * 
-	 * TODO: we could return a set of just snippets, not just the count
+	 * TODO: we could return a set of such snippets, not just the count
 	 * 
 	 * @param sentence ACE sentence
 	 * @return <code>true</code> iff this text contains the sentence
@@ -274,7 +244,7 @@ public interface ACEText<E, A> {
 	 * another snippet that references it, e.g. if there is a snippet</p>
 	 * 
 	 * <pre>
-	 * [For every man then man is a human.]
+	 * [For every man the man is a human.]
 	 * [SubClassOf(man human)]
 	 * </pre>
 	 * 
@@ -291,21 +261,17 @@ public interface ACEText<E, A> {
 	List<ACESnippet> getQuestions();
 
 	/**
-	 * <p>Returns the lexicon using which the snippets of this
-	 * text have been parsed.</p>
+	 * <p>Returns the set of snippets whose axioms reference
+	 * the given entity.</p>
 	 * 
-	 * TODO: Maybe the lexicon should not be part of the text, because
-	 * the parsing must be done outside anyway.
-	 * 
-	 * @return ACE lexicon
+	 * @param entity OWL entity
+	 * @return Set of snippets that reference the given entity
 	 */
-	ACELexicon<E> getACELexicon();
+	Set<ACESnippet> getSnippets(E entity);
 
 	/**
 	 * <p>Returns the number of snippets whose axioms reference
 	 * the given entity.</p>
-	 * 
-	 * TODO: we could return the set of the actual snippets instead
 	 * 
 	 * @param entity OWL entity
 	 * @return Number of snippets that reference the given entity

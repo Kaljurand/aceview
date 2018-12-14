@@ -57,3 +57,5 @@ collapsible
 jonas
 jbutton
 deprecated
+morph
+verbalizations

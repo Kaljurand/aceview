@@ -1,92 +1,305 @@
-<project name="ACE View" default="jar" basedir=".">
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="ACE View" default="install" basedir=".">
 	<description>Building and deployment of the ACE View jar-file.</description>
 
-	<!-- The location of the local copy of Protege 4 trunk. -->
-	<property name="protege" location="${user.home}/mywork/protege4/trunk/"/>
+	<property name="ant.build.javac.source" value="1.6"/>
+	<property name="ant.build.javac.target" value="1.6"/>
 
-	<property name="swi_home_dir" location="/opt/local/lib/swipl-5.6.61/"/>
+	<!-- These are specific to Kaarel's machine, but these
+	are ignored when not using JPL. -->
+	<property name="PLBASE_lib_PLARCH" location="/usr/local/lib/swipl-5.11.22/lib/x86_64-linux"/>
+	<property name="PLBASE_lib_jpl_jar" location="/usr/local/lib/swipl-5.11.22/lib/jpl.jar"/>
+	<!--
+		To run this build file set the environment variable
+		PROTEGE_HOME to point to a protege distribution and type ant
+		install or jar.
+	-->
 
-	<!-- The following properties you probably do not need to modify. -->
+	<property environment="env"/>
+	<property name="protege.home" location="${env.PROTEGE_HOME}"/>
+	<property file="${protege.home}/build.properties"/>
+	<property file="local.properties"/>
 
-	<!-- The name of the ACE View jar-file which this build-script will generate. -->
-	<property name="aceview_jar" value="ch.uzh.ifi.attempto.aceview.jar"/>
-	<property name="aceview.command" value="aceview.command"/>
+	<property file="version.properties"/>
+	<property name="major.version" value="1"/>
+	<property name="minor.version" value="3"/>
+	<property name="micro.version" value="2"/>
 
+	<property name="plugin" value="ch.uzh.ifi.attempto.aceview.ui.view"/>
+
+	<property name="src" location="./src"/>
+	<property name="lib" location="./lib"/>
+	<property name="build" location="./build"/>
 	<property name="javadoc" location="javadoc/"/>
-	<property name="aceview_lib" location="lib"/>
-	<property name="aceview_dist" location="dist/"/>
 
-	<property name="protege_dist" location="${protege}/build/dist/"/>
-	<property name="protege_dist_equinox" location="${protege_dist}/equinox/"/>
-	<property name="protege_dist_bundles" location="${protege_dist}/bundles/"/>
-	<property name="protege_dist_plugins" location="${protege_dist_equinox}/plugins/"/>
+	<property name="classes" location="${build}/classes"/>
+	<property name="genlib" location="${build}/lib"/>
+	<property name="manifest" location="${build}/manifest.mf"/>
 
-	<property name="jars" location="${protege_dist_bundles}/org.protege.editor.owl.jar;${protege_dist_bundles}/org.protege.editor.core.application.jar;${protege}/plugins/org.semanticweb.owl.owlapi/lib/owlapi-bin.jar;${protege}/plugins/org.protege.common/lib/log4j.jar;${aceview_lib}/jdom.jar;${aceview_lib}/RadixTree-0.3.jar;${aceview_lib}/swingx-1.0.jar;${aceview_lib}/swing-worker-1.2.jar;${aceview_lib}/simplenlg-v37.jar;${aceview_lib}/attempto-ape.jar;${aceview_lib}/attempto-owl.jar;${aceview_lib}/google-collect-1.0-rc2.jar"/>
+	<property name="protege.common" location="${protege.home}/bundles"/>
+	<property name="protege.plugins" location="${protege.home}/plugins"/>
+
+	<property name="equinox.common"
+		location="${protege.common}/org.eclipse.equinox.common.jar"/>
+	<property name="equinox.registry"
+		location="${protege.common}/org.eclipse.equinox.registry.jar"/>
+	<property name="protege.lib"
+		location="${protege.common}/org.protege.editor.core.application.jar"/>
+	<property name="common.lib"
+		location="${protege.common}/org.protege.common.jar"/>
+
+	<property name="owl.lib"
+		location="${protege.plugins}/org.semanticweb.owl.owlapi.jar"/>
+
+	<property name="owl.editor.jar"
+		location="${protege.plugins}/org.protege.editor.owl.jar"/>
 
 	<property name="aceview_test_src" location="test/"/>
 	<property name="aceview_test_report" location="test_report/"/>
 
+	<property name="site_server" value="attempto.ifi.uzh.ch"/>
+	<property name="site_dir" value="/Library/WebServer/Documents/aceview/"/>
+	<property name="site_user" value="${user.name}"/>
+
+
 	<target name="init">
-		<!-- <tstamp><format property="build.time" pattern="yyMMdd-HHmm"/></tstamp> -->
-		<tstamp><format property="build.time" pattern="yyMMdd"/></tstamp>
-		<mkdir dir="${aceview_dist}"/>
-	</target>
-
-	<target name="compile" depends="init" description="Compile the ACE View Java files.">
-		<echo>Using Protege jars from: ${protege}</echo>
-		<mkdir dir="classes"/>
-		<javac
-			srcdir="src/"
-			classpath="${jars}"
-			destdir="classes"/>
-	</target>
-
-	<target name="jar" depends="compile" description="Generate the ACE View jar-file.">
-		<jar
-			destfile="${aceview_dist}/${aceview_jar}"
-			manifest="manifest.txt"
-			basedir="."
-			includes="classes/**, lib/**, licenses/**, viewconfig-aceviewtab.xml, plugin.xml"
-			/>
-	</target>
-
-	<target name="deploy" depends="jar" description="Copy the ACE View jar-file into the Protege plug-in directory.">
-		<echo>Copy: ${aceview_jar}</echo>
-		<copy file="${aceview_dist}/${aceview_jar}" todir="${protege_dist_plugins}"/>
-		<!--
-		<echo>Copy: ${aceview.command}</echo>
-		<copy file="${aceview.command}" todir="${protege_dist_equinox}"/>
-		<chmod file="${protege_dist_equinox}/${aceview.command}" perm="750"/>
-		-->
+		<tstamp>
+			<format property="build.time" pattern="yyyy_MM_dd_hhmm"/>
+		</tstamp>
+		<property name="bundle.version"
+			value="${major.version}.${minor.version}.${micro.version}.${build.time}"/>
+		<property name="version"
+			value="${major.version}.${minor.version}.${micro.version}"/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${classes}"/>
+		<mkdir dir="${classes}/lib"/>
+		<mkdir dir="${genlib}"/>
 	</target>
 
 
-	<target name="javadoc" description="Create the ACE View Javadoc files.">
+	<target name="checkProtegeLibsAndReport" depends="checkProtegeLibs" unless="libs.found">
+		<echo message="Missing protege libraries. You need to set "/>
+		<echo message="the PROTEGE_HOME environment variable to a"/>
+		<echo message="protege installation directory where the"/>
+		<echo message="appropriate plugins have been installed."/>
+		<echo message="Alternatively set the jar libs in local.properties (protege.lib=...)"/>
+		<echo message="Use the -v option to ant to see what jars are missing."/>
+		<fail message="missing protege libraries"/>
+	</target>
+
+
+	<!--
+		The following target only needs to be modified if the user
+		needs to change the classpath. It is preconfigured to use
+		the common protege 4 jars, the lib directory and the
+		libraries that have been uncovered in buildlibs.
+	-->
+	<target name="checkProtegeLibs" depends="init">
+		<echo message="**********************************************************"/>
+		<echo message="Using Protege Home = ${protege.home}"/>
+		<echo message="Using Java Version = ${ant.java.version}" />
+		<echo message="**********************************************************"/>
+		<condition property="libs.found">
+			<and>
+				<available file="${protege.osgi}" type="file"/>
+				<available file="${equinox.common}" type="file"/>
+				<available file="${equinox.registry}" type="file"/>
+				<available file="${owl.editor.jar}" type="file"/>
+				<available file="${owl.lib}" type="file"/>
+			</and>
+		</condition>
+		<path id="project.classpath">
+			<pathelement location="${protege.osgi}"/>
+			<pathelement location="${protege.lib}"/>
+			<pathelement location="${equinox.common}"/>
+			<pathelement location="${equinox.registry}"/>
+			<pathelement location="${owl.editor.jar}"/>
+			<pathelement location="${owl.lib}"/>
+			<fileset dir="${lib}"/>
+			<fileset dir="${genlib}"/>
+		</path>
+	</target>
+
+
+	<!--
+		The following target only needs to be modified if the
+		developer needs to obtain some jar files that are contained in
+		the Protege bundles. The contents of these jar files are
+		found when Protege 4 runs but may be needed in order to
+		compile the plugin.
+	-->
+	<target name="buildlibs" depends="checkProtegeLibsAndReport">
+		<unjar dest="${build}"
+			src="${common.lib}">
+			<patternset>
+				<include name="**/log4j.jar"/>
+				<include name="**/looks.jar"/>
+			</patternset>
+		</unjar>
+	</target>
+
+
+	<target name="build.manifest">
+		<copy tofile="${manifest}" file="META-INF/MANIFEST.MF" overwrite="true"/>
+		<manifest file="${manifest}" mode="update">
+			<attribute name="Built-By" value="${user.name}"/>
+			<attribute name="Bundle-Version" value="${bundle.version}"/>
+		</manifest>
+	</target>
+
+	<!--
+		Here is the copy.resources target. It may need modification
+		to copy the right resources into the classes directory. By
+		default it already copies non-java files found in the source
+		directory, the libraries needed by the project and the
+		viewconfig and the plugin.xml. This will be sufficient in
+		many cases.
+	-->
+	<target name="copy.resources" depends="build.manifest">
+		<copy todir="${classes}">
+			<fileset dir="${src}">
+				<include name="**/*"/>
+				<exclude name="**/*.java"/>
+				<exclude name="**/MANIFEST.MF"/>
+				<exclude name="**/manifest.mf"/>
+			</fileset>
+		</copy>
+		<copy todir="${classes}/lib">
+			<fileset dir="${lib}" excludes="junit*.jar,jemmy*.jar"/>
+		</copy>
+		<copy todir="${classes}">
+			<fileset dir="." includes="*.xml">
+				<exclude name="build.xml"/>
+			</fileset>
+		</copy>
+		<!-- the manifest doesn't belong here but this is good for IDE's -->
+		<mkdir dir="${classes}/META-INF"/>
+		<copy todir="${classes}/META-INF" file="${manifest}"/>
+	</target>
+
+
+	<target name="compile" depends="buildlibs, checkProtegeLibsAndReport">
+		<javac srcdir="${src}" destdir="${classes}" debug="on" includeAntRuntime="false">
+			<classpath refid="project.classpath"/>
+		</javac>
+	</target>
+
+
+	<target name="jar" depends="compile, copy.resources" description="Create the ACE View jar-file.">
+		<jar jarfile="${build}/${plugin}.jar"
+			basedir="${classes}"
+			manifest="${build}/manifest.mf"/>
+	</target>
+
+
+	<target name="install" depends="jar" description="Copy the ACE View jar-file into the Protege plugins directory.">
+		<!-- flush cache -->
+		<delete dir="${protege.home}/configuration/org.eclipse.core.runtime"/>
+		<delete dir="${protege.home}/configuration/org.eclipse.osgi"/>
+		<copy file="${build}/${plugin}.jar"
+			todir="${protege.plugins}"
+			overwrite="true"/>
+	</target>
+
+
+	<target name="run" depends="install" description="Install the ACE View jar-file and launch Protege.">
+		<java fork="true" dir="${protege.home}"
+			classname="org.protege.osgi.framework.Launcher">
+			<jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
+			<jvmarg value="-Djava.library.path=${PLBASE_lib_PLARCH}"/>
+			<jvmarg value="-Xmx1500M"/>
+			<classpath>
+				<pathelement path="${protege.osgi}"/>
+				<pathelement path="${protege.launcher}"/>
+				<pathelement path="${PLBASE_lib_jpl_jar}"/>
+			</classpath>
+		</java>
+	</target>
+
+
+	<target name="debug" depends="init">
+		<java fork="true" dir="${protege.home}"
+			classname="org.protege.osgi.framework.Launcher">
+			<jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
+			<jvmarg value="-agentlib:jdwp=transport=dt_socket,address=8500,server=y,suspend=y"/>
+			<jvmarg value="-Xmx1500M"/>
+			<classpath>
+				<pathelement path="${protege.osgi}"/>
+				<pathelement path="${protege.launcher}"/>
+			</classpath>
+		</java>
+	</target>
+
+
+	<target name="clean" description="Delete automatically generated files.">
+		<delete dir="${build}"/>
+		<delete dir="${javadoc}"/>
+	</target>
+
+
+<!--
+<target name="usage">
+<echo message="To run this script set the PROTEGE_HOME environment"/>
+<echo message="variable and use one of the following targets"/>
+<echo message="jar - builds the jar (bundle) file for this project"/>
+<echo message="install - installs the bundle into the Protege distribution"/>
+<echo message="copy.resources - copyies resources into the classes directory"/>
+<echo message=" this can be useful for ide developers - see the wiki"/>
+<echo message="run - runs Protege (requires that Protege has been installed)"/>
+<echo message="debug - starts Protege with the debugger using port 8500"/>
+</target>
+-->
+
+
+
+	<target name="dist" depends="jar" description="Create the update.properties file.">
+	<property name="root" value="https://raw.githubusercontent.com/Kaljurand/aceview/v${version}/"/>
+	<property name="update.properties.file" value="${root}update.properties"/>
+	<property name="readme.file" value="${root}RELEASE_NOTES.html"/>
+	<property name="download" value="https://github.com/Kaljurand/aceview/releases/download/v${version}/${plugin}.jar"/>
+		<echo file="update.properties" append="false">
+id=${plugin}
+version=${bundle.version}
+download=${download}
+name=ACE View Tab
+readme=${readme.file}
+license=http://www.gnu.org/licenses/lgpl.html
+author=Kaarel Kaljurand
+</echo>
+		<echo message="The build file should ensure that"/>
+		<echo message="1. The bundle version and id is correct."/>
+		<echo message="Check the following things"/>
+		<echo message="1. To find this update, The main repository uses "/>
+		<echo message="      ${update.properties.file}"/>
+		<echo message="2. The update.properties can be found at "/>
+		<echo message="      ${update.properties.file}"/>
+		<echo message="3. The README-file for this update can be found at"/>
+		<echo message="      ${readme.file}"/>
+		<echo message="4. The download for this update can be found at"/>
+		<echo message="      ${download}"/>
+	</target>
+
+
+	<target name="javadoc" depends="checkProtegeLibs" description="Create the ACE View Javadoc files.">
 		<javadoc
-			classpath="${jars}"
-			sourcepath="src/"
+			sourcepath="${src}"
 			packagenames="*"
 			destdir="${javadoc}"
-			extdirs="${aceview_lib}"
+			extdirs="${lib}"
 			windowtitle="ACE View Packages"
 			doctitle="ACE View Packages">
 
 			<!-- <tag name="bug" scope="all" description="BUG:"/> -->
-			<bottom><![CDATA[<em>Copyright 2008-2009, Attempto Group, University of Zurich (see <a href="http://attempto.ifi.uzh.ch">http://attempto.ifi.uzh.ch</a>)</em>]]></bottom>
+			<classpath refid="project.classpath"/>
+			<bottom><![CDATA[<em>Copyright 2008-2010, Attempto Group, University of Zurich (see <a href="http://attempto.ifi.uzh.ch">http://attempto.ifi.uzh.ch</a>)</em>]]></bottom>
 		</javadoc>
 	</target>
 
-	<target name="clean" description="Clean up.">
-		<delete dir="classes"/>
-		<delete dir="${javadoc}"/>
-		<delete dir="${aceview_dist}"/>
-		<delete dir="${aceview_test_report}"/>
-	</target>
 
-
-	<target name="zip_source" depends="init" description="Generate a zip-archive of all the source files.">
+	<target name="zip_source" depends="init" description="Create a zip-archive of all the source files.">
 		<zip
-			destfile="${aceview_dist}/aceview_src-${build.time}.zip"
+			destfile="${build}/aceview_src-${build.time}.zip"
 			basedir="."
 			includes="lib/**, src/**, test/**, licenses/**, *.xml, *.txt, .classpath, .settings/**"
 			excludes="classes, **/.DS_Store, **/old/**, **/*.zip, **/*.bash, **/*.lst"
@@ -94,29 +307,67 @@
 	</target>
 
 
+	<target name="zip_protege" depends="install" description="Create a zip-archive of $PROTEGE_HOME.">
+		<zip
+			destfile="${build}/aceview_with_protege-${build.time}.zip"
+			basedir="${protege.home}"
+			/>
+	</target>
+
+
 	<target name="test" depends="compile" description="Unit test some ACE View classes.">
 		<javac
 			srcdir="${aceview_test_src}"
-			classpath="${jars};${aceview_lib}/junit-4.5.jar"
-			destdir="classes"/>
+			destdir="${classes}"
+			>
+			<!-- source="1.6" ??? -->
+			<classpath refid="project.classpath"/>
+		</javac>
 
 		<mkdir dir="${aceview_test_report}"/>
 
-		<junit printsummary="yes" haltonfailure="no">
+		<junit printsummary="yes" haltonfailure="no"
+			dir="${protege.home}" fork="on" >
 
+			<jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
+			<jvmarg value="-Djava.library.path=${PLBASE_lib_PLARCH}"/>
+			<jvmarg value="-Xmx1500M"/>
 			<classpath>
-				<pathelement location="classes"/>
-				<pathelement path="${jars};${swi_home_dir}/lib/jpl.jar;${aceview_lib}/junit-4.5.jar"/>
+				<pathelement location="${classes}"/>
+				<pathelement path="${protege.launcher}"/>
+				<pathelement path="${PLBASE_lib_jpl_jar}"/>
 			</classpath>
+
+			<classpath refid="project.classpath"/>
 
 			<formatter type="plain"/>
 
 			<batchtest fork="yes" todir="${aceview_test_report}">
 				<fileset dir="${aceview_test_src}">
 					<include name="**/*Test.java"/>
+					<!-- <exclude name="**/gui/*Test.java"/> -->
 				</fileset>
 			</batchtest>
 		</junit>
+	</target>
+
+
+	<target name="publish" description="Update the ACE View website based on the files in the site-directory.">
+		<echo message="Updating the ACE View website..."/>
+		<input message="Enter a user name for ${site_server}: " addproperty="username" defaultvalue="${site_user}"/>
+		<input message="Enter ${username}'s password on ${site_server}: " addproperty="password"/>
+
+		<echo message="Copying files to ${username}@${site_server}:${site_dir} ..."/>
+
+		<scp todir="${username}:${password}@${site_server}:${site_dir}" trust="yes" verbose="true">
+			<fileset dir="site">
+				<exclude name="icon.png"/>
+			</fileset>
+		</scp>
+
+		<!--
+		<sshexec host="${server}" username="${username}" password="${password}" command="ls" trust="yes"/>
+		-->
 	</target>
 
 </project>
